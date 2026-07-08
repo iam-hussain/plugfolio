@@ -192,7 +192,8 @@ flowchart LR
 | **Content** | `/dashboard/content` | See all synced posts across platforms; filter mapped/unmapped; open the mapping editor; hide posts from the public page; re-sync. |
 | **Mapping editor** | `/dashboard/content/{id}` | Tag products onto a post: search product catalog, paste any product URL (auto-scraped), attach affiliate link/code, position tags, preview visitor view, publish. |
 | **Products** | `/dashboard/products` | Manage the product library: edit details, replace dead links, group into collections, see per-product performance. |
-| **Storefront** | `/dashboard/storefront` | Customize the public page: section order, featured collections, theme within brand system, bio/links, preview as visitor, publish. |
+| **Storefront** | `/dashboard/storefront` | Customize the public page: about section, creator-defined category sub-pages (create/rename/reorder, add item groups), featured collections, theme within brand system, bio/links, preview as visitor, publish. |
+| **Orders** *(P1.5+)* | `/dashboard/orders` | Own-product sales: order list, status (paid/delivered/refunded), buyer contact, refunds. |
 | **Media kit** | `/dashboard/media-kit` | Auto-generated from synced stats (audience, reach, top content, past collabs); editor curates highlights; share as public link/PDF. |
 | **Brand inbox** | `/dashboard/inbox` | Receive/respond to brand inquiries, track deal status (new → negotiating → active → done), attach deliverables. |
 | **Analytics** | `/dashboard/analytics` | Clicks, top products, coupon usage, revenue — **attributed to the source post**. Date ranges, export. |
@@ -325,6 +326,101 @@ Each feature: what it is → visitor vs. editor view → web/mobile notes → **
 ### 6.12 Payouts — *P0 (must work), keep minimal*
 
 - Stripe Connect (or regional equivalent for a non-US beachhead — verify per chosen region). Balance, history, threshold payouts. No innovation needed here; reliability only.
+
+### 6.13 Product types — affiliate, in-store deals, own products
+
+Every product/offer a creator publishes is one of three types. Each has a different buy path, revenue model, and phase:
+
+| Type | Buy path | Revenue | Phase |
+|---|---|---|---|
+| **Affiliate product** | Redirect to external retailer with attributed link; optional "use my code at checkout" coupon | Affiliate commission share | **P0** (the existing core path, §6.1/§8.4) |
+| **In-store deal** | No online checkout — visitor sees the deal, visits the physical store, redeems during the validity period | Creator-brand arrangement; platform value = traffic proof + future brand tools | **P1** |
+| **Own product** | **Native checkout through Plugfolio's payment gateway**, settled to the creator's account | Transaction fee on gateway sales | **P1.5 (digital) → P2 (physical)** |
+
+**In-store deals (P1)** — a creator announces a discount at a physical store: *"this store in this area has 20% off until Sunday — applicable to all products in store."*
+- Fields: store name, location (area text + geo point), discount description, validity window (`starts_at`/`ends_at`), redemption note ("show this screen" / "mention my name" / code).
+- Deal is store-scoped, not product-scoped — it can cover everything in the store.
+- Visitor surfaces: creator page, `/deals`, and an Explore **"deals near you"** module (browser geolocation with permission, or a manual area picker — no login).
+- **This is genuine whitespace:** no incumbent (ShopMy, LTK, Linktree) touches offline/local deals — and it's a natural fit for a regional beachhead where local-store culture is strong.
+- LLD: new `IN_STORE_DEAL` entity (creator_id, store_name, area, lat/lng, discount_text, starts_at, ends_at, redemption_note, grab_count).
+
+**Own products (P1.5 → P2)** — the creator's own merchandise/products, sold directly:
+- Listing with price, stock, images; guest checkout via Plugfolio's payment gateway (Stripe or regional equivalent); funds settle to the creator's account on the existing payout rails.
+- Buyer stays no-login: **guest checkout** — email only for receipt/delivery, never an account.
+- Start with **digital-friendly** products (no shipping complexity), add physical (shipping address, fulfillment status) at P2.
+- Requires: order management in the dashboard (new **Orders** section), refund/dispute policy, KYC on the creator (already partly needed for payouts).
+- **This updates open decision #4 to a hybrid:** redirect for affiliate products, native checkout *only* for own products.
+- LLD: `ORDER` (buyer_email, product_id, amount, status: pending|paid|delivered|refunded, payment_ref), `PRODUCT.type` enum (affiliate|own), `PRODUCT.stock`.
+
+### 6.14 Creator page structure — about page + category sub-pages + video embeds
+
+The public creator surface becomes a small site, not a single page:
+
+- **Main page (`/handle`)** — about the creator: bio, photo, social accounts, highlights, featured categories, active coupons/deals.
+- **Category sub-pages (`/handle/{category}`)** — creators create their **own categories** ("Gym kit", "Skincare", "Kitchen") and add groups of items to each. Each category is a real page with its own shareable URL (and SEO value). This evolves §6.2 collections into navigable sub-pages: unlimited categories, creator-defined names and ordering, per-category visibility.
+- **Video preview embedding** — every product can be attached to the YouTube/Instagram video it appears in, with an **embedded preview** on the product page and category grid:
+  - YouTube: standard oEmbed/iframe — reliable everywhere.
+  - Instagram: official embed where allowed; **fallback to thumbnail + tap-out** inside in-app browsers where IG embeds are restricted. Never let a blocked embed break the page.
+  - This makes the mapping bidirectional: content → products (tap a post, see products) *and* product → content (product page plays the video it came from).
+- LLD: `COLLECTION` extends to `CATEGORY_PAGE` (title, slug, sort_order, visible); `PRODUCT_TAG` gains embed metadata (provider, embed_url, thumbnail_url).
+
+### 6.15 Plug Connect — connections, favorites, and trackable relationships
+
+The relationship layer between shoppers and creators, and between creators:
+
+- **Shopper → creator connect (P1.5).** A visitor taps **Connect** on any creator page to follow them on-platform; their connected creators power the "My Creators" feed (new products, coupons, drops). Device-based identity, same anonymous model as the wishlist — the follow-list import (§6.16) is simply *bulk connect*. Optional magic-link claim for cross-device.
+- **Creator ↔ creator connect (P2).** Creators connect with each other — the foundation for collabs (§6.17): cross-tagging, shared collections, commission splits, and a "creators I work with" strip on the public page.
+- **Favorite buyers (P2).** A creator can tag shoppers as **favorites**; a favorite is **highlighted whenever they act** — buys, shares, grabs a coupon — in the creator's analytics and notifications, and can be granted perks (early access to drops, exclusive coupons).
+  - *Honest constraint:* fully anonymous visitors can't be favorited — there's nothing stable to tag. Favorites work on **known shoppers**: those who claimed an identity via the magic-link (rewards claim, wishlist claim, circle claim) or a stable repeat device. This defines the identity ladder: **anonymous → claimed → favorite**, and never forces a login to shop.
+- **Full traffic tracking (P0 — extension of §6.9/§8.4).** Every visit and click already flows through the attribution chain; expose the **source dimension** end-to-end: bio link, share link, Explore, search, category page, connect feed, direct, external referrer — as a "traffic sources" breakdown per post, product, and page in analytics. The creator sees *where every visitor came from*.
+- **Social & collab exposure (P1).** The creator controls what's public on their page and media kit: social accounts, past collab details, and a structured **"Work with me" form** (feeds the brand inbox §6.8). Per-item public/private toggles — expose it, or keep it as a private form-only channel.
+- LLD: `CONNECTION` (subject: device_hash|creator_id, target creator_id, kind: follow|creator_link), `SHOPPER_IDENTITY` (created on any magic-link claim; links device hashes, rewards, wishlist, circle, connections), `FAVORITE_BUYER` (creator_id, shopper_identity_id, note).
+
+### 6.16 Instagram follow-list import → "My Creators" circle — *P1.5*
+
+- **What:** A visitor (or creator acting as a shopper) imports the list of accounts they follow on Instagram; Plugfolio matches it against creators on the platform and auto-builds a personalized **"My Creators" circle** — one shoppable feed across every creator they already follow. (ShopMy ships this as "Circles"; this is our version of the multi-creator discovery bet from the product doc §9.)
+- **Why the awkward import flow:** Instagram's API does not expose who a *user* follows. The only compliant path is Instagram's own **Download Your Information** export. The UX must therefore be a hand-held wizard:
+  1. Guided steps (with screenshots/video): Account Settings → *Download or transfer information* → *Some of your information* → Connections → **Following** → Export to device → Date range **All time** → Format **JSON** → Create file.
+  2. Set expectation up front: *"Instagram emails you the file — this can take up to an hour."* Send an optional web-push/email nudge path so the user comes back when it arrives.
+  3. User uploads / drags in the ZIP or `following.json`.
+- **Privacy edge — parse client-side:** the export can contain far more than the follow list. Parse `following.json` **in the browser**, extract handles only, and send just the handle list — the raw file never leaves the device. State this in the UI; it's a trust differentiator.
+- **No-login handling:** the resulting circle is stored device-side (same anonymous model as the wishlist), with the same optional magic-link "claim" for cross-device. For registered creators it attaches to their account.
+- **Mechanics:** matched handles → circle feed (new products, coupons, drops from those creators, sorted by recency); unmatched handles → a *"invite them to Plugfolio"* prompt — which doubles as a creator-acquisition loop (shoppers pull their favorite creators onto the platform).
+- **LLD notes:** `CIRCLE` (id, device_hash / creator_id, created_at) + `CIRCLE_MEMBER` (circle_id, matched creator_id). Client-side parser for Instagram's export shape (`relationships_following[].string_list_data[].value`); tolerate format drift with a server-side fallback parser. Re-import supported (upsert, don't duplicate).
+- **Improvements over ShopMy's version:** client-side parsing (privacy), no account required to build a circle, and the unmatched-creator invite loop.
+
+### 6.17 Good-to-have backlog
+
+Not part of the wedge or parity core — build after the loop works. Each entry: what it is, why it earns a place, and how it respects the no-login rule.
+
+#### Visitor-facing
+
+| Feature | What & why | No-login handling | Priority |
+|---|---|---|---|
+| **Anonymous wishlist** | Device-local saves (see §6.10); saved items stay commissionable indefinitely (match ShopMy). | localStorage; optional email magic-link "claim" for cross-device — never a wall. | P1 |
+| **Price-drop / back-in-stock alerts** | Web-push alert on a wishlisted item. Strongest repeat-visit driver that needs no account. | Push subscription is per-device — no identity needed. Rides on the link-health checker (§6.1) which already re-crawls prices/stock. | P1 |
+| **Recently viewed + anonymous personalization** | "Picked for you" and "continue browsing" modules on Explore, from device-side history and category affinity. | Entirely client-side profile (localStorage), sent as hints to the Explore API. | P1 |
+| **"Shop the look" bundles** | One tap shows every product in an outfit/setup as a purchasable set; editor groups tags into a "look" in the mapping editor. | Public content — nothing to gate. | P1.5 |
+| **Trending-now / drops surface** | Time-limited coupons and product drops ("24h only") on Explore; urgency drives return visits and gives creators a promo lever. | Public. Needs scheduled coupons (below) as the supply side. | P1.5 |
+
+#### Trust & authenticity
+
+| Feature | What & why | No-login handling | Priority |
+|---|---|---|---|
+| **"Actually uses this" verification badge** | Auto-badge when a product appears in ≥N organic posts over time — a credible authenticity signal no incumbent has, computed from data we already hold (`PRODUCT_TAG` × `CONTENT_ITEM.posted_at`). | Computed, not user-generated — nothing to gate. | P1 |
+| **Reviews — rating + comments** | Star rating **and** text comment on products, aggregated as social proof (and SEO content). | Rating: anonymous one-tap, device-hash + rate limits. Comment: needs accountability — email magic-link verification per comment (the one deliberate exception to pure anonymity; never a wall on browsing/buying). Moderation queue for text. Ship ratings first (P1.5), comments after (P2). | P1.5 / P2 |
+| **Media-kit view tracking** | "Brand X viewed your kit 3× this week" — makes the media kit feel alive and prompts follow-up (see §6.7). | Editor-side feature; brand views tracked via kit share-link tokens. | P1 |
+
+#### Content-editor-facing
+
+| Feature | What & why | Notes | Priority |
+|---|---|---|---|
+| **Best-time-to-post / content insights** | "Reels with ≤3 tags convert 2× better", best posting windows — derived from attribution data already collected (§6.9). Cheap, high retention value. | Pure analytics rollup; no new data needed. | P1 |
+| **Scheduled coupons** | Set launch/expiry windows in advance; auto-publish and auto-expire. Feeds the drops surface. | Adds `starts_at` to `COUPON`; a scheduler tick flips visibility. | P1 |
+| **Scheduled products (availability window)** | Editor sets how long a product stays live (e.g. available for 2 days), after which it auto-flips to disabled/unavailable — shown as "no longer available" or hidden. Powers limited-time drops and urgency ("available for 2 more days"). | Adds `available_from` / `available_until` to `PRODUCT_TAG`; scheduler tick flips state; visitor UI shows a countdown while live. | P1.5 |
+| **Creator collabs** | Co-owned collections, tagging another creator's product with commission split. Doubles as a creator-growth loop (collab invites). | Needs a `commission_split` on `AFFILIATE_LINK` and a collab invite flow. | P2 |
+| **AI-suggested tags & bulk mapping** | Covered in §6.1 — listed here for backlog completeness. | — | P1 |
+| **Digital products / tips** | Stan/Beacons territory — sell digital goods, accept tips. A different business (payments, delivery, disputes); only if creators demand it. | Requires native checkout — coupled to open decision #4. | P2 |
 
 ---
 
@@ -747,8 +843,8 @@ The minimum that proves the wedge: open access, no-login shopping, working rewar
 
 1. Creator onboarding + social sync (with manual-URL fallback)
 2. Mapping editor (desktop) + URL auto-scrape
-3. Public creator page + product page + coupons (mobile-web-first, SSR)
-4. Attributed redirect service + click analytics + per-post revenue
+3. Public creator page (about + category sub-pages) + product page with video embed + coupons (mobile-web-first, SSR)
+4. Attributed redirect service + click analytics + per-post revenue + traffic-source breakdown
 5. **Referral rewards loop** (share tokens, ledger, fraud basics)
 6. Explore (editorial, thin-supply design) + basic search
 7. Payouts (Stripe Connect or regional equivalent)
@@ -758,15 +854,21 @@ The minimum that proves the wedge: open access, no-login shopping, working rewar
 
 - AI-suggested tags, bulk mapping, dead-link detection
 - Storefront collections + customization depth
-- Media kit + brand inquiry form/inbox
-- Anonymous wishlist, better search, anonymous personalization
+- Media kit (+ view tracking) + brand inquiry form/inbox
+- Anonymous wishlist + price-drop/back-in-stock alerts, better search, recently-viewed personalization
+- "Actually uses this" verification badge, content insights (best-time-to-post), scheduled coupons
+- **In-store deals** (creator local-store discounts + "deals near you" on Explore)
+- Social & collab exposure controls + "Work with me" form
 - Creator referral program, web push notifications, mobile quick-map
+- *(P1.5 tail: "shop the look" bundles, trending-now/drops surface, product availability windows, product ratings, Instagram follow-list import → "My Creators" circle, shopper→creator Connect, own products — digital, with guest checkout + Orders section)*
 
 ### v2 — Expansion (P2)
 
 - Brand portal (discovery, campaigns, gifting) — the revenue layer
 - Native shopper app (only if metrics justify — decision gate)
-- AI/semantic search, live/drops surfaces, creator collaborations
+- AI/semantic search, live/drops surfaces, creator collaborations (creator↔creator Connect, commission-split collabs)
+- Own products — physical (shipping/fulfillment), favorite buyers (identity ladder: anonymous → claimed → favorite)
+- Review comments (magic-link verified), digital products/tips (coupled to native checkout)
 - Second niche/region
 
 ---
@@ -780,6 +882,6 @@ Carried from the product document, with recommendations from this spec:
 | 1 | Monetization | Commission share on attributed conversions at v1; brand tools as the v2 revenue layer. Avoid Linktree-style visible transaction fees. |
 | 2 | Beachhead | **Must be decided before Explore ranking, region payout rails, and marketing are built.** Deliberate call — this spec is parameterized by it. |
 | 3 | Referral economics | Platform credit funded from commission margin (§6.6). Model before build. |
-| 4 | Checkout ownership | Redirect-to-retailer at v1 (fastest, no inventory/payments risk); revisit native checkout at v2. |
+| 4 | Checkout ownership | **Hybrid (updated by §6.13):** redirect-to-retailer for affiliate products; native checkout through our gateway *only* for creators' own products (digital first at P1.5, physical at P2). |
 | 5 | Mobile app vs. web | **Web-first, mobile-web-first, PWA** (§3). Native = v2 decision gate. |
 | 6 | Brand-side timing | Inquiry inbox at v1.5 (cheap); full portal at v2 once creator density exists. |
