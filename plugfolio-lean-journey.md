@@ -21,13 +21,13 @@ That's the whole product for v1. If a feature doesn't serve that sentence, it's 
 | Account to shop / browse? | No | — | — |
 | Account for anything else? | Only to **follow or comment** | Yes | Yes |
 | Wants | Buy the thing they just saw | Turn content into sales | Find creators to work with |
-| Does | Taps a post, buys | Builds one shoppable page | Posts a requirement, negotiates a collab |
+| Does | Taps a post, buys | Builds shoppable profiles from their socials | Posts a requirement, negotiates a collab |
 
 **The one clean rule: an account is never the price of shopping.** You buy with no account, ever. You only sign in when you want to *act as yourself* — follow a creator, leave a comment, or operate as a business. That's the whole identity model:
 
 > **Shop → no account.  Follow / comment → shopper account.  Sell → creator account.  Hire → business account.**
 
-**How each account signs in:** creators log in by **username** (claimed at sign-up, and also their public URL); shoppers and businesses log in by **email**. So username is a creator-only identity — it's what makes `plugfolio.com/username` theirs.
+**How each account signs in:** everyone with an account logs in by **email** — creators, shoppers, and businesses alike. A creator's **username is not a login**; it's a *per-profile* public handle, drawn from their connected YouTube/Instagram, that makes `plugfolio.com/<username>` theirs. One account can run several profiles, so the username can't be the login (see "How a creator account is built" below).
 
 ---
 
@@ -53,27 +53,53 @@ No popup. No signup wall. No wishlist to manage, no rewards to understand, no fe
 
 ---
 
-## The creator journey (four steps to live)
+## The creator journey (connect first, then tag)
 
 ```mermaid
 flowchart LR
-    A[Sign up + claim handle] --> B[Connect Instagram]
-    B --> C[Tag products on posts]
-    C --> D[Publish + put link in bio]
+    A[Sign up by email] --> B[Connect Google + Meta]
+    B --> C[Create a profile]
+    C --> D[Pick username from your handles]
+    D --> E[Tag products + publish]
 ```
 
-1. **Sign up and claim your username.** Creators register a **username** at sign-up — it's both their login and their public URL: `plugfolio.com/yourusername`. Creators sign in **by username** (not email). No follower minimum, no approval.
-2. **Connect Instagram.** One tap. Posts import automatically. (One platform for v1 — TikTok and YouTube come later.)
-3. **Tag products.** Open a post, paste any product URL — Plugfolio grabs the image, title, and price. Add the affiliate link. Done.
-4. **Publish.** The page builds itself from the tagged posts. One click makes it live. Copy the link into the Instagram bio.
+1. **Sign up by email.** An account is created — **email login, no username here.** The username belongs to profiles, not the account (see below).
+2. **Connect your socials.** Before anything can go live, the account **Admin connects one Google (YouTube) and one Meta (Instagram)** — at least one is required. This is the *only* way to create a profile, and because you can only connect accounts you own, it doubles as proof of the identity behind every username.
+3. **Create a profile (up to 5).** From the channels and handles those connections expose, spin up a shoppable profile. Posts import automatically. A **random username** is assigned right away so the page works instantly.
+4. **Pick your username.** In profile settings, choose the public handle **from the usernames you actually have on the connected YouTube/Instagram** — nothing else is offered. That becomes `plugfolio.com/<username>`. No follower minimum, no approval.
+5. **Tag & publish.** Open a post, paste any product URL — Plugfolio grabs the image, title, and price — add the affiliate link, and publish. Drop the link in the social bio.
 
 The moment that sells them: **seeing their own reel become shoppable.** Onboarding drives straight at that and stops.
 
 ---
 
+## How a creator account is built — account, profiles, roles
+
+Three words, kept straight:
+
+- **Account** — the login (by **email**). Connects to **one Google and one Meta**, and holds **up to 5 profiles**.
+- **Profile** — one shoppable page with one username (drawn from a connected handle). It's what a shopper sees at `plugfolio.com/<username>`. One account, many profiles — which is exactly why the username can't be the login.
+- **Connected socials** — the YouTube channel and Instagram account a profile is built on (at most one of each).
+
+**Two roles on an account — nothing more granular in v1:**
+
+| Can they… | **Admin** | **Manager** |
+|---|---|---|
+| Connect Google/Meta, create or delete profiles | ✅ | ❌ |
+| Edit profile name, username, and settings | ✅ | ❌ |
+| Post content and tag products | ✅ | ✅ |
+| Change the profile picture | ✅ | ✅ |
+
+**Connection rules:**
+- Every profile keeps **at least one** social connected at all times.
+- An Admin can **re-authenticate** a connection anytime (for recovery), but **can't fully disconnect a Google or Meta while a profile still depends on it** — delete the profile first.
+- If a chosen handle is already taken on Plugfolio, **first verified owner keeps it**; the newcomer stays on their random username until a free handle is picked.
+
+---
+
 ## The creator's dashboard — four tabs, not thirteen
 
-The public page is the shop window. The dashboard is the back room, and it stays small:
+The public page is the shop window. The dashboard is the back room, and it stays small. If the account runs several profiles, a **profile switcher** picks which one you're editing; a **Manager** sees every tab except profile settings and connections.
 
 | Tab | What's there |
 |---|---|
@@ -136,7 +162,9 @@ Cutting these is the point. Each is a real feature — just not part of the firs
 | Media kit, brand discovery-by-performance, campaign & gifting suites | The heavy brand side. In v1 a business vets creators from their public page and meets them through the Collabs thread — the rest comes after density exists. |
 | On-platform collab payments | Collab terms are agreed in v1; money changes hands off-platform for now, same "Plugfolio handles no money" rule. |
 | Coupons, availability windows, bundles | Merchandising polish. Layer on once the basics convert. |
-| TikTok + YouTube sync, AI tag suggestions | Scale and convenience. Instagram-only proves the loop first. |
+| TikTok (and other platforms) + AI tag suggestions | v1 connects **YouTube + Instagram** (Google + Meta). Other platforms and AI-assisted tagging are scale/convenience layers for later. |
+| More than 5 profiles per account · granular per-profile permissions | v1 caps at 5 profiles and two account-scoped roles (Admin/Manager). Bigger agency setups and per-profile permission matrices come later. |
+| Free-form / vanity usernames not tied to a social handle | v1 usernames come only from a connected YouTube/Instagram handle — that's what makes them self-verifying. Arbitrary custom handles are a later, moderated feature. |
 | Favorite buyers, creator-to-creator collabs | Relationship infrastructure for a mature platform. (Business-to-creator collab *is* in v1.) |
 | Plugfolio-owned commissions + payout rails | Only needed once Plugfolio sits in the payment path (its own product sales, or owning the affiliate-network relationship to earn a share). In v1 the networks pay creators directly, so there's nothing to remit. |
 

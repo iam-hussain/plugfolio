@@ -60,12 +60,12 @@ This is the committed baseline. It fits the product (SEO-able creator pages, mob
 | State (client) | React Server Components first; **TanStack Query** for client data; local state via hooks | Fetch on the server by default; client state only where it earns its place. |
 | Backend | **Next.js Route Handlers / Server Actions**, extractable to a service later | Start monolith-simple; the service layer (§6) keeps it portable. |
 | Database | **PostgreSQL** + **Prisma** | Relational data (creators, products, taps, collabs); typed queries. |
-| Auth | **Auth.js (NextAuth)**, per-role method (see [ADR-0003](./docs/adr/0003-auth-methods-per-role.md)) | Creators sign in by **username**; shoppers & businesses by **email**; anonymous shoppers stay account-free. |
+| Auth | **Auth.js (NextAuth)**; **email login for all account holders** (see [ADR-0004](./docs/adr/0004-creator-account-profiles-identity.md)) | Creators, shoppers & businesses sign in by email; a creator **account** connects Google+Meta and holds up to 5 **profiles**, each with a social-derived username; anonymous shoppers stay account-free. |
 | Validation | **Zod** at every boundary | One schema validates input, types the result, and documents the contract. |
 | Testing | **Vitest** (unit) + **Playwright** (e2e journeys) | Test the journeys from the docs, not just functions. |
 | Hosting | **Vercel** | First-class Next.js; edge-fast public pages. |
 
-Foundational decisions already recorded: [ADR-0001 (stack)](./docs/adr/0001-tech-stack.md) · [ADR-0002 (no-login shopper identity)](./docs/adr/0002-no-login-shopper-identity.md) · [ADR-0003 (auth methods per role)](./docs/adr/0003-auth-methods-per-role.md).
+Foundational decisions already recorded: [ADR-0001 (stack)](./docs/adr/0001-tech-stack.md) · [ADR-0002 (no-login shopper identity)](./docs/adr/0002-no-login-shopper-identity.md) · [ADR-0004 (creator account, profiles & social-connected identity)](./docs/adr/0004-creator-account-profiles-identity.md) *(supersedes ADR-0003)*.
 
 ---
 

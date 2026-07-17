@@ -1,6 +1,12 @@
 # ADR 0003 — Authentication Methods Per Role
 
-**Status:** Accepted
+**Status:** Superseded by [ADR-0004](./0004-creator-account-profiles-identity.md)
+
+> **Superseded.** This ADR had creators log in **by username**. That no longer holds:
+> a creator account can run multiple profiles (each with its own username), so username
+> can't be the login. ADR-0004 replaces this — **all** account holders log in by email,
+> and the username becomes a *per-profile* public handle derived from a connected social.
+> The shopper/business email decisions below still stand (restated in ADR-0004).
 
 ## Context
 
