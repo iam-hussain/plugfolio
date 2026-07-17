@@ -63,8 +63,8 @@ flowchart LR
     D --> E[Tag products + publish]
 ```
 
-1. **Sign up by email.** An account is created — **email login, no username here.** The username belongs to profiles, not the account (see below).
-2. **Connect your socials.** Before anything can go live, the account **Admin connects one Google (YouTube) and one Meta (Instagram)** — at least one is required. This is the *only* way to create a profile, and because you can only connect accounts you own, it doubles as proof of the identity behind every username.
+1. **Sign up by email.** An account is created in one step — **email login, nothing connected yet, no username here.** The username belongs to profiles, not the account (see below).
+2. **Connect your socials (whenever you're ready).** After the account exists, the **Admin connects one Google (YouTube) and one Meta (Instagram)** — not required at sign-up, done at the point you want to build a profile. At least one connection is needed to create a profile, and because you can only connect accounts you own, it doubles as proof of the identity behind every username.
 3. **Create a profile (up to 5).** From the channels and handles those connections expose, spin up a shoppable profile. Posts import automatically. A **random username** is assigned right away so the page works instantly.
 4. **Pick your username.** In profile settings, choose the public handle **from the usernames you actually have on the connected YouTube/Instagram** — nothing else is offered. That becomes `plugfolio.com/<username>`. No follower minimum, no approval.
 5. **Tag & publish.** Open a post, paste any product URL — Plugfolio grabs the image, title, and price — add the affiliate link, and publish. Drop the link in the social bio.
@@ -77,7 +77,7 @@ The moment that sells them: **seeing their own reel become shoppable.** Onboardi
 
 Three words, kept straight:
 
-- **Account** — the login (by **email**). Connects to **one Google and one Meta**, and holds **up to 5 profiles**.
+- **Account** — the login (by **email**). Created on email alone; connects to **one Google and one Meta** any time afterward, and holds **up to 5 profiles**.
 - **Profile** — one shoppable page with one username (drawn from a connected handle). It's what a shopper sees at `plugfolio.com/<username>`. One account, many profiles — which is exactly why the username can't be the login.
 - **Connected socials** — the YouTube channel and Instagram account a profile is built on (at most one of each).
 

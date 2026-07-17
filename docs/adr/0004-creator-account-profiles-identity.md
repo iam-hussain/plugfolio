@@ -15,8 +15,9 @@ usernames. We also want the public handle to *mean* something — that the perso
 ### Entities
 
 - **Account** — the login entity. Authenticates **by email** (same as shoppers and
-  businesses; username is never a login). Connects to **one Google (YouTube)** and
-  **one Meta (Instagram)**. Holds **up to 5 profiles**.
+  businesses; username is never a login). Created on email alone — **social connections
+  are added after account creation, not required at sign-up**. Connects to **one Google
+  (YouTube)** and **one Meta (Instagram)**. Holds **up to 5 profiles**.
 - **Profile** — one shoppable public page, addressable at `plugfolio.com/<username>`.
   Built from the social identities the account's connections expose. One account → many
   profiles (max 5).
@@ -25,9 +26,10 @@ usernames. We also want the public handle to *mean* something — that the perso
 
 ### Identity / username
 
-- A creator **must connect at least one** of Google/Meta before any profile can exist —
-  connection is the gate to profile creation *and* the proof of identity (you can only
-  OAuth an account you control, so `plugfolio.com/<handle>` is self-verifying — no
+- A creator **must connect at least one** of Google/Meta before any profile can exist.
+  Connection happens **after account creation** (any time the creator is ready), and is
+  the gate to *profile* creation — not to signing up. It also proves identity (you can
+  only OAuth an account you control, so `plugfolio.com/<handle>` is self-verifying — no
   squatting).
 - On profile creation, a **random username** is assigned so the page is live immediately.
 - The creator may later set the username **only from the handles they actually hold** on
