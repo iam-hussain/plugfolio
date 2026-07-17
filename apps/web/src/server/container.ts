@@ -1,4 +1,4 @@
-import { createTapRepository } from "@plugfolio/db";
+import { createProductRepository, createTapRepository } from "@plugfolio/db";
 
 /**
  * Composition root: the app wires domain services to their concrete Prisma
@@ -7,6 +7,7 @@ import { createTapRepository } from "@plugfolio/db";
  */
 export const repositories = {
   taps: createTapRepository(),
+  products: createProductRepository(),
 };
 
 export const clock = { now: () => new Date() };

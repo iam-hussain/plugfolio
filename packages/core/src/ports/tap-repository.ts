@@ -8,8 +8,9 @@ import type { NewOutboundTap, OutboundTap } from "../domain/tap";
  */
 export type TapRepository = {
   /**
-   * Append a tap. Must be idempotent on `idempotencyKey`: a retry returns the
-   * already-recorded tap instead of inserting a duplicate (§6.8).
+   * Append a tap. Must be idempotent on `idempotencyKey`: whether the caller
+   * already recorded it, or a concurrent request wins the insert race, the
+   * already-recorded tap is returned rather than a duplicate or an error (§6.8).
    */
   append(tap: NewOutboundTap): Promise<OutboundTap>;
   findByIdempotencyKey(key: string): Promise<OutboundTap | null>;

@@ -1,5 +1,4 @@
 import type { NewOutboundTap, OutboundTap, TapRepository } from "@plugfolio/core";
-import { ConflictError } from "@plugfolio/core";
 import { Prisma } from "@prisma/client";
 import { prisma, type PrismaClient } from "../client";
 
@@ -16,7 +15,7 @@ export function createTapRepository(db: PrismaClient = prisma): TapRepository {
           data: {
             productId: tap.productId,
             profileId: tap.profileId,
-            deviceToken: tap.deviceToken,
+            deviceId: tap.deviceId,
             idempotencyKey: tap.idempotencyKey,
             source: tap.source,
             occurredAt: tap.occurredAt,
@@ -24,9 +23,15 @@ export function createTapRepository(db: PrismaClient = prisma): TapRepository {
         });
         return toDomain(row);
       } catch (error) {
-        // Unique violation on idempotencyKey under a race — surface as a typed error.
+        // Idempotency race (§6.8): a concurrent request won the insert between
+        // our not-found check and this create. Return the winning row rather
+        // than surfacing the unique-violation as a conflict — the double-fire
+        // is exactly what idempotency promises to absorb.
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-          throw new ConflictError("Tap already recorded for this idempotency key");
+          const winner = await db.tap.findUnique({
+            where: { idempotencyKey: tap.idempotencyKey },
+          });
+          if (winner) return toDomain(winner);
         }
         throw error;
       }
@@ -43,7 +48,7 @@ type TapRow = {
   id: string;
   productId: string;
   profileId: string;
-  deviceToken: string;
+  deviceId: string;
   idempotencyKey: string;
   source: "profile" | "post" | "product";
   occurredAt: Date;
@@ -54,7 +59,7 @@ function toDomain(row: TapRow): OutboundTap {
     id: row.id,
     productId: row.productId,
     profileId: row.profileId,
-    deviceToken: row.deviceToken,
+    deviceId: row.deviceId,
     idempotencyKey: row.idempotencyKey,
     source: row.source,
     occurredAt: row.occurredAt,

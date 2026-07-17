@@ -11,9 +11,14 @@ export type { OutboundTap, NewOutboundTap, TapSource } from "./domain/tap";
 
 // Ports (repository interfaces implemented in @plugfolio/db)
 export type { TapRepository } from "./ports/tap-repository";
+export type { ProductReadRepository, ProductForAttribution } from "./ports/product-repository";
 
 // Schemas
-export { recordOutboundTapInput, type RecordOutboundTapInput } from "./schemas/tap";
+export {
+  recordOutboundTapInput,
+  type RecordOutboundTapInput,
+  type RecordOutboundTapCommand,
+} from "./schemas/tap";
 
 // Services (use-cases)
 export { recordOutboundTap, type RecordOutboundTapDeps } from "./services/record-outbound-tap";
