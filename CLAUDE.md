@@ -1,0 +1,215 @@
+# CLAUDE.md — Engineering Guide for Plugfolio
+
+This file tells any AI or human contributor **how we build Plugfolio**: what to follow,
+how to keep the product docs true, and the code standards, architecture, and patterns
+we hold to. Read it before writing code.
+
+---
+
+## 1. Source of truth — read before you build
+
+Product intent lives in these docs. Read the relevant one **before** implementing a feature:
+
+| Doc | What it governs | Authority |
+|---|---|---|
+| [`plugfolio-lean-journey.md`](./plugfolio-lean-journey.md) | **What ships first (v1).** The one core loop, the three roles, what's deferred. | **Primary — build this.** |
+| [`plugfolio-features-and-journeys.md`](./plugfolio-features-and-journeys.md) | Full feature set & journeys (the long-term vision). | Reference for later phases. |
+| [`plugfolio-product-document.md`](./plugfolio-product-document.md) | Product-owner brief: market, positioning, open decisions. | Strategy context. |
+| [`plugfolio-product-spec.md`](./plugfolio-product-spec.md) | Technical spec, architecture, diagrams. | Reference. |
+| [`plugfolio-competitive-analysis.md`](./plugfolio-competitive-analysis.md) | Market landscape. | Context. |
+
+**If code and a doc disagree, stop and reconcile before continuing.** The lean journey wins for v1 scope.
+
+---
+
+## 2. Golden rules (never break these silently)
+
+1. **Follow the lean journey.** If a feature isn't in `plugfolio-lean-journey.md`'s v1, it's not in v1. To build something deferred, get it moved into v1 in the doc first.
+2. **Shopping never requires an account.** No login wall on any buy path. Accounts gate only: follow, comment (shopper), selling (creator), hiring (business).
+3. **v1 handles no money.** Creators use their own affiliate links; collab payment is off-platform. Do not add payment rails without a doc change.
+4. **Docs stay true — update them in the same change.** See §3.
+5. **Mobile-first, in-app-browser-fast.** Most visitors arrive inside Instagram/TikTok's browser. Every page must be fast and correct there.
+
+---
+
+## 3. Keep the product docs in sync — required, not optional
+
+When your change alters scope, behavior, a journey, or a v1/deferred decision, **update the docs in the same PR**:
+
+- **Behavior or journey change** → update `plugfolio-lean-journey.md` (and the fuller docs if the long-term picture shifts).
+- **Pulling a deferred feature into v1, or deferring one** → move the row in the lean journey's "deliberately left out" table and adjust the affected journey.
+- **Any non-trivial technical decision** (stack choice, data model, auth model, a pattern we commit to) → record it as an **ADR** in `docs/adr/NNNN-title.md` (see §9) and link it from the PR.
+- **New/changed feature** → add or update an **implementation note** in `docs/implementation/<feature>.md` describing: the journey it serves, the data model, the API surface, the components, and edge cases.
+
+> Rule of thumb: **a reviewer should be able to read the diff and the docs together and see one coherent story.** A code change with no matching doc update is incomplete when it touches product behavior.
+
+Keep doc edits surgical — mirror the existing voice (neat, plain, scannable). Don't rewrite whole sections to add one line.
+
+---
+
+## 4. Recommended stack (proposed default — confirm before first build)
+
+No code exists yet, so this is the **recommended baseline**. It fits the product (SEO-able creator pages, mobile-first, fast in in-app browsers, no-login shopping). Raise it in a PR/ADR if you want to change it before we commit.
+
+| Layer | Choice | Why |
+|---|---|---|
+| Language | **TypeScript** (strict) everywhere | One language, typed contracts front-to-back. |
+| Framework | **Next.js (App Router, RSC)** | Server components for fast, SEO-friendly public pages; one repo for web + API. |
+| Styling | **Tailwind CSS** + design tokens (§7) | Fast, consistent, mobile-first; tokens keep the theme centralized. |
+| UI primitives | Headless (Radix) + our own component layer | Accessible primitives, our own styled components on top. |
+| State (client) | React Server Components first; **TanStack Query** for client data; local state via hooks | Fetch on the server by default; client state only where it earns its place. |
+| Backend | **Next.js Route Handlers / Server Actions**, extractable to a service later | Start monolith-simple; the service layer (§6) keeps it portable. |
+| Database | **PostgreSQL** + **Prisma** | Relational data (creators, products, taps, collabs); typed queries. |
+| Auth | **Auth.js (NextAuth)** or Lucia, provider-gated per role | Only creators/businesses/shoppers-who-act need it; shoppers stay anonymous. |
+| Validation | **Zod** at every boundary | One schema validates input, types the result, and documents the contract. |
+| Testing | **Vitest** (unit) + **Playwright** (e2e journeys) | Test the journeys from the docs, not just functions. |
+| Hosting | **Vercel** | First-class Next.js; edge-fast public pages. |
+
+If a different stack is chosen, this table and an ADR must be updated to match — don't leave it stale.
+
+---
+
+## 5. Frontend — feature-based architecture
+
+**Organize by feature, not by file type.** Everything a feature needs lives together; shared code is explicitly shared.
+
+```
+src/
+  app/                      # Next.js routes only — thin. Compose features, no business logic here.
+    (public)/[handle]/      # creator page (no-login shopper surface)
+    (public)/explore/
+    (creator)/dashboard/
+    (business)/collabs/
+    api/                    # route handlers (thin — delegate to services, §6)
+  features/                 # THE core. One folder per product capability.
+    creator-page/
+      components/           # feature-scoped UI
+      hooks/                # feature-scoped hooks (use-...)
+      api.ts                # client calls into backend for this feature
+      types.ts             # feature types (Zod schemas + inferred types)
+      index.ts              # public surface of the feature — import from here only
+    product-tagging/
+    shopper-account/        # follow + comment
+    business-collab/
+    earnings/
+  components/               # GENERIC, product-agnostic UI (Button, Card, Sheet, Field...)
+  lib/                      # generic helpers (formatting, fetch client, cn(), date)
+  server/                   # backend layer (§6): services, repositories, domain
+  styles/                   # tokens, globals, tailwind config bridge
+  test/                     # shared test utils, fixtures
+```
+
+**Rules:**
+- **A feature owns its slice.** UI, hooks, types, and client API for one capability stay in `features/<name>/`.
+- **Cross-feature imports go through `index.ts`.** Never reach into another feature's internals; import from its public surface.
+- **`app/` is thin.** Routes wire features together and handle layout/loading/error boundaries — no business logic.
+- **`components/` is generic only.** If a component knows about "creators" or "collabs," it belongs in a feature, not here.
+- **Server-first.** Default to Server Components; add `"use client"` only for genuine interactivity (tagging editor, share sheet, forms).
+
+---
+
+## 6. Backend — patterns (best-practice suggestions)
+
+Keep the backend a **thin transport shell over a typed domain**, so it survives being extracted from Next.js later.
+
+```
+src/server/
+  domain/          # entities & pure business rules (no framework, no DB imports)
+  services/        # use-cases: orchestrate domain + repositories (the "verbs")
+  repositories/    # data access — the ONLY place Prisma is imported
+  http/            # request→service mapping, Zod validation, error → HTTP shape
+```
+
+**Patterns we follow:**
+
+1. **Layered, one direction.** `http → services → repositories → db`. Domain has zero framework/DB imports. No layer skips downward.
+2. **Repository pattern.** All DB access behind repositories. Swapping/optimizing storage never touches services. Prisma is imported *only* in `repositories/`.
+3. **Service = one use-case.** `tagProductToPost`, `recordOutboundTap`, `postBusinessRequirement`. Route handlers just: validate → call one service → shape response. Thin controllers.
+4. **Validate at the boundary with Zod.** Parse every incoming payload; the parsed type flows inward. Never trust `req.body`.
+5. **Typed errors, not thrown strings.** A `Result`/typed-error style or a small `AppError` hierarchy mapped to HTTP codes in one place. Callers handle known failure cases explicitly.
+6. **Attribution is append-only.** Taps/clicks are immutable events (an event table), never mutated counters — the Earnings truth is a rebuildable projection. Label `tracked` vs `estimated` at the read model, per the docs.
+7. **No-login shopper identity = a signed device token**, not an account row. Anonymous by default; only follow/comment/creator/business create real user records.
+8. **Idempotency on writes that can retry** (tap recording, collab requests) via idempotency keys — in-app browsers double-fire.
+9. **Config & secrets via env only**, validated by a single Zod-checked `env.ts` at boot. No secret in code, ever.
+10. **Money stays out of v1.** No payment integration until a doc change says so (§2.3).
+
+---
+
+## 7. Design system & theme — "Charged Violet"
+
+Centralize the theme; components never hardcode hex/spacing.
+
+- **Palette:** Charged Violet `#7C3AED` (primary) · Electric Lime `#C6FF3D` (one disciplined accent) · violet-tinted dark surfaces. Lime is a spark, not a background — use it sparingly (CTAs, highlights).
+- **Tokens are the only source of color/space/type.** Define semantic tokens (`--color-primary`, `--color-accent`, `--surface`, `--text`, radius, spacing scale) in `styles/tokens.css`, exposed through Tailwind's theme. **Components reference tokens, never raw hex.**
+- **Type:** geometric display face for headings, clean sans for body. One scale, defined once.
+- **Mobile-first & accessible:** design at 360px first; hit WCAG AA contrast (mind lime-on-light — it fails easily); every interactive element keyboard- and screen-reader-usable; respect `prefers-reduced-motion`.
+- **Dark-first surfaces** (the brand is violet-tinted dark), but tokens must support a light mode cleanly.
+
+---
+
+## 8. Code standards
+
+**General**
+- **TypeScript strict.** No `any` (use `unknown` + narrow). Prefer `type` for shapes; `interface` for extendable contracts. Types inferred from Zod where a runtime boundary exists.
+- **Small, pure, single-purpose functions.** A function does one thing; side effects live in services, not in components or utils.
+- **Name for intent.** `recordOutboundTap`, not `handleClick2`. Booleans read as predicates (`isPublished`, `hasAffiliateLink`). No abbreviations that aren't domain terms.
+- **No magic values.** Named constants/enums; strings that cross a boundary get a Zod enum.
+- **Comments explain *why*, not *what*.** The code says what. Match the surrounding density.
+
+**Components**
+- **Function components + hooks only.** One component per file; the file is named for the component.
+- **Props are a typed object**, destructured, with sensible defaults. Keep prop lists short — many props means the component should split.
+- **Presentational vs. container.** Generic UI (`components/`) is presentational and stateless where possible; data-fetching/orchestration lives in feature components/hooks.
+- **Accessibility is not optional.** Semantic HTML first; ARIA only to fill gaps; every control labeled and focusable.
+- **Compose, don't prop-explode.** Prefer `children`/slots over a dozen config flags.
+
+**Hooks & functions**
+- Custom hooks are `use...`, own one concern, and return a stable, typed shape.
+- Data fetching goes through the feature's `api.ts` + TanStack Query — components don't `fetch` inline.
+- Pure helpers in `lib/` are framework-agnostic and unit-tested.
+
+**Testing**
+- **Test the journeys.** Each v1 journey in the lean doc has at least one Playwright path (shopper buys with no account; creator tags & publishes; business posts a requirement).
+- Unit-test domain rules and pure utils with Vitest. Test behavior, not implementation detail.
+- A bug fix ships with the test that would have caught it.
+
+**Formatting**
+- Prettier + ESLint (typescript-eslint, a11y, import-order). CI fails on lint/format/type errors. Don't hand-format around the formatter.
+
+---
+
+## 9. Decision records (ADRs)
+
+Any decision that's expensive to reverse — stack, data model, auth model, a committed pattern — gets a short ADR:
+
+```
+docs/adr/0001-tech-stack.md
+docs/adr/0002-no-login-shopper-identity.md
+```
+
+Format: **Context → Decision → Consequences → Status** (proposed / accepted / superseded). One page. Link it from the PR that implements it. When a later decision overrides an old one, mark the old ADR *superseded* — don't delete it.
+
+---
+
+## 10. Git & PR workflow
+
+- **Branch** off the default branch; never commit product-behavior code without the matching doc/ADR update (§3).
+- **Small, focused PRs**, each mapping to a journey step or feature slice where possible.
+- **Commits** are imperative and explain *why* (`Add outbound-tap event recording for earnings attribution`).
+- **PR body** states: what changed, which journey/doc it serves, which docs/ADRs were updated, and how it was verified.
+- **CI green before merge:** type-check, lint, unit, and the relevant e2e journey.
+- **Definition of done:** feature works on mobile-first, no login added to a shop path, docs updated, tests pass, ADR filed if a real decision was made.
+
+---
+
+## 11. Quick checklist before you open a PR
+
+- [ ] Feature is in the lean journey's v1 (or the doc was updated to include it).
+- [ ] No account required on any shopping path.
+- [ ] No money/payment added without a doc change.
+- [ ] Product doc(s) updated to match behavior; ADR filed if a real decision was made.
+- [ ] Feature-based structure respected; generic vs. feature code in the right place.
+- [ ] Backend change goes http → service → repository; Prisma only in repositories.
+- [ ] Theme via tokens, not hardcoded hex; mobile-first; AA contrast.
+- [ ] Types strict, functions small and named for intent.
+- [ ] Journey/unit tests added; CI green.
