@@ -35,13 +35,17 @@ packages/config  # shared tsconfig / tailwind / eslint / prettier presets
 
 ## Getting started
 
-Requires Node 22+ and pnpm 10+.
+Requires pnpm 10+. The Node version is pinned in [`.nvmrc`](./.nvmrc) — the same
+file CI reads, so local and CI stay on one version.
 
 ```bash
+nvm use                                         # switch to the Node version in .nvmrc (nvm install if needed)
+corepack enable                                 # use the pnpm version pinned in package.json
 pnpm install
-cp packages/db/.env.example packages/db/.env   # set DATABASE_URL
-pnpm db:generate                               # generate the Prisma client
-pnpm dev                                        # run the web app
+cp apps/web/.env.example apps/web/.env.local    # set DATABASE_URL + DEVICE_TOKEN_SECRET
+cp packages/db/.env.example packages/db/.env    # DATABASE_URL for Prisma CLI
+pnpm db:generate                                # generate the Prisma client
+pnpm dev                                         # run the web app
 ```
 
 Common tasks (Turborepo runs them across the graph):
