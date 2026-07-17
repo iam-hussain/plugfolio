@@ -29,7 +29,7 @@ Adopt the following stack as the committed baseline:
 | Client data | RSC-first; TanStack Query for client-side data |
 | Backend | Next.js Route Handlers / Server Actions over a layered service/repository domain (extractable later) |
 | Database | PostgreSQL + Prisma |
-| Auth | Auth.js (NextAuth), gated per role; shoppers anonymous by default |
+| Auth | Auth.js (NextAuth); per-role method — creators by username, shoppers & businesses by email (see ADR-0003); shoppers anonymous by default |
 | Validation | Zod at every boundary |
 | Testing | Vitest (unit) + Playwright (journey e2e) |
 | Hosting | Vercel |

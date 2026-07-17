@@ -27,6 +27,8 @@ That's the whole product for v1. If a feature doesn't serve that sentence, it's 
 
 > **Shop → no account.  Follow / comment → shopper account.  Sell → creator account.  Hire → business account.**
 
+**How each account signs in:** creators log in by **username** (claimed at sign-up, and also their public URL); shoppers and businesses log in by **email**. So username is a creator-only identity — it's what makes `plugfolio.com/username` theirs.
+
 ---
 
 ## The shopper journey (no login to shop)
@@ -60,7 +62,7 @@ flowchart LR
     C --> D[Publish + put link in bio]
 ```
 
-1. **Sign up and claim a handle.** Email sign-in. The handle is the URL: `plugfolio.com/yourhandle`. No follower minimum, no approval.
+1. **Sign up and claim your username.** Creators register a **username** at sign-up — it's both their login and their public URL: `plugfolio.com/yourusername`. Creators sign in **by username** (not email). No follower minimum, no approval.
 2. **Connect Instagram.** One tap. Posts import automatically. (One platform for v1 — TikTok and YouTube come later.)
 3. **Tag products.** Open a post, paste any product URL — Plugfolio grabs the image, title, and price. Add the affiliate link. Done.
 4. **Publish.** The page builds itself from the tagged posts. One click makes it live. Copy the link into the Instagram bio.
@@ -110,7 +112,7 @@ flowchart LR
     G --> H[Creator delivers]
 ```
 
-1. **Create a business account.** Name, what you sell, a logo. That's the sign-up.
+1. **Create a business account.** Name, what you sell, a logo, and an **email** — businesses sign in by email. That's the sign-up.
 2. **Post a requirement** *(door one — creators come to you).* Describe the brief: the product, the kind of content you want, a budget or price range, and a deadline. It lists on an open board; creators who fit tap **Approach** and a thread opens.
 3. **Or reach out to a creator** *(door two — you go to them).* Browse creator pages, and when one fits, send a collab request straight to their **Collabs** tab.
 4. **Bargain in a thread.** Both sides negotiate **content and price** in one simple conversation — what gets made, for how much, by when. No email chains, no DMs.
