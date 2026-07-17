@@ -1,7 +1,7 @@
 # Plugfolio — Lean User Journey
 
 *The neat, simple, clean version. One core loop. Everything else waits.*
-*July 2026. Companion to the fuller docs — this is what we build first.*
+*July 2026. This is the product — what we build first, and the spec code follows.*
 
 ---
 
@@ -152,4 +152,4 @@ If all three are true, the loop works and it funds itself. Everything else is a 
 
 ---
 
-*Fuller feature set and long-term vision live in [`plugfolio-features-and-journeys.md`](./plugfolio-features-and-journeys.md) and [`plugfolio-product-document.md`](./plugfolio-product-document.md). This doc is what ships first.*
+*Deferred features are listed above with the reason each one waits. How we build this — architecture, standards, and committed decisions — lives in [`CLAUDE.md`](./CLAUDE.md) and [`docs/adr/`](./docs/adr/).*

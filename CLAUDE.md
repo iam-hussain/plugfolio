@@ -13,12 +13,12 @@ Product intent lives in these docs. Read the relevant one **before** implementin
 | Doc | What it governs | Authority |
 |---|---|---|
 | [`plugfolio-lean-journey.md`](./plugfolio-lean-journey.md) | **What ships first (v1).** The one core loop, the three roles, what's deferred. | **Primary — build this.** |
-| [`plugfolio-features-and-journeys.md`](./plugfolio-features-and-journeys.md) | Full feature set & journeys (the long-term vision). | Reference for later phases. |
-| [`plugfolio-product-document.md`](./plugfolio-product-document.md) | Product-owner brief: market, positioning, open decisions. | Strategy context. |
-| [`plugfolio-product-spec.md`](./plugfolio-product-spec.md) | Technical spec, architecture, diagrams. | Reference. |
-| [`plugfolio-competitive-analysis.md`](./plugfolio-competitive-analysis.md) | Market landscape. | Context. |
+| [`docs/adr/`](./docs/adr/) | Committed technical decisions (stack, identity model, …). | Binding once *Accepted*. |
+| [`docs/implementation/`](./docs/implementation/) | Per-feature implementation notes (data model, API, components, edge cases). | Reference as you build. |
 
 **If code and a doc disagree, stop and reconcile before continuing.** The lean journey wins for v1 scope.
+
+> Note: the earlier heavy product docs (full features/journeys, product-owner brief, technical spec, competitive analysis) were removed in the pivot to the lean product. If a later phase needs that material, recover it from git history — don't reintroduce deferred scope without moving it into the lean journey first.
 
 ---
 
@@ -36,7 +36,7 @@ Product intent lives in these docs. Read the relevant one **before** implementin
 
 When your change alters scope, behavior, a journey, or a v1/deferred decision, **update the docs in the same PR**:
 
-- **Behavior or journey change** → update `plugfolio-lean-journey.md` (and the fuller docs if the long-term picture shifts).
+- **Behavior or journey change** → update `plugfolio-lean-journey.md`.
 - **Pulling a deferred feature into v1, or deferring one** → move the row in the lean journey's "deliberately left out" table and adjust the affected journey.
 - **Any non-trivial technical decision** (stack choice, data model, auth model, a pattern we commit to) → record it as an **ADR** in `docs/adr/NNNN-title.md` (see §9) and link it from the PR.
 - **New/changed feature** → add or update an **implementation note** in `docs/implementation/<feature>.md` describing: the journey it serves, the data model, the API surface, the components, and edge cases.
@@ -47,9 +47,9 @@ Keep doc edits surgical — mirror the existing voice (neat, plain, scannable). 
 
 ---
 
-## 4. Recommended stack (proposed default — confirm before first build)
+## 4. Stack (accepted — see [ADR-0001](./docs/adr/0001-tech-stack.md))
 
-No code exists yet, so this is the **recommended baseline**. It fits the product (SEO-able creator pages, mobile-first, fast in in-app browsers, no-login shopping). Raise it in a PR/ADR if you want to change it before we commit.
+This is the committed baseline. It fits the product (SEO-able creator pages, mobile-first, fast in in-app browsers, no-login shopping). Changing it requires a new ADR that supersedes ADR-0001 and an update to this table.
 
 | Layer | Choice | Why |
 |---|---|---|
@@ -65,7 +65,7 @@ No code exists yet, so this is the **recommended baseline**. It fits the product
 | Testing | **Vitest** (unit) + **Playwright** (e2e journeys) | Test the journeys from the docs, not just functions. |
 | Hosting | **Vercel** | First-class Next.js; edge-fast public pages. |
 
-If a different stack is chosen, this table and an ADR must be updated to match — don't leave it stale.
+Foundational decisions already recorded: [ADR-0001 (stack)](./docs/adr/0001-tech-stack.md) · [ADR-0002 (no-login shopper identity)](./docs/adr/0002-no-login-shopper-identity.md).
 
 ---
 
