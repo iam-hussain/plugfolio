@@ -66,16 +66,29 @@ This is the committed baseline. It fits the product (SEO-able creator pages, mob
 | Testing | **Vitest** (unit) + **Playwright** (e2e journeys) | Test the journeys from the docs, not just functions. |
 | Hosting | **Vercel** | First-class Next.js; edge-fast public pages. |
 
-Foundational decisions already recorded: [ADR-0001 (stack)](./docs/adr/0001-tech-stack.md) · [ADR-0002 (no-login shopper identity)](./docs/adr/0002-no-login-shopper-identity.md) · [ADR-0004 (creator account, profiles & social-connected identity)](./docs/adr/0004-creator-account-profiles-identity.md) *(supersedes ADR-0003)*.
+Foundational decisions already recorded: [ADR-0001 (stack)](./docs/adr/0001-tech-stack.md) · [ADR-0002 (no-login shopper identity)](./docs/adr/0002-no-login-shopper-identity.md) · [ADR-0004 (creator account, profiles & social-connected identity)](./docs/adr/0004-creator-account-profiles-identity.md) *(supersedes ADR-0003)* · [ADR-0005 (monorepo structure)](./docs/adr/0005-monorepo-structure.md) *(amends ADR-0001)* · [ADR-0006 (REST API + mobile clients)](./docs/adr/0006-rest-api-and-mobile-clients.md) *(amends ADR-0001)*.
 
 ---
 
 ## 5. Frontend — feature-based architecture
 
-**Organize by feature, not by file type.** Everything a feature needs lives together; shared code is explicitly shared.
+**We use a monorepo** (pnpm workspaces + Turborepo — see [ADR-0005](./docs/adr/0005-monorepo-structure.md)). One deployable in v1 (`apps/web`); shared code lives in `packages/`:
 
 ```
-src/
+apps/
+  web/            # the only v1 deployable — Next.js App Router. The feature-based src/ below lives here.
+packages/
+  core/           # framework-free domain: entities, rules, services, Zod schemas, repository INTERFACES (§6). No Prisma/Next.
+  db/             # Prisma schema + client + repository IMPLEMENTATIONS — the ONLY place Prisma is imported.
+  ui/             # shadcn/ui primitives, themed via tokens (@plugfolio/ui).
+  tokens/         # "Charged Violet" design tokens (§7) — CSS + TS, single source of color/space/type.
+  config/         # shared tsconfig / tailwind / eslint / prettier presets.
+```
+
+**Organize by feature, not by file type.** Everything a feature needs lives together; shared code is explicitly shared. The frontend structure below lives inside **`apps/web/src/`**:
+
+```
+apps/web/src/
   app/                      # Next.js routes only — thin. Compose features, no business logic here.
     (public)/[handle]/      # creator page (no-login shopper surface)
     (public)/explore/
@@ -96,11 +109,13 @@ src/
   components/
     ui/                     # shadcn/ui components (generated, then themed with our tokens) — do not hand-roll these
                             # other generic, product-agnostic UI we compose on top of ui/
-  lib/                      # generic helpers (formatting, fetch client, cn(), date)
-  server/                   # backend layer (§6): services, repositories, domain
-  styles/                   # tokens, globals, tailwind config bridge
+  lib/                      # generic helpers (formatting, fetch client, date)
+  server/                   # app-side backend seam (§6): env, http mapping, composition root wiring core services to db repos
+  styles/                   # globals + tailwind bridge (tokens themselves live in @plugfolio/tokens)
   test/                     # shared test utils, fixtures
 ```
+
+> `components/ui/` (shadcn) and `cn()` are shared across apps, so they live in **`@plugfolio/ui`**; the domain/services/repositories of §6 live in **`@plugfolio/core`** + **`@plugfolio/db`**. Import each package from its public `index` only.
 
 **Rules:**
 - **A feature owns its slice.** UI, hooks, types, and client API for one capability stay in `features/<name>/`.
@@ -113,14 +128,16 @@ src/
 
 ## 6. Backend — patterns (best-practice suggestions)
 
-Keep the backend a **thin transport shell over a typed domain**, so it survives being extracted from Next.js later.
+Keep the backend a **thin transport shell over a typed domain**, so it survives being extracted from Next.js later. In the monorepo (§5, [ADR-0005](./docs/adr/0005-monorepo-structure.md)) the layers map onto packages:
 
 ```
-src/server/
-  domain/          # entities & pure business rules (no framework, no DB imports)
-  services/        # use-cases: orchestrate domain + repositories (the "verbs")
-  repositories/    # data access — the ONLY place Prisma is imported
-  http/            # request→service mapping, Zod validation, error → HTTP shape
+packages/core/          # domain + services + Zod schemas + repository INTERFACES (framework-free, no DB imports)
+  domain/               # entities & pure business rules
+  services/             # use-cases: orchestrate domain + repositories (the "verbs")
+  schemas/              # Zod schemas — validate at the boundary, infer the type inward
+  ports/                # repository interfaces the services depend on
+packages/db/            # repository IMPLEMENTATIONS — the ONLY place Prisma is imported
+apps/web/src/server/    # http: request→service mapping, error → HTTP shape; env.ts; composition root
 ```
 
 **Patterns we follow:**
@@ -135,6 +152,7 @@ src/server/
 8. **Idempotency on writes that can retry** (tap recording, collab requests) via idempotency keys — in-app browsers double-fire.
 9. **Config & secrets via env only**, validated by a single Zod-checked `env.ts` at boot. No secret in code, ever.
 10. **Money stays out of v1.** No payment integration until a doc change says so (§2.3).
+11. **REST, not GraphQL** (see [ADR-0006](./docs/adr/0006-rest-api-and-mobile-clients.md)). Client islands and the future native app consume versioned REST endpoints under `app/api/*`; the Zod boundary schema is the single contract source (OpenAPI + typed clients generate from it). Public RSC pages skip HTTP and call services directly.
 
 ---
 
@@ -143,7 +161,7 @@ src/server/
 Centralize the theme; components never hardcode hex/spacing.
 
 - **Palette:** Charged Violet `#7C3AED` (primary) · Electric Lime `#C6FF3D` (one disciplined accent) · violet-tinted dark surfaces. Lime is a spark, not a background — use it sparingly (CTAs, highlights).
-- **Tokens are the only source of color/space/type.** Define semantic tokens (`--color-primary`, `--color-accent`, `--surface`, `--text`, radius, spacing scale) in `styles/tokens.css`, exposed through Tailwind's theme. **Components reference tokens, never raw hex.**
+- **Tokens are the only source of color/space/type.** Define semantic tokens (`--color-primary`, `--color-accent`, `--surface`, `--text`, radius, spacing scale) in `@plugfolio/tokens` (`tokens.css`), exposed through Tailwind's theme via the shared preset in `@plugfolio/config`. **Components reference tokens, never raw hex.**
 - **Type:** geometric display face for headings, clean sans for body. One scale, defined once.
 - **Mobile-first & accessible:** design at 360px first; hit WCAG AA contrast (mind lime-on-light — it fails easily); every interactive element keyboard- and screen-reader-usable; respect `prefers-reduced-motion`.
 - **Dark-first surfaces** (the brand is violet-tinted dark), but tokens must support a light mode cleanly.

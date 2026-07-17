@@ -1,0 +1,64 @@
+/**
+ * Plugfolio design tokens — "Charged Violet" (CLAUDE.md §7).
+ *
+ * The ONLY source of color / radius / type. Components reference these via the
+ * Tailwind preset (@plugfolio/config/tailwind); never hardcode hex.
+ *
+ * Colors are stored as HSL channels (no `hsl()` wrapper) so Tailwind's
+ * `<alpha-value>` opacity modifier works: `hsl(var(--color-primary) / 0.5)`.
+ *
+ * Dark-first surfaces (the brand is violet-tinted dark); light mode overrides
+ * below keep AA contrast — mind lime-on-light, it fails easily.
+ */
+
+:root,
+:root[data-theme="dark"] {
+  /* Brand */
+  --color-primary: 262 83% 58%; /* Charged Violet #7C3AED */
+  --color-primary-foreground: 0 0% 100%;
+  --color-accent: 76 100% 62%; /* Electric Lime #C6FF3D — a spark, use sparingly */
+  --color-accent-foreground: 240 20% 8%;
+
+  /* Surfaces (violet-tinted dark) */
+  --surface: 258 30% 8%;
+  --surface-muted: 258 20% 14%;
+  --text: 250 30% 96%;
+  --text-muted: 250 10% 68%;
+
+  --border: 258 18% 22%;
+  --ring: 262 83% 58%;
+
+  /* Shape & type */
+  --radius: 0.75rem;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+:root[data-theme="light"] {
+  --color-primary: 262 83% 52%;
+  --color-primary-foreground: 0 0% 100%;
+  --color-accent: 76 90% 42%; /* darkened so lime text passes AA on light */
+  --color-accent-foreground: 240 20% 8%;
+
+  --surface: 0 0% 100%;
+  --surface-muted: 258 30% 96%;
+  --text: 258 30% 12%;
+  --text-muted: 258 8% 38%;
+
+  --border: 258 20% 88%;
+  --ring: 262 83% 52%;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --color-primary: 262 83% 52%;
+    --color-accent: 76 90% 42%;
+    --color-accent-foreground: 240 20% 8%;
+    --surface: 0 0% 100%;
+    --surface-muted: 258 30% 96%;
+    --text: 258 30% 12%;
+    --text-muted: 258 8% 38%;
+    --border: 258 20% 88%;
+    --ring: 262 83% 52%;
+  }
+}

@@ -1,0 +1,75 @@
+// Plugfolio database schema (PostgreSQL + Prisma — ADR-0001).
+// This is a v1 starter: enough to exercise the layering (a creator account with
+// profiles, tagged products, and the append-only tap event). Expand per the
+// implementation notes in docs/implementation/ as features land.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// A creator ACCOUNT — email login, connects Google+Meta, holds up to 5
+/// profiles (ADR-0004). Shoppers stay anonymous and are NOT rows here (ADR-0002).
+model Account {
+  id        String    @id @default(uuid()) @db.Uuid
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  profiles  Profile[]
+}
+
+/// A creator PROFILE with a social-derived username (ADR-0004).
+model Profile {
+  id        String    @id @default(uuid()) @db.Uuid
+  username  String    @unique
+  accountId String    @db.Uuid
+  account   Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  products  Product[]
+  taps      Tap[]
+  createdAt DateTime  @default(now())
+
+  @@index([accountId])
+}
+
+/// A product a creator tags, linked to their own affiliate destination (v1
+/// handles no money — creators use their own affiliate links; §2.3).
+model Product {
+  id            String  @id @default(uuid()) @db.Uuid
+  profileId     String  @db.Uuid
+  profile       Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title         String
+  affiliateUrl  String
+  taps          Tap[]
+  createdAt     DateTime @default(now())
+
+  @@index([profileId])
+}
+
+/// An outbound tap — immutable attribution event (§6.6, append-only). Earnings
+/// are a rebuildable projection over these rows, never a mutated counter.
+model Tap {
+  id             String   @id @default(uuid()) @db.Uuid
+  productId      String   @db.Uuid
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  profileId      String   @db.Uuid
+  profile        Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  /// Verified anonymous device identity (from the signed cookie), NOT an
+  /// account link (§6.7, ADR-0002).
+  deviceId       String   @db.Uuid
+  /// Idempotency key — in-app browsers double-fire taps (§6.8).
+  idempotencyKey String   @unique @db.Uuid
+  source         TapSource
+  occurredAt     DateTime @default(now())
+
+  @@index([profileId, occurredAt])
+  @@index([productId, occurredAt])
+}
+
+enum TapSource {
+  profile
+  post
+  product
+}
