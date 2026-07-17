@@ -1,0 +1,10 @@
+# Prose docs are hand-maintained (§3 "keep doc edits surgical"). Keeping Prettier
+# off markdown avoids table-realignment churn on files unrelated to a change.
+**/*.md
+
+# Generated / vendored
+node_modules/
+.next/
+dist/
+.turbo/
+pnpm-lock.yaml

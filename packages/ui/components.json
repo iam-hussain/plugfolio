@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "../tokens/src/tokens.css",
+    "baseColor": "violet",
+    "cssVariables": true
+  },
+  "aliases": {
+    "components": "@plugfolio/ui/components",
+    "utils": "@plugfolio/ui/lib/cn",
+    "ui": "@plugfolio/ui/components"
+  }
+}
