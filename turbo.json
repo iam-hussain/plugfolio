@@ -5,7 +5,8 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build", "db:generate"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": ["DATABASE_URL", "DEVICE_TOKEN_SECRET"]
     },
     "dev": {
       "dependsOn": ["^build"],
