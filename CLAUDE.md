@@ -14,6 +14,7 @@ Product intent lives in these docs. Read the relevant one **before** implementin
 |---|---|---|
 | [`plugfolio-lean-journey.md`](./plugfolio-lean-journey.md) | **What ships first (v1).** The one core loop, the three roles, what's deferred. | **Primary — build this.** |
 | [`docs/adr/`](./docs/adr/) | Committed technical decisions (stack, identity model, …). | Binding once *Accepted*. |
+| [`docs/design/`](./docs/design/) | Page-by-page design briefs for designers (per v1 screen). | Design source for each page. |
 | [`docs/implementation/`](./docs/implementation/) | Per-feature implementation notes (data model, API, components, edge cases). | Reference as you build. |
 
 **If code and a doc disagree, stop and reconcile before continuing.** The lean journey wins for v1 scope.
