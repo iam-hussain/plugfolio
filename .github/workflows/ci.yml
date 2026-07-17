@@ -19,7 +19,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: pnpm
 
       - name: Install dependencies
@@ -42,3 +42,5 @@ jobs:
         env:
           # Build-time only; no real database is contacted (Prisma connects lazily at query time).
           DATABASE_URL: postgresql://user:pass@localhost:5432/plugfolio
+          # Build-time placeholder; the real secret is provided at runtime.
+          DEVICE_TOKEN_SECRET: ci-build-placeholder-secret-not-used-at-runtime
