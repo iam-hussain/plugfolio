@@ -39,9 +39,12 @@ usernames. We also want the public handle to *mean* something — that the perso
   verified owner keeps a handle; a later claimant stays on their random username until
   they pick a free one.
 
-### Roles (account-scoped, exactly two in v1)
+### Roles (per-profile, exactly two in v1)
 
-| Capability | Admin | Manager |
+Membership is **scoped to a profile**, not the whole account. Each profile has **exactly
+one Admin** (the account owner) and **up to 3 Managers** invited to help run that profile.
+
+| Capability | Admin (1 / profile) | Manager (≤3 / profile) |
 |---|---|---|
 | Connect Google/Meta; create/delete profiles | ✅ | ❌ |
 | Edit profile name, username, settings | ✅ | ❌ |
@@ -69,12 +72,14 @@ usernames. We also want the public handle to *mean* something — that the perso
   "can't disconnect while depended-on" guard. Losing access to a social without another
   connected means the profile can't be recovered except by deletion — accepted for v1.
 - **Data model sketch:** `Account (email, googleConn?, metaConn?)` → has-many `Profile
-  (username, pictureUrl, ytChannel?, igAccount?)`; `Membership (accountId, userId, role)`
-  for Admin/Manager; usernames unique, immutable-ish (change = deliberate, redirect
+  (username, pictureUrl, ytChannel?, igAccount?)`; `ProfileMembership (profileId, userId,
+  role)` for Admin/Manager, with constraints **exactly one Admin per profile** and **≤3
+  Managers per profile**; usernames unique, immutable-ish (change = deliberate, redirect
   handling deferred). Attribution/earnings still key off the profile.
 
 ## Revisit if
 
-- Agencies need **>5 profiles** or **per-profile roles** (both deferred today).
+- Agencies need **>5 profiles**, **>3 managers per profile**, or **additional role types**
+  beyond Admin/Manager (all deferred today).
 - We add platforms beyond YouTube/Instagram (add providers; identity rules unchanged).
 - Vanity usernames not tied to a social become desirable (needs moderation + anti-squat).

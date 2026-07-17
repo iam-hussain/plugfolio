@@ -81,9 +81,9 @@ Three words, kept straight:
 - **Profile** — one shoppable page with one username (drawn from a connected handle). It's what a shopper sees at `plugfolio.com/<username>`. One account, many profiles — which is exactly why the username can't be the login.
 - **Connected socials** — the YouTube channel and Instagram account a profile is built on (at most one of each).
 
-**Two roles on an account — nothing more granular in v1:**
+**Access to a profile — one Admin, up to three Managers.** Every profile has exactly **one Admin** (the account owner) and up to **3 Managers** invited to help run *that* profile. Two roles, nothing more granular in v1:
 
-| Can they… | **Admin** | **Manager** |
+| Can they… | **Admin** (1 per profile) | **Manager** (up to 3 per profile) |
 |---|---|---|
 | Connect Google/Meta, create or delete profiles | ✅ | ❌ |
 | Edit profile name, username, and settings | ✅ | ❌ |
@@ -163,7 +163,7 @@ Cutting these is the point. Each is a real feature — just not part of the firs
 | On-platform collab payments | Collab terms are agreed in v1; money changes hands off-platform for now, same "Plugfolio handles no money" rule. |
 | Coupons, availability windows, bundles | Merchandising polish. Layer on once the basics convert. |
 | TikTok (and other platforms) + AI tag suggestions | v1 connects **YouTube + Instagram** (Google + Meta). Other platforms and AI-assisted tagging are scale/convenience layers for later. |
-| More than 5 profiles per account · granular per-profile permissions | v1 caps at 5 profiles and two account-scoped roles (Admin/Manager). Bigger agency setups and per-profile permission matrices come later. |
+| More than 5 profiles per account · more than 2 role types · more than 3 managers per profile | v1 caps at 5 profiles, and per profile: one Admin + up to 3 Managers, no finer permission matrix. Bigger agency setups come later. |
 | Free-form / vanity usernames not tied to a social handle | v1 usernames come only from a connected YouTube/Instagram handle — that's what makes them self-verifying. Arbitrary custom handles are a later, moderated feature. |
 | Favorite buyers, creator-to-creator collabs | Relationship infrastructure for a mature platform. (Business-to-creator collab *is* in v1.) |
 | Plugfolio-owned commissions + payout rails | Only needed once Plugfolio sits in the payment path (its own product sales, or owning the affiliate-network relationship to earn a share). In v1 the networks pay creators directly, so there's nothing to remit. |
