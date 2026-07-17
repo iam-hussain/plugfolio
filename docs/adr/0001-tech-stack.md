@@ -25,7 +25,7 @@ Adopt the following stack as the committed baseline:
 | Language | TypeScript (strict) end-to-end |
 | Framework | Next.js (App Router, React Server Components) |
 | Styling | Tailwind CSS with semantic design tokens |
-| UI primitives | Radix (headless) + our own styled component layer |
+| UI primitives | shadcn/ui (Radix under the hood) — use it for anything it provides; custom only where it has no equivalent |
 | Client data | RSC-first; TanStack Query for client-side data |
 | Backend | Next.js Route Handlers / Server Actions over a layered service/repository domain (extractable later) |
 | Database | PostgreSQL + Prisma |

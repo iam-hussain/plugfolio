@@ -56,7 +56,7 @@ This is the committed baseline. It fits the product (SEO-able creator pages, mob
 | Language | **TypeScript** (strict) everywhere | One language, typed contracts front-to-back. |
 | Framework | **Next.js (App Router, RSC)** | Server components for fast, SEO-friendly public pages; one repo for web + API. |
 | Styling | **Tailwind CSS** + design tokens (§7) | Fast, consistent, mobile-first; tokens keep the theme centralized. |
-| UI primitives | Headless (Radix) + our own component layer | Accessible primitives, our own styled components on top. |
+| UI primitives | **shadcn/ui** (Radix under the hood) | Accessible, themeable components we own the source of — the default; don't rebuild what it gives us (see §8). |
 | State (client) | React Server Components first; **TanStack Query** for client data; local state via hooks | Fetch on the server by default; client state only where it earns its place. |
 | Backend | **Next.js Route Handlers / Server Actions**, extractable to a service later | Start monolith-simple; the service layer (§6) keeps it portable. |
 | Database | **PostgreSQL** + **Prisma** | Relational data (creators, products, taps, collabs); typed queries. |
@@ -92,7 +92,9 @@ src/
     shopper-account/        # follow + comment
     business-collab/
     earnings/
-  components/               # GENERIC, product-agnostic UI (Button, Card, Sheet, Field...)
+  components/
+    ui/                     # shadcn/ui components (generated, then themed with our tokens) — do not hand-roll these
+                            # other generic, product-agnostic UI we compose on top of ui/
   lib/                      # generic helpers (formatting, fetch client, cn(), date)
   server/                   # backend layer (§6): services, repositories, domain
   styles/                   # tokens, globals, tailwind config bridge
@@ -157,9 +159,10 @@ Centralize the theme; components never hardcode hex/spacing.
 - **Comments explain *why*, not *what*.** The code says what. Match the surrounding density.
 
 **Components**
+- **shadcn/ui first — always.** If shadcn/ui has a component for what you need (Button, Dialog, Sheet, Input, Select, Dropdown, Tabs, Toast, Table, …), **use it — do not build a custom one.** Add it with the shadcn CLI into `components/ui/`, then theme it via our tokens (§7). Only build a custom component when shadcn has **no** equivalent, and even then compose it from shadcn primitives where possible. Extend a shadcn component by wrapping it, not by forking a parallel version. Never reintroduce a hand-rolled Button/Modal/etc. that duplicates one shadcn already provides.
 - **Function components + hooks only.** One component per file; the file is named for the component.
 - **Props are a typed object**, destructured, with sensible defaults. Keep prop lists short — many props means the component should split.
-- **Presentational vs. container.** Generic UI (`components/`) is presentational and stateless where possible; data-fetching/orchestration lives in feature components/hooks.
+- **Presentational vs. container.** Generic UI (`components/`, built on shadcn `components/ui/`) is presentational and stateless where possible; data-fetching/orchestration lives in feature components/hooks.
 - **Accessibility is not optional.** Semantic HTML first; ARIA only to fill gaps; every control labeled and focusable.
 - **Compose, don't prop-explode.** Prefer `children`/slots over a dozen config flags.
 
@@ -210,6 +213,7 @@ Format: **Context → Decision → Consequences → Status** (proposed / accepte
 - [ ] Product doc(s) updated to match behavior; ADR filed if a real decision was made.
 - [ ] Feature-based structure respected; generic vs. feature code in the right place.
 - [ ] Backend change goes http → service → repository; Prisma only in repositories.
+- [ ] Used shadcn/ui for anything it provides; no custom component duplicating a shadcn one.
 - [ ] Theme via tokens, not hardcoded hex; mobile-first; AA contrast.
 - [ ] Types strict, functions small and named for intent.
 - [ ] Journey/unit tests added; CI green.
