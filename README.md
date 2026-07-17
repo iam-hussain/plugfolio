@@ -45,20 +45,24 @@ pnpm install
 cp apps/web/.env.example apps/web/.env.local    # set DATABASE_URL + DEVICE_TOKEN_SECRET
 cp packages/db/.env.example packages/db/.env    # DATABASE_URL for Prisma CLI
 pnpm db:generate                                # generate the Prisma client
-pnpm dev                                         # run the web app
+pnpm --filter @plugfolio/db db:migrate          # apply migrations to your database
+pnpm --filter @plugfolio/db db:seed             # seed @lena + a tappable product
+pnpm dev                                         # run the web app, then visit /lena
 ```
 
 Common tasks (Turborepo runs them across the graph):
 
 ```bash
-pnpm build       # build all
-pnpm typecheck   # type-check all
-pnpm lint        # lint all
-pnpm test        # unit tests (Vitest)
+pnpm build                       # build all
+pnpm typecheck                   # type-check all
+pnpm lint                        # lint all
+pnpm test                        # unit tests (Vitest)
+pnpm --filter @plugfolio/web test:e2e   # Playwright shopper journeys
 ```
 
 ## Status
 
 Scaffold in place: the monorepo, shared packages, and one end-to-end vertical slice
-(`recordOutboundTap`: route handler → service → repository) build and test green. Feature
-slices land next. See [`CLAUDE.md`](./CLAUDE.md) before contributing.
+(`recordOutboundTap`: route handler → service → repository) build and test green, with
+an initial migration + seed, Playwright shopper e2e, and a DB-backed integration test in
+CI. Feature slices land next. See [`CLAUDE.md`](./CLAUDE.md) before contributing.

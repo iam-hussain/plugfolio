@@ -66,7 +66,7 @@ This is the committed baseline. It fits the product (SEO-able creator pages, mob
 | Testing | **Vitest** (unit) + **Playwright** (e2e journeys) | Test the journeys from the docs, not just functions. |
 | Hosting | **Vercel** | First-class Next.js; edge-fast public pages. |
 
-Foundational decisions already recorded: [ADR-0001 (stack)](./docs/adr/0001-tech-stack.md) · [ADR-0002 (no-login shopper identity)](./docs/adr/0002-no-login-shopper-identity.md) · [ADR-0004 (creator account, profiles & social-connected identity)](./docs/adr/0004-creator-account-profiles-identity.md) *(supersedes ADR-0003)* · [ADR-0005 (monorepo structure)](./docs/adr/0005-monorepo-structure.md) *(amends ADR-0001)*.
+Foundational decisions already recorded: [ADR-0001 (stack)](./docs/adr/0001-tech-stack.md) · [ADR-0002 (no-login shopper identity)](./docs/adr/0002-no-login-shopper-identity.md) · [ADR-0004 (creator account, profiles & social-connected identity)](./docs/adr/0004-creator-account-profiles-identity.md) *(supersedes ADR-0003)* · [ADR-0005 (monorepo structure)](./docs/adr/0005-monorepo-structure.md) *(amends ADR-0001)* · [ADR-0006 (REST API + mobile clients)](./docs/adr/0006-rest-api-and-mobile-clients.md) *(amends ADR-0001)*.
 
 ---
 
@@ -152,6 +152,7 @@ apps/web/src/server/    # http: request→service mapping, error → HTTP shape;
 8. **Idempotency on writes that can retry** (tap recording, collab requests) via idempotency keys — in-app browsers double-fire.
 9. **Config & secrets via env only**, validated by a single Zod-checked `env.ts` at boot. No secret in code, ever.
 10. **Money stays out of v1.** No payment integration until a doc change says so (§2.3).
+11. **REST, not GraphQL** (see [ADR-0006](./docs/adr/0006-rest-api-and-mobile-clients.md)). Client islands and the future native app consume versioned REST endpoints under `app/api/*`; the Zod boundary schema is the single contract source (OpenAPI + typed clients generate from it). Public RSC pages skip HTTP and call services directly.
 
 ---
 
