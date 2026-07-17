@@ -40,7 +40,7 @@ flowchart LR
 1. **Arrive.** They tapped `plugfolio.com/handle` from a creator's bio. The page loads instantly and shows the creator, their content grid, nothing else in the way.
 2. **Tap a post.** The reel or photo opens with its tagged product shown right there — "this is what's in the video."
 3. **See the product.** Photo, price, the post it came from, one Buy button.
-4. **Buy.** The button sends them to the retailer with the creator's affiliate link. The creator gets credit. The shopper just shops.
+4. **Buy.** The button sends them to the retailer through the creator's own affiliate link. The retailer's network credits the creator directly — Plugfolio just measures the tap. The shopper just shops.
 
 No popup. No signup wall. No wishlist to manage, no rewards to understand, no feed to build. If it isn't "tap, see, buy," it isn't here yet.
 
@@ -72,17 +72,19 @@ The public page is the shop window. The dashboard is the back room, and it stays
 |---|---|
 | **Posts** | Every imported post. Tap one to tag its products. That's the core tool. |
 | **Products** | The things they've tagged. Fix a link, remove one. |
-| **Earnings** | Clicks and attributed sales, tied to the post that drove them. "This reel made you $214." |
+| **Earnings** | Clicks and outbound taps, tied to the post that drove them: "this reel drove 312 taps." Where the creator's affiliate network reports conversions back, those sales show too — always honestly labeled *tracked* vs. *estimated*. |
 
 No media kit, no brand inbox, no coupon scheduler, no payouts console in v1. Three tabs a creator understands in ten seconds.
+
+**v1 handles no money.** The creator brings their own affiliate links; the retailer's network pays them directly, on the network's own schedule. Plugfolio measures the traffic and never sits in the payment path — which is exactly why there's no payout infrastructure to build yet. Plugfolio-owned commissions and payout rails are a deliberate later step (see below).
 
 ---
 
 ## One kind of product
 
-v1 sells **affiliate products only** — buy button goes to the retailer, click is tracked, creator earns commission.
+v1 sells **affiliate products only** — buy button goes to the retailer through the creator's own affiliate link, the tap is tracked, and the network pays the creator its commission directly.
 
-No in-store deals. No guest checkout for the creator's own goods. No three-column product-type table to explain. One type, one buy path.
+No in-store deals. No guest checkout for the creator's own goods. No three-column product-type table to explain. One type, one buy path — and Plugfolio never handles the money.
 
 ---
 
@@ -100,7 +102,8 @@ Cutting these is the point. Each is a real feature — just not part of the firs
 | Media kit, brand inbox, brand marketplace | The brand side. Comes after creator + shopper density exists. |
 | Coupons, availability windows, bundles | Merchandising polish. Layer on once the basics convert. |
 | TikTok + YouTube sync, AI tag suggestions | Scale and convenience. Instagram-only proves the loop first. |
-| Favorite buyers, creator collabs, payouts | Relationship and money infrastructure for a mature platform. |
+| Favorite buyers, creator collabs | Relationship infrastructure for a mature platform. |
+| Plugfolio-owned commissions + payout rails | Only needed once Plugfolio sits in the payment path (its own product sales, or owning the affiliate-network relationship to earn a share). In v1 the networks pay creators directly, so there's nothing to remit. |
 
 The rule for adding any of them back: **it must not add a step to "tap, see, buy" or a screen the creator has to learn.**
 
