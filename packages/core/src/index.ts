@@ -19,6 +19,12 @@ export type {
   ShopperProduct,
   ShopperProductView,
 } from "./ports/creator-page-repository";
+export type {
+  EarningsReadRepository,
+  EarningsSummary,
+  PostTapCount,
+  ProductTapCount,
+} from "./ports/earnings-repository";
 
 // Schemas
 export {
@@ -35,3 +41,4 @@ export {
   getShopperProduct,
   type CreatorPageReadDeps,
 } from "./services/creator-page-reads";
+export { getEarnings, type EarningsReadDeps } from "./services/get-earnings";
