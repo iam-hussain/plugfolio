@@ -33,7 +33,9 @@ async function requireOwnProfile(
   userId: string,
   profileId: string,
 ): Promise<void> {
-  const profiles = await deps.profiles.listByUser(userId);
+  // Admin OR Manager — posting and tagging are exactly what Managers are
+  // invited for (ADR-0004); settings stay Admin-only elsewhere.
+  const profiles = await deps.profiles.listAccessibleByUser(userId);
   if (!profiles.some((profile) => profile.id === profileId)) {
     throw new ForbiddenError("Not your profile");
   }

@@ -1,6 +1,7 @@
 import {
   createBusinessRepository,
   createConnectionRepository,
+  createManagerRepository,
   createCollabRepository,
   createCommentRepository,
   createFollowRepository,
@@ -11,6 +12,7 @@ import {
   createRequirementRepository,
   createSessionRepository,
   createTapRepository,
+  createUserRepository,
 } from "@plugfolio/db";
 import { createOgMetadataGateway } from "./gateways/og-metadata";
 
@@ -30,6 +32,8 @@ export const repositories = {
   collabs: createCollabRepository(),
   sessions: createSessionRepository(),
   connections: createConnectionRepository(),
+  managers: createManagerRepository(),
+  users: createUserRepository(),
   postWrites: createPostWriteRepository(),
   productWrites: createProductWriteRepository(),
 };
@@ -57,4 +61,10 @@ export const creatorContentDeps = {
   products: repositories.products,
   productWrites: repositories.productWrites,
   metadata: createOgMetadataGateway(),
+};
+
+export const profileManagerDeps = {
+  profiles: repositories.profiles,
+  managers: repositories.managers,
+  users: repositories.users,
 };

@@ -45,7 +45,7 @@ async function resolveSide(
   const business = await deps.businesses.findByUser(userId);
   if (business && business.id === participants.businessId) return { side: "business" };
 
-  const profiles = await deps.profiles.listByUser(userId);
+  const profiles = await deps.profiles.listAccessibleByUser(userId);
   if (profiles.some((profile) => profile.id === participants.profileId)) {
     return { side: "creator" };
   }
@@ -113,7 +113,7 @@ export async function approachRequirement(
   userId: string,
   input: ApproachRequirementInput,
 ): Promise<string> {
-  const profiles = await deps.profiles.listByUser(userId);
+  const profiles = await deps.profiles.listAccessibleByUser(userId);
   if (!profiles.some((profile) => profile.id === input.profileId)) {
     throw new ForbiddenError("You can only approach with your own profile");
   }
@@ -209,7 +209,7 @@ export async function listMyCreatorCollabs(
   deps: Pick<BusinessCollabDeps, "profiles" | "collabs">,
   userId: string,
 ): Promise<readonly CollabSummary[]> {
-  const profiles = await deps.profiles.listByUser(userId);
+  const profiles = await deps.profiles.listAccessibleByUser(userId);
   if (profiles.length === 0) return [];
   return deps.collabs.listByProfiles(profiles.map((profile) => profile.id));
 }

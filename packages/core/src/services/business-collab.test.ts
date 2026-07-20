@@ -148,6 +148,11 @@ function makeDeps(options: { withBusiness?: boolean } = { withBusiness: true }) 
     async listByUser(userId) {
       return userId === CREATOR_USER ? [{ id: PROFILE_ID, username: "lena" }] : [];
     },
+    async listAccessibleByUser(userId) {
+      return userId === CREATOR_USER
+        ? [{ id: PROFILE_ID, username: "lena", role: "admin" as const }]
+        : [];
+    },
     async exists(profileId) {
       return profileId === PROFILE_ID;
     },

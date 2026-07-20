@@ -14,6 +14,9 @@ function makeFakeProfiles(): ProfileRepository {
     async listByUser() {
       return [];
     },
+    async listAccessibleByUser() {
+      return [];
+    },
     async exists(profileId: string) {
       return profileId === PROFILE_ID;
     },

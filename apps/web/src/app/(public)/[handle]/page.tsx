@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getComments, getCreatorPage, isFollowingProfile } from "@plugfolio/core";
 import { CreatorHeader, PostGrid } from "@/features/creator-page";
+import { RequestCollabForm } from "@/features/business-collab";
 import { CommentForm, CommentList, FollowButton } from "@/features/shopper-account";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -24,11 +25,14 @@ export default async function CreatorPage({ params }: { params: Promise<Params> 
   if (!page) notFound();
 
   const session = await auth();
-  const [following, comments] = await Promise.all([
+  const [following, comments, business] = await Promise.all([
     session?.user
       ? isFollowingProfile({ follows: repositories.follows }, session.user.id, page.id)
       : Promise.resolve(false),
     getComments({ comments: repositories.comments }, page.id),
+    session?.user
+      ? repositories.businesses.findByUser(session.user.id)
+      : Promise.resolve(null),
   ]);
 
   return (
@@ -41,6 +45,11 @@ export default async function CreatorPage({ params }: { params: Promise<Params> 
           initiallyFollowing={following}
         />
       </div>
+      {business ? (
+        <div className="pb-6">
+          <RequestCollabForm profileId={page.id} />
+        </div>
+      ) : null}
       <PostGrid handle={page.username} posts={page.posts} />
       <section aria-label="Comments" className="pt-8">
         <h2 className="pb-3 font-medium">Comments</h2>

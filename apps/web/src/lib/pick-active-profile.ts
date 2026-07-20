@@ -1,9 +1,9 @@
-import type { ProfileSummary } from "@plugfolio/core";
+import type { AccessibleProfile } from "@plugfolio/core";
 
-/** The dashboard's ?profile= switcher: requested profile if owned, else first. */
+/** The dashboard's ?profile= switcher: requested profile if accessible, else first. */
 export function pickActiveProfile(
-  profiles: readonly ProfileSummary[],
+  profiles: readonly AccessibleProfile[],
   requested: string | undefined,
-): ProfileSummary | undefined {
+): AccessibleProfile | undefined {
   return profiles.find((profile) => profile.id === requested) ?? profiles[0];
 }

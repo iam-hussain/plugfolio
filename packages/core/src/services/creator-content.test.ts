@@ -35,6 +35,11 @@ function makeDeps(options: { connected?: boolean; profileCount?: number; metadat
     async listByUser(userId) {
       return userId === USER ? [{ id: PROFILE_ID, username: "lena" }] : [];
     },
+    async listAccessibleByUser(userId) {
+      return userId === USER
+        ? [{ id: PROFILE_ID, username: "lena", role: "admin" as const }]
+        : [];
+    },
     async exists() {
       return true;
     },

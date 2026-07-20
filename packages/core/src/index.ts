@@ -32,7 +32,13 @@ export type {
   PostTapCount,
   ProductTapCount,
 } from "./ports/earnings-repository";
-export type { ProfileRepository, ProfileSummary } from "./ports/profile-repository";
+export type {
+  ProfileRepository,
+  ProfileSummary,
+  ProfileRole,
+  AccessibleProfile,
+} from "./ports/profile-repository";
+export type { ManagerRepository, ManagerView, UserRepository } from "./ports/manager-repository";
 export type {
   ConnectionReadRepository,
   PostWriteRepository,
@@ -97,6 +103,15 @@ export {
 } from "./services/creator-page-reads";
 export { getEarnings, type EarningsReadDeps } from "./services/get-earnings";
 export { getMyProfiles, type ProfileReadDeps } from "./services/get-my-profiles";
+export {
+  inviteManager,
+  inviteManagerInput,
+  type InviteManagerInput,
+  removeManager,
+  listManagers,
+  MAX_MANAGERS_PER_PROFILE,
+  type ProfileManagerDeps,
+} from "./services/profile-managers";
 export {
   createProfile,
   createPost,

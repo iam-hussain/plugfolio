@@ -1,4 +1,4 @@
-import type { ProfileRepository, ProfileSummary } from "../ports/profile-repository";
+import type { AccessibleProfile, ProfileRepository } from "../ports/profile-repository";
 
 /**
  * The signed-in user's profiles — the dashboard's scoping read. Everything
@@ -12,6 +12,6 @@ export type ProfileReadDeps = {
 export async function getMyProfiles(
   deps: ProfileReadDeps,
   userId: string,
-): Promise<readonly ProfileSummary[]> {
-  return deps.profiles.listByUser(userId);
+): Promise<readonly AccessibleProfile[]> {
+  return deps.profiles.listAccessibleByUser(userId);
 }

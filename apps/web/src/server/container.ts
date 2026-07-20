@@ -1,6 +1,7 @@
 import {
   createBusinessRepository,
   createConnectionRepository,
+  createManagerRepository,
   createCollabRepository,
   createCommentRepository,
   createCreatorPageRepository,
@@ -8,6 +9,7 @@ import {
   createFollowRepository,
   createProfileRepository,
   createRequirementRepository,
+  createUserRepository,
 } from "@plugfolio/db";
 
 /**
@@ -25,6 +27,8 @@ export const repositories = {
   requirements: createRequirementRepository(),
   collabs: createCollabRepository(),
   connections: createConnectionRepository(),
+  managers: createManagerRepository(),
+  users: createUserRepository(),
 };
 
 export const clock = { now: () => new Date() };
@@ -36,4 +40,10 @@ export const businessCollabDeps = {
   collabs: repositories.collabs,
   profiles: repositories.profiles,
   now: clock.now,
+};
+
+export const profileManagerDeps = {
+  profiles: repositories.profiles,
+  managers: repositories.managers,
+  users: repositories.users,
 };
