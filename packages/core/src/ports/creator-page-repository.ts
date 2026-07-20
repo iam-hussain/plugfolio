@@ -23,6 +23,7 @@ export type ShopperPost = {
 };
 
 export type CreatorPage = {
+  readonly id: string;
   readonly username: string;
   readonly posts: readonly ShopperPost[];
 };

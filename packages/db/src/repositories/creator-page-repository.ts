@@ -26,6 +26,7 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
       return db.profile.findUnique({
         where: { username },
         select: {
+          id: true,
           username: true,
           posts: {
             orderBy: { createdAt: "desc" },

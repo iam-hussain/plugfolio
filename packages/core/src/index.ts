@@ -26,6 +26,8 @@ export type {
   ProductTapCount,
 } from "./ports/earnings-repository";
 export type { ProfileReadRepository, ProfileSummary } from "./ports/profile-repository";
+export type { FollowRepository } from "./ports/follow-repository";
+export type { CommentRepository, CommentView, NewComment } from "./ports/comment-repository";
 
 // Schemas
 export {
@@ -33,6 +35,12 @@ export {
   type RecordOutboundTapInput,
   type RecordOutboundTapCommand,
 } from "./schemas/tap";
+export {
+  followProfileInput,
+  type FollowProfileInput,
+  addCommentInput,
+  type AddCommentInput,
+} from "./schemas/shopper-social";
 
 // Services (use-cases)
 export { recordOutboundTap, type RecordOutboundTapDeps } from "./services/record-outbound-tap";
@@ -44,3 +52,12 @@ export {
 } from "./services/creator-page-reads";
 export { getEarnings, type EarningsReadDeps } from "./services/get-earnings";
 export { getMyProfiles, type ProfileReadDeps } from "./services/get-my-profiles";
+export {
+  followProfile,
+  unfollowProfile,
+  getFollowedProfiles,
+  isFollowingProfile,
+  addComment,
+  getComments,
+  type ShopperSocialDeps,
+} from "./services/shopper-social";

@@ -32,6 +32,24 @@ test("the dashboard is gated by sign-in — a creator surface, never a shop wall
   await expect(page.getByRole("button", { name: /sign in with email/i })).toBeVisible();
 });
 
+test("follow and comment are gated; reading them is not", async ({ page, request }) => {
+  // Anonymous visitor sees the social surface read-only: comments render, the
+  // Follow button is a door to sign-in, and no wall touches the page.
+  await page.goto("/lena");
+  await expect(page.getByRole("heading", { name: "Comments" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Follow" })).toBeVisible();
+
+  // The write APIs refuse anonymous callers with 401 (never silently accept).
+  const follow = await request.post("/api/follows", {
+    data: { profileId: "00000000-0000-0000-0000-0000000000b1" },
+  });
+  expect(follow.status()).toBe(401);
+  const comment = await request.post("/api/comments", {
+    data: { profileId: "00000000-0000-0000-0000-0000000000b1", body: "hi" },
+  });
+  expect(comment.status()).toBe(401);
+});
+
 test("shopper taps a post, sees the product, and buys — zero account", async ({ page }) => {
   // The affiliate destination is external; stub it so the journey ends
   // deterministically without leaving the test network.

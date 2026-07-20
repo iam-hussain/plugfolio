@@ -26,6 +26,8 @@ model User {
   profiles      Profile[]
   accounts      Account[]
   sessions      Session[]
+  follows       Follow[]
+  comments      Comment[]
 }
 
 /// An Auth.js provider link — for Google/Meta this IS the "connected social"
@@ -78,10 +80,14 @@ model Profile {
   posts     Post[]
   products  Product[]
   taps      Tap[]
+  followers Follow[]
+  comments  Comment[]
   createdAt DateTime  @default(now())
 
   @@index([userId])
 }
+
+
 
 /// A creator's post — the shoppable unit of the page ("tap a post, see the
 /// product"). v1 has no social import yet, so rows come from seed/dashboard;

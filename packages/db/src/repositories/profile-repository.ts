@@ -11,5 +11,10 @@ export function createProfileRepository(db: PrismaClient = prisma): ProfileReadR
         select: { id: true, username: true },
       });
     },
+
+    async exists(profileId: string): Promise<boolean> {
+      const count = await db.profile.count({ where: { id: profileId } });
+      return count > 0;
+    },
   };
 }

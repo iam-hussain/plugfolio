@@ -1,6 +1,8 @@
 import {
+  createCommentRepository,
   createCreatorPageRepository,
   createEarningsRepository,
+  createFollowRepository,
   createProductRepository,
   createProfileRepository,
   createTapRepository,
@@ -17,6 +19,8 @@ export const repositories = {
   creatorPages: createCreatorPageRepository(),
   earnings: createEarningsRepository(),
   profiles: createProfileRepository(),
+  follows: createFollowRepository(),
+  comments: createCommentRepository(),
 };
 
 export const clock = { now: () => new Date() };

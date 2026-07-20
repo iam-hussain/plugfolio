@@ -10,4 +10,5 @@ export type ProfileSummary = {
 
 export type ProfileReadRepository = {
   listByUser(userId: string): Promise<readonly ProfileSummary[]>;
+  exists(profileId: string): Promise<boolean>;
 };

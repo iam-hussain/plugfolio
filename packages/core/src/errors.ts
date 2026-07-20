@@ -31,3 +31,11 @@ export class ConflictError extends AppError {
     this.name = "ConflictError";
   }
 }
+
+export class UnauthorizedError extends AppError {
+  constructor(message = "Sign in required", details?: unknown) {
+    super("UNAUTHORIZED", message, details);
+    this.name = "UnauthorizedError";
+  }
+}
+
