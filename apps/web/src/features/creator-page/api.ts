@@ -11,6 +11,7 @@ import type { RecordOutboundTapInput } from "@plugfolio/core";
 export type RecordedTap = {
   id: string;
   productId: string;
+  postId: string | null;
   profileId: string;
   source: RecordOutboundTapInput["source"];
   occurredAt: string;

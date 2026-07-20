@@ -14,6 +14,7 @@ export function createTapRepository(db: PrismaClient = prisma): TapRepository {
         const row = await db.tap.create({
           data: {
             productId: tap.productId,
+            postId: tap.postId,
             profileId: tap.profileId,
             deviceId: tap.deviceId,
             idempotencyKey: tap.idempotencyKey,
@@ -47,6 +48,7 @@ export function createTapRepository(db: PrismaClient = prisma): TapRepository {
 type TapRow = {
   id: string;
   productId: string;
+  postId: string | null;
   profileId: string;
   deviceId: string;
   idempotencyKey: string;
@@ -58,6 +60,7 @@ function toDomain(row: TapRow): OutboundTap {
   return {
     id: row.id,
     productId: row.productId,
+    postId: row.postId,
     profileId: row.profileId,
     deviceId: row.deviceId,
     idempotencyKey: row.idempotencyKey,

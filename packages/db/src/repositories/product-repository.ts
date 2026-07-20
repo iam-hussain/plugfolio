@@ -14,5 +14,12 @@ export function createProductRepository(db: PrismaClient = prisma): ProductReadR
         select: { id: true, profileId: true },
       });
     },
+
+    async isTaggedToPost(productId: string, postId: string): Promise<boolean> {
+      const count = await db.post.count({
+        where: { id: postId, products: { some: { id: productId } } },
+      });
+      return count > 0;
+    },
   };
 }

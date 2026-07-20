@@ -12,6 +12,8 @@ import { useRecordTap } from "../hooks/use-record-tap";
 export type ProductTapButtonProps = {
   productId: string;
   affiliateUrl: string;
+  /** The post that drove the tap, for per-post earnings attribution. */
+  postId?: string;
   source?: TapSource;
   label?: string;
 };
@@ -19,6 +21,7 @@ export type ProductTapButtonProps = {
 export function ProductTapButton({
   productId,
   affiliateUrl,
+  postId,
   source = "product",
   label = "Buy",
 }: ProductTapButtonProps) {
@@ -28,7 +31,7 @@ export function ProductTapButton({
     // Fresh key per intent so a double-fire collapses to one event (§6.8).
     const idempotencyKey = crypto.randomUUID();
     recordTap.mutate(
-      { productId, idempotencyKey, source },
+      { productId, postId, idempotencyKey, source },
       // Forward whether or not recording succeeded — never block the shopper's
       // purchase on attribution.
       { onSettled: () => window.location.assign(affiliateUrl) },

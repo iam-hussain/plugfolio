@@ -45,6 +45,24 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: plugfolio_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      # The shopper journey drives the real page → API → DB path (seeded @lena).
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/plugfolio_e2e?schema=public
+      DEVICE_TOKEN_SECRET: ci-e2e-secret-at-least-thirty-two-characters
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -58,6 +76,12 @@ jobs:
 
       - name: Generate Prisma client
         run: pnpm db:generate
+
+      - name: Apply migrations
+        run: pnpm --filter @plugfolio/db db:migrate:deploy
+
+      - name: Seed shopper journey data
+        run: pnpm --filter @plugfolio/db db:seed
 
       - name: Install Playwright browsers
         run: pnpm --filter @plugfolio/web exec playwright install --with-deps chromium

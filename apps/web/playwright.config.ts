@@ -34,10 +34,13 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     env: {
-      // Public pages don't touch these, but set them so the dev server boots
-      // cleanly if any shared module reads env at startup.
-      DATABASE_URL: "postgresql://user:pass@localhost:5432/plugfolio",
-      DEVICE_TOKEN_SECRET: "e2e-only-secret-at-least-thirty-two-chars",
+      // The shopper journey reads seeded data, so CI provides a real
+      // DATABASE_URL (migrated + seeded); the placeholder keeps local
+      // DB-less boots working for the pages that don't touch the DB.
+      DATABASE_URL:
+        process.env.DATABASE_URL ?? "postgresql://user:pass@localhost:5432/plugfolio",
+      DEVICE_TOKEN_SECRET:
+        process.env.DEVICE_TOKEN_SECRET ?? "e2e-only-secret-at-least-thirty-two-chars",
     },
   },
 });

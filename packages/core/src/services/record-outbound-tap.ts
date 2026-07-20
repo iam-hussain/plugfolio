@@ -32,6 +32,12 @@ export async function recordOutboundTap(
     throw new NotFoundError("Product not found");
   }
 
+  // Per-post attribution integrity: only accept a post that actually has this
+  // product tagged, so per-post earnings can't be skewed by a forged postId.
+  if (command.postId && !(await deps.products.isTaggedToPost(product.id, command.postId))) {
+    throw new NotFoundError("Product is not tagged in this post");
+  }
+
   // Idempotency (§6.8): in-app browsers double-fire — a retry with the same key
   // returns the original event rather than recording a second tap.
   const existing = await deps.taps.findByIdempotencyKey(command.idempotencyKey);
@@ -39,6 +45,7 @@ export async function recordOutboundTap(
 
   return deps.taps.append({
     productId: product.id,
+    postId: command.postId ?? null,
     profileId: product.profileId,
     deviceId: command.deviceId,
     idempotencyKey: command.idempotencyKey,

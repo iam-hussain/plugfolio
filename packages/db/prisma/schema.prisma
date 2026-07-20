@@ -27,6 +27,7 @@ model Profile {
   username  String    @unique
   accountId String    @db.Uuid
   account   Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  posts     Post[]
   products  Product[]
   taps      Tap[]
   createdAt DateTime  @default(now())
@@ -34,14 +35,37 @@ model Profile {
   @@index([accountId])
 }
 
+/// A creator's post — the shoppable unit of the page ("tap a post, see the
+/// product"). v1 has no social import yet, so rows come from seed/dashboard;
+/// every row is treated as published (the publish flag lands with the tagging
+/// dashboard).
+model Post {
+  id        String    @id @default(uuid()) @db.Uuid
+  profileId String    @db.Uuid
+  profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  mediaUrl  String
+  caption   String?
+  products  Product[]
+  taps      Tap[]
+  createdAt DateTime  @default(now())
+
+  @@index([profileId, createdAt])
+}
+
 /// A product a creator tags, linked to their own affiliate destination (v1
-/// handles no money — creators use their own affiliate links; §2.3).
+/// handles no money — creators use their own affiliate links; §2.3). Price and
+/// image are display-only metadata grabbed at tag time; the retailer owns the
+/// real price.
 model Product {
   id            String  @id @default(uuid()) @db.Uuid
   profileId     String  @db.Uuid
   profile       Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   title         String
   affiliateUrl  String
+  imageUrl      String?
+  priceCents    Int?
+  currency      String   @default("usd")
+  posts         Post[]
   taps          Tap[]
   createdAt     DateTime @default(now())
 
@@ -56,6 +80,11 @@ model Tap {
   product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   profileId      String   @db.Uuid
   profile        Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  /// The post that drove the tap ("this reel drove 312 taps"). Nullable —
+  /// profile-/product-surface taps have no post. SetNull, not Cascade: taps
+  /// are append-only earnings events and must survive a post's deletion.
+  postId         String?  @db.Uuid
+  post           Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
   /// Verified anonymous device identity (from the signed cookie), NOT an
   /// account link (§6.7, ADR-0002).
   deviceId       String   @db.Uuid
@@ -66,6 +95,7 @@ model Tap {
 
   @@index([profileId, occurredAt])
   @@index([productId, occurredAt])
+  @@index([postId, occurredAt])
 }
 
 enum TapSource {

@@ -12,6 +12,13 @@ export type { OutboundTap, NewOutboundTap, TapSource } from "./domain/tap";
 // Ports (repository interfaces implemented in @plugfolio/db)
 export type { TapRepository } from "./ports/tap-repository";
 export type { ProductReadRepository, ProductForAttribution } from "./ports/product-repository";
+export type {
+  CreatorPageReadRepository,
+  CreatorPage,
+  ShopperPost,
+  ShopperProduct,
+  ShopperProductView,
+} from "./ports/creator-page-repository";
 
 // Schemas
 export {
@@ -22,3 +29,9 @@ export {
 
 // Services (use-cases)
 export { recordOutboundTap, type RecordOutboundTapDeps } from "./services/record-outbound-tap";
+export {
+  getCreatorPage,
+  getShopperPost,
+  getShopperProduct,
+  type CreatorPageReadDeps,
+} from "./services/creator-page-reads";

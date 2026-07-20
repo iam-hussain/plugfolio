@@ -49,6 +49,7 @@ describe.skipIf(!url)("TapRepository (integration)", () => {
     const idempotencyKey = randomUUID();
     const newTap = {
       productId,
+      postId: null,
       profileId,
       deviceId: randomUUID(),
       idempotencyKey,
