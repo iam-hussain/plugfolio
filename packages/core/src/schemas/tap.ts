@@ -12,6 +12,13 @@ import { z } from "zod";
 export const recordOutboundTapInput = z.object({
   /** The tagged product being tapped through to its affiliate destination. */
   productId: z.string().uuid(),
+  /**
+   * The post that drove the tap, for per-post earnings ("this reel drove 312
+   * taps"). Optional — profile-/product-surface taps have no post. The service
+   * verifies the post actually has this product tagged, so a client can't file
+   * taps under an unrelated post.
+   */
+  postId: z.string().uuid().optional(),
   /** Idempotency key; in-app browsers double-fire taps (§6.8). */
   idempotencyKey: z.string().uuid(),
   /** Where the tap happened, for the read model. */

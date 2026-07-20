@@ -6,12 +6,45 @@
 // Errors
 export * from "./errors";
 
+// Anonymous shopper identity (§6.7, ADR-0002) — shared by both deployables
+export {
+  DEVICE_COOKIE,
+  verifyDeviceToken,
+  issueDeviceToken,
+} from "./auth/device-token";
+
 // Domain
 export type { OutboundTap, NewOutboundTap, TapSource } from "./domain/tap";
 
 // Ports (repository interfaces implemented in @plugfolio/db)
 export type { TapRepository } from "./ports/tap-repository";
 export type { ProductReadRepository, ProductForAttribution } from "./ports/product-repository";
+export type {
+  CreatorPageReadRepository,
+  CreatorPage,
+  ShopperPost,
+  ShopperProduct,
+  ShopperProductView,
+} from "./ports/creator-page-repository";
+export type {
+  EarningsReadRepository,
+  EarningsSummary,
+  PostTapCount,
+  ProductTapCount,
+} from "./ports/earnings-repository";
+export type { ProfileReadRepository, ProfileSummary } from "./ports/profile-repository";
+export type { FollowRepository } from "./ports/follow-repository";
+export type { CommentRepository, CommentView, NewComment } from "./ports/comment-repository";
+export type {
+  Business,
+  BusinessRepository,
+  RequirementRepository,
+  RequirementView,
+  CollabRepository,
+  CollabSummary,
+  CollabThread,
+  CollabMessageView,
+} from "./ports/business-collab-repository";
 
 // Schemas
 export {
@@ -19,6 +52,56 @@ export {
   type RecordOutboundTapInput,
   type RecordOutboundTapCommand,
 } from "./schemas/tap";
+export {
+  followProfileInput,
+  type FollowProfileInput,
+  addCommentInput,
+  type AddCommentInput,
+} from "./schemas/shopper-social";
+export {
+  createBusinessInput,
+  type CreateBusinessInput,
+  postRequirementInput,
+  type PostRequirementInput,
+  approachRequirementInput,
+  type ApproachRequirementInput,
+  requestCollabInput,
+  type RequestCollabInput,
+  collabMessageInput,
+  type CollabMessageInput,
+} from "./schemas/business-collab";
 
 // Services (use-cases)
 export { recordOutboundTap, type RecordOutboundTapDeps } from "./services/record-outbound-tap";
+export {
+  getCreatorPage,
+  getShopperPost,
+  getShopperProduct,
+  type CreatorPageReadDeps,
+} from "./services/creator-page-reads";
+export { getEarnings, type EarningsReadDeps } from "./services/get-earnings";
+export { getMyProfiles, type ProfileReadDeps } from "./services/get-my-profiles";
+export {
+  followProfile,
+  unfollowProfile,
+  getFollowedProfiles,
+  isFollowingProfile,
+  addComment,
+  getComments,
+  type ShopperSocialDeps,
+} from "./services/shopper-social";
+export {
+  createBusiness,
+  getMyBusiness,
+  postRequirement,
+  listOpenRequirements,
+  listMyRequirements,
+  approachRequirement,
+  requestCollab,
+  sendCollabMessage,
+  agreeCollab,
+  getCollabThread,
+  listMyBusinessCollabs,
+  listMyCreatorCollabs,
+  type BusinessCollabDeps,
+} from "./services/business-collab";

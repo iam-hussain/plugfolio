@@ -28,16 +28,38 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: "pnpm exec next dev",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-    env: {
-      // Public pages don't touch these, but set them so the dev server boots
-      // cleanly if any shared module reads env at startup.
-      DATABASE_URL: "postgresql://user:pass@localhost:5432/plugfolio",
-      DEVICE_TOKEN_SECRET: "e2e-only-secret-at-least-thirty-two-chars",
+  // Two deployables (ADR-0008): the standalone API plus the web app, which
+  // proxies /api/* to it — the journeys exercise the real production shape.
+  webServer: [
+    {
+      command: "pnpm --filter @plugfolio/api start",
+      url: "http://localhost:3001/api/health",
+      reuseExistingServer: !process.env.CI,
+      timeout: 60_000,
+      env: {
+        DATABASE_URL:
+          process.env.DATABASE_URL ?? "postgresql://user:pass@localhost:5432/plugfolio",
+        DEVICE_TOKEN_SECRET:
+          process.env.DEVICE_TOKEN_SECRET ?? "e2e-only-secret-at-least-thirty-two-chars",
+        PORT: "3001",
+      },
     },
-  },
+    {
+      command: "pnpm exec next dev",
+      url: "http://localhost:3000",
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+      env: {
+        // The shopper journey reads seeded data, so CI provides a real
+        // DATABASE_URL (migrated + seeded); the placeholder keeps local
+        // DB-less boots working for the pages that don't touch the DB.
+        DATABASE_URL:
+          process.env.DATABASE_URL ?? "postgresql://user:pass@localhost:5432/plugfolio",
+        DEVICE_TOKEN_SECRET:
+          process.env.DEVICE_TOKEN_SECRET ?? "e2e-only-secret-at-least-thirty-two-chars",
+        AUTH_SECRET: process.env.AUTH_SECRET ?? "e2e-only-auth-secret-at-least-32-chars!",
+        API_URL: "http://localhost:3001",
+      },
+    },
+  ],
 });

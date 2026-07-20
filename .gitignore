@@ -30,3 +30,4 @@ test-results/
 *.log
 .vercel/
 *.tsbuildinfo
+graphify-out/

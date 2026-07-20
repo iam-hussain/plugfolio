@@ -59,24 +59,25 @@ This is the committed baseline. It fits the product (SEO-able creator pages, mob
 | Styling | **Tailwind CSS** + design tokens (§7) | Fast, consistent, mobile-first; tokens keep the theme centralized. |
 | UI primitives | **shadcn/ui** (Radix under the hood) | Accessible, themeable components we own the source of — the default; don't rebuild what it gives us (see §8). |
 | State (client) | React Server Components first; **TanStack Query** for client data; local state via hooks | Fetch on the server by default; client state only where it earns its place. |
-| Backend | **Next.js Route Handlers / Server Actions**, extractable to a service later | Start monolith-simple; the service layer (§6) keeps it portable. |
+| Backend | **Standalone REST API (`apps/api`, Hono)** behind a same-origin proxy; Auth.js routes stay in `apps/web` (see [ADR-0008](./docs/adr/0008-standalone-api-service.md)) | Independent scale/deploy for the API; the service layer (§6) made the extraction a move, not a rewrite. |
 | Database | **PostgreSQL** + **Prisma** | Relational data (creators, products, taps, collabs); typed queries. |
 | Auth | **Auth.js (NextAuth)**; **email login for all account holders** (see [ADR-0004](./docs/adr/0004-creator-account-profiles-identity.md)) | Creators, shoppers & businesses sign in by email; a creator **account** connects Google+Meta and holds up to 5 **profiles**, each with a social-derived username; anonymous shoppers stay account-free. |
 | Validation | **Zod** at every boundary | One schema validates input, types the result, and documents the contract. |
 | Testing | **Vitest** (unit) + **Playwright** (e2e journeys) | Test the journeys from the docs, not just functions. |
 | Hosting | **Vercel** | First-class Next.js; edge-fast public pages. |
 
-Foundational decisions already recorded: [ADR-0001 (stack)](./docs/adr/0001-tech-stack.md) · [ADR-0002 (no-login shopper identity)](./docs/adr/0002-no-login-shopper-identity.md) · [ADR-0004 (creator account, profiles & social-connected identity)](./docs/adr/0004-creator-account-profiles-identity.md) *(supersedes ADR-0003)* · [ADR-0005 (monorepo structure)](./docs/adr/0005-monorepo-structure.md) *(amends ADR-0001)* · [ADR-0006 (REST API + mobile clients)](./docs/adr/0006-rest-api-and-mobile-clients.md) *(amends ADR-0001)*.
+Foundational decisions already recorded: [ADR-0001 (stack)](./docs/adr/0001-tech-stack.md) · [ADR-0002 (no-login shopper identity)](./docs/adr/0002-no-login-shopper-identity.md) · [ADR-0004 (creator account, profiles & social-connected identity)](./docs/adr/0004-creator-account-profiles-identity.md) *(supersedes ADR-0003)* · [ADR-0005 (monorepo structure)](./docs/adr/0005-monorepo-structure.md) *(amends ADR-0001)* · [ADR-0006 (REST API + mobile clients)](./docs/adr/0006-rest-api-and-mobile-clients.md) *(amends ADR-0001)* · [ADR-0007 (Auth.js identity tables)](./docs/adr/0007-authjs-identity-tables.md) *(amends ADR-0004)* · [ADR-0008 (standalone API service)](./docs/adr/0008-standalone-api-service.md) *(amends ADR-0005/0006)*.
 
 ---
 
 ## 5. Frontend — feature-based architecture
 
-**We use a monorepo** (pnpm workspaces + Turborepo — see [ADR-0005](./docs/adr/0005-monorepo-structure.md)). One deployable in v1 (`apps/web`); shared code lives in `packages/`:
+**We use a monorepo** (pnpm workspaces + Turborepo — see [ADR-0005](./docs/adr/0005-monorepo-structure.md)). Two deployables (`apps/web` + `apps/api` — see [ADR-0008](./docs/adr/0008-standalone-api-service.md)); shared code lives in `packages/`:
 
 ```
 apps/
-  web/            # the only v1 deployable — Next.js App Router. The feature-based src/ below lives here.
+  web/            # Next.js App Router — pages + Auth.js; proxies /api/* to apps/api. The feature-based src/ below lives here.
+  api/            # standalone REST API (Hono) — thin shells over core services; mobile clients hit this directly.
 packages/
   core/           # framework-free domain: entities, rules, services, Zod schemas, repository INTERFACES (§6). No Prisma/Next.
   db/             # Prisma schema + client + repository IMPLEMENTATIONS — the ONLY place Prisma is imported.
@@ -94,7 +95,7 @@ apps/web/src/
     (public)/explore/
     (creator)/dashboard/
     (business)/collabs/
-    api/                    # route handlers (thin — delegate to services, §6)
+    api/auth/               # Auth.js routes (the only /api/* served by web — the rest proxies to apps/api, ADR-0008)
   features/                 # THE core. One folder per product capability.
     creator-page/
       components/           # feature-scoped UI

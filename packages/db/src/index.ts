@@ -2,3 +2,15 @@
 export { prisma, type PrismaClient } from "./client";
 export { createTapRepository } from "./repositories/tap-repository";
 export { createProductRepository } from "./repositories/product-repository";
+export { createCreatorPageRepository } from "./repositories/creator-page-repository";
+export { createEarningsRepository } from "./repositories/earnings-repository";
+export { createProfileRepository } from "./repositories/profile-repository";
+export { createFollowRepository } from "./repositories/follow-repository";
+export { createCommentRepository } from "./repositories/comment-repository";
+export {
+  createBusinessRepository,
+  createRequirementRepository,
+  createCollabRepository,
+} from "./repositories/business-collab-repository";
+export { createAuthAdapter } from "./auth-adapter";
+export { createSessionRepository } from "./repositories/session-repository";

@@ -12,36 +12,206 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// A creator ACCOUNT — email login, connects Google+Meta, holds up to 5
-/// profiles (ADR-0004). Shoppers stay anonymous and are NOT rows here (ADR-0002).
+/// The login identity — what ADR-0004 calls the creator ACCOUNT (email login,
+/// connects Google+Meta, holds up to 5 profiles). Named `User` because Auth.js
+/// owns the identity tables (ADR-0007); anonymous shoppers are NOT rows here
+/// (ADR-0002).
+model User {
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  profiles      Profile[]
+  accounts      Account[]
+  sessions      Session[]
+  follows       Follow[]
+  comments      Comment[]
+  business      Business?
+  collabMessages CollabMessage[]
+}
+
+/// An Auth.js provider link — for Google/Meta this IS the "connected social"
+/// of ADR-0004 (at most one of each per account, enforced in the service layer
+/// when connects land).
 model Account {
-  id        String    @id @default(uuid()) @db.Uuid
-  email     String    @unique
-  createdAt DateTime  @default(now())
-  profiles  Profile[]
+  userId            String  @db.Uuid
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@index([userId])
+}
+
+/// Auth.js database session (email magic-link sign-in, ADR-0007).
+model Session {
+  id           String   @id @default(uuid()) @db.Uuid
+  sessionToken String   @unique
+  userId       String   @db.Uuid
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// Auth.js email verification token (magic links).
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
 }
 
 /// A creator PROFILE with a social-derived username (ADR-0004).
 model Profile {
   id        String    @id @default(uuid()) @db.Uuid
   username  String    @unique
-  accountId String    @db.Uuid
-  account   Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  userId    String    @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts     Post[]
+  products  Product[]
+  taps      Tap[]
+  followers Follow[]
+  comments  Comment[]
+  collabs   Collab[]
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+/// A BUSINESS — a brand/store that hires creators (lean journey: name, what
+/// you sell, a logo, an email). One business per user in v1.
+model Business {
+  id           String        @id @default(uuid()) @db.Uuid
+  userId       String        @unique @db.Uuid
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  description  String
+  logoUrl      String?
+  requirements Requirement[]
+  collabs      Collab[]
+  createdAt    DateTime      @default(now())
+}
+
+/// A posted requirement (door one): the brief creators can approach on the
+/// open board. Budget is free text — v1 handles no money (§2.3).
+model Requirement {
+  id         String   @id @default(uuid()) @db.Uuid
+  businessId String   @db.Uuid
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  title      String
+  brief      String
+  budget     String?
+  deadline   DateTime?
+  collabs    Collab[]
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+/// A collab thread between one business and one creator profile. Two doors:
+/// creator approaches a requirement (requirementId set) or business reaches
+/// out directly (requirementId null). Agreed when BOTH sides have accepted;
+/// money changes hands off-platform (§2.3).
+model Collab {
+  id               String          @id @default(uuid()) @db.Uuid
+  businessId       String          @db.Uuid
+  business         Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  profileId        String          @db.Uuid
+  profile          Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  requirementId    String?         @db.Uuid
+  requirement      Requirement?    @relation(fields: [requirementId], references: [id], onDelete: SetNull)
+  businessAgreedAt DateTime?
+  creatorAgreedAt  DateTime?
+  messages         CollabMessage[]
+  createdAt        DateTime        @default(now())
+
+  @@index([businessId])
+  @@index([profileId])
+}
+
+/// One message in a collab thread — the bargain happens here, not in DMs.
+model CollabMessage {
+  id           String   @id @default(uuid()) @db.Uuid
+  collabId     String   @db.Uuid
+  collab       Collab   @relation(fields: [collabId], references: [id], onDelete: Cascade)
+  senderUserId String   @db.Uuid
+  sender       User     @relation(fields: [senderUserId], references: [id], onDelete: Cascade)
+  body         String
+  createdAt    DateTime @default(now())
+
+  @@index([collabId, createdAt])
+}
+
+/// A shopper following a creator profile — the first of the two social actions
+/// behind the optional shopper account (§2.2: never required to shop).
+model Follow {
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profileId String   @db.Uuid
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, profileId])
+  @@index([profileId])
+}
+
+/// A comment on a creator's page — the second social action behind the
+/// shopper account. Reading comments stays account-free.
+model Comment {
+  id        String   @id @default(uuid()) @db.Uuid
+  profileId String   @db.Uuid
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([profileId, createdAt])
+}
+
+/// A creator's post — the shoppable unit of the page ("tap a post, see the
+/// product"). v1 has no social import yet, so rows come from seed/dashboard;
+/// every row is treated as published (the publish flag lands with the tagging
+/// dashboard).
+model Post {
+  id        String    @id @default(uuid()) @db.Uuid
+  profileId String    @db.Uuid
+  profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  mediaUrl  String
+  caption   String?
   products  Product[]
   taps      Tap[]
   createdAt DateTime  @default(now())
 
-  @@index([accountId])
+  @@index([profileId, createdAt])
 }
 
 /// A product a creator tags, linked to their own affiliate destination (v1
-/// handles no money — creators use their own affiliate links; §2.3).
+/// handles no money — creators use their own affiliate links; §2.3). Price and
+/// image are display-only metadata grabbed at tag time; the retailer owns the
+/// real price.
 model Product {
   id            String  @id @default(uuid()) @db.Uuid
   profileId     String  @db.Uuid
   profile       Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   title         String
   affiliateUrl  String
+  imageUrl      String?
+  priceCents    Int?
+  currency      String   @default("usd")
+  posts         Post[]
   taps          Tap[]
   createdAt     DateTime @default(now())
 
@@ -56,6 +226,11 @@ model Tap {
   product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   profileId      String   @db.Uuid
   profile        Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  /// The post that drove the tap ("this reel drove 312 taps"). Nullable —
+  /// profile-/product-surface taps have no post. SetNull, not Cascade: taps
+  /// are append-only earnings events and must survive a post's deletion.
+  postId         String?  @db.Uuid
+  post           Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
   /// Verified anonymous device identity (from the signed cookie), NOT an
   /// account link (§6.7, ADR-0002).
   deviceId       String   @db.Uuid
@@ -66,6 +241,7 @@ model Tap {
 
   @@index([profileId, occurredAt])
   @@index([productId, occurredAt])
+  @@index([postId, occurredAt])
 }
 
 enum TapSource {

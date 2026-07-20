@@ -23,11 +23,15 @@ function makeFakeTaps(): TapRepository & { rows: OutboundTap[] } {
 
 const PRODUCT_ID = "11111111-1111-1111-1111-111111111111";
 const OWNER_PROFILE_ID = "22222222-2222-2222-2222-222222222222";
+const TAGGED_POST_ID = "55555555-5555-5555-5555-555555555555";
 
 function makeFakeProducts(): ProductReadRepository {
   return {
     async findForAttribution(productId: string) {
       return productId === PRODUCT_ID ? { id: PRODUCT_ID, profileId: OWNER_PROFILE_ID } : null;
+    },
+    async isTaggedToPost(productId: string, postId: string) {
+      return productId === PRODUCT_ID && postId === TAGGED_POST_ID;
     },
   };
 }
@@ -60,6 +64,34 @@ describe("recordOutboundTap", () => {
       ),
     ).rejects.toBeInstanceOf(NotFoundError);
     expect(taps.rows).toHaveLength(0);
+  });
+
+  it("records the driving post when it has the product tagged", async () => {
+    const taps = makeFakeTaps();
+    const tap = await recordOutboundTap(
+      { taps, products: makeFakeProducts(), now },
+      { ...command, postId: TAGGED_POST_ID },
+    );
+
+    expect(tap.postId).toBe(TAGGED_POST_ID);
+  });
+
+  it("rejects a postId whose post does not have the product tagged", async () => {
+    const taps = makeFakeTaps();
+    await expect(
+      recordOutboundTap(
+        { taps, products: makeFakeProducts(), now },
+        { ...command, postId: "66666666-6666-6666-6666-666666666666" },
+      ),
+    ).rejects.toBeInstanceOf(NotFoundError);
+    expect(taps.rows).toHaveLength(0);
+  });
+
+  it("records a null post for post-less surfaces", async () => {
+    const taps = makeFakeTaps();
+    const tap = await recordOutboundTap({ taps, products: makeFakeProducts(), now }, command);
+
+    expect(tap.postId).toBeNull();
   });
 
   it("is idempotent: a retry with the same key does not double-count", async () => {

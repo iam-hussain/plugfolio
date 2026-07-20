@@ -11,4 +11,9 @@ export type ProductForAttribution = {
 
 export type ProductReadRepository = {
   findForAttribution(productId: string): Promise<ProductForAttribution | null>;
+  /**
+   * Whether `postId` actually has `productId` tagged — guards per-post
+   * attribution so a client can't file taps under an unrelated post.
+   */
+  isTaggedToPost(productId: string, postId: string): Promise<boolean>;
 };

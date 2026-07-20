@@ -8,6 +8,8 @@ export type TapSource = "profile" | "post" | "product";
 export type OutboundTap = {
   readonly id: string;
   readonly productId: string;
+  /** The post that drove the tap; null for profile-/product-surface taps. */
+  readonly postId: string | null;
   /** Derived from the product, never trusted from the client (§6.6 integrity). */
   readonly profileId: string;
   /** Verified device identity (from the signed cookie), NOT a raw client value. */
