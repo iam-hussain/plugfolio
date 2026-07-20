@@ -1,4 +1,4 @@
-import type { ProfileRepository, ProfileSummary } from "@plugfolio/core";
+import type { AccessibleProfile, ProfileRepository, ProfileSummary } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 
 /** Prisma implementation of the `ProfileRepository` port. */
@@ -10,6 +10,25 @@ export function createProfileRepository(db: PrismaClient = prisma): ProfileRepos
         orderBy: { createdAt: "asc" },
         select: { id: true, username: true },
       });
+    },
+
+    async listAccessibleByUser(userId: string): Promise<readonly AccessibleProfile[]> {
+      const [owned, managed] = await Promise.all([
+        db.profile.findMany({
+          where: { userId },
+          orderBy: { createdAt: "asc" },
+          select: { id: true, username: true },
+        }),
+        db.profileManager.findMany({
+          where: { userId },
+          orderBy: { createdAt: "asc" },
+          select: { profile: { select: { id: true, username: true } } },
+        }),
+      ]);
+      return [
+        ...owned.map((profile) => ({ ...profile, role: "admin" as const })),
+        ...managed.map((row) => ({ ...row.profile, role: "manager" as const })),
+      ];
     },
 
     async exists(profileId: string): Promise<boolean> {

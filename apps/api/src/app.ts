@@ -14,12 +14,15 @@ import {
   createPost,
   createPostInput,
   createProfile,
+  inviteManager,
+  inviteManagerInput,
   followProfile,
   followProfileInput,
   postRequirement,
   postRequirementInput,
   recordOutboundTap,
   recordOutboundTapInput,
+  removeManager,
   removeProduct,
   requestCollab,
   requestCollabInput,
@@ -31,7 +34,14 @@ import {
   updateProductInput,
 } from "@plugfolio/core";
 import { deviceIdentity, requireUserId } from "./auth";
-import { businessCollabDeps, clock, creatorContentDeps, repositories, shopperSocialDeps } from "./container";
+import {
+  businessCollabDeps,
+  clock,
+  creatorContentDeps,
+  profileManagerDeps,
+  repositories,
+  shopperSocialDeps,
+} from "./container";
 import { toErrorShape } from "./http/error-response";
 
 /**
@@ -176,5 +186,25 @@ app.delete("/products/:productId", async (c) => {
   const userId = await requireUserId(c);
   const productId = uuidParam.parse(c.req.param("productId"));
   await removeProduct(creatorContentDeps, userId, productId);
+  return c.json({ removed: true });
+});
+
+// --- Managers (ADR-0004: Admin-only settings surface) ---
+
+app.post("/profiles/:profileId/managers", async (c) => {
+  const userId = await requireUserId(c);
+  const input = inviteManagerInput.parse({
+    ...(await c.req.json()),
+    profileId: c.req.param("profileId"),
+  });
+  await inviteManager(profileManagerDeps, userId, input);
+  return c.json({ invited: true }, 201);
+});
+
+app.delete("/profiles/:profileId/managers/:managerUserId", async (c) => {
+  const userId = await requireUserId(c);
+  const profileId = uuidParam.parse(c.req.param("profileId"));
+  const managerUserId = uuidParam.parse(c.req.param("managerUserId"));
+  await removeManager(profileManagerDeps, userId, profileId, managerUserId);
   return c.json({ removed: true });
 });

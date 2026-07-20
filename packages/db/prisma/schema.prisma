@@ -30,6 +30,7 @@ model User {
   comments      Comment[]
   business      Business?
   collabMessages CollabMessage[]
+  managedProfiles ProfileManager[]
 }
 
 /// An Auth.js provider link — for Google/Meta this IS the "connected social"
@@ -85,8 +86,23 @@ model Profile {
   followers Follow[]
   comments  Comment[]
   collabs   Collab[]
+  managers  ProfileManager[]
   createdAt DateTime  @default(now())
 
+  @@index([userId])
+}
+
+/// A Manager invited to help run ONE profile (ADR-0004: one Admin — the
+/// profile's owning user — plus up to 3 Managers; the cap and the two-role
+/// permission split are enforced in the service layer).
+model ProfileManager {
+  profileId String   @db.Uuid
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([profileId, userId])
   @@index([userId])
 }
 

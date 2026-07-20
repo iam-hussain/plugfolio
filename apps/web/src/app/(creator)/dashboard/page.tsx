@@ -46,6 +46,11 @@ export default async function DashboardPage({
             Products
           </Link>
           <Link href="/dashboard/collabs">Collabs</Link>
+          {active?.role === "admin" ? (
+            <Link href={{ pathname: "/dashboard/settings", query: { profile: active.id } }}>
+              Settings
+            </Link>
+          ) : null}
         </nav>
       </header>
 
@@ -71,6 +76,9 @@ export default async function DashboardPage({
                   }`}
                 >
                   @{profile.username}
+                  {profile.role === "manager" ? (
+                    <span className="text-muted-foreground"> · manager</span>
+                  ) : null}
                 </Link>
               </li>
             ))}

@@ -5,3 +5,4 @@ export { RequirementBoard, type RequirementBoardProps } from "./components/requi
 export { ApproachForm, type ApproachFormProps } from "./components/approach-form";
 export { ThreadActions, type ThreadActionsProps } from "./components/thread-actions";
 export { CollabList, type CollabListProps } from "./components/collab-list";
+export { RequestCollabForm, type RequestCollabFormProps } from "./components/request-collab-form";

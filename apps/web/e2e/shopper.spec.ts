@@ -82,6 +82,20 @@ test("the tagging back room is gated; its write APIs refuse anonymous callers", 
   expect(profile.status()).toBe(401);
 });
 
+test("manager settings are gated; the invite API refuses anonymous callers", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/dashboard/settings");
+  await page.waitForURL("**/api/auth/signin**");
+
+  const invite = await request.post(
+    "/api/profiles/00000000-0000-0000-0000-0000000000b1/managers",
+    { data: { email: "x@example.com" } },
+  );
+  expect(invite.status()).toBe(401);
+});
+
 test("shopper taps a post, sees the product, and buys — zero account", async ({ page }) => {
   // The affiliate destination is external; stub it so the journey ends
   // deterministically without leaving the test network.
