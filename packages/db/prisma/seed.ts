@@ -68,7 +68,42 @@ async function main() {
     },
   });
 
-  console.log("Seeded: @lena with 2 posts, 1 tagged product. Visit /lena");
+  const BIZ_USER_ID = "00000000-0000-0000-0000-0000000000e1";
+  const BUSINESS_ID = "00000000-0000-0000-0000-0000000000f1";
+  const REQUIREMENT_ID = "00000000-0000-0000-0000-0000000000f2";
+
+  await prisma.user.upsert({
+    where: { id: BIZ_USER_ID },
+    update: {},
+    create: { id: BIZ_USER_ID, email: "business@example.com" },
+  });
+
+  await prisma.business.upsert({
+    where: { id: BUSINESS_ID },
+    update: {},
+    create: {
+      id: BUSINESS_ID,
+      userId: BIZ_USER_ID,
+      name: "Verve Gear",
+      description: "Everyday carry goods",
+    },
+  });
+
+  await prisma.requirement.upsert({
+    where: { id: REQUIREMENT_ID },
+    update: {},
+    create: {
+      id: REQUIREMENT_ID,
+      businessId: BUSINESS_ID,
+      title: "30s reel featuring our tote",
+      brief: "One short-form reel showing the tote in a daily routine. We ship the product.",
+      budget: "$150–300",
+    },
+  });
+
+  console.log(
+    "Seeded: @lena (2 posts, 1 tagged product) + Verve Gear with 1 open requirement. Visit /lena",
+  );
 }
 
 main()

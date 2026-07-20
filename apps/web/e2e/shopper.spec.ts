@@ -50,6 +50,23 @@ test("follow and comment are gated; reading them is not", async ({ page, request
   expect(comment.status()).toBe(401);
 });
 
+test("the business surface is gated; its write APIs refuse anonymous callers", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/collabs");
+  await page.waitForURL("**/api/auth/signin**");
+
+  const requirement = await request.post("/api/requirements", {
+    data: { title: "x", brief: "y" },
+  });
+  expect(requirement.status()).toBe(401);
+  const business = await request.post("/api/businesses", {
+    data: { name: "x", description: "y" },
+  });
+  expect(business.status()).toBe(401);
+});
+
 test("shopper taps a post, sees the product, and buys — zero account", async ({ page }) => {
   // The affiliate destination is external; stub it so the journey ends
   // deterministically without leaving the test network.

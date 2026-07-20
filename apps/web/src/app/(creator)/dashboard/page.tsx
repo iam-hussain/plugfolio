@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getEarnings, getMyProfiles } from "@plugfolio/core";
 import { EarningsSummaryView } from "@/features/earnings";
@@ -24,9 +25,14 @@ export default async function DashboardPage() {
 
   return (
     <main className="mx-auto max-w-md px-4 pb-8">
-      <header className="py-8">
-        <h1 className="font-display text-2xl font-semibold">Dashboard</h1>
-        <p className="text-muted-foreground text-sm">{session.user.email}</p>
+      <header className="flex items-baseline justify-between py-8">
+        <div>
+          <h1 className="font-display text-2xl font-semibold">Dashboard</h1>
+          <p className="text-muted-foreground text-sm">{session.user.email}</p>
+        </div>
+        <Link href="/dashboard/collabs" className="text-sm underline">
+          Collabs
+        </Link>
       </header>
       {!active || !earnings ? (
         <p className="text-muted-foreground py-12 text-center text-sm">

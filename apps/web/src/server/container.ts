@@ -1,10 +1,13 @@
 import {
+  createBusinessRepository,
+  createCollabRepository,
   createCommentRepository,
   createCreatorPageRepository,
   createEarningsRepository,
   createFollowRepository,
   createProductRepository,
   createProfileRepository,
+  createRequirementRepository,
   createTapRepository,
 } from "@plugfolio/db";
 
@@ -21,6 +24,18 @@ export const repositories = {
   profiles: createProfileRepository(),
   follows: createFollowRepository(),
   comments: createCommentRepository(),
+  businesses: createBusinessRepository(),
+  requirements: createRequirementRepository(),
+  collabs: createCollabRepository(),
 };
 
 export const clock = { now: () => new Date() };
+
+/** The business-collab service dependency bundle, wired once. */
+export const businessCollabDeps = {
+  businesses: repositories.businesses,
+  requirements: repositories.requirements,
+  collabs: repositories.collabs,
+  profiles: repositories.profiles,
+  now: clock.now,
+};

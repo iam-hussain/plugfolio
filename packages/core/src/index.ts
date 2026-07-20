@@ -28,6 +28,16 @@ export type {
 export type { ProfileReadRepository, ProfileSummary } from "./ports/profile-repository";
 export type { FollowRepository } from "./ports/follow-repository";
 export type { CommentRepository, CommentView, NewComment } from "./ports/comment-repository";
+export type {
+  Business,
+  BusinessRepository,
+  RequirementRepository,
+  RequirementView,
+  CollabRepository,
+  CollabSummary,
+  CollabThread,
+  CollabMessageView,
+} from "./ports/business-collab-repository";
 
 // Schemas
 export {
@@ -41,6 +51,18 @@ export {
   addCommentInput,
   type AddCommentInput,
 } from "./schemas/shopper-social";
+export {
+  createBusinessInput,
+  type CreateBusinessInput,
+  postRequirementInput,
+  type PostRequirementInput,
+  approachRequirementInput,
+  type ApproachRequirementInput,
+  requestCollabInput,
+  type RequestCollabInput,
+  collabMessageInput,
+  type CollabMessageInput,
+} from "./schemas/business-collab";
 
 // Services (use-cases)
 export { recordOutboundTap, type RecordOutboundTapDeps } from "./services/record-outbound-tap";
@@ -61,3 +83,18 @@ export {
   getComments,
   type ShopperSocialDeps,
 } from "./services/shopper-social";
+export {
+  createBusiness,
+  getMyBusiness,
+  postRequirement,
+  listOpenRequirements,
+  listMyRequirements,
+  approachRequirement,
+  requestCollab,
+  sendCollabMessage,
+  agreeCollab,
+  getCollabThread,
+  listMyBusinessCollabs,
+  listMyCreatorCollabs,
+  type BusinessCollabDeps,
+} from "./services/business-collab";
