@@ -13,6 +13,12 @@ const schema = z.object({
   AUTH_SECRET: z.string().min(32, "AUTH_SECRET must be at least 32 chars"),
   // Sender for magic-link emails; transport itself lands with deployment.
   EMAIL_FROM: z.string().default("Plugfolio <login@plugfolio.local>"),
+  // OAuth connects (ADR-0004: Google/YouTube + Meta/Instagram). Optional —
+  // the providers are wired only when credentials exist.
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  FACEBOOK_CLIENT_ID: z.string().optional(),
+  FACEBOOK_CLIENT_SECRET: z.string().optional(),
 });
 
 const parsed = schema.safeParse(process.env);

@@ -11,19 +11,27 @@ import {
   collabMessageInput,
   createBusiness,
   createBusinessInput,
+  createPost,
+  createPostInput,
+  createProfile,
   followProfile,
   followProfileInput,
   postRequirement,
   postRequirementInput,
   recordOutboundTap,
   recordOutboundTapInput,
+  removeProduct,
   requestCollab,
   requestCollabInput,
   sendCollabMessage,
+  tagProductToPost,
+  tagProductInput,
   unfollowProfile,
+  updateProductAffiliateUrl,
+  updateProductInput,
 } from "@plugfolio/core";
 import { deviceIdentity, requireUserId } from "./auth";
-import { businessCollabDeps, clock, repositories, shopperSocialDeps } from "./container";
+import { businessCollabDeps, clock, creatorContentDeps, repositories, shopperSocialDeps } from "./container";
 import { toErrorShape } from "./http/error-response";
 
 /**
@@ -128,4 +136,45 @@ app.post("/collabs/:collabId/agree", async (c) => {
   const collabId = uuidParam.parse(c.req.param("collabId"));
   await agreeCollab(businessCollabDeps, userId, collabId);
   return c.json({ agreed: true });
+});
+
+// --- The creator's back room (lean journey: Posts + Products tabs) ---
+
+app.post("/profiles", async (c) => {
+  const userId = await requireUserId(c);
+  const profile = await createProfile(creatorContentDeps, userId);
+  return c.json({ profile }, 201);
+});
+
+app.post("/posts", async (c) => {
+  const userId = await requireUserId(c);
+  const input = createPostInput.parse(await c.req.json());
+  const post = await createPost(creatorContentDeps, userId, input);
+  return c.json({ post }, 201);
+});
+
+// The core tool: paste a product URL + affiliate link, tag it to the post.
+app.post("/posts/:postId/products", async (c) => {
+  const userId = await requireUserId(c);
+  const input = tagProductInput.parse({
+    ...(await c.req.json()),
+    postId: c.req.param("postId"),
+  });
+  const product = await tagProductToPost(creatorContentDeps, userId, input);
+  return c.json({ product }, 201);
+});
+
+app.patch("/products/:productId", async (c) => {
+  const userId = await requireUserId(c);
+  const productId = uuidParam.parse(c.req.param("productId"));
+  const input = updateProductInput.parse(await c.req.json());
+  await updateProductAffiliateUrl(creatorContentDeps, userId, productId, input.affiliateUrl);
+  return c.json({ updated: true });
+});
+
+app.delete("/products/:productId", async (c) => {
+  const userId = await requireUserId(c);
+  const productId = uuidParam.parse(c.req.param("productId"));
+  await removeProduct(creatorContentDeps, userId, productId);
+  return c.json({ removed: true });
 });

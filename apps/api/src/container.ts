@@ -1,14 +1,18 @@
 import {
   createBusinessRepository,
+  createConnectionRepository,
   createCollabRepository,
   createCommentRepository,
   createFollowRepository,
   createProductRepository,
+  createPostWriteRepository,
+  createProductWriteRepository,
   createProfileRepository,
   createRequirementRepository,
   createSessionRepository,
   createTapRepository,
 } from "@plugfolio/db";
+import { createOgMetadataGateway } from "./gateways/og-metadata";
 
 /**
  * Composition root: the API wires domain services to their concrete Prisma
@@ -25,6 +29,9 @@ export const repositories = {
   requirements: createRequirementRepository(),
   collabs: createCollabRepository(),
   sessions: createSessionRepository(),
+  connections: createConnectionRepository(),
+  postWrites: createPostWriteRepository(),
+  productWrites: createProductWriteRepository(),
 };
 
 export const clock = { now: () => new Date() };
@@ -41,4 +48,13 @@ export const businessCollabDeps = {
   collabs: repositories.collabs,
   profiles: repositories.profiles,
   now: clock.now,
+};
+
+export const creatorContentDeps = {
+  profiles: repositories.profiles,
+  connections: repositories.connections,
+  posts: repositories.postWrites,
+  products: repositories.products,
+  productWrites: repositories.productWrites,
+  metadata: createOgMetadataGateway(),
 };

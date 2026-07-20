@@ -2,20 +2,26 @@ import { describe, expect, it } from "vitest";
 import { NotFoundError } from "../errors";
 import type { CommentRepository, CommentView, NewComment } from "../ports/comment-repository";
 import type { FollowRepository } from "../ports/follow-repository";
-import type { ProfileReadRepository } from "../ports/profile-repository";
+import type { ProfileRepository } from "../ports/profile-repository";
 import { addComment, followProfile, getFollowedProfiles, unfollowProfile } from "./shopper-social";
 
 const PROFILE_ID = "11111111-1111-1111-1111-111111111111";
 const USER_ID = "22222222-2222-2222-2222-222222222222";
 
 /** In-memory fakes — services stay testable without Prisma. */
-function makeFakeProfiles(): ProfileReadRepository {
+function makeFakeProfiles(): ProfileRepository {
   return {
     async listByUser() {
       return [];
     },
     async exists(profileId: string) {
       return profileId === PROFILE_ID;
+    },
+    async countByUser() {
+      return 1;
+    },
+    async create() {
+      throw new Error("not used");
     },
   };
 }

@@ -1,6 +1,6 @@
 /**
- * Read port for a user's profiles (ADR-0004: one account, up to 5 profiles).
- * The dashboard lists these and scopes every dashboard read to them.
+ * Port for creator profiles (ADR-0004: one account, up to 5 profiles). The
+ * dashboard lists these and scopes every dashboard read/write to them.
  */
 
 export type ProfileSummary = {
@@ -8,7 +8,9 @@ export type ProfileSummary = {
   readonly username: string;
 };
 
-export type ProfileReadRepository = {
+export type ProfileRepository = {
   listByUser(userId: string): Promise<readonly ProfileSummary[]>;
   exists(profileId: string): Promise<boolean>;
+  countByUser(userId: string): Promise<number>;
+  create(profile: { userId: string; username: string }): Promise<ProfileSummary>;
 };

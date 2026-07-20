@@ -2,6 +2,7 @@ import type {
   CreatorPage,
   CreatorPageReadRepository,
   ShopperPost,
+  ShopperProduct,
   ShopperProductView,
 } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
@@ -38,6 +39,14 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
             },
           },
         },
+      });
+    },
+
+    async listProducts(username: string): Promise<readonly ShopperProduct[]> {
+      return db.product.findMany({
+        where: { profile: { username } },
+        orderBy: { createdAt: "desc" },
+        select: productSelect,
       });
     },
 

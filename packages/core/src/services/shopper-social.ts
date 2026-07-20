@@ -1,7 +1,7 @@
 import { NotFoundError } from "../errors";
 import type { CommentRepository, CommentView } from "../ports/comment-repository";
 import type { FollowRepository } from "../ports/follow-repository";
-import type { ProfileReadRepository, ProfileSummary } from "../ports/profile-repository";
+import type { ProfileRepository, ProfileSummary } from "../ports/profile-repository";
 
 /**
  * The shopper-account use-cases (§2.2: follow and comment are the ONLY things
@@ -11,7 +11,7 @@ import type { ProfileReadRepository, ProfileSummary } from "../ports/profile-rep
 export type ShopperSocialDeps = {
   follows: FollowRepository;
   comments: CommentRepository;
-  profiles: ProfileReadRepository;
+  profiles: ProfileRepository;
 };
 
 const COMMENTS_PAGE_SIZE = 50;

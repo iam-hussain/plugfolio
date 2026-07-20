@@ -8,7 +8,7 @@ import type {
   RequirementRepository,
   RequirementView,
 } from "../ports/business-collab-repository";
-import type { ProfileReadRepository } from "../ports/profile-repository";
+import type { ProfileRepository } from "../ports/profile-repository";
 import type {
   ApproachRequirementInput,
   CollabMessageInput,
@@ -27,7 +27,7 @@ export type BusinessCollabDeps = {
   businesses: BusinessRepository;
   requirements: RequirementRepository;
   collabs: CollabRepository;
-  profiles: ProfileReadRepository;
+  profiles: ProfileRepository;
   now: () => Date;
 };
 
