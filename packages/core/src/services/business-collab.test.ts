@@ -8,7 +8,7 @@ import type {
   RequirementRepository,
   RequirementView,
 } from "../ports/business-collab-repository";
-import type { ProfileReadRepository } from "../ports/profile-repository";
+import type { ProfileRepository } from "../ports/profile-repository";
 import {
   agreeCollab,
   approachRequirement,
@@ -144,12 +144,18 @@ function makeDeps(options: { withBusiness?: boolean } = { withBusiness: true }) 
     },
   };
 
-  const profiles: ProfileReadRepository = {
+  const profiles: ProfileRepository = {
     async listByUser(userId) {
       return userId === CREATOR_USER ? [{ id: PROFILE_ID, username: "lena" }] : [];
     },
     async exists(profileId) {
       return profileId === PROFILE_ID;
+    },
+    async countByUser() {
+      return 1;
+    },
+    async create() {
+      throw new Error("not used");
     },
   };
 

@@ -1,5 +1,6 @@
 import {
   createBusinessRepository,
+  createConnectionRepository,
   createCollabRepository,
   createCommentRepository,
   createCreatorPageRepository,
@@ -23,6 +24,7 @@ export const repositories = {
   businesses: createBusinessRepository(),
   requirements: createRequirementRepository(),
   collabs: createCollabRepository(),
+  connections: createConnectionRepository(),
 };
 
 export const clock = { now: () => new Date() };

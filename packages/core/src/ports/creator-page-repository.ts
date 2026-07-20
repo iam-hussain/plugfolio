@@ -35,6 +35,8 @@ export type ShopperProductView = ShopperProduct & {
 
 export type CreatorPageReadRepository = {
   findByUsername(username: string): Promise<CreatorPage | null>;
+  /** Every product of the profile — including ones whose post was deleted. */
+  listProducts(username: string): Promise<readonly ShopperProduct[]>;
   /** Scoped by username so a post can't be reached under another creator's handle. */
   findPost(username: string, postId: string): Promise<ShopperPost | null>;
   findProduct(username: string, productId: string): Promise<ShopperProductView | null>;

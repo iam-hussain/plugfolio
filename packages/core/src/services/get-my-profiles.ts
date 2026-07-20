@@ -1,4 +1,4 @@
-import type { ProfileReadRepository, ProfileSummary } from "../ports/profile-repository";
+import type { ProfileRepository, ProfileSummary } from "../ports/profile-repository";
 
 /**
  * The signed-in user's profiles — the dashboard's scoping read. Everything
@@ -6,7 +6,7 @@ import type { ProfileReadRepository, ProfileSummary } from "../ports/profile-rep
  * untrusted input; that is what keeps one creator out of another's earnings.
  */
 export type ProfileReadDeps = {
-  profiles: ProfileReadRepository;
+  profiles: ProfileRepository;
 };
 
 export async function getMyProfiles(

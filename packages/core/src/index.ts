@@ -32,7 +32,14 @@ export type {
   PostTapCount,
   ProductTapCount,
 } from "./ports/earnings-repository";
-export type { ProfileReadRepository, ProfileSummary } from "./ports/profile-repository";
+export type { ProfileRepository, ProfileSummary } from "./ports/profile-repository";
+export type {
+  ConnectionReadRepository,
+  PostWriteRepository,
+  ProductWriteRepository,
+  ProductMetadata,
+  ProductMetadataGateway,
+} from "./ports/creator-content-repository";
 export type { FollowRepository } from "./ports/follow-repository";
 export type { CommentRepository, CommentView, NewComment } from "./ports/comment-repository";
 export type {
@@ -70,6 +77,14 @@ export {
   collabMessageInput,
   type CollabMessageInput,
 } from "./schemas/business-collab";
+export {
+  createPostInput,
+  type CreatePostInput,
+  tagProductInput,
+  type TagProductInput,
+  updateProductInput,
+  type UpdateProductInput,
+} from "./schemas/creator-content";
 
 // Services (use-cases)
 export { recordOutboundTap, type RecordOutboundTapDeps } from "./services/record-outbound-tap";
@@ -77,10 +92,20 @@ export {
   getCreatorPage,
   getShopperPost,
   getShopperProduct,
+  listProfileProducts,
   type CreatorPageReadDeps,
 } from "./services/creator-page-reads";
 export { getEarnings, type EarningsReadDeps } from "./services/get-earnings";
 export { getMyProfiles, type ProfileReadDeps } from "./services/get-my-profiles";
+export {
+  createProfile,
+  createPost,
+  tagProductToPost,
+  updateProductAffiliateUrl,
+  removeProduct,
+  MAX_PROFILES_PER_ACCOUNT,
+  type CreatorContentDeps,
+} from "./services/creator-content";
 export {
   followProfile,
   unfollowProfile,

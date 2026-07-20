@@ -14,3 +14,8 @@ export {
 } from "./repositories/business-collab-repository";
 export { createAuthAdapter } from "./auth-adapter";
 export { createSessionRepository } from "./repositories/session-repository";
+export {
+  createConnectionRepository,
+  createPostWriteRepository,
+  createProductWriteRepository,
+} from "./repositories/creator-content-repository";

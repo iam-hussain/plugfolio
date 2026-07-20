@@ -67,6 +67,21 @@ test("the business surface is gated; its write APIs refuse anonymous callers", a
   expect(business.status()).toBe(401);
 });
 
+test("the tagging back room is gated; its write APIs refuse anonymous callers", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/dashboard/posts");
+  await page.waitForURL("**/api/auth/signin**");
+
+  const post = await request.post("/api/posts", {
+    data: { profileId: "00000000-0000-0000-0000-0000000000b1", mediaUrl: "https://x.test/m.jpg" },
+  });
+  expect(post.status()).toBe(401);
+  const profile = await request.post("/api/profiles");
+  expect(profile.status()).toBe(401);
+});
+
 test("shopper taps a post, sees the product, and buys — zero account", async ({ page }) => {
   // The affiliate destination is external; stub it so the journey ends
   // deterministically without leaving the test network.

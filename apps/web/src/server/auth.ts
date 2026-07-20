@@ -1,5 +1,8 @@
 import { createAuthAdapter } from "@plugfolio/db";
 import NextAuth, { type DefaultSession, type NextAuthResult } from "next-auth";
+import type { Provider } from "next-auth/providers";
+import Facebook from "next-auth/providers/facebook";
+import Google from "next-auth/providers/google";
 import { env } from "@/env";
 
 /**
@@ -15,12 +18,32 @@ declare module "next-auth" {
   }
 }
 
+// OAuth connects (ADR-0004): a Google/Meta Account row IS the connected
+// social. Env-gated — wired the moment credentials exist, absent otherwise.
+const oauthProviders: Provider[] = [
+  ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+    ? [
+        Google({
+          clientId: env.GOOGLE_CLIENT_ID,
+          clientSecret: env.GOOGLE_CLIENT_SECRET,
+          authorization: {
+            params: { scope: "openid email profile https://www.googleapis.com/auth/youtube.readonly" },
+          },
+        }),
+      ]
+    : []),
+  ...(env.FACEBOOK_CLIENT_ID && env.FACEBOOK_CLIENT_SECRET
+    ? [Facebook({ clientId: env.FACEBOOK_CLIENT_ID, clientSecret: env.FACEBOOK_CLIENT_SECRET })]
+    : []),
+];
+
 const nextAuth = NextAuth({
   adapter: createAuthAdapter(),
   secret: env.AUTH_SECRET,
   trustHost: true,
   session: { strategy: "database" },
   providers: [
+    ...oauthProviders,
     {
       id: "email",
       type: "email",

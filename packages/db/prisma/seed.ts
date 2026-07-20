@@ -23,6 +23,21 @@ async function main() {
     create: { id: ACCOUNT_ID, email: "creator@example.com" },
   });
 
+  // A connected social (Auth.js Account row) — profile creation requires one
+  // (ADR-0004); real Google/Meta rows appear via OAuth once apps are configured.
+  await prisma.account.upsert({
+    where: {
+      provider_providerAccountId: { provider: "google", providerAccountId: "seed-google-lena" },
+    },
+    update: {},
+    create: {
+      userId: ACCOUNT_ID,
+      type: "oauth",
+      provider: "google",
+      providerAccountId: "seed-google-lena",
+    },
+  });
+
   await prisma.profile.upsert({
     where: { id: PROFILE_ID },
     update: {},

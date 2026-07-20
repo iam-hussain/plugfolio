@@ -2,6 +2,7 @@ import type {
   CreatorPage,
   CreatorPageReadRepository,
   ShopperPost,
+  ShopperProduct,
   ShopperProductView,
 } from "../ports/creator-page-repository";
 
@@ -36,4 +37,11 @@ export async function getShopperProduct(
   productId: string,
 ): Promise<ShopperProductView | null> {
   return deps.creatorPages.findProduct(username, productId);
+}
+
+export async function listProfileProducts(
+  deps: CreatorPageReadDeps,
+  username: string,
+): Promise<readonly ShopperProduct[]> {
+  return deps.creatorPages.listProducts(username);
 }
