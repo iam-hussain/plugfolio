@@ -9,6 +9,10 @@ const schema = z.object({
   DATABASE_URL: z.string().url(),
   // Secret that signs the anonymous device token (§6.7, ADR-0002).
   DEVICE_TOKEN_SECRET: z.string().min(32, "DEVICE_TOKEN_SECRET must be at least 32 chars"),
+  // Auth.js session/token secret (ADR-0007).
+  AUTH_SECRET: z.string().min(32, "AUTH_SECRET must be at least 32 chars"),
+  // Sender for magic-link emails; transport itself lands with deployment.
+  EMAIL_FROM: z.string().default("Plugfolio <login@plugfolio.local>"),
 });
 
 const parsed = schema.safeParse(process.env);

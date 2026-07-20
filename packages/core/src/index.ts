@@ -25,6 +25,7 @@ export type {
   PostTapCount,
   ProductTapCount,
 } from "./ports/earnings-repository";
+export type { ProfileReadRepository, ProfileSummary } from "./ports/profile-repository";
 
 // Schemas
 export {
@@ -42,3 +43,4 @@ export {
   type CreatorPageReadDeps,
 } from "./services/creator-page-reads";
 export { getEarnings, type EarningsReadDeps } from "./services/get-earnings";
+export { getMyProfiles, type ProfileReadDeps } from "./services/get-my-profiles";

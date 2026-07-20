@@ -17,7 +17,7 @@ const POST_TAGGED_ID = "00000000-0000-0000-0000-0000000000d1";
 const POST_UNTAGGED_ID = "00000000-0000-0000-0000-0000000000d2";
 
 async function main() {
-  await prisma.account.upsert({
+  await prisma.user.upsert({
     where: { id: ACCOUNT_ID },
     update: {},
     create: { id: ACCOUNT_ID, email: "creator@example.com" },
@@ -26,7 +26,7 @@ async function main() {
   await prisma.profile.upsert({
     where: { id: PROFILE_ID },
     update: {},
-    create: { id: PROFILE_ID, username: "lena", accountId: ACCOUNT_ID },
+    create: { id: PROFILE_ID, username: "lena", userId: ACCOUNT_ID },
   });
 
   await prisma.product.upsert({

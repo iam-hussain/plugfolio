@@ -35,9 +35,9 @@ describe.skipIf(!url)("EarningsRepository (integration)", () => {
   beforeAll(async () => {
     db = new PrismaClient({ datasources: { db: { url } } });
     earnings = createEarningsRepository(db);
-    await db.account.create({ data: { id: accountId, email: `${accountId}@example.com` } });
+    await db.user.create({ data: { id: accountId, email: `${accountId}@example.com` } });
     await db.profile.create({
-      data: { id: profileId, username: accountId.slice(0, 8), accountId },
+      data: { id: profileId, username: accountId.slice(0, 8), userId: accountId },
     });
     await db.product.create({
       data: { id: productId, profileId, title: "Tote", affiliateUrl: "https://example.com/x" },
@@ -55,7 +55,7 @@ describe.skipIf(!url)("EarningsRepository (integration)", () => {
   });
 
   afterAll(async () => {
-    await db.account.delete({ where: { id: accountId } }); // cascades everything
+    await db.user.delete({ where: { id: accountId } }); // cascades everything
     await db.$disconnect();
   });
 

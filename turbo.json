@@ -6,7 +6,7 @@
     "build": {
       "dependsOn": ["^build", "db:generate"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "env": ["DATABASE_URL", "DEVICE_TOKEN_SECRET"]
+      "env": ["DATABASE_URL", "DEVICE_TOKEN_SECRET", "AUTH_SECRET", "EMAIL_FROM"]
     },
     "dev": {
       "dependsOn": ["^build"],

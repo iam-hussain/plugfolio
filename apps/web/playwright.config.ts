@@ -41,6 +41,7 @@ export default defineConfig({
         process.env.DATABASE_URL ?? "postgresql://user:pass@localhost:5432/plugfolio",
       DEVICE_TOKEN_SECRET:
         process.env.DEVICE_TOKEN_SECRET ?? "e2e-only-secret-at-least-thirty-two-chars",
+      AUTH_SECRET: process.env.AUTH_SECRET ?? "e2e-only-auth-secret-at-least-32-chars!",
     },
   },
 });

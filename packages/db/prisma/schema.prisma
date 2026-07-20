@@ -12,27 +12,75 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// A creator ACCOUNT — email login, connects Google+Meta, holds up to 5
-/// profiles (ADR-0004). Shoppers stay anonymous and are NOT rows here (ADR-0002).
+/// The login identity — what ADR-0004 calls the creator ACCOUNT (email login,
+/// connects Google+Meta, holds up to 5 profiles). Named `User` because Auth.js
+/// owns the identity tables (ADR-0007); anonymous shoppers are NOT rows here
+/// (ADR-0002).
+model User {
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  profiles      Profile[]
+  accounts      Account[]
+  sessions      Session[]
+}
+
+/// An Auth.js provider link — for Google/Meta this IS the "connected social"
+/// of ADR-0004 (at most one of each per account, enforced in the service layer
+/// when connects land).
 model Account {
-  id        String    @id @default(uuid()) @db.Uuid
-  email     String    @unique
-  createdAt DateTime  @default(now())
-  profiles  Profile[]
+  userId            String  @db.Uuid
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@index([userId])
+}
+
+/// Auth.js database session (email magic-link sign-in, ADR-0007).
+model Session {
+  id           String   @id @default(uuid()) @db.Uuid
+  sessionToken String   @unique
+  userId       String   @db.Uuid
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// Auth.js email verification token (magic links).
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
 }
 
 /// A creator PROFILE with a social-derived username (ADR-0004).
 model Profile {
   id        String    @id @default(uuid()) @db.Uuid
   username  String    @unique
-  accountId String    @db.Uuid
-  account   Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  userId    String    @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   posts     Post[]
   products  Product[]
   taps      Tap[]
   createdAt DateTime  @default(now())
 
-  @@index([accountId])
+  @@index([userId])
 }
 
 /// A creator's post — the shoppable unit of the page ("tap a post, see the

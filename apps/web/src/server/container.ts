@@ -1,6 +1,8 @@
 import {
   createCreatorPageRepository,
+  createEarningsRepository,
   createProductRepository,
+  createProfileRepository,
   createTapRepository,
 } from "@plugfolio/db";
 
@@ -13,6 +15,8 @@ export const repositories = {
   taps: createTapRepository(),
   products: createProductRepository(),
   creatorPages: createCreatorPageRepository(),
+  earnings: createEarningsRepository(),
+  profiles: createProfileRepository(),
 };
 
 export const clock = { now: () => new Date() };

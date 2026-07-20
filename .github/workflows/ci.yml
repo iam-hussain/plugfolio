@@ -40,8 +40,9 @@ jobs:
         env:
           # Build-time only; no real database is contacted (Prisma connects lazily at query time).
           DATABASE_URL: postgresql://user:pass@localhost:5432/plugfolio
-          # Build-time placeholder; the real secret is provided at runtime.
+          # Build-time placeholders; the real secrets are provided at runtime.
           DEVICE_TOKEN_SECRET: ci-build-placeholder-secret-not-used-at-runtime
+          AUTH_SECRET: ci-build-placeholder-secret-not-used-at-runtime
 
   e2e:
     runs-on: ubuntu-latest
@@ -63,6 +64,7 @@ jobs:
       # The shopper journey drives the real page → API → DB path (seeded @lena).
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/plugfolio_e2e?schema=public
       DEVICE_TOKEN_SECRET: ci-e2e-secret-at-least-thirty-two-characters
+      AUTH_SECRET: ci-e2e-auth-secret-at-least-thirty-two-chars
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

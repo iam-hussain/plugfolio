@@ -27,9 +27,9 @@ describe.skipIf(!url)("TapRepository (integration)", () => {
   beforeAll(async () => {
     db = new PrismaClient({ datasources: { db: { url } } });
     taps = createTapRepository(db);
-    await db.account.create({ data: { id: accountId, email: `${accountId}@example.com` } });
+    await db.user.create({ data: { id: accountId, email: `${accountId}@example.com` } });
     await db.profile.create({
-      data: { id: profileId, username: accountId.slice(0, 8), accountId },
+      data: { id: profileId, username: accountId.slice(0, 8), userId: accountId },
     });
     await db.product.create({
       data: { id: productId, profileId, title: "Test", affiliateUrl: "https://example.com/x" },
@@ -37,7 +37,7 @@ describe.skipIf(!url)("TapRepository (integration)", () => {
   });
 
   afterAll(async () => {
-    await db.account.delete({ where: { id: accountId } }); // cascades to profile/product/tap
+    await db.user.delete({ where: { id: accountId } }); // cascades to profile/product/tap
     await db.$disconnect();
   });
 

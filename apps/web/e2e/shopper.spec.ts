@@ -22,6 +22,16 @@ test("a creator page is reachable by handle with no account", async ({ page }) =
   await expect(page.getByText("@lena")).toBeVisible();
 });
 
+test("the dashboard is gated by sign-in — a creator surface, never a shop wall", async ({
+  page,
+}) => {
+  await page.goto("/dashboard");
+
+  // Unauthenticated → Auth.js sign-in, while every shop path stays open.
+  await page.waitForURL("**/api/auth/signin**");
+  await expect(page.getByRole("button", { name: /sign in with email/i })).toBeVisible();
+});
+
 test("shopper taps a post, sees the product, and buys — zero account", async ({ page }) => {
   // The affiliate destination is external; stub it so the journey ends
   // deterministically without leaving the test network.
