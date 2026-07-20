@@ -6,6 +6,13 @@
 // Errors
 export * from "./errors";
 
+// Anonymous shopper identity (§6.7, ADR-0002) — shared by both deployables
+export {
+  DEVICE_COOKIE,
+  verifyDeviceToken,
+  issueDeviceToken,
+} from "./auth/device-token";
+
 // Domain
 export type { OutboundTap, NewOutboundTap, TapSource } from "./domain/tap";
 

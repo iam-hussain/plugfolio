@@ -2,32 +2,39 @@ import {
   createBusinessRepository,
   createCollabRepository,
   createCommentRepository,
-  createCreatorPageRepository,
-  createEarningsRepository,
   createFollowRepository,
+  createProductRepository,
   createProfileRepository,
   createRequirementRepository,
+  createSessionRepository,
+  createTapRepository,
 } from "@plugfolio/db";
 
 /**
- * Composition root: the app wires domain services to their concrete Prisma
- * repositories here. Services (in @plugfolio/core) stay ignorant of Prisma; this
- * is the only seam that knows both sides (§6 layering).
+ * Composition root: the API wires domain services to their concrete Prisma
+ * repositories here (§6 layering) — the same seam apps/web has for its
+ * server-rendered reads.
  */
 export const repositories = {
-  creatorPages: createCreatorPageRepository(),
-  earnings: createEarningsRepository(),
+  taps: createTapRepository(),
+  products: createProductRepository(),
   profiles: createProfileRepository(),
   follows: createFollowRepository(),
   comments: createCommentRepository(),
   businesses: createBusinessRepository(),
   requirements: createRequirementRepository(),
   collabs: createCollabRepository(),
+  sessions: createSessionRepository(),
 };
 
 export const clock = { now: () => new Date() };
 
-/** The business-collab service dependency bundle, wired once. */
+export const shopperSocialDeps = {
+  follows: repositories.follows,
+  comments: repositories.comments,
+  profiles: repositories.profiles,
+};
+
 export const businessCollabDeps = {
   businesses: repositories.businesses,
   requirements: repositories.requirements,
