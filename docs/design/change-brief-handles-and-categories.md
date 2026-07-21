@@ -25,15 +25,29 @@ person's public name for **comments and follows**. The email is never shown anyw
 | Links anywhere? | **No** — plain text in v1, never a link | Yes, to the profile page |
 | How it's obtained | Auto-generated, user-editable | Chosen from verified YouTube/Instagram handles |
 
-### Who signs a comment — the one rule (no picker UI)
+### Who signs a comment — a smart default plus an identity picker
 
-- **Everyone, everywhere:** the comment shows the author's display name + `@handle`.
-- **Exception — the page's own team:** when the Admin or a Manager of *this* profile
-  comments on it, the comment automatically speaks **as the profile**: profile name +
-  profile avatar + a **"Creator" badge**. No handle shown. This mirrors owner replies on
-  Instagram/YouTube, so shoppers already read it correctly.
-- There is **no identity switcher** on the comment form. The system decides; the form
-  never asks.
+Two ways a comment can be signed:
+
+- **As a person:** display name + `@handle` — the plain treatment, most comments.
+- **As a profile:** profile name + profile avatar + a **"Creator" badge**, no handle shown
+  — the treatment shoppers know from owner replies on Instagram/YouTube.
+
+Who gets to choose: a user who belongs to creator profiles (as Admin or Manager) gets an
+**identity picker** on the comment form — their `@handle` plus every profile they belong
+to — and may speak as any of them **on any page**, including other creators' pages.
+A user with no profiles (every shopper) **never sees the picker** — the form stays exactly
+as designed today.
+
+**The default must do the right thing untouched** — this is the load-bearing design rule:
+
+- On a page owned by one of the commenter's profiles → preselect **that profile**.
+- Everywhere else → preselect their **personal `@handle`**.
+
+So replying to your own shoppers is zero-tap correct, and speaking as a brand on someone
+else's page is always a deliberate pick. The selection is **per-comment, never sticky** —
+don't design an account-level "acting as" mode; that's how people post as the wrong brand
+on Facebook Pages.
 
 ### Screens affected
 
@@ -44,9 +58,13 @@ person's public name for **comments and follows**. The email is never shown anyw
   (badge, not a shout). Nested replies from the creator are the common case (see the
   existing mock: "Maya Okafor" replying to Priya).
 
-**Comment form:** unchanged except the signed-in state may show *"commenting as @handle"*
-(or *"as Maya Okafor · Creator"* when the team rule applies) in small text — recommended,
-so attribution is never a surprise.
+**Comment form — the identity picker:** a compact "commenting as" control on the form
+(e.g. small avatar + name + chevron) that opens a sheet listing the personal `@handle`
+first, then each profile (avatar + profile name). Keep it quiet — it's a safety control,
+not a feature to advertise. Must scale gracefully: a Manager can belong to profiles from
+several different owners, so the list may exceed 4–5 entries (scroll, don't cram).
+For users with a single identity, replace the picker with plain text: *"commenting as
+@handle"*.
 
 **Account settings — new small surface:** one field, **"Your handle"** — current `@handle`,
 edit → availability check → save. Errors: taken, invalid characters, too short/long.
@@ -54,17 +72,23 @@ This is the only new screen in this change; keep it a single sheet/section, not 
 
 ### States to design
 
-- Shopper comment (name + `@handle`) · team reply (profile + Creator badge) — light & dark.
+- Comment as a person (name + `@handle`) · comment as a profile (profile + Creator badge) —
+  both in-thread, light & dark. A brand comment on *someone else's* page uses the same
+  profile treatment — no special variant.
+- Comment form: single identity (plain "commenting as" text) · multi-identity picker
+  closed / open (sheet) · long picker list (5+ identities, scrolling).
 - Handle edit: idle / checking availability / taken / saved.
-- Long handles truncate; the badge never wraps away from the name.
+- Long handles and long profile names truncate; the badge never wraps away from the name.
 
 ### Components
 
-Existing Badge (the "Creator" chip), Avatar, Input with inline validation. No new primitives.
+Existing Badge (the "Creator" chip), Avatar, Input with inline validation, and a
+Sheet/DropdownMenu for the picker. No new primitives beyond those.
 
 ### Out of scope — do not design
 
-Handle profile pages (`@handle` links nowhere in v1) · choosing an identity per comment ·
+Handle profile pages (`@handle` links nowhere in v1) · a sticky account-level "acting as"
+mode · brand-comment gating or moderation UI (reporting, rate-limit messaging) ·
 verified checkmarks for handles · handle mentions/autocomplete inside comment bodies.
 
 ---

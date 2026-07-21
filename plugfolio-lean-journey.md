@@ -53,7 +53,7 @@ No popup. No signup wall. No wishlist to manage, no rewards to understand, no fe
 
 **The one optional account.** If a shopper wants to **follow** a creator (so their new posts show up later) or **comment** on a creator's page, *then* they create a lightweight shopper account — email sign-in, nothing more. Buying never asks for it; only these two social actions do. Follow and comment are the *only* things behind that door in v1.
 
-**Who a comment speaks as — one rule, no picker.** A comment is signed by the commenter's **`@member-handle`** — except when the commenter is the Admin or a Manager of the profile the page belongs to, in which case the comment automatically speaks **as the profile** (brand name + a "Creator" badge), the way owner replies work on Instagram/YouTube. On anyone *else's* page a creator comments as their personal handle like everybody else; choosing an identity per comment is deferred.
+**Who a comment speaks as — a smart default plus a picker.** By default a comment is signed by the commenter's **`@member-handle`**. Anyone who belongs to creator profiles (as Admin or Manager) gets an **identity picker** on the comment box and can speak **as any of those profiles** (brand name + a "Creator" badge) — on any page, including other creators' pages. The default always does the right thing untouched: on a page one of your profiles owns, it preselects **that profile** (owner replies read the way they do on Instagram/YouTube); everywhere else it preselects your personal handle — so speaking as a brand on someone else's page is always a deliberate choice, never an accident.
 
 ---
 
@@ -187,7 +187,7 @@ Cutting these is the point. Each is a real feature — just not part of the firs
 | More than 5 profiles per account · more than 2 role types · more than 3 managers per profile | v1 caps at 5 profiles, and per profile: one Admin + up to 3 Managers, no finer permission matrix. Bigger agency setups come later. |
 | Free-form / vanity usernames not tied to a social handle | v1 usernames come only from a connected YouTube/Instagram handle — that's what makes them self-verifying. Arbitrary custom handles are a later, moderated feature. |
 | Favorite buyers, creator-to-creator collabs | Relationship infrastructure for a mature platform. (Business-to-creator collab *is* in v1.) |
-| Comment identity picker (choose to speak as a brand on someone else's page) | v1's automatic rule covers the real cases: own page → the profile speaks, elsewhere → your member handle. A picker is Facebook-Pages complexity with no v1 payoff. |
+| Brand-comment gating & moderation (rate limits, "only where tagged / in a collab" rules) | The identity picker *is* in v1; what waits is the anti-self-promo machinery around it. v1 leans on the personal-handle default — gating layers on if brand spam actually shows up. |
 | Multi-category items + category landing pages | v1: one category per post/product, chips filter the profile grid via a param. A join table and SEO-able category URLs layer on if creators actually need them. |
 | Plugfolio-owned commissions + payout rails | Only needed once Plugfolio sits in the payment path (its own product sales, or owning the affiliate-network relationship to earn a share). In v1 the networks pay creators directly, so there's nothing to remit. |
 

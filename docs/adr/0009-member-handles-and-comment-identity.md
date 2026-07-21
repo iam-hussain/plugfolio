@@ -23,17 +23,26 @@ social verification (ADR-0004) — a scheme too heavy to impose on shoppers.
    v1** — always rendered as `@handle` in comment/follow contexts. No page behind a handle
    means no squatting value, so free-form handles need no verification. Profile usernames
    remain the only URL namespace, social-verified per ADR-0004.
-3. **Comment identity is a door rule, not a picker.** `Comment.authorUserId` is always the
-   real person; a nullable `Comment.asProfileId` is set **automatically by the service**
-   when the author is the Admin or a Manager of the profile the page belongs to. Render:
-   `asProfileId` present → profile name + "Creator" badge; absent → `@member-handle`.
-   No identity switcher in v1 — on your own page you speak as the profile, everywhere
-   else as yourself.
+3. **Comment identity: a smart default plus a picker.** `Comment.authorUserId` is always
+   the real person; a nullable `Comment.asProfileId` records which identity the comment
+   speaks as. The comment box carries an **identity picker**: the author's `@handle` plus
+   every profile they're an Admin or Manager of — usable on **any** page, including other
+   creators'. The **default** selection is the page's own profile when the author is a
+   member of it, the personal handle everywhere else — brand-speak on someone else's page
+   is always a deliberate pick, never a sticky "acting as" mode. The service **validates
+   membership** of `asProfileId` on every write. Render: `asProfileId` present → profile
+   name + "Creator" badge; absent → `@member-handle`. Users with no profiles never see a
+   picker.
 
 ## Consequences
 
-- Attribution is fixed with one column on `User` and one on `Comment`; an eventual picker
-  is just making `asProfileId` user-selectable — no model change.
+- Attribution is fixed with one column on `User` and one on `Comment`.
+- Brand-to-brand commenting opens a self-promo spam surface. v1 ships only the
+  personal-handle default as the brake — no gating rules; rate limits or "only where
+  tagged / in a collab" restrictions are the lever if abuse shows up (deferred, see the
+  lean journey).
+- A Manager of profiles across several owners gets a long picker list — the picker UI must
+  scale past 2–3 entries gracefully.
 - Existing `User` rows need a backfill migration generating handles.
 - Handle changes should be deliberate (uniqueness check + a reserved-words list; old
   handles aren't redirected — nothing links to them).
@@ -44,5 +53,5 @@ social verification (ADR-0004) — a scheme too heavy to impose on shoppers.
 
 - Member handles get public pages (`/u/<handle>`) — that reopens squatting and the
   namespace-merge question.
-- Brand-to-brand commenting (a profile commenting on another creator's page) is demanded —
-  that's the identity picker.
+- Brand comment spam appears — add gating (comment-as-brand only where tagged or in an
+  active collab) or per-profile rate limits; the model already supports either.
