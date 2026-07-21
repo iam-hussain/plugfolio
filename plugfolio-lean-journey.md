@@ -29,6 +29,8 @@ That's the whole product for v1. If a feature doesn't serve that sentence, it's 
 
 **How each account signs in:** everyone with an account logs in by **email** — creators, shoppers, and businesses alike. A creator's **username is not a login**; it's a *per-profile* public handle, drawn from their connected YouTube/Instagram, that makes `plugfolio.com/<username>` theirs. One account can run several profiles, so the username can't be the login (see "How a creator account is built" below).
 
+**Every account also gets a member handle.** Whatever the role, each account carries one globally unique **`@handle`** — auto-generated at first sign-in so sign-up stays one step, changeable later in settings. It's how a person appears when they follow or comment (the email is **never** shown), and it is *not* a login either. Member handles are a separate namespace from profile usernames: a profile username is a URL and social-verified; a member handle is display-only, with no public page in v1 — so it can be free-form without inviting squatting.
+
 ---
 
 ## The shopper journey (no login to shop)
@@ -50,6 +52,8 @@ flowchart LR
 No popup. No signup wall. No wishlist to manage, no rewards to understand, no feed to build. If it isn't "tap, see, buy," it isn't here yet.
 
 **The one optional account.** If a shopper wants to **follow** a creator (so their new posts show up later) or **comment** on a creator's page, *then* they create a lightweight shopper account — email sign-in, nothing more. Buying never asks for it; only these two social actions do. Follow and comment are the *only* things behind that door in v1.
+
+**Who a comment speaks as — one rule, no picker.** A comment is signed by the commenter's **`@member-handle`** — except when the commenter is the Admin or a Manager of the profile the page belongs to, in which case the comment automatically speaks **as the profile** (brand name + a "Creator" badge), the way owner replies work on Instagram/YouTube. On anyone *else's* page a creator comments as their personal handle like everybody else; choosing an identity per comment is deferred.
 
 ---
 
@@ -114,6 +118,23 @@ No media kit, no coupon scheduler, no payouts console in v1. Four tabs a creator
 
 ---
 
+## Categories — the creator's shelves
+
+A profile can group its content into **categories** — each just a **title** and an optional
+**description** ("Desk setup", "Budget skincare"). They belong to *that profile*, not to a
+site-wide taxonomy.
+
+- A post or product sits in **one category or none**. Uncategorized things are still live —
+  they simply show under "All".
+- On the public page, category chips above the grid **filter** it; "All" is the default, so
+  a profile with no categories looks exactly like today.
+- **Admin and Managers** both curate categories — it's content work, same tier as tagging.
+- Deleting a category never deletes content; its items just fall back to "All".
+
+One item on multiple shelves, and category pages with their own URLs, are deferred.
+
+---
+
 ## One kind of product
 
 v1 sells **affiliate products only** — buy button goes to the retailer through the creator's own affiliate link, the tap is tracked, and the network pays the creator its commission directly.
@@ -166,6 +187,8 @@ Cutting these is the point. Each is a real feature — just not part of the firs
 | More than 5 profiles per account · more than 2 role types · more than 3 managers per profile | v1 caps at 5 profiles, and per profile: one Admin + up to 3 Managers, no finer permission matrix. Bigger agency setups come later. |
 | Free-form / vanity usernames not tied to a social handle | v1 usernames come only from a connected YouTube/Instagram handle — that's what makes them self-verifying. Arbitrary custom handles are a later, moderated feature. |
 | Favorite buyers, creator-to-creator collabs | Relationship infrastructure for a mature platform. (Business-to-creator collab *is* in v1.) |
+| Comment identity picker (choose to speak as a brand on someone else's page) | v1's automatic rule covers the real cases: own page → the profile speaks, elsewhere → your member handle. A picker is Facebook-Pages complexity with no v1 payoff. |
+| Multi-category items + category landing pages | v1: one category per post/product, chips filter the profile grid via a param. A join table and SEO-able category URLs layer on if creators actually need them. |
 | Plugfolio-owned commissions + payout rails | Only needed once Plugfolio sits in the payment path (its own product sales, or owning the affiliate-network relationship to earn a share). In v1 the networks pay creators directly, so there's nothing to remit. |
 
 The rule for adding any of them back: **it must not add a step to "tap, see, buy" or a screen the creator has to learn.**

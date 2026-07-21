@@ -37,6 +37,14 @@ Priority: **P0** = the core loop (must be flawless); **P1** = supports a v1 jour
 | 11 | Business — Post a Requirement & Find Creators | Business | P1 | [business/11-post-requirement-and-find-creators.md](./business/11-post-requirement-and-find-creators.md) |
 | 12 | Collabs & Negotiation Thread | Creator + Business | P1 | [business/12-collabs-and-thread.md](./business/12-collabs-and-thread.md) |
 
+## Change briefs
+
+Product changes that arrive after a page brief was written get a **change brief** rather
+than a rewrite of the affected pages:
+
+- [change-brief-handles-and-categories.md](./change-brief-handles-and-categories.md) —
+  member handles (`@handle`) + comment identity, and per-profile categories (July 2026).
+
 ## Brief template
 
 Every page brief follows the same shape: **Purpose · Who arrives & from where · Layout
