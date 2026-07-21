@@ -22,6 +22,7 @@ export type { ProductReadRepository, ProductForAttribution } from "./ports/produ
 export type {
   CreatorPageReadRepository,
   CreatorPage,
+  PageCategory,
   ShopperPost,
   ShopperProduct,
   ShopperProductView,
@@ -48,6 +49,12 @@ export type {
 } from "./ports/creator-content-repository";
 export type { FollowRepository } from "./ports/follow-repository";
 export type { CommentRepository, CommentView, NewComment } from "./ports/comment-repository";
+export type {
+  CategoryRepository,
+  CategoryView,
+  NewCategory,
+  CategoryPatch,
+} from "./ports/category-repository";
 export type {
   Business,
   BusinessRepository,
@@ -90,7 +97,19 @@ export {
   type TagProductInput,
   updateProductInput,
   type UpdateProductInput,
+  createCategoryInput,
+  type CreateCategoryInput,
+  updateCategoryInput,
+  type UpdateCategoryInput,
+  setPostCategoryInput,
+  type SetPostCategoryInput,
+  setProductCategoryInput,
+  type SetProductCategoryInput,
 } from "./schemas/creator-content";
+export {
+  updateMemberHandleInput,
+  type UpdateMemberHandleInput,
+} from "./schemas/member-handle";
 
 // Services (use-cases)
 export { recordOutboundTap, type RecordOutboundTapDeps } from "./services/record-outbound-tap";
@@ -118,9 +137,22 @@ export {
   tagProductToPost,
   updateProductAffiliateUrl,
   removeProduct,
+  listMyCategories,
+  createCategory,
+  updateCategory,
+  removeCategory,
+  setPostCategory,
+  setProductCategory,
   MAX_PROFILES_PER_ACCOUNT,
   type CreatorContentDeps,
+  type CategoryDeps,
 } from "./services/creator-content";
+export {
+  generateMemberHandle,
+  updateMemberHandle,
+  getMemberHandle,
+  type MemberHandleDeps,
+} from "./services/member-handle";
 export {
   followProfile,
   unfollowProfile,

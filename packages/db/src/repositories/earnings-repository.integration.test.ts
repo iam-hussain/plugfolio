@@ -35,7 +35,7 @@ describe.skipIf(!url)("EarningsRepository (integration)", () => {
   beforeAll(async () => {
     db = new PrismaClient({ datasources: { db: { url } } });
     earnings = createEarningsRepository(db);
-    await db.user.create({ data: { id: accountId, email: `${accountId}@example.com` } });
+    await db.user.create({ data: { id: accountId, email: `${accountId}@example.com`, username: `user-${accountId.slice(0, 8)}` } });
     await db.profile.create({
       data: { id: profileId, username: accountId.slice(0, 8), userId: accountId },
     });

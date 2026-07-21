@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { NotFoundError } from "../errors";
+import { ForbiddenError, NotFoundError } from "../errors";
 import type { CommentRepository, CommentView, NewComment } from "../ports/comment-repository";
 import type { FollowRepository } from "../ports/follow-repository";
 import type { ProfileRepository } from "../ports/profile-repository";
@@ -7,6 +7,8 @@ import { addComment, followProfile, getFollowedProfiles, unfollowProfile } from 
 
 const PROFILE_ID = "11111111-1111-1111-1111-111111111111";
 const USER_ID = "22222222-2222-2222-2222-222222222222";
+/** A creator who is Admin of PROFILE_ID (for ADR-0009 identity tests). */
+const CREATOR_ID = "33333333-3333-3333-3333-333333333333";
 
 /** In-memory fakes — services stay testable without Prisma. */
 function makeFakeProfiles(): ProfileRepository {
@@ -14,8 +16,10 @@ function makeFakeProfiles(): ProfileRepository {
     async listByUser() {
       return [];
     },
-    async listAccessibleByUser() {
-      return [];
+    async listAccessibleByUser(userId: string) {
+      return userId === CREATOR_ID
+        ? [{ id: PROFILE_ID, username: "lena", role: "admin" as const }]
+        : [];
     },
     async exists(profileId: string) {
       return profileId === PROFILE_ID;
@@ -56,7 +60,8 @@ function makeFakeComments(): CommentRepository & { rows: CommentView[] } {
       const view: CommentView = {
         id: `comment-${rows.length + 1}`,
         body: comment.body,
-        authorName: null,
+        author: { name: null, handle: "user-abc12345" },
+        asProfile: comment.asProfileId ? { username: "lena" } : null,
         createdAt: new Date("2026-07-20T00:00:00.000Z"),
       };
       rows.push(view);
@@ -117,6 +122,28 @@ describe("addComment", () => {
         body: "hello",
       }),
     ).rejects.toBeInstanceOf(NotFoundError);
+    expect(deps.comments.rows).toHaveLength(0);
+  });
+
+  it("lets a member speak AS their profile (ADR-0009)", async () => {
+    const deps = makeDeps();
+    const comment = await addComment(deps, CREATOR_ID, {
+      profileId: PROFILE_ID,
+      asProfileId: PROFILE_ID,
+      body: "Thanks — glad you love them!",
+    });
+    expect(comment.asProfile).toEqual({ username: "lena" });
+  });
+
+  it("rejects speaking as a profile the author doesn't belong to", async () => {
+    const deps = makeDeps();
+    await expect(
+      addComment(deps, USER_ID, {
+        profileId: PROFILE_ID,
+        asProfileId: PROFILE_ID,
+        body: "pretending to be the brand",
+      }),
+    ).rejects.toBeInstanceOf(ForbiddenError);
     expect(deps.comments.rows).toHaveLength(0);
   });
 });

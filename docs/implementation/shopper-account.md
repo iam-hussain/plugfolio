@@ -19,8 +19,8 @@ Migration `20260720100000_follows_and_comments`:
 ## Components (feature `shopper-account`)
 
 - `FollowButton` (client) — signed-out: a door to sign-in; signed-in: toggle backed by `router.refresh()` (server state stays the truth).
-- `CommentForm` (client) — signed-in only; 500-char cap mirrors the Zod schema.
-- `CommentList` (server) — account-free reading; shows `User.name ?? "Shopper"` — **the author's email is never rendered** (privacy; names arrive when profile settings land).
+- `CommentForm` (client) — signed-in only; 500-char cap mirrors the Zod schema. Carries the ADR-0009 identity picker for profile members (see [member-handles-and-categories.md](./member-handles-and-categories.md)).
+- `CommentList` (server) — account-free reading; a comment is signed by the author's `@member-handle`, or by the profile + Creator badge when it speaks as one (ADR-0009) — **the author's email is never rendered** (privacy).
 
 ## Edge cases
 

@@ -45,6 +45,11 @@ export default async function DashboardPage({
           >
             Products
           </Link>
+          <Link
+            href={{ pathname: "/dashboard/categories", query: active ? { profile: active.id } : {} }}
+          >
+            Categories
+          </Link>
           <Link href="/dashboard/collabs">Collabs</Link>
           {active?.role === "admin" ? (
             <Link href={{ pathname: "/dashboard/settings", query: { profile: active.id } }}>

@@ -1,4 +1,10 @@
-import type { ManagerRepository, ManagerView, UserRepository } from "@plugfolio/core";
+import { Prisma } from "@prisma/client";
+import {
+  generateMemberHandle,
+  type ManagerRepository,
+  type ManagerView,
+  type UserRepository,
+} from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 
 /** Prisma implementations of the Manager ports (ADR-0004). */
@@ -42,9 +48,30 @@ export function createUserRepository(db: PrismaClient = prisma): UserRepository 
       return db.user.upsert({
         where: { email },
         update: {},
-        create: { email },
+        // Every account gets a member handle from birth (ADR-0009).
+        create: { email, username: generateMemberHandle() },
         select: { id: true },
       });
+    },
+
+    async getHandle(userId: string): Promise<string | null> {
+      const row = await db.user.findUnique({
+        where: { id: userId },
+        select: { username: true },
+      });
+      return row?.username ?? null;
+    },
+
+    async updateUsername(userId: string, username: string): Promise<"ok" | "taken"> {
+      try {
+        await db.user.update({ where: { id: userId }, data: { username } });
+        return "ok";
+      } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+          return "taken";
+        }
+        throw error;
+      }
     },
   };
 }

@@ -1,18 +1,20 @@
 "use client";
 
-import type { ShopperProduct } from "@plugfolio/core";
+import type { CategoryView, ShopperProduct } from "@plugfolio/core";
 import { Button } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { removeProduct, updateProduct } from "../api";
+import { CategorySelect } from "./category-select";
 
 /** Products tab row (lean journey: "Fix a link, remove one"). */
 export type ProductRowProps = {
   product: ShopperProduct;
+  categories: readonly CategoryView[];
 };
 
-export function ProductRow({ product }: ProductRowProps) {
+export function ProductRow({ product, categories }: ProductRowProps) {
   const router = useRouter();
   const [affiliateUrl, setAffiliateUrl] = useState(product.affiliateUrl);
 
@@ -63,6 +65,11 @@ export function ProductRow({ product }: ProductRowProps) {
           {save.isPending ? "Saving…" : "Save"}
         </Button>
       </form>
+      <CategorySelect
+        target={{ kind: "product", productId: product.id }}
+        categories={categories}
+        currentCategoryId={product.categoryId}
+      />
       {save.isError || remove.isError ? (
         <p role="alert" className="text-muted-foreground text-xs">
           {(save.error ?? remove.error)?.message}

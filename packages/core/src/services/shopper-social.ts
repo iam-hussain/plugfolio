@@ -1,7 +1,8 @@
-import { NotFoundError } from "../errors";
+import { ForbiddenError, NotFoundError } from "../errors";
 import type { CommentRepository, CommentView } from "../ports/comment-repository";
 import type { FollowRepository } from "../ports/follow-repository";
 import type { ProfileRepository, ProfileSummary } from "../ports/profile-repository";
+import type { AddCommentInput } from "../schemas/shopper-social";
 
 /**
  * The shopper-account use-cases (§2.2: follow and comment are the ONLY things
@@ -53,12 +54,21 @@ export async function isFollowingProfile(
 export async function addComment(
   deps: ShopperSocialDeps,
   userId: string,
-  input: { profileId: string; body: string },
+  input: AddCommentInput,
 ): Promise<CommentView> {
   if (!(await deps.profiles.exists(input.profileId))) {
     throw new NotFoundError("Profile not found");
   }
-  return deps.comments.add({ profileId: input.profileId, userId, body: input.body });
+  // ADR-0009: speaking AS a profile requires membership (Admin or Manager) —
+  // the client's pick is never trusted.
+  const asProfileId = input.asProfileId ?? null;
+  if (asProfileId) {
+    const memberships = await deps.profiles.listAccessibleByUser(userId);
+    if (!memberships.some((profile) => profile.id === asProfileId)) {
+      throw new ForbiddenError("Not your profile");
+    }
+  }
+  return deps.comments.add({ profileId: input.profileId, userId, asProfileId, body: input.body });
 }
 
 export async function getComments(

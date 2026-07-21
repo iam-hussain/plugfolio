@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ConflictError, ForbiddenError, NotFoundError } from "../errors";
+import type { CategoryRepository, CategoryView } from "../ports/category-repository";
 import type {
   ConnectionReadRepository,
   PostWriteRepository,
@@ -11,9 +12,12 @@ import type { ProductReadRepository } from "../ports/product-repository";
 import type { ProfileRepository } from "../ports/profile-repository";
 import {
   MAX_PROFILES_PER_ACCOUNT,
+  createCategory,
   createPost,
   createProfile,
   removeProduct,
+  setPostCategory,
+  setProductCategory,
   tagProductToPost,
   updateProductAffiliateUrl,
 } from "./creator-content";
@@ -23,6 +27,9 @@ const OUTSIDER = "10000000-0000-0000-0000-000000000002";
 const PROFILE_ID = "20000000-0000-0000-0000-000000000001";
 const POST_ID = "30000000-0000-0000-0000-000000000001";
 const PRODUCT_ID = "40000000-0000-0000-0000-000000000001";
+const CATEGORY_ID = "50000000-0000-0000-0000-000000000001";
+/** A category belonging to a DIFFERENT profile — cross-profile must 404. */
+const FOREIGN_CATEGORY_ID = "50000000-0000-0000-0000-000000000002";
 
 function makeDeps(options: { connected?: boolean; profileCount?: number; metadata?: ProductMetadata | null } = {}) {
   const { connected = true, profileCount = 1, metadata = null } = options;
@@ -56,12 +63,16 @@ function makeDeps(options: { connected?: boolean; profileCount?: number; metadat
       return connected;
     },
   };
+  const postCategoryChanges: (string | null)[] = [];
   const posts: PostWriteRepository = {
     async create() {
       return { id: "new-post" };
     },
     async belongsToProfile(postId, profileId) {
       return postId === POST_ID && profileId === PROFILE_ID;
+    },
+    async setCategory(_postId, categoryId) {
+      postCategoryChanges.push(categoryId);
     },
   };
   const products: ProductReadRepository = {
@@ -84,9 +95,41 @@ function makeDeps(options: { connected?: boolean; profileCount?: number; metadat
     async updateAffiliateUrl(productId) {
       updates.push(productId);
     },
+    async setCategory(_productId, categoryId) {
+      productCategoryChanges.push(categoryId);
+    },
     async remove(productId) {
       removals.push(productId);
     },
+  };
+  const productCategoryChanges: (string | null)[] = [];
+  const categoryRows: CategoryView[] = [
+    { id: CATEGORY_ID, title: "Desk setup", description: null, sortOrder: 0 },
+  ];
+  const categories: CategoryRepository = {
+    async listByProfile() {
+      return categoryRows;
+    },
+    async findProfileId(categoryId) {
+      if (categoryId === CATEGORY_ID) return PROFILE_ID;
+      if (categoryId === FOREIGN_CATEGORY_ID) return "20000000-0000-0000-0000-000000000099";
+      return null;
+    },
+    async create(category) {
+      if (categoryRows.some((row) => row.title === category.title)) return "duplicate";
+      const view: CategoryView = {
+        id: "new-category",
+        title: category.title,
+        description: category.description,
+        sortOrder: 0,
+      };
+      categoryRows.push(view);
+      return view;
+    },
+    async update() {
+      return "ok";
+    },
+    async remove() {},
   };
   const gateway: ProductMetadataGateway = {
     async fetchMetadata() {
@@ -95,11 +138,13 @@ function makeDeps(options: { connected?: boolean; profileCount?: number; metadat
   };
 
   return {
-    deps: { profiles, connections, posts, products, productWrites, metadata: gateway },
+    deps: { profiles, connections, posts, products, productWrites, categories, metadata: gateway },
     created,
     taggedRows,
     updates,
     removals,
+    postCategoryChanges,
+    productCategoryChanges,
   };
 }
 
@@ -176,5 +221,36 @@ describe("product fixes (Products tab)", () => {
     await expect(
       updateProductAffiliateUrl(deps, OUTSIDER, PRODUCT_ID, "https://a.test/x"),
     ).rejects.toBeInstanceOf(ForbiddenError);
+  });
+});
+
+describe("categories (ADR-0010)", () => {
+  it("rejects a duplicate title on the same profile with Conflict", async () => {
+    const { deps } = makeDeps();
+    await expect(
+      createCategory(deps, USER, { profileId: PROFILE_ID, title: "Desk setup" }),
+    ).rejects.toBeInstanceOf(ConflictError);
+  });
+
+  it("an outsider cannot create a category", async () => {
+    const { deps } = makeDeps();
+    await expect(
+      createCategory(deps, OUTSIDER, { profileId: PROFILE_ID, title: "Sneaky shelf" }),
+    ).rejects.toBeInstanceOf(ForbiddenError);
+  });
+
+  it("puts a post on a shelf and takes it off", async () => {
+    const { deps, postCategoryChanges } = makeDeps();
+    await setPostCategory(deps, USER, POST_ID, { profileId: PROFILE_ID, categoryId: CATEGORY_ID });
+    await setPostCategory(deps, USER, POST_ID, { profileId: PROFILE_ID, categoryId: null });
+    expect(postCategoryChanges).toEqual([CATEGORY_ID, null]);
+  });
+
+  it("rejects assigning a category from another profile (cross-profile is a 404)", async () => {
+    const { deps, productCategoryChanges } = makeDeps();
+    await expect(
+      setProductCategory(deps, USER, PRODUCT_ID, { categoryId: FOREIGN_CATEGORY_ID }),
+    ).rejects.toBeInstanceOf(NotFoundError);
+    expect(productCategoryChanges).toEqual([]);
   });
 });

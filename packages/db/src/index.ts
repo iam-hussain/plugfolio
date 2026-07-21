@@ -7,6 +7,7 @@ export { createEarningsRepository } from "./repositories/earnings-repository";
 export { createProfileRepository } from "./repositories/profile-repository";
 export { createFollowRepository } from "./repositories/follow-repository";
 export { createCommentRepository } from "./repositories/comment-repository";
+export { createCategoryRepository } from "./repositories/category-repository";
 export {
   createBusinessRepository,
   createRequirementRepository,

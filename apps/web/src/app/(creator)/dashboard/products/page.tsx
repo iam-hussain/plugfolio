@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getMyProfiles, listProfileProducts } from "@plugfolio/core";
+import { getMyProfiles, listMyCategories, listProfileProducts } from "@plugfolio/core";
 import { ProductRow } from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
@@ -24,10 +24,14 @@ export default async function DashboardProductsPage({
   const active = pickActiveProfile(profiles, (await searchParams).profile);
   if (!active) redirect("/dashboard");
 
-  const products = await listProfileProducts(
-    { creatorPages: repositories.creatorPages },
-    active.username,
-  );
+  const [products, categories] = await Promise.all([
+    listProfileProducts({ creatorPages: repositories.creatorPages }, active.username),
+    listMyCategories(
+      { profiles: repositories.profiles, categories: repositories.categories },
+      session.user.id,
+      active.id,
+    ),
+  ]);
 
   return (
     <main className="mx-auto max-w-md px-4 pb-8">
@@ -52,7 +56,7 @@ export default async function DashboardProductsPage({
       ) : (
         <div className="divide-border divide-y">
           {products.map((product) => (
-            <ProductRow key={product.id} product={product} />
+            <ProductRow key={product.id} product={product} categories={categories} />
           ))}
         </div>
       )}

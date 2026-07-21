@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getComments, getCreatorPage, isFollowingProfile } from "@plugfolio/core";
-import { CreatorHeader, PostGrid } from "@/features/creator-page";
+import { getComments, getCreatorPage, getMemberHandle, isFollowingProfile } from "@plugfolio/core";
+import { CategoryChips, CreatorHeader, PostGrid } from "@/features/creator-page";
 import { RequestCollabForm } from "@/features/business-collab";
 import { CommentForm, CommentList, FollowButton } from "@/features/shopper-account";
 import { auth } from "@/server/auth";
@@ -13,19 +13,26 @@ import { repositories } from "@/server/container";
 // services directly — no HTTP hop (§6.11). A session, if present, only enriches
 // (follow state, comment box) — nothing here ever requires one (§2.2).
 type Params = { handle: string };
+type SearchParams = { category?: string };
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { handle } = await params;
   return { title: `@${handle}` };
 }
 
-export default async function CreatorPage({ params }: { params: Promise<Params> }) {
+export default async function CreatorPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<Params>;
+  searchParams: Promise<SearchParams>;
+}) {
   const { handle } = await params;
   const page = await getCreatorPage({ creatorPages: repositories.creatorPages }, handle);
   if (!page) notFound();
 
   const session = await auth();
-  const [following, comments, business] = await Promise.all([
+  const [following, comments, business, ownHandle, memberships] = await Promise.all([
     session?.user
       ? isFollowingProfile({ follows: repositories.follows }, session.user.id, page.id)
       : Promise.resolve(false),
@@ -33,7 +40,27 @@ export default async function CreatorPage({ params }: { params: Promise<Params> 
     session?.user
       ? repositories.businesses.findByUser(session.user.id)
       : Promise.resolve(null),
+    session?.user
+      ? getMemberHandle({ users: repositories.users }, session.user.id)
+      : Promise.resolve(""),
+    session?.user
+      ? repositories.profiles.listAccessibleByUser(session.user.id)
+      : Promise.resolve([]),
   ]);
+
+  // Category chips filter the grid (ADR-0010); "All" holds everything.
+  const { category } = await searchParams;
+  const activeCategory = page.categories.find((c) => c.id === category) ?? null;
+  const posts = activeCategory
+    ? page.posts.filter((post) => post.categoryId === activeCategory.id)
+    : page.posts;
+
+  // ADR-0009 default: on your own page you speak as the profile; the picker
+  // lets a member choose otherwise, per comment.
+  const identities = memberships.map(({ id, username }) => ({ id, username }));
+  const defaultAsProfileId = identities.some((identity) => identity.id === page.id)
+    ? page.id
+    : null;
 
   return (
     <main className="mx-auto max-w-md px-4 pb-8">
@@ -50,13 +77,33 @@ export default async function CreatorPage({ params }: { params: Promise<Params> 
           <RequestCollabForm profileId={page.id} />
         </div>
       ) : null}
-      <PostGrid handle={page.username} posts={page.posts} />
+      <CategoryChips
+        handle={page.username}
+        categories={page.categories}
+        activeId={activeCategory?.id ?? null}
+      />
+      {activeCategory && posts.length === 0 ? (
+        <p className="text-muted-foreground py-12 text-center text-sm">
+          Nothing here yet —{" "}
+          <Link href={`/${page.username}`} className="underline">
+            see All
+          </Link>
+          .
+        </p>
+      ) : (
+        <PostGrid handle={page.username} posts={posts} />
+      )}
       <section aria-label="Comments" className="pt-8">
         <h2 className="pb-3 font-medium">Comments</h2>
         <CommentList comments={comments} />
         <div className="pt-4">
           {session?.user ? (
-            <CommentForm profileId={page.id} />
+            <CommentForm
+              profileId={page.id}
+              ownHandle={ownHandle}
+              identities={identities}
+              defaultAsProfileId={defaultAsProfileId}
+            />
           ) : (
             <p className="text-muted-foreground text-sm">
               <Link href="/api/auth/signin" className="underline">

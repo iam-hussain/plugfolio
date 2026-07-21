@@ -19,6 +19,11 @@ datasource db {
 model User {
   id            String    @id @default(uuid()) @db.Uuid
   email         String    @unique
+  /// The member handle (ADR-0009): every account's public identity for
+  /// follow/comment, shown as @handle. Auto-generated at first sign-in,
+  /// changeable in settings. NEVER a login and never a URL in v1 — a separate
+  /// namespace from Profile.username.
+  username      String    @unique
   emailVerified DateTime?
   name          String?
   image         String?
@@ -80,14 +85,16 @@ model Profile {
   username  String    @unique
   userId    String    @db.Uuid
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  posts     Post[]
-  products  Product[]
-  taps      Tap[]
-  followers Follow[]
-  comments  Comment[]
-  collabs   Collab[]
-  managers  ProfileManager[]
-  createdAt DateTime  @default(now())
+  posts      Post[]
+  products   Product[]
+  taps       Tap[]
+  followers  Follow[]
+  comments   Comment[]  @relation("PageComments")
+  commentsAs Comment[]  @relation("CommentsAsProfile")
+  categories Category[]
+  collabs    Collab[]
+  managers   ProfileManager[]
+  createdAt  DateTime   @default(now())
 
   @@index([userId])
 }
@@ -188,13 +195,36 @@ model Follow {
 model Comment {
   id        String   @id @default(uuid()) @db.Uuid
   profileId String   @db.Uuid
-  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile   Profile  @relation("PageComments", fields: [profileId], references: [id], onDelete: Cascade)
   userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// The profile this comment speaks AS (ADR-0009) — validated against the
+  /// author's memberships in the service. Null = the personal @handle.
+  /// SetNull: a deleted profile's comments fall back to the person.
+  asProfileId String?  @db.Uuid
+  asProfile   Profile? @relation("CommentsAsProfile", fields: [asProfileId], references: [id], onDelete: SetNull)
   body      String
   createdAt DateTime @default(now())
 
   @@index([profileId, createdAt])
+}
+
+/// A creator's shelf (ADR-0010): per-profile curation, never a site-wide
+/// taxonomy. Posts/products join via a single nullable FK — deleting a
+/// category never deletes content.
+model Category {
+  id          String    @id @default(uuid()) @db.Uuid
+  profileId   String    @db.Uuid
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  sortOrder   Int       @default(0)
+  posts       Post[]
+  products    Product[]
+  createdAt   DateTime  @default(now())
+
+  @@unique([profileId, title])
+  @@index([profileId, sortOrder])
 }
 
 /// A creator's post — the shoppable unit of the page ("tap a post, see the
@@ -207,6 +237,8 @@ model Post {
   profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   mediaUrl  String
   caption   String?
+  categoryId String?   @db.Uuid
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   products  Product[]
   taps      Tap[]
   createdAt DateTime  @default(now())
@@ -227,6 +259,8 @@ model Product {
   imageUrl      String?
   priceCents    Int?
   currency      String   @default("usd")
+  categoryId    String?   @db.Uuid
+  category      Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   posts         Post[]
   taps          Tap[]
   createdAt     DateTime @default(now())

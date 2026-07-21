@@ -1,4 +1,8 @@
-import type { AddCommentInput, FollowProfileInput } from "@plugfolio/core";
+import type {
+  AddCommentInput,
+  FollowProfileInput,
+  UpdateMemberHandleInput,
+} from "@plugfolio/core";
 
 /**
  * Client calls for the shopper-account actions (§5: components go through the
@@ -34,6 +38,16 @@ export async function unfollowProfile(input: FollowProfileInput): Promise<void> 
 export async function addComment(input: AddCommentInput): Promise<void> {
   const response = await fetch("/api/comments", {
     method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+    credentials: "same-origin",
+  });
+  if (!response.ok) throw await parseError(response);
+}
+
+export async function updateMemberHandle(input: UpdateMemberHandleInput): Promise<void> {
+  const response = await fetch("/api/me/handle", {
+    method: "PATCH",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input),
     credentials: "same-origin",

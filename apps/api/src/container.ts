@@ -1,5 +1,6 @@
 import {
   createBusinessRepository,
+  createCategoryRepository,
   createConnectionRepository,
   createManagerRepository,
   createCollabRepository,
@@ -27,6 +28,7 @@ export const repositories = {
   profiles: createProfileRepository(),
   follows: createFollowRepository(),
   comments: createCommentRepository(),
+  categories: createCategoryRepository(),
   businesses: createBusinessRepository(),
   requirements: createRequirementRepository(),
   collabs: createCollabRepository(),
@@ -60,6 +62,7 @@ export const creatorContentDeps = {
   posts: repositories.postWrites,
   products: repositories.products,
   productWrites: repositories.productWrites,
+  categories: repositories.categories,
   metadata: createOgMetadataGateway(),
 };
 
