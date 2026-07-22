@@ -1,5 +1,11 @@
 /** Public surface of the creator-page feature (§5: import from here only). */
 export { CreatorHeader, type CreatorHeaderProps } from "./components/creator-header";
+export {
+  SocialsRow,
+  type SocialsRowProps,
+  type SocialLink,
+  type SocialPlatform,
+} from "./components/socials-row";
 export { PostGrid, type PostGridProps } from "./components/post-grid";
 export { CategoryChips, type CategoryChipsProps } from "./components/category-chips";
 export { TaggedProductCard, type TaggedProductCardProps } from "./components/tagged-product-card";

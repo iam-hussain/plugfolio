@@ -159,13 +159,32 @@ apps/web/src/server/    # http: request→service mapping, error → HTTP shape;
 
 ## 7. Design system & theme — "Charged Violet"
 
-Centralize the theme; components never hardcode hex/spacing.
+The design source of truth is **Brand Guidelines v1.1** and the **Engineering Spec** in [`docs/design-out/`](./docs/design-out/) (rendered `Plugfolio Brand.html`, `Plugfolio Dev Spec.dc.html`, `PlugMark.dc.html`). Centralize the theme; **components never hardcode hex, spacing, or fonts, and never use inline `style` attributes** — every visual value comes from a token utility class.
 
-- **Palette:** Charged Violet `#7C3AED` (primary) · Electric Lime `#C6FF3D` (one disciplined accent) · violet-tinted dark surfaces. Lime is a spark, not a background — use it sparingly (CTAs, highlights).
-- **Tokens are the only source of color/space/type.** Define semantic tokens (`--color-primary`, `--color-accent`, `--surface`, `--text`, radius, spacing scale) in `@plugfolio/tokens` (`tokens.css`), exposed through Tailwind's theme via the shared preset in `@plugfolio/config`. **Components reference tokens, never raw hex.**
-- **Type:** geometric display face for headings, clean sans for body. One scale, defined once.
-- **Mobile-first & accessible:** design at 360px first; hit WCAG AA contrast (mind lime-on-light — it fails easily); every interactive element keyboard- and screen-reader-usable; respect `prefers-reduced-motion`.
-- **Dark-first surfaces** (the brand is violet-tinted dark), but tokens must support a light mode cleanly.
+**Palette (Brand Guidelines v1.1 §05).** Raw values live in `@plugfolio/tokens` (`tokens.css`) as `--brand-*`; components consume the *semantic* tokens, not these.
+
+| Role | Hex | Notes |
+|---|---|---|
+| Brand Violet | `#7C3AED` | primary |
+| Violet Deep | `#5B21B6` | hover / dark |
+| Violet Tint | `#A78BFA` | accents / focus ring |
+| Ink | `#12101C` | text / prongs / dark UI |
+| Electric Lime | `#C6FF3D` | **fill only, always dark text on top** |
+| Coral | `#FF6B5C` | warm alt |
+| Violet Wash | `#EFEAFB` | tint field |
+| Canvas | `#F5F4F8` | light page bg |
+
+- **Lime rule (enforce in review):** Electric Lime is a **fill only, with dark (`--color-accent-foreground` = Ink) text on top**. Never lime type on white, never lime as a text color — it fails AA. Use it for the Buy CTA, the coupon code chip, and dark-surface PlugMark prongs.
+- **Tokens are the only source of color/space/type.** Semantic tokens (`--color-primary`, `--color-accent`, `--surface`, `--surface-muted`, `--text`, `--text-muted`, `--border`, `--ring`) are defined once in `tokens.css` (light **and** dark) and exposed through the Tailwind preset in `@plugfolio/config`. In this codebase `--surface` is the **page** (`bg-background`) and `--surface-muted` is the **raised** card/input fill (`bg-card` / `bg-muted`). **Reference tokens via classes, never raw hex.**
+- **Radius:** `sm 8px · md 12px · lg 16px · pill 9999px` (`rounded-sm|md|lg|pill`). **Spacing:** 4-based (4 / 8 / 12 / 16 / 24 / 32 / 48).
+- **Type (Brand Guidelines v1.1 §06), loaded via `next/font` in `apps/web` layout:**
+  - **Sora** — display / wordmark / headlines (500–800), tracking -2% to -5% (`font-display`, `tracking-display`).
+  - **Inter** — UI & body (400–700), 16px / 1.6, tabular nums for data (`font-sans`).
+  - **Space Mono** — micro labels, eyebrows, uppercase captions, tracking 0.12–0.18em (`font-mono`, `tracking-eyebrow`).
+- **Brand mark — PlugMark.** The two-prong "plug that grows" symbol + `plugfolio` wordmark (lowercase, Sora 700, square spark dot). Live in `apps/web/src/components/brand/` as `PlugMark`, `Wordmark`, `Logo` (horizontal / stacked / symbol / reversed lockups). **Never redraw the mark** — reuse the component (geometry is copied from `PlugMark.dc.html`). Color follows the locked rule: **on light** = violet body + ink prongs (spark violet/ink, never lime); **on dark/violet** = white/violet body + lime prongs & spark; under 24px collapse to a single flat color.
+- **Persistent shopper chrome.** Every public shopper screen carries the app top bar (PlugMark + wordmark, search, role-signaling account slot) and the bottom tab bar (HOME / SHOP / FOLLOWING / ACCOUNT). Both live in `apps/web/src/components/chrome/`; wrap surfaces via `ShopperShell` — screens never invent their own header/footer.
+- **Mobile-first & accessible:** design at 360px first; hit WCAG AA contrast in **both** themes (mind lime-on-light — it's fill-only for this reason); ≥44px hit targets; body never below 14px; every control keyboard- and screen-reader-usable; respect `prefers-reduced-motion`.
+- **Dark-first surfaces** (the brand is violet-tinted dark), but tokens support light mode cleanly.
 
 ---
 
@@ -180,6 +199,7 @@ Centralize the theme; components never hardcode hex/spacing.
 
 **Components**
 - **shadcn/ui first — always.** If shadcn/ui has a component for what you need (Button, Dialog, Sheet, Input, Select, Dropdown, Tabs, Toast, Table, …), **use it — do not build a custom one.** Add it with the shadcn CLI into `components/ui/`, then theme it via our tokens (§7). Only build a custom component when shadcn has **no** equivalent, and even then compose it from shadcn primitives where possible. Extend a shadcn component by wrapping it, not by forking a parallel version. Never reintroduce a hand-rolled Button/Modal/etc. that duplicates one shadcn already provides.
+- **Variants via `class-variance-authority` (CVA) — never hardcoded colors, never inline styles.** Any component with visual states (size, tone, active/inactive, kind) declares them with `cva`, keyed on token utility classes (`bg-primary`, `text-accent-foreground`, `border-border`, …). No raw hex, no `style={{ … }}` attribute, and no runtime-built Tailwind strings (`` `h-[${n}px]` ``) that the JIT can't see — use named CVA size/tone variants so every value stays on the token scale. Pick a variant with a prop; don't branch styling with ad-hoc `className` string concatenation.
 - **Function components + hooks only.** One component per file; the file is named for the component.
 - **Props are a typed object**, destructured, with sensible defaults. Keep prop lists short — many props means the component should split.
 - **Presentational vs. container.** Generic UI (`components/`, built on shadcn `components/ui/`) is presentational and stateless where possible; data-fetching/orchestration lives in feature components/hooks.
