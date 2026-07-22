@@ -195,8 +195,18 @@ model Follow {
 /// shopper account. Reading comments stays account-free.
 model Comment {
   id        String   @id @default(uuid()) @db.Uuid
+  /// The owning creator page — always set, also for product comments.
   profileId String   @db.Uuid
   profile   Profile  @relation("PageComments", fields: [profileId], references: [id], onDelete: Cascade)
+  /// ADR-0013: null = a page-level comment; set = a comment on this product.
+  /// Post comments are deferred.
+  productId String?  @db.Uuid
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  /// ADR-0013: one-level threads — a reply's parent is always top-level
+  /// (enforced in the service). Replies go with their parent (Cascade).
+  parentId  String?  @db.Uuid
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
   userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   /// The profile this comment speaks AS (ADR-0009) — validated against the
@@ -208,6 +218,8 @@ model Comment {
   createdAt DateTime @default(now())
 
   @@index([profileId, createdAt])
+  @@index([productId, createdAt])
+  @@index([parentId])
 }
 
 /// A creator's shelf (ADR-0010): per-profile curation, never a site-wide
@@ -274,6 +286,7 @@ model Product {
   posts         Post[]
   taps          Tap[]
   codeCopies    CodeCopy[]
+  comments      Comment[]
   createdAt     DateTime @default(now())
 
   @@index([profileId])

@@ -70,11 +70,24 @@ For users with a single identity, replace the picker with plain text: *"commenti
 edit → availability check → save. Errors: taken, invalid characters, too short/long.
 This is the only new screen in this change; keep it a single sheet/section, not a page.
 
+### Where comments live & how they thread (ADR-0013)
+
+- Comments appear in **two places**: the creator's page and **each product's page** — the
+  product thread is where buying questions happen ("does it fit a 16-inch laptop?").
+  Posts have **no** comments in v1.
+- Threads are **one level deep**: any top-level comment can take replies (indented, like
+  the existing mock's Maya-under-Priya), but replies can't be replied to — don't design a
+  deeper affordance. **Reply** shows only for signed-in viewers and opens an inline reply
+  form (with the same identity picker); the creator's answer defaults to speaking as the
+  profile.
+
 ### States to design
 
 - Comment as a person (name + `@handle`) · comment as a profile (profile + Creator badge) —
   both in-thread, light & dark. A brand comment on *someone else's* page uses the same
   profile treatment — no special variant.
+- Thread states: top-level with replies (indent treatment) · Reply closed / open (inline
+  form + cancel) · product-page thread empty ("No comments yet").
 - Comment form: single identity (plain "commenting as" text) · multi-identity picker
   closed / open (sheet) · long picker list (5+ identities, scrolling).
 - Handle edit: idle / checking availability / taken / saved.

@@ -48,6 +48,7 @@ export const shopperSocialDeps = {
   follows: repositories.follows,
   comments: repositories.comments,
   profiles: repositories.profiles,
+  products: repositories.products,
 };
 
 export const businessCollabDeps = {

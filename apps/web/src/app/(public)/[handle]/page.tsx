@@ -95,7 +95,12 @@ export default async function CreatorPage({
       )}
       <section aria-label="Comments" className="pt-8">
         <h2 className="pb-3 font-medium">Comments</h2>
-        <CommentList comments={comments} />
+        <CommentList
+          comments={comments}
+          replyContext={
+            session?.user ? { profileId: page.id, ownHandle, identities, defaultAsProfileId } : null
+          }
+        />
         <div className="pt-4">
           {session?.user ? (
             <CommentForm

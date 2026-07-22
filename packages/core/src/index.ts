@@ -49,7 +49,13 @@ export type {
   ProductMetadataGateway,
 } from "./ports/creator-content-repository";
 export type { FollowRepository } from "./ports/follow-repository";
-export type { CommentRepository, CommentView, NewComment } from "./ports/comment-repository";
+export type {
+  CommentRepository,
+  CommentView,
+  CommentThread,
+  CommentTarget,
+  NewComment,
+} from "./ports/comment-repository";
 export type {
   CategoryRepository,
   CategoryView,
@@ -172,6 +178,7 @@ export {
   isFollowingProfile,
   addComment,
   getComments,
+  getProductComments,
   type ShopperSocialDeps,
 } from "./services/shopper-social";
 export {

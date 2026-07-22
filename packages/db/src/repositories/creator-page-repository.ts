@@ -79,6 +79,7 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
         where: { id: productId, profile: { username } },
         select: {
           ...productSelect,
+          profileId: true,
           posts: {
             orderBy: { createdAt: "desc" },
             take: 1,

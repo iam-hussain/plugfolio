@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getShopperProduct } from "@plugfolio/core";
+import { getMemberHandle, getProductComments, getShopperProduct } from "@plugfolio/core";
 import { CouponBlock, ProductTapButton } from "@/features/creator-page";
+import { CommentForm, CommentList } from "@/features/shopper-account";
 import { formatPrice } from "@/lib/format-price";
+import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
 
-// Product page (brief 03): photo, price, the post it came from, one Buy
-// button. The buy path stays account-free (ADR-0002, §2.2).
+// Product page (brief 03 + 13): photo, price, the post it came from, one
+// outbound action — plus its own comment thread (ADR-0013). The buy path
+// stays account-free (ADR-0002, §2.2); a session only enriches.
 type Params = { handle: string; productId: string };
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
@@ -29,6 +32,22 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
     productId,
   );
   if (!product) notFound();
+
+  const session = await auth();
+  const [comments, ownHandle, memberships] = await Promise.all([
+    getProductComments({ comments: repositories.comments }, product.id),
+    session?.user
+      ? getMemberHandle({ users: repositories.users }, session.user.id)
+      : Promise.resolve(""),
+    session?.user
+      ? repositories.profiles.listAccessibleByUser(session.user.id)
+      : Promise.resolve([]),
+  ]);
+
+  const identities = memberships.map(({ id, username }) => ({ id, username }));
+  const defaultAsProfileId = identities.some((identity) => identity.id === product.profileId)
+    ? product.profileId
+    : null;
 
   const price = formatPrice(product.priceCents, product.currency);
 
@@ -95,6 +114,41 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
           </Link>
         </aside>
       ) : null}
+      <section aria-label="Comments" className="pt-8">
+        <h2 className="pb-3 font-medium">Comments</h2>
+        <CommentList
+          comments={comments}
+          replyContext={
+            session?.user
+              ? {
+                  profileId: product.profileId,
+                  productId: product.id,
+                  ownHandle,
+                  identities,
+                  defaultAsProfileId,
+                }
+              : null
+          }
+        />
+        <div className="pt-4">
+          {session?.user ? (
+            <CommentForm
+              profileId={product.profileId}
+              productId={product.id}
+              ownHandle={ownHandle}
+              identities={identities}
+              defaultAsProfileId={defaultAsProfileId}
+            />
+          ) : (
+            <p className="text-muted-foreground text-sm">
+              <Link href="/api/auth/signin" className="underline">
+                Sign in
+              </Link>{" "}
+              to comment — shopping never needs an account.
+            </p>
+          )}
+        </div>
+      </section>
     </main>
   );
 }

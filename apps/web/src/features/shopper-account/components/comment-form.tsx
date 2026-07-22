@@ -22,26 +22,35 @@ export type CommentIdentityOption = {
 
 export type CommentFormProps = {
   profileId: string;
+  /** ADR-0013: set when commenting on a product instead of the page. */
+  productId?: string;
+  /** ADR-0013: set when replying to a top-level comment. */
+  parentId?: string;
   /** The commenter's member handle, for the "commenting as" label. */
   ownHandle: string;
   /** Profiles the commenter can speak as (empty for plain shoppers). */
   identities: readonly CommentIdentityOption[];
   /** Preselected identity: this page's profile when the user is a member. */
   defaultAsProfileId: string | null;
+  placeholder?: string;
 };
 
 export function CommentForm({
   profileId,
+  productId,
+  parentId,
   ownHandle,
   identities,
   defaultAsProfileId,
+  placeholder = "Add a comment…",
 }: CommentFormProps) {
   const router = useRouter();
   const [body, setBody] = useState("");
   const [asProfileId, setAsProfileId] = useState(defaultAsProfileId ?? "");
 
   const submit = useMutation({
-    mutationFn: () => addComment({ profileId, body, asProfileId: asProfileId || null }),
+    mutationFn: () =>
+      addComment({ profileId, productId, parentId, body, asProfileId: asProfileId || null }),
     onSuccess: () => {
       setBody("");
       router.refresh();
@@ -75,16 +84,16 @@ export function CommentForm({
       ) : (
         <p className="text-muted-foreground text-xs">Commenting as @{ownHandle}</p>
       )}
-      <label htmlFor="comment-body" className="sr-only">
-        Add a comment
+      <label className="sr-only" htmlFor={`comment-body-${parentId ?? productId ?? "page"}`}>
+        {placeholder}
       </label>
       <textarea
-        id="comment-body"
+        id={`comment-body-${parentId ?? productId ?? "page"}`}
         value={body}
         onChange={(event) => setBody(event.target.value)}
         maxLength={500}
         rows={2}
-        placeholder="Add a comment…"
+        placeholder={placeholder}
         className="border-border bg-background rounded-md border p-2 text-sm"
       />
       <div className="flex items-center justify-between">

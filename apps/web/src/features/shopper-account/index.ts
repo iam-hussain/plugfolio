@@ -5,5 +5,9 @@ export {
   type CommentFormProps,
   type CommentIdentityOption,
 } from "./components/comment-form";
-export { CommentList, type CommentListProps } from "./components/comment-list";
+export {
+  CommentList,
+  type CommentListProps,
+  type CommentReplyContext,
+} from "./components/comment-list";
 export { HandleForm, type HandleFormProps } from "./components/handle-form";

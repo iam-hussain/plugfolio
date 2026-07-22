@@ -47,6 +47,8 @@ export type CreatorPage = {
 };
 
 export type ShopperProductView = ShopperProduct & {
+  /** The owning profile — the product page's comment target (ADR-0013). */
+  readonly profileId: string;
   /** The post it came from (brief 03); null if tagged nowhere yet. */
   readonly fromPost: { readonly id: string; readonly mediaUrl: string } | null;
 };

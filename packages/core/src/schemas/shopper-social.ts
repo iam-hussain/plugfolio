@@ -14,6 +14,10 @@ export type FollowProfileInput = z.infer<typeof followProfileInput>;
 
 export const addCommentInput = z.object({
   profileId: z.string().uuid(),
+  /** ADR-0013: set = a comment on this product (must belong to the profile). */
+  productId: z.string().uuid().nullish(),
+  /** ADR-0013: set = a reply; the parent must be top-level on the same target. */
+  parentId: z.string().uuid().nullish(),
   /** The profile to speak AS (ADR-0009) — membership is verified in the service. */
   asProfileId: z.string().uuid().nullish(),
   body: z.string().trim().min(1, "Comment cannot be empty").max(500, "Max 500 characters"),
