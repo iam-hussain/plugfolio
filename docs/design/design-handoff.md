@@ -5,9 +5,12 @@
 *Version: v1 ("lean journey") · July 2026 · Everything described here is built and working; items marked **[LATER]** are designed-for but not yet live.*
 
 > **Changes since this handoff:** member handles & comment identity + categories
-> ([change brief](./change-brief-handles-and-categories.md)), and product kinds & coupon
+> ([change brief](./change-brief-handles-and-categories.md)); product kinds & coupon
 > offers — the product card described in §6.3/6.4/6.10/6.11 below now has affiliate/own/
-> coupon variants, specced in **[brief 13 — Products & Offers](./13-products-and-offers.md)**.
+> coupon variants, specced in **[brief 13 — Products & Offers](./13-products-and-offers.md)**;
+> and auth is now **email + password** (verification link once at registration, reset by
+> email — no magic-link login), specced in the updated
+> **[brief 04 — Accounts & Sign-in](./accounts/04-accounts-and-sign-in.md)**.
 > Where this document and those briefs disagree, the briefs win.
 
 ---
