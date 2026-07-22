@@ -46,8 +46,8 @@ flowchart LR
 
 1. **Arrive.** They tapped `plugfolio.com/handle` from a creator's bio. The page loads instantly and shows the creator, their content grid, nothing else in the way.
 2. **Tap a post.** The reel or photo opens with its tagged product shown right there — "this is what's in the video."
-3. **See the product.** Photo, price, the post it came from, one Buy button.
-4. **Buy.** The button sends them to the retailer through the creator's own affiliate link. The retailer's network credits the creator directly — Plugfolio just measures the tap. The shopper just shops.
+3. **See the product.** Photo, price, the post it came from, one Buy button — plus the code to copy when the product carries an offer.
+4. **Buy.** The button sends them out — to the retailer through the creator's affiliate link, or to the creator's own store. The network credits the creator directly — Plugfolio just measures the tap. The shopper just shops.
 
 No popup. No signup wall. No wishlist to manage, no rewards to understand, no feed to build. If it isn't "tap, see, buy," it isn't here yet.
 
@@ -71,7 +71,7 @@ flowchart LR
 2. **Connect your socials (whenever you're ready).** After the account exists, the **Admin connects one Google (YouTube) and one Meta (Instagram)** — not required at sign-up, done at the point you want to build a profile. At least one connection is needed to create a profile, and because you can only connect accounts you own, it doubles as proof of the identity behind every username.
 3. **Create a profile (up to 5).** From the channels and handles those connections expose, spin up a shoppable profile. Posts import automatically. A **random username** is assigned right away so the page works instantly.
 4. **Pick your username.** In profile settings, choose the public handle **from the usernames you actually have on the connected YouTube/Instagram** — nothing else is offered. That becomes `plugfolio.com/<username>`. No follower minimum, no approval.
-5. **Tag & publish.** Open a post, paste any product URL — Plugfolio grabs the image, title, and price — add the affiliate link, and publish. Drop the link in the social bio.
+5. **Tag & publish.** Open a post, paste any product URL — Plugfolio grabs the image, title, and price — add the affiliate link (or mark it as **your own product** and link your store), attach a **coupon code** if you have one, and publish. Drop the link in the social bio.
 
 The moment that sells them: **seeing their own reel become shoppable.** Onboarding drives straight at that and stops.
 
@@ -108,7 +108,7 @@ The public page is the shop window. The dashboard is the back room, and it stays
 | Tab | What's there |
 |---|---|
 | **Posts** | Every imported post. Tap one to tag its products. That's the core tool. |
-| **Products** | The things they've tagged. Fix a link, remove one. |
+| **Products** | The things they've tagged — affiliate or their own. Fix a link, attach or edit a coupon, remove one. |
 | **Earnings** | Clicks and outbound taps, tied to the post that drove them: "this reel drove 312 taps." Where the creator's affiliate network reports conversions back, those sales show too — always honestly labeled *tracked* vs. *estimated*. |
 | **Collabs** | Two lists in one place: **open requirements** businesses have posted (approach any that fit) and **incoming requests** from businesses who reached out — each a simple thread to agree content and price. |
 
@@ -135,11 +135,25 @@ One item on multiple shelves, and category pages with their own URLs, are deferr
 
 ---
 
-## One kind of product
+## Products — three cards, one buy model
 
-v1 sells **affiliate products only** — buy button goes to the retailer through the creator's own affiliate link, the tap is tracked, and the network pays the creator its commission directly.
+Every product on Plugfolio is an **outbound card**: the shopper taps out, Plugfolio
+measures the tap. What varies is whose product it is and whether a deal rides along:
 
-No in-store deals. No guest checkout for the creator's own goods. No three-column product-type table to explain. One type, one buy path — and Plugfolio never handles the money.
+- **Affiliate product** — the Buy button goes to the retailer through the creator's own
+  affiliate link; the network pays the creator its commission directly.
+- **The creator's own product** — the button goes to the creator's own site or store.
+  It's their product; no commission language — Plugfolio just measures the traffic.
+- **A coupon on either** — any product can carry an offer: a **code**, an optional
+  expiry, and its redemption channel — **online** (copy the code, shop through the link),
+  **in-store** (show the code at the shop; no link, no Buy button), or **both**. Online
+  activity is *tracked* (taps + code copies); in-store redemption happens beyond
+  Plugfolio's sight and is labeled honestly (code copies only) — the same *tracked vs
+  estimated* discipline as Earnings.
+
+One buy model — **outbound**. No checkout, no cart, and Plugfolio never handles the
+money (§2.3). Selling the creator's own goods *through* Plugfolio (digital downloads,
+merch, on-platform checkout) is the deliberate later step — see the table below.
 
 ---
 
@@ -178,11 +192,12 @@ Cutting these is the point. Each is a real feature — just not part of the firs
 | Referral / share-to-earn rewards | Powerful, but adds an economy to explain before the core loop is even proven. |
 | Anonymous wishlist + price alerts | Needs device identity and notification plumbing; not on the buy path. |
 | Aggregated "My Creators" feed + Instagram follow-list import | Following a creator is in v1 (see the shopper account); the *payoff* is a simple followed-creators list. The rich aggregated feed and the five-step JSON-import are the deferred part. |
-| In-store / local deals | Different buy model (offline redemption). Adds a second product type. |
+| Tracked in-store redemption (card-linked offers, verified redemptions) | The *untracked* in-store coupon channel is in v1 — show the code at the counter. *Measuring* redemption means card/bank integrations; wait for local density. |
 | Ratings + "actually uses this" badge | Commenting is in v1 (behind the shopper account); star ratings and the authenticity badge are the deferred trust layer. |
 | Media kit, brand discovery-by-performance, campaign & gifting suites | The heavy brand side. In v1 a business vets creators from their public page and meets them through the Collabs thread — the rest comes after density exists. |
 | On-platform collab payments | Collab terms are agreed in v1; money changes hands off-platform for now, same "Plugfolio handles no money" rule. |
-| Coupons, availability windows, bundles | Merchandising polish. Layer on once the basics convert. |
+| Availability windows, bundles, drops | Merchandising polish. Layer on once the basics convert. (Coupon offers themselves are in v1.) |
+| On-platform checkout for creator-owned goods (digital downloads first, then merch/memberships) | **The planned Phase B and the revenue model.** It's the moment Plugfolio handles money — payments, refunds, tax, payouts — and the first exception to no-login shopping. Gated on its own ADR + doc change, after the outbound loop is proven. |
 | TikTok (and other platforms) + AI tag suggestions | v1 connects **YouTube + Instagram** (Google + Meta). Other platforms and AI-assisted tagging are scale/convenience layers for later. |
 | More than 5 profiles per account · more than 2 role types · more than 3 managers per profile | v1 caps at 5 profiles, and per profile: one Admin + up to 3 Managers, no finer permission matrix. Bigger agency setups come later. |
 | Free-form / vanity usernames not tied to a social handle | v1 usernames come only from a connected YouTube/Instagram handle — that's what makes them self-verifying. Arbitrary custom handles are a later, moderated feature. |

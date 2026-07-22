@@ -36,6 +36,7 @@ Priority: **P0** = the core loop (must be flawless); **P1** = supports a v1 jour
 | 10 | Profile Settings & Managers | Creator | P1 | [creator/10-profile-settings-and-managers.md](./creator/10-profile-settings-and-managers.md) |
 | 11 | Business — Post a Requirement & Find Creators | Business | P1 | [business/11-post-requirement-and-find-creators.md](./business/11-post-requirement-and-find-creators.md) |
 | 12 | Collabs & Negotiation Thread | Creator + Business | P1 | [business/12-collabs-and-thread.md](./business/12-collabs-and-thread.md) |
+| 13 | Products & Offers (affiliate · own · coupon) | Shopper + Creator | P0 | [13-products-and-offers.md](./13-products-and-offers.md) |
 
 ## Change briefs
 
@@ -55,5 +56,6 @@ Out of scope**. If you add a page, copy that structure.
 
 Do not design these — they're deferred (see the lean journey's "left out" table):
 Explore/discovery feed, search, referral/share-to-earn rewards, anonymous wishlist &
-alerts, aggregated "My Creators" feed, in-store deals, star ratings & the "actually uses
-this" badge, media kit, coupons/drops, TikTok, on-platform payments/payouts.
+alerts, aggregated "My Creators" feed, tracked in-store redemption (the *untracked*
+in-store coupon channel IS in v1 — see brief 13), star ratings & the "actually uses
+this" badge, media kit, drops/bundles, TikTok, on-platform payments/payouts & checkout.
