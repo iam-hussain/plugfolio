@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Collabs" };
 
 export default async function BusinessCollabsPage() {
   const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  if (!session?.user) redirect("/signin");
 
   const business = await getMyBusiness(businessCollabDeps, session.user.id);
 

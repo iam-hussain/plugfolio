@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Account" };
 
 export default async function AccountPage() {
   const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  if (!session?.user) redirect("/signin");
 
   const handle = await getMemberHandle({ users: repositories.users }, session.user.id);
 

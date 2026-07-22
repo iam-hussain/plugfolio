@@ -15,6 +15,10 @@ export {
   createCollabRepository,
 } from "./repositories/business-collab-repository";
 export { createAuthAdapter } from "./auth-adapter";
+export {
+  createAuthAccountRepository,
+  createAuthTokenRepository,
+} from "./repositories/auth-account-repository";
 export { createSessionRepository } from "./repositories/session-repository";
 export { createManagerRepository, createUserRepository } from "./repositories/manager-repository";
 export {

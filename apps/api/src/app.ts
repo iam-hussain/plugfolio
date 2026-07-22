@@ -12,6 +12,15 @@ import {
   createBusiness,
   createBusinessInput,
   createCategory,
+  emailOnlyInput,
+  registerAccount,
+  registerInput,
+  requestPasswordReset,
+  resendVerification,
+  resetPassword,
+  resetPasswordInput,
+  verifyEmail,
+  verifyEmailInput,
   createCategoryInput,
   createPost,
   createPostInput,
@@ -50,6 +59,7 @@ import {
 } from "@plugfolio/core";
 import { deviceIdentity, requireUserId } from "./auth";
 import {
+  accountAuthDeps,
   businessCollabDeps,
   clock,
   creatorContentDeps,
@@ -76,6 +86,40 @@ app.onError((error, c) => {
 });
 
 app.get("/health", (c) => c.json({ status: "ok" }));
+
+// --- Password auth (ADR-0012). NOT under /api/auth — that path belongs to
+// Auth.js in apps/web; login itself goes through the Credentials provider.
+
+app.post("/account", async (c) => {
+  const input = registerInput.parse(await c.req.json());
+  await registerAccount(accountAuthDeps, input);
+  return c.json({ registered: true }, 201);
+});
+
+app.post("/account/verify", async (c) => {
+  const input = verifyEmailInput.parse(await c.req.json());
+  await verifyEmail(accountAuthDeps, input);
+  return c.json({ verified: true });
+});
+
+app.post("/account/resend-verification", async (c) => {
+  const input = emailOnlyInput.parse(await c.req.json());
+  await resendVerification(accountAuthDeps, input);
+  return c.json({ sent: true });
+});
+
+app.post("/account/reset-request", async (c) => {
+  const input = emailOnlyInput.parse(await c.req.json());
+  await requestPasswordReset(accountAuthDeps, input);
+  // Always ok — never an existence oracle.
+  return c.json({ sent: true });
+});
+
+app.post("/account/reset", async (c) => {
+  const input = resetPasswordInput.parse(await c.req.json());
+  await resetPassword(accountAuthDeps, input);
+  return c.json({ reset: true });
+});
 
 // The no-login shopper write (ADR-0002): anonymous device identity, never a session.
 app.post("/taps", async (c) => {

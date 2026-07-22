@@ -28,7 +28,7 @@ test("the dashboard is gated by sign-in — a creator surface, never a shop wall
   await page.goto("/dashboard");
 
   // Unauthenticated → Auth.js sign-in, while every shop path stays open.
-  await page.waitForURL("**/api/auth/signin**");
+  await page.waitForURL("**/signin**");
   await expect(page.getByRole("button", { name: /sign in with email/i })).toBeVisible();
 });
 
@@ -55,7 +55,7 @@ test("the business surface is gated; its write APIs refuse anonymous callers", a
   request,
 }) => {
   await page.goto("/collabs");
-  await page.waitForURL("**/api/auth/signin**");
+  await page.waitForURL("**/signin**");
 
   const requirement = await request.post("/api/requirements", {
     data: { title: "x", brief: "y" },
@@ -72,7 +72,7 @@ test("the tagging back room is gated; its write APIs refuse anonymous callers", 
   request,
 }) => {
   await page.goto("/dashboard/posts");
-  await page.waitForURL("**/api/auth/signin**");
+  await page.waitForURL("**/signin**");
 
   const post = await request.post("/api/posts", {
     data: { profileId: "00000000-0000-0000-0000-0000000000b1", mediaUrl: "https://x.test/m.jpg" },
@@ -87,7 +87,7 @@ test("manager settings are gated; the invite API refuses anonymous callers", asy
   request,
 }) => {
   await page.goto("/dashboard/settings");
-  await page.waitForURL("**/api/auth/signin**");
+  await page.waitForURL("**/signin**");
 
   const invite = await request.post(
     "/api/profiles/00000000-0000-0000-0000-0000000000b1/managers",

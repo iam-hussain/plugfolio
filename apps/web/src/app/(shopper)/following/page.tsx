@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Following" };
 
 export default async function FollowingPage() {
   const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  if (!session?.user) redirect("/signin");
 
   const profiles = await getFollowedProfiles({ follows: repositories.follows }, session.user.id);
 

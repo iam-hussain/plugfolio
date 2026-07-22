@@ -27,7 +27,7 @@ export function FollowButton({ profileId, isAuthenticated, initiallyFollowing }:
 
   if (!isAuthenticated) {
     return (
-      <Button variant="outline" size="sm" onClick={() => router.push("/api/auth/signin")}>
+      <Button variant="outline" size="sm" onClick={() => router.push("/signin")}>
         Follow
       </Button>
     );
