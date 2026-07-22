@@ -72,18 +72,40 @@ async function main() {
     },
   });
 
+  // An own-product with a both-channel coupon (ADR-0011) so the card variants
+  // render in dev: "Their own product" tag + code chip + in-store line.
+  const OWN_PRODUCT_ID = "00000000-0000-0000-0000-0000000000c2";
+  await prisma.product.upsert({
+    where: { id: OWN_PRODUCT_ID },
+    update: {},
+    create: {
+      id: OWN_PRODUCT_ID,
+      profileId: PROFILE_ID,
+      kind: "own",
+      title: "Lena's Desk Mat",
+      affiliateUrl: "https://lena.example.com/shop/desk-mat",
+      couponCode: "LENA15",
+      inStoreNote: "Show this code at the Indiranagar studio store",
+      priceCents: 2400,
+      currency: "usd",
+    },
+  });
+
   // One post with the product tagged (the shoppable path) and one without
   // (grid must render untagged posts too).
   await prisma.post.upsert({
     where: { id: POST_TAGGED_ID },
-    update: { products: { connect: { id: PRODUCT_ID } }, categoryId: CATEGORY_ID },
+    update: {
+      products: { connect: [{ id: PRODUCT_ID }, { id: OWN_PRODUCT_ID }] },
+      categoryId: CATEGORY_ID,
+    },
     create: {
       id: POST_TAGGED_ID,
       profileId: PROFILE_ID,
       categoryId: CATEGORY_ID,
       mediaUrl: "https://example.com/media/morning-routine.jpg",
       caption: "Morning routine",
-      products: { connect: { id: PRODUCT_ID } },
+      products: { connect: [{ id: PRODUCT_ID }, { id: OWN_PRODUCT_ID }] },
     },
   });
 

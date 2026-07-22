@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ConflictError, ForbiddenError, NotFoundError } from "../errors";
+import { AppError, ConflictError, ForbiddenError, NotFoundError } from "../errors";
 import type { CategoryRepository, CategoryView } from "../ports/category-repository";
 import type {
   ConnectionReadRepository,
@@ -10,6 +10,7 @@ import type {
 } from "../ports/creator-content-repository";
 import type { ProductReadRepository } from "../ports/product-repository";
 import type { ProfileRepository } from "../ports/profile-repository";
+import { tagProductInput } from "../schemas/creator-content";
 import {
   MAX_PROFILES_PER_ACCOUNT,
   createCategory,
@@ -18,6 +19,7 @@ import {
   removeProduct,
   setPostCategory,
   setProductCategory,
+  setProductCoupon,
   tagProductToPost,
   updateProductAffiliateUrl,
 } from "./creator-content";
@@ -31,12 +33,22 @@ const CATEGORY_ID = "50000000-0000-0000-0000-000000000001";
 /** A category belonging to a DIFFERENT profile — cross-profile must 404. */
 const FOREIGN_CATEGORY_ID = "50000000-0000-0000-0000-000000000002";
 
-function makeDeps(options: { connected?: boolean; profileCount?: number; metadata?: ProductMetadata | null } = {}) {
-  const { connected = true, profileCount = 1, metadata = null } = options;
+function makeDeps(
+  options: {
+    connected?: boolean;
+    profileCount?: number;
+    metadata?: ProductMetadata | null;
+    /** The existing product's outbound URL (null = in-store-only). */
+    productUrl?: string | null;
+  } = {},
+) {
+  const { connected = true, profileCount = 1, metadata = null, productUrl = "https://a.test/x" } =
+    options;
   const created: { username: string }[] = [];
   const taggedRows: { title: string; imageUrl: string | null; priceCents: number | null }[] = [];
   const updates: string[] = [];
   const removals: string[] = [];
+  const couponUpdates: { couponCode: string | null; inStoreNote: string | null }[] = [];
 
   const profiles: ProfileRepository = {
     async listByUser(userId) {
@@ -77,7 +89,9 @@ function makeDeps(options: { connected?: boolean; profileCount?: number; metadat
   };
   const products: ProductReadRepository = {
     async findForAttribution(productId) {
-      return productId === PRODUCT_ID ? { id: PRODUCT_ID, profileId: PROFILE_ID } : null;
+      return productId === PRODUCT_ID
+        ? { id: PRODUCT_ID, profileId: PROFILE_ID, affiliateUrl: productUrl, couponCode: null }
+        : null;
     },
     async isTaggedToPost() {
       return true;
@@ -94,6 +108,9 @@ function makeDeps(options: { connected?: boolean; profileCount?: number; metadat
     },
     async updateAffiliateUrl(productId) {
       updates.push(productId);
+    },
+    async updateCoupon(_productId, coupon) {
+      couponUpdates.push({ couponCode: coupon.couponCode, inStoreNote: coupon.inStoreNote });
     },
     async setCategory(_productId, categoryId) {
       productCategoryChanges.push(categoryId);
@@ -143,6 +160,7 @@ function makeDeps(options: { connected?: boolean; profileCount?: number; metadat
     taggedRows,
     updates,
     removals,
+    couponUpdates,
     postCategoryChanges,
     productCategoryChanges,
   };
@@ -171,6 +189,7 @@ describe("createPost / tagProductToPost", () => {
     profileId: PROFILE_ID,
     postId: POST_ID,
     url: "https://shop.example.com/tote",
+    kind: "affiliate" as const,
     affiliateUrl: "https://affiliate.example.com/tote",
   };
 
@@ -221,6 +240,40 @@ describe("product fixes (Products tab)", () => {
     await expect(
       updateProductAffiliateUrl(deps, OUTSIDER, PRODUCT_ID, "https://a.test/x"),
     ).rejects.toBeInstanceOf(ForbiddenError);
+  });
+});
+
+describe("coupons (ADR-0011)", () => {
+  it("boundary schema: a coupon-less product needs a link; an in-store note makes the link optional", () => {
+    const base = { profileId: PROFILE_ID, postId: POST_ID, url: "https://s.test/p" };
+    expect(tagProductInput.safeParse(base).success).toBe(false);
+    expect(
+      tagProductInput.safeParse({ ...base, couponCode: "SAVE10", inStoreNote: "At the counter" })
+        .success,
+    ).toBe(true);
+    expect(tagProductInput.safeParse({ ...base, inStoreNote: "At the counter" }).success).toBe(
+      false,
+    );
+  });
+
+  it("sets a coupon when the product has an outbound link", async () => {
+    const { deps, couponUpdates } = makeDeps();
+    await setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: "SAVE10" });
+    expect(couponUpdates).toEqual([{ couponCode: "SAVE10", inStoreNote: null }]);
+  });
+
+  it("rejects a coupon with no channel (link-less product, no in-store note)", async () => {
+    const { deps, couponUpdates } = makeDeps({ productUrl: null });
+    await expect(
+      setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: "SAVE10" }),
+    ).rejects.toBeInstanceOf(AppError);
+    expect(couponUpdates).toEqual([]);
+  });
+
+  it("clearing the code clears the whole coupon, even on a link-less product", async () => {
+    const { deps, couponUpdates } = makeDeps({ productUrl: null });
+    await setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: null });
+    expect(couponUpdates).toEqual([{ couponCode: null, inStoreNote: null }]);
   });
 });
 

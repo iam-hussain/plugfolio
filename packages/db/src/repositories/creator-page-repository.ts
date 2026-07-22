@@ -13,7 +13,11 @@ const productSelect = {
   imageUrl: true,
   priceCents: true,
   currency: true,
+  kind: true,
   affiliateUrl: true,
+  couponCode: true,
+  offerEndsAt: true,
+  inStoreNote: true,
   categoryId: true,
 } as const;
 

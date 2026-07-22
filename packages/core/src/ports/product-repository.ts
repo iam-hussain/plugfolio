@@ -7,6 +7,10 @@
 export type ProductForAttribution = {
   readonly id: string;
   readonly profileId: string;
+  /** Null = in-store-only coupon (ADR-0011): no outbound destination, so no taps. */
+  readonly affiliateUrl: string | null;
+  /** Copies are only valid on products that actually carry a code. */
+  readonly couponCode: string | null;
 };
 
 export type ProductReadRepository = {

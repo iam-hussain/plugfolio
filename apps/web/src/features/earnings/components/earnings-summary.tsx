@@ -21,6 +21,12 @@ export function EarningsSummaryView({ summary }: EarningsSummaryViewProps) {
       </Card>
       <Card>
         <CardHeader>
+          <CardTitle>{summary.totalCodeCopies}</CardTitle>
+          <CardDescription>code copies · redemption not tracked</CardDescription>
+        </CardHeader>
+      </Card>
+      <Card>
+        <CardHeader>
           <CardTitle>By post</CardTitle>
         </CardHeader>
         <CardContent>
@@ -52,6 +58,7 @@ export function EarningsSummaryView({ summary }: EarningsSummaryViewProps) {
                   <span className="truncate text-sm">{product.title}</span>
                   <span className="text-muted-foreground shrink-0 text-sm">
                     {product.taps} taps
+                    {product.codeCopies > 0 ? ` · ${product.codeCopies} copies` : ""}
                   </span>
                 </li>
               ))}

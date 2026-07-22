@@ -31,6 +31,11 @@ export async function recordOutboundTap(
   if (!product) {
     throw new NotFoundError("Product not found");
   }
+  // An in-store-only product (ADR-0011) has no outbound destination — a tap on
+  // it is a forged event, not a buy path.
+  if (!product.affiliateUrl) {
+    throw new NotFoundError("Product has no outbound destination");
+  }
 
   // Per-post attribution integrity: only accept a post that actually has this
   // product tagged, so per-post earnings can't be skewed by a forged postId.

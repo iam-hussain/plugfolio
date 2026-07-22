@@ -1,6 +1,7 @@
 import {
   createBusinessRepository,
   createCategoryRepository,
+  createCodeCopyRepository,
   createConnectionRepository,
   createManagerRepository,
   createCollabRepository,
@@ -24,6 +25,7 @@ import { createOgMetadataGateway } from "./gateways/og-metadata";
  */
 export const repositories = {
   taps: createTapRepository(),
+  codeCopies: createCodeCopyRepository(),
   products: createProductRepository(),
   profiles: createProfileRepository(),
   follows: createFollowRepository(),

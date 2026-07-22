@@ -52,6 +52,10 @@ export function createProductWriteRepository(db: PrismaClient = prisma): Product
       await db.product.update({ where: { id: productId }, data: { categoryId } });
     },
 
+    async updateCoupon(productId, coupon): Promise<void> {
+      await db.product.update({ where: { id: productId }, data: coupon });
+    },
+
     async remove(productId: string): Promise<void> {
       // Cascade removes its taps (earnings history for a deleted product goes
       // with the product — the profile-level totals rebuild without it).

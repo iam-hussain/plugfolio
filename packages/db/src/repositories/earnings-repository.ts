@@ -9,19 +9,33 @@ import { prisma, type PrismaClient } from "../client";
 export function createEarningsRepository(db: PrismaClient = prisma): EarningsReadRepository {
   return {
     async summarize(profileId: string): Promise<EarningsSummary> {
-      const [totalTaps, postGroups, productGroups] = await Promise.all([
-        db.tap.count({ where: { profileId } }),
-        db.tap.groupBy({
-          by: ["postId"],
-          where: { profileId, postId: { not: null } },
-          _count: { _all: true },
-        }),
-        db.tap.groupBy({
-          by: ["productId"],
-          where: { profileId },
-          _count: { _all: true },
-        }),
-      ]);
+      const [totalTaps, totalCodeCopies, postGroups, productGroups, copyGroups] =
+        await Promise.all([
+          db.tap.count({ where: { profileId } }),
+          db.codeCopy.count({ where: { profileId } }),
+          db.tap.groupBy({
+            by: ["postId"],
+            where: { profileId, postId: { not: null } },
+            _count: { _all: true },
+          }),
+          db.tap.groupBy({
+            by: ["productId"],
+            where: { profileId },
+            _count: { _all: true },
+          }),
+          db.codeCopy.groupBy({
+            by: ["productId"],
+            where: { profileId },
+            _count: { _all: true },
+          }),
+        ]);
+
+      const copiesByProduct = new Map(copyGroups.map((g) => [g.productId, g._count._all]));
+      // A product can have copies but no taps (in-store-only coupons) — it
+      // still deserves a row.
+      const productIds = [
+        ...new Set([...productGroups.map((g) => g.productId), ...copiesByProduct.keys()]),
+      ];
 
       const [posts, products] = await Promise.all([
         db.post.findMany({
@@ -29,12 +43,13 @@ export function createEarningsRepository(db: PrismaClient = prisma): EarningsRea
           select: { id: true, mediaUrl: true, caption: true },
         }),
         db.product.findMany({
-          where: { id: { in: productGroups.map((g) => g.productId) } },
+          where: { id: { in: productIds } },
           select: { id: true, title: true },
         }),
       ]);
       const postById = new Map(posts.map((p) => [p.id, p]));
       const productById = new Map(products.map((p) => [p.id, p]));
+      const tapsByProduct = new Map(productGroups.map((g) => [g.productId, g._count._all]));
 
       const byPost = postGroups
         // A post deleted after its taps were recorded (postId kept via SetNull
@@ -47,14 +62,23 @@ export function createEarningsRepository(db: PrismaClient = prisma): EarningsRea
         })
         .sort((a, b) => b.taps - a.taps);
 
-      const byProduct = productGroups
-        .flatMap((g) => {
-          const product = productById.get(g.productId);
-          return product ? [{ productId: product.id, title: product.title, taps: g._count._all }] : [];
+      const byProduct = productIds
+        .flatMap((productId) => {
+          const product = productById.get(productId);
+          return product
+            ? [
+                {
+                  productId: product.id,
+                  title: product.title,
+                  taps: tapsByProduct.get(productId) ?? 0,
+                  codeCopies: copiesByProduct.get(productId) ?? 0,
+                },
+              ]
+            : [];
         })
-        .sort((a, b) => b.taps - a.taps);
+        .sort((a, b) => b.taps - a.taps || b.codeCopies - a.codeCopies);
 
-      return { totalTaps, byPost, byProduct };
+      return { totalTaps, totalCodeCopies, byPost, byProduct };
     },
   };
 }

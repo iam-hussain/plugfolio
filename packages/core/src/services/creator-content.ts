@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { ConflictError, ForbiddenError, NotFoundError } from "../errors";
+import { AppError, ConflictError, ForbiddenError, NotFoundError } from "../errors";
 import type { CategoryRepository, CategoryView } from "../ports/category-repository";
 import type {
   ConnectionReadRepository,
@@ -14,6 +14,7 @@ import type {
   CreatePostInput,
   SetPostCategoryInput,
   SetProductCategoryInput,
+  SetProductCouponInput,
   TagProductInput,
   UpdateCategoryInput,
 } from "../schemas/creator-content";
@@ -82,7 +83,9 @@ export async function createPost(
   });
 }
 
-/** The core tool: paste a product URL, grab its metadata, tag it to the post. */
+/** The core tool: paste a product URL, grab its metadata, tag it to the post.
+ * ADR-0011: kind + optional coupon ride along; the channel rule (a link, or a
+ * coupon with an in-store note) is enforced by the boundary schema. */
 export async function tagProductToPost(
   deps: CreatorContentDeps,
   userId: string,
@@ -100,8 +103,12 @@ export async function tagProductToPost(
   return deps.productWrites.createTagged({
     profileId: input.profileId,
     postId: input.postId,
+    kind: input.kind,
     title: metadata?.title ?? fallbackTitle,
-    affiliateUrl: input.affiliateUrl,
+    affiliateUrl: input.affiliateUrl ?? null,
+    couponCode: input.couponCode ?? null,
+    offerEndsAt: input.offerEndsAt ?? null,
+    inStoreNote: input.inStoreNote ?? null,
     imageUrl: metadata?.imageUrl ?? null,
     priceCents: metadata?.priceCents ?? null,
     currency: metadata?.currency ?? "usd",
@@ -135,6 +142,39 @@ export async function removeProduct(
 ): Promise<void> {
   await requireOwnProduct(deps, userId, productId);
   await deps.productWrites.remove(productId);
+}
+
+/** Edit or clear a product's coupon (ADR-0011: "fix a code"). Clearing is
+ * always allowed; setting a code needs a redemption channel — the product's
+ * outbound link or an in-store note. */
+export async function setProductCoupon(
+  deps: CreatorContentDeps,
+  userId: string,
+  productId: string,
+  input: SetProductCouponInput,
+): Promise<void> {
+  const product = await deps.products.findForAttribution(productId);
+  if (!product) throw new NotFoundError("Product not found");
+  await requireOwnProfile(deps, userId, product.profileId);
+
+  if (input.couponCode === null) {
+    await deps.productWrites.updateCoupon(productId, {
+      couponCode: null,
+      offerEndsAt: null,
+      inStoreNote: null,
+    });
+    return;
+  }
+
+  const inStoreNote = input.inStoreNote ?? null;
+  if (!product.affiliateUrl && !inStoreNote) {
+    throw new AppError("VALIDATION", "A coupon needs a link or an in-store note");
+  }
+  await deps.productWrites.updateCoupon(productId, {
+    couponCode: input.couponCode,
+    offerEndsAt: input.offerEndsAt ?? null,
+    inStoreNote,
+  });
 }
 
 // --- Categories (ADR-0010: per-profile shelves; Admin AND Manager curate) ---

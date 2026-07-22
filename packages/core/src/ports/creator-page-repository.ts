@@ -12,7 +12,14 @@ export type ShopperProduct = {
   /** Display-only price grabbed at tag time; the retailer owns the real price. */
   readonly priceCents: number | null;
   readonly currency: string;
-  readonly affiliateUrl: string;
+  /** ADR-0011: affiliate (Buy → retailer) or own (Shop their store). */
+  readonly kind: "affiliate" | "own";
+  /** Outbound destination; null = in-store-only coupon → no Buy button. */
+  readonly affiliateUrl: string | null;
+  /** Coupon attachment (ADR-0011); all null when the product carries no offer. */
+  readonly couponCode: string | null;
+  readonly offerEndsAt: Date | null;
+  readonly inStoreNote: string | null;
   /** The shelf it sits in (ADR-0010); null = uncategorized ("All" only). */
   readonly categoryId: string | null;
 };

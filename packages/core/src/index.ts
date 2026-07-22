@@ -19,6 +19,7 @@ export type { OutboundTap, NewOutboundTap, TapSource } from "./domain/tap";
 // Ports (repository interfaces implemented in @plugfolio/db)
 export type { TapRepository } from "./ports/tap-repository";
 export type { ProductReadRepository, ProductForAttribution } from "./ports/product-repository";
+export type { CodeCopyRepository, CodeCopy, NewCodeCopy } from "./ports/code-copy-repository";
 export type {
   CreatorPageReadRepository,
   CreatorPage,
@@ -73,6 +74,11 @@ export {
   type RecordOutboundTapCommand,
 } from "./schemas/tap";
 export {
+  recordCodeCopyInput,
+  type RecordCodeCopyInput,
+  type RecordCodeCopyCommand,
+} from "./schemas/code-copy";
+export {
   followProfileInput,
   type FollowProfileInput,
   addCommentInput,
@@ -93,10 +99,14 @@ export {
 export {
   createPostInput,
   type CreatePostInput,
+  productKind,
+  type ProductKind,
   tagProductInput,
   type TagProductInput,
   updateProductInput,
   type UpdateProductInput,
+  setProductCouponInput,
+  type SetProductCouponInput,
   createCategoryInput,
   type CreateCategoryInput,
   updateCategoryInput,
@@ -113,6 +123,7 @@ export {
 
 // Services (use-cases)
 export { recordOutboundTap, type RecordOutboundTapDeps } from "./services/record-outbound-tap";
+export { recordCodeCopy, type RecordCodeCopyDeps } from "./services/record-code-copy";
 export {
   getCreatorPage,
   getShopperPost,
@@ -136,6 +147,7 @@ export {
   createPost,
   tagProductToPost,
   updateProductAffiliateUrl,
+  setProductCoupon,
   removeProduct,
   listMyCategories,
   createCategory,

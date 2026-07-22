@@ -22,6 +22,8 @@ import {
   followProfileInput,
   postRequirement,
   postRequirementInput,
+  recordCodeCopy,
+  recordCodeCopyInput,
   recordOutboundTap,
   recordOutboundTapInput,
   removeCategory,
@@ -34,6 +36,8 @@ import {
   setPostCategoryInput,
   setProductCategory,
   setProductCategoryInput,
+  setProductCoupon,
+  setProductCouponInput,
   tagProductToPost,
   tagProductInput,
   unfollowProfile,
@@ -93,6 +97,29 @@ app.post("/taps", async (c) => {
     });
   }
   return c.json({ tap }, 201);
+});
+
+// The coupon-code copy — the second anonymous attribution event (ADR-0011),
+// same device-identity + idempotency rules as taps.
+app.post("/code-copies", async (c) => {
+  const input = recordCodeCopyInput.parse(await c.req.json());
+  const { deviceId, issued } = deviceIdentity(c);
+
+  const copy = await recordCodeCopy(
+    { codeCopies: repositories.codeCopies, products: repositories.products, now: clock.now },
+    { ...input, deviceId },
+  );
+
+  if (issued) {
+    setCookie(c, DEVICE_COOKIE, issued.token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Lax",
+      path: "/",
+      maxAge: ONE_YEAR_SECONDS,
+    });
+  }
+  return c.json({ copy }, 201);
 });
 
 app.post("/follows", async (c) => {
@@ -206,6 +233,15 @@ app.delete("/products/:productId", async (c) => {
   const productId = uuidParam.parse(c.req.param("productId"));
   await removeProduct(creatorContentDeps, userId, productId);
   return c.json({ removed: true });
+});
+
+// Edit or clear a product's coupon (ADR-0011: "fix a code").
+app.patch("/products/:productId/coupon", async (c) => {
+  const userId = await requireUserId(c);
+  const productId = uuidParam.parse(c.req.param("productId"));
+  const input = setProductCouponInput.parse(await c.req.json());
+  await setProductCoupon(creatorContentDeps, userId, productId, input);
+  return c.json({ updated: true });
 });
 
 // --- Categories (ADR-0010: per-profile shelves; Admin + Manager curate) ---

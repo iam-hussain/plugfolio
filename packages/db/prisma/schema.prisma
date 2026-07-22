@@ -88,6 +88,7 @@ model Profile {
   posts      Post[]
   products   Product[]
   taps       Tap[]
+  codeCopies CodeCopy[]
   followers  Follow[]
   comments   Comment[]  @relation("PageComments")
   commentsAs Comment[]  @relation("CommentsAsProfile")
@@ -241,21 +242,30 @@ model Post {
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   products  Product[]
   taps      Tap[]
+  codeCopies CodeCopy[]
   createdAt DateTime  @default(now())
 
   @@index([profileId, createdAt])
 }
 
-/// A product a creator tags, linked to their own affiliate destination (v1
-/// handles no money — creators use their own affiliate links; §2.3). Price and
-/// image are display-only metadata grabbed at tag time; the retailer owns the
-/// real price.
+/// A product a creator tags (ADR-0011: outbound-only; v1 handles no money,
+/// §2.3). `kind` says whose product it is; a coupon (code + channels) can ride
+/// on either. Price and image are display-only metadata grabbed at tag time.
 model Product {
   id            String  @id @default(uuid()) @db.Uuid
   profileId     String  @db.Uuid
   profile       Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  kind          ProductKind @default(affiliate)
   title         String
-  affiliateUrl  String
+  /// The outbound destination — retailer affiliate link (kind=affiliate) or
+  /// the creator's own store (kind=own). Null = in-store-only coupon: no Buy
+  /// button, the code + inStoreNote IS the buy path (ADR-0011).
+  affiliateUrl  String?
+  /// Coupon attachment: code + optional expiry + optional in-store channel.
+  /// Channel rule (≥1 of affiliateUrl/inStoreNote) enforced in the service.
+  couponCode    String?
+  offerEndsAt   DateTime?
+  inStoreNote   String?
   imageUrl      String?
   priceCents    Int?
   currency      String   @default("usd")
@@ -263,9 +273,15 @@ model Product {
   category      Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   posts         Post[]
   taps          Tap[]
+  codeCopies    CodeCopy[]
   createdAt     DateTime @default(now())
 
   @@index([profileId])
+}
+
+enum ProductKind {
+  affiliate
+  own
 }
 
 /// An outbound tap — immutable attribution event (§6.6, append-only). Earnings
@@ -298,4 +314,23 @@ enum TapSource {
   profile
   post
   product
+}
+
+/// A coupon-code copy — the second attribution event (ADR-0011), append-only
+/// like Tap. In-store redemption happens beyond Plugfolio's sight, so copies
+/// are the only measured signal and are labeled "redemption not tracked".
+model CodeCopy {
+  id             String   @id @default(uuid()) @db.Uuid
+  productId      String   @db.Uuid
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  profileId      String   @db.Uuid
+  profile        Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  postId         String?  @db.Uuid
+  post           Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
+  deviceId       String   @db.Uuid
+  idempotencyKey String   @unique @db.Uuid
+  occurredAt     DateTime @default(now())
+
+  @@index([profileId, occurredAt])
+  @@index([productId, occurredAt])
 }

@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getShopperProduct } from "@plugfolio/core";
-import { ProductTapButton } from "@/features/creator-page";
+import { CouponBlock, ProductTapButton } from "@/features/creator-page";
 import { formatPrice } from "@/lib/format-price";
 import { repositories } from "@/server/container";
 
@@ -53,15 +53,31 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
       ) : null}
       <h1 className="font-display pt-4 text-xl font-semibold">{product.title}</h1>
       {price ? <p className="text-muted-foreground pt-1">{price}</p> : null}
-      <div className="pt-4">
-        <ProductTapButton
-          productId={product.id}
-          postId={product.fromPost?.id}
-          affiliateUrl={product.affiliateUrl}
-          source="product"
-          label="Buy"
-        />
-      </div>
+      {product.kind === "own" ? (
+        <p className="text-muted-foreground pt-1 text-sm">Their own product</p>
+      ) : null}
+      {product.couponCode ? (
+        <div className="pt-4">
+          <CouponBlock
+            productId={product.id}
+            postId={product.fromPost?.id}
+            couponCode={product.couponCode}
+            offerEndsAt={product.offerEndsAt}
+            inStoreNote={product.inStoreNote}
+          />
+        </div>
+      ) : null}
+      {product.affiliateUrl ? (
+        <div className="pt-4">
+          <ProductTapButton
+            productId={product.id}
+            postId={product.fromPost?.id}
+            affiliateUrl={product.affiliateUrl}
+            source="product"
+            label={product.kind === "own" ? "Shop their store" : "Buy"}
+          />
+        </div>
+      ) : null}
       {product.fromPost ? (
         <aside className="pt-6">
           <p className="text-muted-foreground pb-2 text-sm">From this post</p>

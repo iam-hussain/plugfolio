@@ -3,6 +3,7 @@ import type {
   CreatePostInput,
   SetPostCategoryInput,
   SetProductCategoryInput,
+  SetProductCouponInput,
   TagProductInput,
   UpdateProductInput,
 } from "@plugfolio/core";
@@ -35,6 +36,8 @@ export const updateProduct = (productId: string, input: UpdateProductInput) =>
   send(`/api/products/${productId}`, "PATCH", input);
 export const removeProduct = (productId: string) =>
   send(`/api/products/${productId}`, "DELETE");
+export const setProductCoupon = (productId: string, input: SetProductCouponInput) =>
+  send(`/api/products/${productId}/coupon`, "PATCH", input);
 
 // Categories (ADR-0010)
 export const createCategory = ({ profileId, ...body }: CreateCategoryInput) =>
