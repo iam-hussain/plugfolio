@@ -19,6 +19,11 @@ datasource db {
 model User {
   id            String    @id @default(uuid()) @db.Uuid
   email         String    @unique
+  /// The member handle (ADR-0009): every account's public identity for
+  /// follow/comment, shown as @handle. Auto-generated at first sign-in,
+  /// changeable in settings. NEVER a login and never a URL in v1 — a separate
+  /// namespace from Profile.username.
+  username      String    @unique
   emailVerified DateTime?
   name          String?
   image         String?
@@ -80,14 +85,17 @@ model Profile {
   username  String    @unique
   userId    String    @db.Uuid
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  posts     Post[]
-  products  Product[]
-  taps      Tap[]
-  followers Follow[]
-  comments  Comment[]
-  collabs   Collab[]
-  managers  ProfileManager[]
-  createdAt DateTime  @default(now())
+  posts      Post[]
+  products   Product[]
+  taps       Tap[]
+  codeCopies CodeCopy[]
+  followers  Follow[]
+  comments   Comment[]  @relation("PageComments")
+  commentsAs Comment[]  @relation("CommentsAsProfile")
+  categories Category[]
+  collabs    Collab[]
+  managers   ProfileManager[]
+  createdAt  DateTime   @default(now())
 
   @@index([userId])
 }
@@ -187,14 +195,49 @@ model Follow {
 /// shopper account. Reading comments stays account-free.
 model Comment {
   id        String   @id @default(uuid()) @db.Uuid
+  /// The owning creator page — always set, also for product comments.
   profileId String   @db.Uuid
-  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile   Profile  @relation("PageComments", fields: [profileId], references: [id], onDelete: Cascade)
+  /// ADR-0013: null = a page-level comment; set = a comment on this product.
+  /// Post comments are deferred.
+  productId String?  @db.Uuid
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  /// ADR-0013: one-level threads — a reply's parent is always top-level
+  /// (enforced in the service). Replies go with their parent (Cascade).
+  parentId  String?  @db.Uuid
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
   userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// The profile this comment speaks AS (ADR-0009) — validated against the
+  /// author's memberships in the service. Null = the personal @handle.
+  /// SetNull: a deleted profile's comments fall back to the person.
+  asProfileId String?  @db.Uuid
+  asProfile   Profile? @relation("CommentsAsProfile", fields: [asProfileId], references: [id], onDelete: SetNull)
   body      String
   createdAt DateTime @default(now())
 
   @@index([profileId, createdAt])
+  @@index([productId, createdAt])
+  @@index([parentId])
+}
+
+/// A creator's shelf (ADR-0010): per-profile curation, never a site-wide
+/// taxonomy. Posts/products join via a single nullable FK — deleting a
+/// category never deletes content.
+model Category {
+  id          String    @id @default(uuid()) @db.Uuid
+  profileId   String    @db.Uuid
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  sortOrder   Int       @default(0)
+  posts       Post[]
+  products    Product[]
+  createdAt   DateTime  @default(now())
+
+  @@unique([profileId, title])
+  @@index([profileId, sortOrder])
 }
 
 /// A creator's post — the shoppable unit of the page ("tap a post, see the
@@ -207,31 +250,51 @@ model Post {
   profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   mediaUrl  String
   caption   String?
+  categoryId String?   @db.Uuid
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   products  Product[]
   taps      Tap[]
+  codeCopies CodeCopy[]
   createdAt DateTime  @default(now())
 
   @@index([profileId, createdAt])
 }
 
-/// A product a creator tags, linked to their own affiliate destination (v1
-/// handles no money — creators use their own affiliate links; §2.3). Price and
-/// image are display-only metadata grabbed at tag time; the retailer owns the
-/// real price.
+/// A product a creator tags (ADR-0011: outbound-only; v1 handles no money,
+/// §2.3). `kind` says whose product it is; a coupon (code + channels) can ride
+/// on either. Price and image are display-only metadata grabbed at tag time.
 model Product {
   id            String  @id @default(uuid()) @db.Uuid
   profileId     String  @db.Uuid
   profile       Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  kind          ProductKind @default(affiliate)
   title         String
-  affiliateUrl  String
+  /// The outbound destination — retailer affiliate link (kind=affiliate) or
+  /// the creator's own store (kind=own). Null = in-store-only coupon: no Buy
+  /// button, the code + inStoreNote IS the buy path (ADR-0011).
+  affiliateUrl  String?
+  /// Coupon attachment: code + optional expiry + optional in-store channel.
+  /// Channel rule (≥1 of affiliateUrl/inStoreNote) enforced in the service.
+  couponCode    String?
+  offerEndsAt   DateTime?
+  inStoreNote   String?
   imageUrl      String?
   priceCents    Int?
   currency      String   @default("usd")
+  categoryId    String?   @db.Uuid
+  category      Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   posts         Post[]
   taps          Tap[]
+  codeCopies    CodeCopy[]
+  comments      Comment[]
   createdAt     DateTime @default(now())
 
   @@index([profileId])
+}
+
+enum ProductKind {
+  affiliate
+  own
 }
 
 /// An outbound tap — immutable attribution event (§6.6, append-only). Earnings
@@ -264,4 +327,23 @@ enum TapSource {
   profile
   post
   product
+}
+
+/// A coupon-code copy — the second attribution event (ADR-0011), append-only
+/// like Tap. In-store redemption happens beyond Plugfolio's sight, so copies
+/// are the only measured signal and are labeled "redemption not tracked".
+model CodeCopy {
+  id             String   @id @default(uuid()) @db.Uuid
+  productId      String   @db.Uuid
+  product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  profileId      String   @db.Uuid
+  profile        Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  postId         String?  @db.Uuid
+  post           Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
+  deviceId       String   @db.Uuid
+  idempotencyKey String   @unique @db.Uuid
+  occurredAt     DateTime @default(now())
+
+  @@index([profileId, occurredAt])
+  @@index([productId, occurredAt])
 }

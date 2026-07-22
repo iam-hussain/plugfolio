@@ -20,4 +20,8 @@ export type ManagerRepository = {
 
 export type UserRepository = {
   findOrCreateByEmail(email: string): Promise<{ id: string }>;
+  /** The member handle (ADR-0009); null only for an unknown user id. */
+  getHandle(userId: string): Promise<string | null>;
+  /** "taken" surfaces the global-uniqueness constraint for a typed ConflictError. */
+  updateUsername(userId: string, username: string): Promise<"ok" | "taken">;
 };

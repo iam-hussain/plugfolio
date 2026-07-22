@@ -16,6 +16,8 @@ export type PostWriteRepository = {
     caption: string | null;
   }): Promise<{ id: string }>;
   belongsToProfile(postId: string, profileId: string): Promise<boolean>;
+  /** Put the post on a shelf, or take it off (null) — ADR-0010. */
+  setCategory(postId: string, categoryId: string | null): Promise<void>;
 };
 
 export type ProductWriteRepository = {
@@ -23,13 +25,24 @@ export type ProductWriteRepository = {
   createTagged(product: {
     profileId: string;
     postId: string;
+    kind: "affiliate" | "own";
     title: string;
-    affiliateUrl: string;
+    affiliateUrl: string | null;
+    couponCode: string | null;
+    offerEndsAt: Date | null;
+    inStoreNote: string | null;
     imageUrl: string | null;
     priceCents: number | null;
     currency: string;
   }): Promise<{ id: string }>;
   updateAffiliateUrl(productId: string, affiliateUrl: string): Promise<void>;
+  /** Set or clear (all-null) the coupon attachment — ADR-0011. */
+  updateCoupon(
+    productId: string,
+    coupon: { couponCode: string | null; offerEndsAt: Date | null; inStoreNote: string | null },
+  ): Promise<void>;
+  /** Put the product on a shelf, or take it off (null) — ADR-0010. */
+  setCategory(productId: string, categoryId: string | null): Promise<void>;
   remove(productId: string): Promise<void>;
 };
 

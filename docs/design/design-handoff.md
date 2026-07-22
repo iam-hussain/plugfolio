@@ -4,6 +4,15 @@
 
 *Version: v1 ("lean journey") · July 2026 · Everything described here is built and working; items marked **[LATER]** are designed-for but not yet live.*
 
+> **Changes since this handoff:** member handles & comment identity + categories
+> ([change brief](./change-brief-handles-and-categories.md)); product kinds & coupon
+> offers — the product card described in §6.3/6.4/6.10/6.11 below now has affiliate/own/
+> coupon variants, specced in **[brief 13 — Products & Offers](./13-products-and-offers.md)**;
+> and auth is now **email + password** (verification link once at registration, reset by
+> email — no magic-link login), specced in the updated
+> **[brief 04 — Accounts & Sign-in](./accounts/04-accounts-and-sign-in.md)**.
+> Where this document and those briefs disagree, the briefs win.
+
 ---
 
 ## 1. What Plugfolio is
@@ -310,7 +319,7 @@ Plain, confident, anti-corporate; the product's personality is *removing* fricti
 
 ## 9. Explicitly OUT of v1 (do not design these into the flows)
 
-Referral rewards · wishlists/price alerts · aggregated feed · in-store deals · ratings/badges · media kits & campaign suites · on-platform payments/payouts · coupons/bundles · TikTok · AI tag suggestions · >5 profiles, >3 managers, finer roles · vanity usernames · creator-to-creator collabs. (Full rationale table lives in `plugfolio-lean-journey.md`.)
+Referral rewards · wishlists/price alerts · aggregated feed · tracked in-store redemption (untracked in-store coupons ARE in v1, brief 13) · ratings/badges · media kits & campaign suites · on-platform payments/payouts/checkout · drops/bundles · TikTok · AI tag suggestions · >5 profiles, >3 managers, finer roles · vanity usernames · creator-to-creator collabs. (Full rationale table lives in `plugfolio-lean-journey.md`.)
 
 ## 10. Open questions for you
 

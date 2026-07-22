@@ -54,6 +54,12 @@ function makeDeps(existingManagers = 0) {
     async findOrCreateByEmail(email) {
       return { id: email === "admin@example.com" ? ADMIN : MANAGER_USER };
     },
+    async getHandle() {
+      return "user-abc12345";
+    },
+    async updateUsername() {
+      return "ok";
+    },
   };
 
   return { deps: { profiles, managers, users }, added, removed };

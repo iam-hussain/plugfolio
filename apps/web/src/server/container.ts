@@ -1,5 +1,6 @@
 import {
   createBusinessRepository,
+  createCategoryRepository,
   createConnectionRepository,
   createManagerRepository,
   createCollabRepository,
@@ -23,6 +24,7 @@ export const repositories = {
   profiles: createProfileRepository(),
   follows: createFollowRepository(),
   comments: createCommentRepository(),
+  categories: createCategoryRepository(),
   businesses: createBusinessRepository(),
   requirements: createRequirementRepository(),
   collabs: createCollabRepository(),

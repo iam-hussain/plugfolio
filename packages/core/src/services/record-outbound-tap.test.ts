@@ -25,10 +25,12 @@ const PRODUCT_ID = "11111111-1111-1111-1111-111111111111";
 const OWNER_PROFILE_ID = "22222222-2222-2222-2222-222222222222";
 const TAGGED_POST_ID = "55555555-5555-5555-5555-555555555555";
 
-function makeFakeProducts(): ProductReadRepository {
+function makeFakeProducts(affiliateUrl: string | null = "https://a.test/link"): ProductReadRepository {
   return {
     async findForAttribution(productId: string) {
-      return productId === PRODUCT_ID ? { id: PRODUCT_ID, profileId: OWNER_PROFILE_ID } : null;
+      return productId === PRODUCT_ID
+        ? { id: PRODUCT_ID, profileId: OWNER_PROFILE_ID, affiliateUrl, couponCode: null }
+        : null;
     },
     async isTaggedToPost(productId: string, postId: string) {
       return productId === PRODUCT_ID && postId === TAGGED_POST_ID;
@@ -92,6 +94,14 @@ describe("recordOutboundTap", () => {
     const tap = await recordOutboundTap({ taps, products: makeFakeProducts(), now }, command);
 
     expect(tap.postId).toBeNull();
+  });
+
+  it("rejects a tap on an in-store-only product (no outbound destination, ADR-0011)", async () => {
+    const taps = makeFakeTaps();
+    await expect(
+      recordOutboundTap({ taps, products: makeFakeProducts(null), now }, command),
+    ).rejects.toBeInstanceOf(NotFoundError);
+    expect(taps.rows).toHaveLength(0);
   });
 
   it("is idempotent: a retry with the same key does not double-count", async () => {

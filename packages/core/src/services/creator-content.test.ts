@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { ConflictError, ForbiddenError, NotFoundError } from "../errors";
+import { AppError, ConflictError, ForbiddenError, NotFoundError } from "../errors";
+import type { CategoryRepository, CategoryView } from "../ports/category-repository";
 import type {
   ConnectionReadRepository,
   PostWriteRepository,
@@ -9,11 +10,16 @@ import type {
 } from "../ports/creator-content-repository";
 import type { ProductReadRepository } from "../ports/product-repository";
 import type { ProfileRepository } from "../ports/profile-repository";
+import { tagProductInput } from "../schemas/creator-content";
 import {
   MAX_PROFILES_PER_ACCOUNT,
+  createCategory,
   createPost,
   createProfile,
   removeProduct,
+  setPostCategory,
+  setProductCategory,
+  setProductCoupon,
   tagProductToPost,
   updateProductAffiliateUrl,
 } from "./creator-content";
@@ -23,13 +29,26 @@ const OUTSIDER = "10000000-0000-0000-0000-000000000002";
 const PROFILE_ID = "20000000-0000-0000-0000-000000000001";
 const POST_ID = "30000000-0000-0000-0000-000000000001";
 const PRODUCT_ID = "40000000-0000-0000-0000-000000000001";
+const CATEGORY_ID = "50000000-0000-0000-0000-000000000001";
+/** A category belonging to a DIFFERENT profile — cross-profile must 404. */
+const FOREIGN_CATEGORY_ID = "50000000-0000-0000-0000-000000000002";
 
-function makeDeps(options: { connected?: boolean; profileCount?: number; metadata?: ProductMetadata | null } = {}) {
-  const { connected = true, profileCount = 1, metadata = null } = options;
+function makeDeps(
+  options: {
+    connected?: boolean;
+    profileCount?: number;
+    metadata?: ProductMetadata | null;
+    /** The existing product's outbound URL (null = in-store-only). */
+    productUrl?: string | null;
+  } = {},
+) {
+  const { connected = true, profileCount = 1, metadata = null, productUrl = "https://a.test/x" } =
+    options;
   const created: { username: string }[] = [];
   const taggedRows: { title: string; imageUrl: string | null; priceCents: number | null }[] = [];
   const updates: string[] = [];
   const removals: string[] = [];
+  const couponUpdates: { couponCode: string | null; inStoreNote: string | null }[] = [];
 
   const profiles: ProfileRepository = {
     async listByUser(userId) {
@@ -56,6 +75,7 @@ function makeDeps(options: { connected?: boolean; profileCount?: number; metadat
       return connected;
     },
   };
+  const postCategoryChanges: (string | null)[] = [];
   const posts: PostWriteRepository = {
     async create() {
       return { id: "new-post" };
@@ -63,10 +83,15 @@ function makeDeps(options: { connected?: boolean; profileCount?: number; metadat
     async belongsToProfile(postId, profileId) {
       return postId === POST_ID && profileId === PROFILE_ID;
     },
+    async setCategory(_postId, categoryId) {
+      postCategoryChanges.push(categoryId);
+    },
   };
   const products: ProductReadRepository = {
     async findForAttribution(productId) {
-      return productId === PRODUCT_ID ? { id: PRODUCT_ID, profileId: PROFILE_ID } : null;
+      return productId === PRODUCT_ID
+        ? { id: PRODUCT_ID, profileId: PROFILE_ID, affiliateUrl: productUrl, couponCode: null }
+        : null;
     },
     async isTaggedToPost() {
       return true;
@@ -84,9 +109,44 @@ function makeDeps(options: { connected?: boolean; profileCount?: number; metadat
     async updateAffiliateUrl(productId) {
       updates.push(productId);
     },
+    async updateCoupon(_productId, coupon) {
+      couponUpdates.push({ couponCode: coupon.couponCode, inStoreNote: coupon.inStoreNote });
+    },
+    async setCategory(_productId, categoryId) {
+      productCategoryChanges.push(categoryId);
+    },
     async remove(productId) {
       removals.push(productId);
     },
+  };
+  const productCategoryChanges: (string | null)[] = [];
+  const categoryRows: CategoryView[] = [
+    { id: CATEGORY_ID, title: "Desk setup", description: null, sortOrder: 0 },
+  ];
+  const categories: CategoryRepository = {
+    async listByProfile() {
+      return categoryRows;
+    },
+    async findProfileId(categoryId) {
+      if (categoryId === CATEGORY_ID) return PROFILE_ID;
+      if (categoryId === FOREIGN_CATEGORY_ID) return "20000000-0000-0000-0000-000000000099";
+      return null;
+    },
+    async create(category) {
+      if (categoryRows.some((row) => row.title === category.title)) return "duplicate";
+      const view: CategoryView = {
+        id: "new-category",
+        title: category.title,
+        description: category.description,
+        sortOrder: 0,
+      };
+      categoryRows.push(view);
+      return view;
+    },
+    async update() {
+      return "ok";
+    },
+    async remove() {},
   };
   const gateway: ProductMetadataGateway = {
     async fetchMetadata() {
@@ -95,11 +155,14 @@ function makeDeps(options: { connected?: boolean; profileCount?: number; metadat
   };
 
   return {
-    deps: { profiles, connections, posts, products, productWrites, metadata: gateway },
+    deps: { profiles, connections, posts, products, productWrites, categories, metadata: gateway },
     created,
     taggedRows,
     updates,
     removals,
+    couponUpdates,
+    postCategoryChanges,
+    productCategoryChanges,
   };
 }
 
@@ -126,6 +189,7 @@ describe("createPost / tagProductToPost", () => {
     profileId: PROFILE_ID,
     postId: POST_ID,
     url: "https://shop.example.com/tote",
+    kind: "affiliate" as const,
     affiliateUrl: "https://affiliate.example.com/tote",
   };
 
@@ -176,5 +240,70 @@ describe("product fixes (Products tab)", () => {
     await expect(
       updateProductAffiliateUrl(deps, OUTSIDER, PRODUCT_ID, "https://a.test/x"),
     ).rejects.toBeInstanceOf(ForbiddenError);
+  });
+});
+
+describe("coupons (ADR-0011)", () => {
+  it("boundary schema: a coupon-less product needs a link; an in-store note makes the link optional", () => {
+    const base = { profileId: PROFILE_ID, postId: POST_ID, url: "https://s.test/p" };
+    expect(tagProductInput.safeParse(base).success).toBe(false);
+    expect(
+      tagProductInput.safeParse({ ...base, couponCode: "SAVE10", inStoreNote: "At the counter" })
+        .success,
+    ).toBe(true);
+    expect(tagProductInput.safeParse({ ...base, inStoreNote: "At the counter" }).success).toBe(
+      false,
+    );
+  });
+
+  it("sets a coupon when the product has an outbound link", async () => {
+    const { deps, couponUpdates } = makeDeps();
+    await setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: "SAVE10" });
+    expect(couponUpdates).toEqual([{ couponCode: "SAVE10", inStoreNote: null }]);
+  });
+
+  it("rejects a coupon with no channel (link-less product, no in-store note)", async () => {
+    const { deps, couponUpdates } = makeDeps({ productUrl: null });
+    await expect(
+      setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: "SAVE10" }),
+    ).rejects.toBeInstanceOf(AppError);
+    expect(couponUpdates).toEqual([]);
+  });
+
+  it("clearing the code clears the whole coupon, even on a link-less product", async () => {
+    const { deps, couponUpdates } = makeDeps({ productUrl: null });
+    await setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: null });
+    expect(couponUpdates).toEqual([{ couponCode: null, inStoreNote: null }]);
+  });
+});
+
+describe("categories (ADR-0010)", () => {
+  it("rejects a duplicate title on the same profile with Conflict", async () => {
+    const { deps } = makeDeps();
+    await expect(
+      createCategory(deps, USER, { profileId: PROFILE_ID, title: "Desk setup" }),
+    ).rejects.toBeInstanceOf(ConflictError);
+  });
+
+  it("an outsider cannot create a category", async () => {
+    const { deps } = makeDeps();
+    await expect(
+      createCategory(deps, OUTSIDER, { profileId: PROFILE_ID, title: "Sneaky shelf" }),
+    ).rejects.toBeInstanceOf(ForbiddenError);
+  });
+
+  it("puts a post on a shelf and takes it off", async () => {
+    const { deps, postCategoryChanges } = makeDeps();
+    await setPostCategory(deps, USER, POST_ID, { profileId: PROFILE_ID, categoryId: CATEGORY_ID });
+    await setPostCategory(deps, USER, POST_ID, { profileId: PROFILE_ID, categoryId: null });
+    expect(postCategoryChanges).toEqual([CATEGORY_ID, null]);
+  });
+
+  it("rejects assigning a category from another profile (cross-profile is a 404)", async () => {
+    const { deps, productCategoryChanges } = makeDeps();
+    await expect(
+      setProductCategory(deps, USER, PRODUCT_ID, { categoryId: FOREIGN_CATEGORY_ID }),
+    ).rejects.toBeInstanceOf(NotFoundError);
+    expect(productCategoryChanges).toEqual([]);
   });
 });

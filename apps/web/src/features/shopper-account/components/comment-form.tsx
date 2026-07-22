@@ -7,19 +7,50 @@ import { useState } from "react";
 import { addComment } from "../api";
 
 /**
- * Comment box for signed-in shoppers. Anonymous visitors get a sign-in door
+ * Comment box for signed-in users. Anonymous visitors get a sign-in door
  * instead (rendered by the parent) — reading stays account-free (§2.2).
+ *
+ * Identity (ADR-0009): users with profile memberships get a "commenting as"
+ * picker (personal @handle + each profile); everyone else sees plain text.
+ * The default is per-page (this page's own profile when a member, else the
+ * personal handle) and per-comment — never a sticky "acting as" mode.
  */
-export type CommentFormProps = {
-  profileId: string;
+export type CommentIdentityOption = {
+  id: string;
+  username: string;
 };
 
-export function CommentForm({ profileId }: CommentFormProps) {
+export type CommentFormProps = {
+  profileId: string;
+  /** ADR-0013: set when commenting on a product instead of the page. */
+  productId?: string;
+  /** ADR-0013: set when replying to a top-level comment. */
+  parentId?: string;
+  /** The commenter's member handle, for the "commenting as" label. */
+  ownHandle: string;
+  /** Profiles the commenter can speak as (empty for plain shoppers). */
+  identities: readonly CommentIdentityOption[];
+  /** Preselected identity: this page's profile when the user is a member. */
+  defaultAsProfileId: string | null;
+  placeholder?: string;
+};
+
+export function CommentForm({
+  profileId,
+  productId,
+  parentId,
+  ownHandle,
+  identities,
+  defaultAsProfileId,
+  placeholder = "Add a comment…",
+}: CommentFormProps) {
   const router = useRouter();
   const [body, setBody] = useState("");
+  const [asProfileId, setAsProfileId] = useState(defaultAsProfileId ?? "");
 
   const submit = useMutation({
-    mutationFn: () => addComment({ profileId, body }),
+    mutationFn: () =>
+      addComment({ profileId, productId, parentId, body, asProfileId: asProfileId || null }),
     onSuccess: () => {
       setBody("");
       router.refresh();
@@ -34,16 +65,35 @@ export function CommentForm({ profileId }: CommentFormProps) {
         if (body.trim()) submit.mutate();
       }}
     >
-      <label htmlFor="comment-body" className="sr-only">
-        Add a comment
+      {identities.length > 0 ? (
+        <label className="text-muted-foreground flex items-center gap-2 text-xs">
+          Commenting as
+          <select
+            value={asProfileId}
+            onChange={(event) => setAsProfileId(event.target.value)}
+            className="border-border bg-background rounded-md border p-1 text-xs"
+          >
+            <option value="">@{ownHandle} (you)</option>
+            {identities.map((identity) => (
+              <option key={identity.id} value={identity.id}>
+                {identity.username} · Creator
+              </option>
+            ))}
+          </select>
+        </label>
+      ) : (
+        <p className="text-muted-foreground text-xs">Commenting as @{ownHandle}</p>
+      )}
+      <label className="sr-only" htmlFor={`comment-body-${parentId ?? productId ?? "page"}`}>
+        {placeholder}
       </label>
       <textarea
-        id="comment-body"
+        id={`comment-body-${parentId ?? productId ?? "page"}`}
         value={body}
         onChange={(event) => setBody(event.target.value)}
         maxLength={500}
         rows={2}
-        placeholder="Add a comment…"
+        placeholder={placeholder}
         className="border-border bg-background rounded-md border p-2 text-sm"
       />
       <div className="flex items-center justify-between">

@@ -1,4 +1,4 @@
-import type { RecordOutboundTapInput } from "@plugfolio/core";
+import type { RecordCodeCopyInput, RecordOutboundTapInput } from "@plugfolio/core";
 
 /**
  * Client-side calls into the backend for this feature (§5: components don't
@@ -35,4 +35,16 @@ export async function recordTap(input: RecordOutboundTapInput): Promise<Recorded
 
   const data = (await response.json()) as { tap: RecordedTap };
   return data.tap;
+}
+
+/** The second attribution event (ADR-0011). Fire-and-forget from the caller's
+ * perspective — copying the code never waits on this. */
+export async function recordCodeCopy(input: RecordCodeCopyInput): Promise<void> {
+  const response = await fetch("/api/code-copies", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+    credentials: "same-origin",
+  });
+  if (!response.ok) throw new Error("Failed to record code copy");
 }

@@ -15,12 +15,13 @@ const PROFILE_ID = "00000000-0000-0000-0000-0000000000b1";
 const PRODUCT_ID = "00000000-0000-0000-0000-0000000000c1";
 const POST_TAGGED_ID = "00000000-0000-0000-0000-0000000000d1";
 const POST_UNTAGGED_ID = "00000000-0000-0000-0000-0000000000d2";
+const CATEGORY_ID = "00000000-0000-0000-0000-0000000000c9";
 
 async function main() {
   await prisma.user.upsert({
     where: { id: ACCOUNT_ID },
     update: {},
-    create: { id: ACCOUNT_ID, email: "creator@example.com" },
+    create: { id: ACCOUNT_ID, email: "creator@example.com", username: "maya" },
   });
 
   // A connected social (Auth.js Account row) — profile creation requires one
@@ -44,12 +45,25 @@ async function main() {
     create: { id: PROFILE_ID, username: "lena", userId: ACCOUNT_ID },
   });
 
+  // One shelf (ADR-0010) so the public page shows a chips row in dev.
+  await prisma.category.upsert({
+    where: { id: CATEGORY_ID },
+    update: {},
+    create: {
+      id: CATEGORY_ID,
+      profileId: PROFILE_ID,
+      title: "Everyday carry",
+      description: "The bag and the bits that live in it.",
+    },
+  });
+
   await prisma.product.upsert({
     where: { id: PRODUCT_ID },
-    update: {},
+    update: { categoryId: CATEGORY_ID },
     create: {
       id: PRODUCT_ID,
       profileId: PROFILE_ID,
+      categoryId: CATEGORY_ID,
       title: "Everyday Tote",
       affiliateUrl: "https://example.com/affiliate/everyday-tote",
       imageUrl: "https://example.com/images/everyday-tote.jpg",
@@ -58,17 +72,40 @@ async function main() {
     },
   });
 
+  // An own-product with a both-channel coupon (ADR-0011) so the card variants
+  // render in dev: "Their own product" tag + code chip + in-store line.
+  const OWN_PRODUCT_ID = "00000000-0000-0000-0000-0000000000c2";
+  await prisma.product.upsert({
+    where: { id: OWN_PRODUCT_ID },
+    update: {},
+    create: {
+      id: OWN_PRODUCT_ID,
+      profileId: PROFILE_ID,
+      kind: "own",
+      title: "Lena's Desk Mat",
+      affiliateUrl: "https://lena.example.com/shop/desk-mat",
+      couponCode: "LENA15",
+      inStoreNote: "Show this code at the Indiranagar studio store",
+      priceCents: 2400,
+      currency: "usd",
+    },
+  });
+
   // One post with the product tagged (the shoppable path) and one without
   // (grid must render untagged posts too).
   await prisma.post.upsert({
     where: { id: POST_TAGGED_ID },
-    update: { products: { connect: { id: PRODUCT_ID } } },
+    update: {
+      products: { connect: [{ id: PRODUCT_ID }, { id: OWN_PRODUCT_ID }] },
+      categoryId: CATEGORY_ID,
+    },
     create: {
       id: POST_TAGGED_ID,
       profileId: PROFILE_ID,
+      categoryId: CATEGORY_ID,
       mediaUrl: "https://example.com/media/morning-routine.jpg",
       caption: "Morning routine",
-      products: { connect: { id: PRODUCT_ID } },
+      products: { connect: [{ id: PRODUCT_ID }, { id: OWN_PRODUCT_ID }] },
     },
   });
 
@@ -90,7 +127,7 @@ async function main() {
   await prisma.user.upsert({
     where: { id: BIZ_USER_ID },
     update: {},
-    create: { id: BIZ_USER_ID, email: "business@example.com" },
+    create: { id: BIZ_USER_ID, email: "business@example.com", username: "verve-gear" },
   });
 
   await prisma.business.upsert({

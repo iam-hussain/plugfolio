@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { getMyProfiles, getShopperPost } from "@plugfolio/core";
-import { TagProductForm } from "@/features/product-tagging";
+import { getMyProfiles, getShopperPost, listMyCategories } from "@plugfolio/core";
+import { CategorySelect, TagProductForm } from "@/features/product-tagging";
 import { formatPrice } from "@/lib/format-price";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
@@ -31,11 +31,14 @@ export default async function TagPostPage({
 
   const { postId } = await params;
   // Scoped by the creator's own username — another profile's post is a 404.
-  const post = await getShopperPost(
-    { creatorPages: repositories.creatorPages },
-    active.username,
-    postId,
-  );
+  const [post, categories] = await Promise.all([
+    getShopperPost({ creatorPages: repositories.creatorPages }, active.username, postId),
+    listMyCategories(
+      { profiles: repositories.profiles, categories: repositories.categories },
+      session.user.id,
+      active.id,
+    ),
+  ]);
   if (!post) notFound();
 
   return (
@@ -56,6 +59,13 @@ export default async function TagPostPage({
         />
       </div>
       {post.caption ? <p className="py-3 text-sm">{post.caption}</p> : null}
+      <div className="py-2">
+        <CategorySelect
+          target={{ kind: "post", postId: post.id, profileId: active.id }}
+          categories={categories}
+          currentCategoryId={post.categoryId}
+        />
+      </div>
 
       <section aria-label="Tagged products" className="py-4">
         <h2 className="pb-3 font-medium">Tagged products</h2>

@@ -35,7 +35,7 @@ describe.skipIf(!url)("EarningsRepository (integration)", () => {
   beforeAll(async () => {
     db = new PrismaClient({ datasources: { db: { url } } });
     earnings = createEarningsRepository(db);
-    await db.user.create({ data: { id: accountId, email: `${accountId}@example.com` } });
+    await db.user.create({ data: { id: accountId, email: `${accountId}@example.com`, username: `user-${accountId.slice(0, 8)}` } });
     await db.profile.create({
       data: { id: profileId, username: accountId.slice(0, 8), userId: accountId },
     });
@@ -68,11 +68,11 @@ describe.skipIf(!url)("EarningsRepository (integration)", () => {
       { postId: hotPostId, mediaUrl: "https://example.com/hot.jpg", caption: "Hot", taps: 2 },
       { postId: quietPostId, mediaUrl: "https://example.com/quiet.jpg", caption: null, taps: 1 },
     ]);
-    expect(summary.byProduct).toEqual([{ productId, title: "Tote", taps: 4 }]);
+    expect(summary.byProduct).toEqual([{ productId, title: "Tote", taps: 4, codeCopies: 0 }]);
   });
 
   it("is rebuildable: another profile's events never leak in", async () => {
     const summary = await earnings.summarize(randomUUID());
-    expect(summary).toEqual({ totalTaps: 0, byPost: [], byProduct: [] });
+    expect(summary).toEqual({ totalTaps: 0, totalCodeCopies: 0, byPost: [], byProduct: [] });
   });
 });

@@ -12,23 +12,43 @@ export type ShopperProduct = {
   /** Display-only price grabbed at tag time; the retailer owns the real price. */
   readonly priceCents: number | null;
   readonly currency: string;
-  readonly affiliateUrl: string;
+  /** ADR-0011: affiliate (Buy → retailer) or own (Shop their store). */
+  readonly kind: "affiliate" | "own";
+  /** Outbound destination; null = in-store-only coupon → no Buy button. */
+  readonly affiliateUrl: string | null;
+  /** Coupon attachment (ADR-0011); all null when the product carries no offer. */
+  readonly couponCode: string | null;
+  readonly offerEndsAt: Date | null;
+  readonly inStoreNote: string | null;
+  /** The shelf it sits in (ADR-0010); null = uncategorized ("All" only). */
+  readonly categoryId: string | null;
 };
 
 export type ShopperPost = {
   readonly id: string;
   readonly mediaUrl: string;
   readonly caption: string | null;
+  readonly categoryId: string | null;
   readonly products: readonly ShopperProduct[];
+};
+
+/** A category chip on the public page (ADR-0010). */
+export type PageCategory = {
+  readonly id: string;
+  readonly title: string;
+  readonly description: string | null;
 };
 
 export type CreatorPage = {
   readonly id: string;
   readonly username: string;
+  readonly categories: readonly PageCategory[];
   readonly posts: readonly ShopperPost[];
 };
 
 export type ShopperProductView = ShopperProduct & {
+  /** The owning profile — the product page's comment target (ADR-0013). */
+  readonly profileId: string;
   /** The post it came from (brief 03); null if tagged nowhere yet. */
   readonly fromPost: { readonly id: string; readonly mediaUrl: string } | null;
 };

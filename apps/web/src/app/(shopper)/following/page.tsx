@@ -18,8 +18,11 @@ export default async function FollowingPage() {
 
   return (
     <main className="mx-auto max-w-md px-4 pb-8">
-      <header className="py-8">
+      <header className="flex items-baseline justify-between py-8">
         <h1 className="font-display text-2xl font-semibold">Following</h1>
+        <Link href="/account" className="text-muted-foreground text-sm underline">
+          Account
+        </Link>
       </header>
       {profiles.length === 0 ? (
         <p className="text-muted-foreground py-12 text-center text-sm">

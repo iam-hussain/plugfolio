@@ -13,7 +13,12 @@ const productSelect = {
   imageUrl: true,
   priceCents: true,
   currency: true,
+  kind: true,
   affiliateUrl: true,
+  couponCode: true,
+  offerEndsAt: true,
+  inStoreNote: true,
+  categoryId: true,
 } as const;
 
 /**
@@ -29,12 +34,17 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
         select: {
           id: true,
           username: true,
+          categories: {
+            orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+            select: { id: true, title: true, description: true },
+          },
           posts: {
             orderBy: { createdAt: "desc" },
             select: {
               id: true,
               mediaUrl: true,
               caption: true,
+              categoryId: true,
               products: { select: productSelect },
             },
           },
@@ -58,6 +68,7 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
           id: true,
           mediaUrl: true,
           caption: true,
+          categoryId: true,
           products: { select: productSelect },
         },
       });
@@ -68,6 +79,7 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
         where: { id: productId, profile: { username } },
         select: {
           ...productSelect,
+          profileId: true,
           posts: {
             orderBy: { createdAt: "desc" },
             take: 1,

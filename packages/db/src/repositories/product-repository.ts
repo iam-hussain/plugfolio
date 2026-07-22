@@ -11,7 +11,7 @@ export function createProductRepository(db: PrismaClient = prisma): ProductReadR
     async findForAttribution(productId: string): Promise<ProductForAttribution | null> {
       return db.product.findUnique({
         where: { id: productId },
-        select: { id: true, profileId: true },
+        select: { id: true, profileId: true, affiliateUrl: true, couponCode: true },
       });
     },
 

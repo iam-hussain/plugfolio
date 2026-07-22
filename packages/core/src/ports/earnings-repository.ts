@@ -18,11 +18,15 @@ export type ProductTapCount = {
   readonly productId: string;
   readonly title: string;
   readonly taps: number;
+  /** Coupon-code copies (ADR-0011) — measured copies, never redemptions. */
+  readonly codeCopies: number;
 };
 
 export type EarningsSummary = {
   /** Every outbound tap for the profile, including post-less surface taps. */
   readonly totalTaps: number;
+  /** Every coupon-code copy — labeled "redemption not tracked" at the view. */
+  readonly totalCodeCopies: number;
   /** Ordered most-tapped first. Taps whose post was deleted count only in totals. */
   readonly byPost: readonly PostTapCount[];
   readonly byProduct: readonly ProductTapCount[];

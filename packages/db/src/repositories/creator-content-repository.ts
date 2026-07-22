@@ -27,6 +27,10 @@ export function createPostWriteRepository(db: PrismaClient = prisma): PostWriteR
       const count = await db.post.count({ where: { id: postId, profileId } });
       return count > 0;
     },
+
+    async setCategory(postId: string, categoryId: string | null): Promise<void> {
+      await db.post.update({ where: { id: postId }, data: { categoryId } });
+    },
   };
 }
 
@@ -42,6 +46,14 @@ export function createProductWriteRepository(db: PrismaClient = prisma): Product
 
     async updateAffiliateUrl(productId: string, affiliateUrl: string): Promise<void> {
       await db.product.update({ where: { id: productId }, data: { affiliateUrl } });
+    },
+
+    async setCategory(productId: string, categoryId: string | null): Promise<void> {
+      await db.product.update({ where: { id: productId }, data: { categoryId } });
+    },
+
+    async updateCoupon(productId, coupon): Promise<void> {
+      await db.product.update({ where: { id: productId }, data: coupon });
     },
 
     async remove(productId: string): Promise<void> {

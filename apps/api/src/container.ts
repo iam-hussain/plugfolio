@@ -1,5 +1,7 @@
 import {
   createBusinessRepository,
+  createCategoryRepository,
+  createCodeCopyRepository,
   createConnectionRepository,
   createManagerRepository,
   createCollabRepository,
@@ -23,10 +25,12 @@ import { createOgMetadataGateway } from "./gateways/og-metadata";
  */
 export const repositories = {
   taps: createTapRepository(),
+  codeCopies: createCodeCopyRepository(),
   products: createProductRepository(),
   profiles: createProfileRepository(),
   follows: createFollowRepository(),
   comments: createCommentRepository(),
+  categories: createCategoryRepository(),
   businesses: createBusinessRepository(),
   requirements: createRequirementRepository(),
   collabs: createCollabRepository(),
@@ -44,6 +48,7 @@ export const shopperSocialDeps = {
   follows: repositories.follows,
   comments: repositories.comments,
   profiles: repositories.profiles,
+  products: repositories.products,
 };
 
 export const businessCollabDeps = {
@@ -60,6 +65,7 @@ export const creatorContentDeps = {
   posts: repositories.postWrites,
   products: repositories.products,
   productWrites: repositories.productWrites,
+  categories: repositories.categories,
   metadata: createOgMetadataGateway(),
 };
 

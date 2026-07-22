@@ -11,6 +11,8 @@ import {
   collabMessageInput,
   createBusiness,
   createBusinessInput,
+  createCategory,
+  createCategoryInput,
   createPost,
   createPostInput,
   createProfile,
@@ -20,16 +22,29 @@ import {
   followProfileInput,
   postRequirement,
   postRequirementInput,
+  recordCodeCopy,
+  recordCodeCopyInput,
   recordOutboundTap,
   recordOutboundTapInput,
+  removeCategory,
   removeManager,
   removeProduct,
   requestCollab,
   requestCollabInput,
   sendCollabMessage,
+  setPostCategory,
+  setPostCategoryInput,
+  setProductCategory,
+  setProductCategoryInput,
+  setProductCoupon,
+  setProductCouponInput,
   tagProductToPost,
   tagProductInput,
   unfollowProfile,
+  updateCategory,
+  updateCategoryInput,
+  updateMemberHandle,
+  updateMemberHandleInput,
   updateProductAffiliateUrl,
   updateProductInput,
 } from "@plugfolio/core";
@@ -84,6 +99,29 @@ app.post("/taps", async (c) => {
   return c.json({ tap }, 201);
 });
 
+// The coupon-code copy — the second anonymous attribution event (ADR-0011),
+// same device-identity + idempotency rules as taps.
+app.post("/code-copies", async (c) => {
+  const input = recordCodeCopyInput.parse(await c.req.json());
+  const { deviceId, issued } = deviceIdentity(c);
+
+  const copy = await recordCodeCopy(
+    { codeCopies: repositories.codeCopies, products: repositories.products, now: clock.now },
+    { ...input, deviceId },
+  );
+
+  if (issued) {
+    setCookie(c, DEVICE_COOKIE, issued.token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Lax",
+      path: "/",
+      maxAge: ONE_YEAR_SECONDS,
+    });
+  }
+  return c.json({ copy }, 201);
+});
+
 app.post("/follows", async (c) => {
   const userId = await requireUserId(c);
   const input = followProfileInput.parse(await c.req.json());
@@ -103,6 +141,14 @@ app.post("/comments", async (c) => {
   const input = addCommentInput.parse(await c.req.json());
   const comment = await addComment(shopperSocialDeps, userId, input);
   return c.json({ comment }, 201);
+});
+
+// The member handle (ADR-0009): public identity, never a login.
+app.patch("/me/handle", async (c) => {
+  const userId = await requireUserId(c);
+  const input = updateMemberHandleInput.parse(await c.req.json());
+  await updateMemberHandle({ users: repositories.users }, userId, input);
+  return c.json({ updated: true });
 });
 
 app.post("/businesses", async (c) => {
@@ -187,6 +233,58 @@ app.delete("/products/:productId", async (c) => {
   const productId = uuidParam.parse(c.req.param("productId"));
   await removeProduct(creatorContentDeps, userId, productId);
   return c.json({ removed: true });
+});
+
+// Edit or clear a product's coupon (ADR-0011: "fix a code").
+app.patch("/products/:productId/coupon", async (c) => {
+  const userId = await requireUserId(c);
+  const productId = uuidParam.parse(c.req.param("productId"));
+  const input = setProductCouponInput.parse(await c.req.json());
+  await setProductCoupon(creatorContentDeps, userId, productId, input);
+  return c.json({ updated: true });
+});
+
+// --- Categories (ADR-0010: per-profile shelves; Admin + Manager curate) ---
+
+app.post("/profiles/:profileId/categories", async (c) => {
+  const userId = await requireUserId(c);
+  const input = createCategoryInput.parse({
+    ...(await c.req.json()),
+    profileId: c.req.param("profileId"),
+  });
+  const category = await createCategory(creatorContentDeps, userId, input);
+  return c.json({ category }, 201);
+});
+
+app.patch("/categories/:categoryId", async (c) => {
+  const userId = await requireUserId(c);
+  const categoryId = uuidParam.parse(c.req.param("categoryId"));
+  const input = updateCategoryInput.parse(await c.req.json());
+  await updateCategory(creatorContentDeps, userId, categoryId, input);
+  return c.json({ updated: true });
+});
+
+app.delete("/categories/:categoryId", async (c) => {
+  const userId = await requireUserId(c);
+  const categoryId = uuidParam.parse(c.req.param("categoryId"));
+  await removeCategory(creatorContentDeps, userId, categoryId);
+  return c.json({ removed: true });
+});
+
+app.patch("/posts/:postId/category", async (c) => {
+  const userId = await requireUserId(c);
+  const postId = uuidParam.parse(c.req.param("postId"));
+  const input = setPostCategoryInput.parse(await c.req.json());
+  await setPostCategory(creatorContentDeps, userId, postId, input);
+  return c.json({ updated: true });
+});
+
+app.patch("/products/:productId/category", async (c) => {
+  const userId = await requireUserId(c);
+  const productId = uuidParam.parse(c.req.param("productId"));
+  const input = setProductCategoryInput.parse(await c.req.json());
+  await setProductCategory(creatorContentDeps, userId, productId, input);
+  return c.json({ updated: true });
 });
 
 // --- Managers (ADR-0004: Admin-only settings surface) ---

@@ -1,4 +1,12 @@
-import type { CreatePostInput, TagProductInput, UpdateProductInput } from "@plugfolio/core";
+import type {
+  CreateCategoryInput,
+  CreatePostInput,
+  SetPostCategoryInput,
+  SetProductCategoryInput,
+  SetProductCouponInput,
+  TagProductInput,
+  UpdateProductInput,
+} from "@plugfolio/core";
 
 /**
  * Client calls for the creator's back room (§5). Contracts are the same
@@ -28,3 +36,15 @@ export const updateProduct = (productId: string, input: UpdateProductInput) =>
   send(`/api/products/${productId}`, "PATCH", input);
 export const removeProduct = (productId: string) =>
   send(`/api/products/${productId}`, "DELETE");
+export const setProductCoupon = (productId: string, input: SetProductCouponInput) =>
+  send(`/api/products/${productId}/coupon`, "PATCH", input);
+
+// Categories (ADR-0010)
+export const createCategory = ({ profileId, ...body }: CreateCategoryInput) =>
+  send(`/api/profiles/${profileId}/categories`, "POST", body);
+export const removeCategory = (categoryId: string) =>
+  send(`/api/categories/${categoryId}`, "DELETE");
+export const setPostCategory = (postId: string, input: SetPostCategoryInput) =>
+  send(`/api/posts/${postId}/category`, "PATCH", input);
+export const setProductCategory = (productId: string, input: SetProductCategoryInput) =>
+  send(`/api/products/${productId}/category`, "PATCH", input);
