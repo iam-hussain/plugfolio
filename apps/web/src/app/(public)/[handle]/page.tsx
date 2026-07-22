@@ -111,7 +111,7 @@ export default async function CreatorPage({
             />
           ) : (
             <p className="text-muted-foreground text-sm">
-              <Link href="/api/auth/signin" className="underline">
+              <Link href="/signin" className="underline">
                 Sign in
               </Link>{" "}
               to comment — shopping never needs an account.

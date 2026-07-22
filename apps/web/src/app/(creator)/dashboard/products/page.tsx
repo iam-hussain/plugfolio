@@ -18,7 +18,7 @@ export default async function DashboardProductsPage({
   searchParams: Promise<SearchParams>;
 }) {
   const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  if (!session?.user) redirect("/signin");
 
   const profiles = await getMyProfiles({ profiles: repositories.profiles }, session.user.id);
   const active = pickActiveProfile(profiles, (await searchParams).profile);

@@ -16,7 +16,7 @@ export const metadata: Metadata = { title: "Collabs" };
 
 export default async function CreatorCollabsPage() {
   const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  if (!session?.user) redirect("/signin");
 
   const [profiles, requirements, collabs] = await Promise.all([
     getMyProfiles({ profiles: repositories.profiles }, session.user.id),

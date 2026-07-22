@@ -1,4 +1,7 @@
+import type { AuthMailer } from "@plugfolio/core";
 import {
+  createAuthAccountRepository,
+  createAuthTokenRepository,
   createBusinessRepository,
   createCategoryRepository,
   createCodeCopyRepository,
@@ -17,6 +20,7 @@ import {
   createUserRepository,
 } from "@plugfolio/db";
 import { createOgMetadataGateway } from "./gateways/og-metadata";
+import { env } from "./env";
 
 /**
  * Composition root: the API wires domain services to their concrete Prisma
@@ -73,4 +77,23 @@ export const profileManagerDeps = {
   profiles: repositories.profiles,
   managers: repositories.managers,
   users: repositories.users,
+};
+
+// ponytail: no mail transport yet — links go to the server console; a real
+// provider (SMTP/Resend) replaces this object at deployment time.
+const consoleMailer: AuthMailer = {
+  async sendVerification(email, url) {
+    console.log(`[auth] verification link for ${email}: ${url}`);
+  },
+  async sendPasswordReset(email, url) {
+    console.log(`[auth] password-reset link for ${email}: ${url}`);
+  },
+};
+
+export const accountAuthDeps = {
+  accounts: createAuthAccountRepository(),
+  tokens: createAuthTokenRepository(),
+  mailer: consoleMailer,
+  webOrigin: env.WEB_ORIGIN,
+  now: clock.now,
 };

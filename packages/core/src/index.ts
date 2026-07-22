@@ -21,6 +21,12 @@ export type { TapRepository } from "./ports/tap-repository";
 export type { ProductReadRepository, ProductForAttribution } from "./ports/product-repository";
 export type { CodeCopyRepository, CodeCopy, NewCodeCopy } from "./ports/code-copy-repository";
 export type {
+  AuthAccount,
+  AuthAccountRepository,
+  AuthTokenRepository,
+  AuthMailer,
+} from "./ports/auth-account-repository";
+export type {
   CreatorPageReadRepository,
   CreatorPage,
   PageCategory,
@@ -126,6 +132,18 @@ export {
   updateMemberHandleInput,
   type UpdateMemberHandleInput,
 } from "./schemas/member-handle";
+export {
+  registerInput,
+  type RegisterInput,
+  credentialsInput,
+  type CredentialsInput,
+  emailOnlyInput,
+  type EmailOnlyInput,
+  verifyEmailInput,
+  type VerifyEmailInput,
+  resetPasswordInput,
+  type ResetPasswordInput,
+} from "./schemas/account-auth";
 
 // Services (use-cases)
 export { recordOutboundTap, type RecordOutboundTapDeps } from "./services/record-outbound-tap";
@@ -171,6 +189,16 @@ export {
   getMemberHandle,
   type MemberHandleDeps,
 } from "./services/member-handle";
+export {
+  registerAccount,
+  resendVerification,
+  verifyEmail,
+  requestPasswordReset,
+  resetPassword,
+  verifyCredentials,
+  type AccountAuthDeps,
+  type CredentialsResult,
+} from "./services/account-auth";
 export {
   followProfile,
   unfollowProfile,

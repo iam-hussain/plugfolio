@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "Collab" };
 
 export default async function CollabThreadPage({ params }: { params: Promise<Params> }) {
   const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  if (!session?.user) redirect("/signin");
 
   const { collabId } = await params;
   let result: Awaited<ReturnType<typeof getCollabThread>>;

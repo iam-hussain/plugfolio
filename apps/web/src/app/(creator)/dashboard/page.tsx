@@ -20,7 +20,7 @@ export default async function DashboardPage({
   searchParams: Promise<SearchParams>;
 }) {
   const session = await auth();
-  if (!session?.user) redirect("/api/auth/signin");
+  if (!session?.user) redirect("/signin");
 
   const [profiles, connected] = await Promise.all([
     getMyProfiles({ profiles: repositories.profiles }, session.user.id),
@@ -92,7 +92,7 @@ export default async function DashboardPage({
         {!connected ? (
           <p className="text-muted-foreground pt-3 text-xs">
             Social connects (YouTube · Instagram) appear on the{" "}
-            <Link href="/api/auth/signin" className="underline">
+            <Link href="/signin" className="underline">
               sign-in page
             </Link>{" "}
             once OAuth apps are configured.

@@ -24,6 +24,9 @@ model User {
   /// changeable in settings. NEVER a login and never a URL in v1 — a separate
   /// namespace from Profile.username.
   username      String    @unique
+  /// scrypt `salt:hash` (ADR-0012). Null = passwordless (an invited Manager
+  /// before their first set-password link).
+  passwordHash  String?
   emailVerified DateTime?
   name          String?
   image         String?
