@@ -30,6 +30,35 @@ const preset = {
         },
         border: "hsl(var(--border) / <alpha-value>)",
         ring: "hsl(var(--ring) / <alpha-value>)",
+        // shadcn semantic names, aliased onto the same tokens so every
+        // generated component themes from tokens.css without new values.
+        card: {
+          DEFAULT: "hsl(var(--surface) / <alpha-value>)",
+          foreground: "hsl(var(--text) / <alpha-value>)",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--surface-muted) / <alpha-value>)",
+          foreground: "hsl(var(--text) / <alpha-value>)",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--surface-muted) / <alpha-value>)",
+          foreground: "hsl(var(--text) / <alpha-value>)",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
+          foreground: "hsl(var(--destructive-foreground) / <alpha-value>)",
+        },
+        input: "hsl(var(--border) / <alpha-value>)",
+        sidebar: {
+          DEFAULT: "hsl(var(--surface-muted) / <alpha-value>)",
+          foreground: "hsl(var(--text) / <alpha-value>)",
+          primary: "hsl(var(--color-primary) / <alpha-value>)",
+          "primary-foreground": "hsl(var(--color-primary-foreground) / <alpha-value>)",
+          accent: "hsl(var(--surface) / <alpha-value>)",
+          "accent-foreground": "hsl(var(--text) / <alpha-value>)",
+          border: "hsl(var(--border) / <alpha-value>)",
+          ring: "hsl(var(--ring) / <alpha-value>)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

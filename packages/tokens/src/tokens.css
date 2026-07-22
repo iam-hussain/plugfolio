@@ -28,6 +28,10 @@
   --border: 258 18% 22%;
   --ring: 262 83% 58%;
 
+  /* Destructive actions (delete/remove) — shadcn components expect it */
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+
   /* Shape & type */
   --radius: 0.75rem;
   --font-display: "Space Grotesk", system-ui, sans-serif;
@@ -47,6 +51,9 @@
 
   --border: 258 20% 88%;
   --ring: 262 83% 52%;
+
+  --destructive: 0 72% 45%;
+  --destructive-foreground: 0 0% 100%;
 }
 
 @media (prefers-color-scheme: light) {
@@ -60,5 +67,6 @@
     --text-muted: 258 8% 38%;
     --border: 258 20% 88%;
     --ring: 262 83% 52%;
+    --destructive: 0 72% 45%;
   }
 }
