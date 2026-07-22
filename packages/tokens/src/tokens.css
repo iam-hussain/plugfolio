@@ -1,56 +1,78 @@
 /**
- * Plugfolio design tokens — "Charged Violet" (CLAUDE.md §7).
+ * Plugfolio design tokens — "Charged Violet", Brand Guidelines v1.1 (CLAUDE.md §7).
  *
- * The ONLY source of color / radius / type. Components reference these via the
- * Tailwind preset (@plugfolio/config/tailwind); never hardcode hex.
+ * The ONLY source of color / radius / type. Components reference these through the
+ * Tailwind preset (@plugfolio/config/tailwind) as semantic utility classes
+ * (bg-primary, text-foreground, …) — NEVER a raw hex, NEVER an inline style.
  *
  * Colors are stored as HSL channels (no `hsl()` wrapper) so Tailwind's
  * `<alpha-value>` opacity modifier works: `hsl(var(--color-primary) / 0.5)`.
  *
- * Dark-first surfaces (the brand is violet-tinted dark); light mode overrides
- * below keep AA contrast — mind lime-on-light, it fails easily.
+ * Two token families:
+ *   1. Semantic tokens (--color-primary, --surface, --text, …) — what components
+ *      consume. They flip between light and dark below.
+ *   2. Raw brand tokens (--brand-*) — the fixed palette values behind the
+ *      semantics, exposed for the few spots that need a specific brand color
+ *      (e.g. the lime coupon chip, the coral warm alt). Same in both themes.
+ *
+ * Dark-first surfaces (the brand is violet-tinted dark); the light overrides keep
+ * WCAG AA. Electric Lime is a FILL ONLY with dark text on top — it fails AA as a
+ * text color on light, so it is never used as `--color-accent` type.
  */
 
 :root,
 :root[data-theme="dark"] {
-  /* Brand */
-  --color-primary: 262 83% 58%; /* Charged Violet #7C3AED */
+  /* Raw brand palette (fixed in both themes) — Brand Guidelines v1.1 §05. */
+  --brand-violet: 262 83% 58%; /* #7C3AED Brand Violet */
+  --brand-violet-deep: 262 70% 42%; /* #5B21B6 hover / dark */
+  --brand-violet-tint: 255 92% 76%; /* #A78BFA accents / bg */
+  --brand-ink: 258 26% 9%; /* #12101C text / prongs / dark UI */
+  --brand-lime: 76 100% 62%; /* #C6FF3D fill only, dark text */
+  --brand-coral: 6 100% 68%; /* #FF6B5C warm alt */
+  --brand-violet-wash: 255 60% 95%; /* #EFEAFB tint field */
+  --brand-canvas: 252 33% 97%; /* #F5F4F8 page bg */
+
+  /* Semantic — DARK (default surface). */
+  --color-primary: 258 90% 66%; /* #8B5CF6 lifted violet for dark */
   --color-primary-foreground: 0 0% 100%;
-  --color-accent: 76 100% 62%; /* Electric Lime #C6FF3D — a spark, use sparingly */
-  --color-accent-foreground: 240 20% 8%;
+  --color-accent: 76 100% 62%; /* Electric Lime — a spark, fill only */
+  --color-accent-foreground: 258 26% 9%; /* Ink text on lime, always */
 
-  /* Surfaces (violet-tinted dark) */
-  --surface: 258 30% 8%;
-  --surface-muted: 258 20% 14%;
-  --text: 250 30% 96%;
-  --text-muted: 250 10% 68%;
+  /* This codebase's functional roles: `--surface` is the PAGE (bg-background);
+     `--surface-muted` is the RAISED card/input fill (bg-muted, bg-card). Values
+     follow the design table (dark: page #12101C, cards #1A1726). */
+  --surface: 258 26% 9%; /* #12101C page bg */
+  --surface-muted: 256 24% 12%; /* #1A1726 cards, sheets, inputs */
+  --text: 260 40% 96%; /* #F4F2FA */
+  --text-muted: 257 12% 63%; /* #9A94AC captions, @handle, price */
 
-  --border: 258 18% 22%;
-  --ring: 262 83% 58%;
+  --border: 256 24% 21%; /* #2C2740 hairlines, dividers, inputs */
+  --ring: 258 90% 66%; /* keyboard focus ring */
 
-  /* Destructive actions (delete/remove) — shadcn components expect it */
+  /* Destructive actions (delete/remove) — shadcn components expect it. */
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
 
-  /* Shape & type */
-  --radius: 0.75rem;
-  --font-display: "Space Grotesk", system-ui, sans-serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  /* Shape & type. */
+  --radius: 1rem; /* radius-lg (16px); md/sm derive in the preset */
+  --font-display: var(--font-sora, "Sora"), system-ui, sans-serif;
+  --font-sans: var(--font-inter, "Inter"), system-ui, sans-serif;
+  --font-mono: var(--font-space-mono, "Space Mono"), ui-monospace, monospace;
 }
 
 :root[data-theme="light"] {
-  --color-primary: 262 83% 52%;
+  --color-primary: 262 83% 58%; /* #7C3AED */
   --color-primary-foreground: 0 0% 100%;
-  --color-accent: 76 90% 42%; /* darkened so lime text passes AA on light */
-  --color-accent-foreground: 240 20% 8%;
+  --color-accent: 76 100% 62%; /* lime stays lime — fill only, never text */
+  --color-accent-foreground: 258 26% 9%;
 
-  --surface: 0 0% 100%;
-  --surface-muted: 258 30% 96%;
-  --text: 258 30% 12%;
-  --text-muted: 258 8% 38%;
+  --surface: 252 33% 97%; /* #F5F4F8 Canvas page bg */
+  --surface-muted: 0 0% 100%; /* #FFFFFF cards, sheets, inputs */
+  --text: 258 26% 9%; /* #12101C Ink */
+  --text-muted: 257 9% 34%; /* #54505F */
 
-  --border: 258 20% 88%;
-  --ring: 262 83% 52%;
+  --border: 258 26% 92%; /* #E7E4EF */
+  --ring: 255 92% 76%; /* #A78BFA Violet Tint */
 
   --destructive: 0 72% 45%;
   --destructive-foreground: 0 0% 100%;
@@ -58,15 +80,20 @@
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
-    --color-primary: 262 83% 52%;
-    --color-accent: 76 90% 42%;
-    --color-accent-foreground: 240 20% 8%;
-    --surface: 0 0% 100%;
-    --surface-muted: 258 30% 96%;
-    --text: 258 30% 12%;
-    --text-muted: 258 8% 38%;
-    --border: 258 20% 88%;
-    --ring: 262 83% 52%;
+    --color-primary: 262 83% 58%;
+    --color-primary-foreground: 0 0% 100%;
+    --color-accent: 76 100% 62%;
+    --color-accent-foreground: 258 26% 9%;
+
+    --surface: 252 33% 97%;
+    --surface-muted: 0 0% 100%;
+    --text: 258 26% 9%;
+    --text-muted: 257 9% 34%;
+
+    --border: 258 26% 92%;
+    --ring: 255 92% 76%;
+
     --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
   }
 }

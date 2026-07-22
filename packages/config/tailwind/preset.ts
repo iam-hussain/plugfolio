@@ -32,8 +32,10 @@ const preset = {
         ring: "hsl(var(--ring) / <alpha-value>)",
         // shadcn semantic names, aliased onto the same tokens so every
         // generated component themes from tokens.css without new values.
+        // Cards/sheets are the RAISED surface (design: white / #1A1726),
+        // one step off the page background.
         card: {
-          DEFAULT: "hsl(var(--surface) / <alpha-value>)",
+          DEFAULT: "hsl(var(--surface-muted) / <alpha-value>)",
           foreground: "hsl(var(--text) / <alpha-value>)",
         },
         popover: {
@@ -49,6 +51,19 @@ const preset = {
           foreground: "hsl(var(--destructive-foreground) / <alpha-value>)",
         },
         input: "hsl(var(--border) / <alpha-value>)",
+        // Raw brand palette (Brand Guidelines v1.1 §05) — for the few spots that
+        // need a specific brand color, e.g. the coral warm alt. Still tokens,
+        // never raw hex in JSX. Lime is fill-only; use `accent` for it.
+        brand: {
+          violet: "hsl(var(--brand-violet) / <alpha-value>)",
+          "violet-deep": "hsl(var(--brand-violet-deep) / <alpha-value>)",
+          "violet-tint": "hsl(var(--brand-violet-tint) / <alpha-value>)",
+          "violet-wash": "hsl(var(--brand-violet-wash) / <alpha-value>)",
+          ink: "hsl(var(--brand-ink) / <alpha-value>)",
+          lime: "hsl(var(--brand-lime) / <alpha-value>)",
+          coral: "hsl(var(--brand-coral) / <alpha-value>)",
+          canvas: "hsl(var(--brand-canvas) / <alpha-value>)",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--surface-muted) / <alpha-value>)",
           foreground: "hsl(var(--text) / <alpha-value>)",
@@ -60,14 +75,26 @@ const preset = {
           ring: "hsl(var(--ring) / <alpha-value>)",
         },
       },
+      // Radius scale — Brand/Dev-spec §02: sm 8 · md 12 · lg 16 · pill 999.
       borderRadius: {
+        sm: "0.5rem",
+        md: "0.75rem",
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        xl: "1.25rem",
+        pill: "9999px",
       },
       fontFamily: {
+        // Sora = display / wordmark / headlines; Inter = UI & body;
+        // Space Mono = micro labels, eyebrows, captions.
         display: ["var(--font-display)", "system-ui", "sans-serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      },
+      letterSpacing: {
+        // Sora tracks tight at display sizes (-2% to -5%); Space Mono eyebrows
+        // track wide (0.12–0.18em).
+        display: "-0.03em",
+        eyebrow: "0.14em",
       },
     },
   },
