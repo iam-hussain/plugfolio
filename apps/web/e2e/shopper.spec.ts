@@ -9,8 +9,10 @@ import { expect, test } from "@playwright/test";
 test("home page renders the value prop without a login wall", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { name: /shoppable creator pages/i })).toBeVisible();
-  await expect(page.getByText(/no login/i)).toBeVisible();
+  // The value prop leads the page (brand eyebrow) and the no-login promise is
+  // explicit — copy per Brand Guidelines v1.1, but the intent is unchanged.
+  await expect(page.getByText(/shoppable creator pages/i)).toBeVisible();
+  await expect(page.getByText(/never needs an account/i)).toBeVisible();
   // Nothing on the landing path should demand sign-in.
   await expect(page.getByRole("link", { name: /sign in|log in/i })).toHaveCount(0);
 });
@@ -28,8 +30,9 @@ test("the dashboard is gated by sign-in — a creator surface, never a shop wall
   await page.goto("/dashboard");
 
   // Unauthenticated → Auth.js sign-in, while every shop path stays open.
+  // Login is email + password (ADR-0012); the submit button reads "Sign in".
   await page.waitForURL("**/signin**");
-  await expect(page.getByRole("button", { name: /sign in with email/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^sign in$/i })).toBeVisible();
 });
 
 test("follow and comment are gated; reading them is not", async ({ page, request }) => {
