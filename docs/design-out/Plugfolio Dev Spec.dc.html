@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  doc-page:not(:defined){visibility:hidden}
+  a{color:#7C3AED;text-decoration:none}
+  a:hover{color:#5B21B6;text-decoration:underline}
+</style>
+<script src="./doc-page.js"></script>
+</helmet>
+<doc-page margin="0.8in">
+
+<div style="display:flex;align-items:center;gap:11px;margin-bottom:26px;">
+  <div style="width:30px;height:30px;flex-shrink:0;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+  <div style="font-family:'Sora',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.045em;display:flex;align-items:flex-end;color:#12101C;">plugfolio<span style="width:5px;height:5px;border-radius:1.5px;background:#7C3AED;margin:0 0 6px 2px;"></span></div>
+  <div style="margin-left:auto;font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:#8C8798;">Engineering Spec &middot; v1 &middot; Jul 2026</div>
+</div>
+
+<h1 style="font-family:'Sora',sans-serif;font-size:38px;font-weight:800;letter-spacing:-0.035em;line-height:1.05;color:#12101C;margin:0 0 14px;text-wrap:balance;">Product &amp; User-Journey Specification</h1>
+<p style="font-size:16.5px;line-height:1.6;color:#54505F;margin:0 0 6px;max-width:640px;">Every role, every flow, every screen, every state &mdash; and how each maps to <b style="color:#12101C;">shadcn/ui + Tailwind</b> and the Plugfolio design tokens. This is the build reference for v1.</p>
+<p style="font-size:13px;color:#8C8798;margin:14px 0 0;font-family:'Space Mono',monospace;">Brand source of truth &rarr; <a href="./Plugfolio Brand.html">Plugfolio Brand Guidelines v1.1</a> &nbsp;&middot;&nbsp; Interactive prototype &rarr; <a href="./Plugfolio UI.dc.html">Plugfolio UI</a></p>
+
+<hr style="border:none;border-top:1px solid #E7E4EF;margin:30px 0;">
+
+<!-- ===== 0. HOW TO READ ===== -->
+<div style="break-inside:avoid;">
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7C3AED;">00 &middot; Orientation</div>
+<h2 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.025em;color:#12101C;margin:6px 0 0;">Two rules that shape every screen</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0;">
+  <div style="break-inside:avoid;background:#EFEAFB;border:1px solid #E0DCEC;border-radius:14px;padding:18px 20px;">
+    <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#7C3AED;margin-bottom:8px;">Golden rule 1</div>
+    <div style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:#12101C;margin-bottom:6px;">An account is never the price of shopping.</div>
+    <div style="font-size:14px;line-height:1.6;color:#54505F;">No modal, wall, or "sign up to continue" may appear on the path from arriving at a creator page to landing on the retailer. Sign-in exists only for "act as yourself" actions (follow, comment).</div>
+  </div>
+  <div style="break-inside:avoid;background:#12101C;border-radius:14px;padding:18px 20px;">
+    <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#C6FF3D;margin-bottom:8px;">Golden rule 2</div>
+    <div style="font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:#FFFFFF;margin-bottom:6px;">v1 handles no money.</div>
+    <div style="font-size:14px;line-height:1.6;color:#B4AEC4;">Buy buttons forward to the retailer through the creator's own affiliate link. Never build a cart, checkout, wallet, or payout. Collab terms "settle off-platform."</div>
+  </div>
+</div>
+<p style="font-size:15px;line-height:1.65;color:#2A2735;margin:10px 0;"><b style="color:#12101C;">What Plugfolio is, in one line:</b> a creator turns their content into a page where every post is shoppable; a follower taps a post and buys &mdash; no account, no friction. Three roles share one product; one email account can hold any mix of them.</p>
+
+<!-- ===== 1. ROLES & PERMISSIONS ===== -->
+<div style="break-before:page;"></div>
+<div style="break-inside:avoid;margin-top:8px;">
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7C3AED;">01 &middot; Roles</div>
+<h2 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.025em;color:#12101C;margin:6px 0 0;">Roles &amp; permissions</h2>
+<p style="font-size:15px;line-height:1.65;color:#2A2735;margin:12px 0;">The viewer's role decides what renders. There are four viewers of every public page and two dashboard roles. Enforce every rule on the server; the client mirrors it for UX only.</p>
+</div>
+
+<table style="width:100%;border-collapse:collapse;font-size:13px;margin:14px 0;break-inside:auto;">
+  <thead>
+    <tr style="background:#EFEAFB;">
+      <th style="text-align:left;padding:10px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Capability</th>
+      <th style="padding:10px 8px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Anon</th>
+      <th style="padding:10px 8px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Shopper</th>
+      <th style="padding:10px 8px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Admin</th>
+      <th style="padding:10px 8px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Manager</th>
+      <th style="padding:10px 8px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Business</th>
+    </tr>
+  </thead>
+  <tbody style="color:#2A2735;">
+    <tr><td style="padding:9px 12px;border:1px solid #E7E4EF;">Browse pages / posts / products &middot; Buy</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:9px 12px;border:1px solid #E7E4EF;">Read comments</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td></tr>
+    <tr><td style="padding:9px 12px;border:1px solid #E7E4EF;">Follow / write a comment</td><td style="text-align:center;border:1px solid #E7E4EF;color:#8C8798;">&rarr; sign-in</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:9px 12px;border:1px solid #E7E4EF;">See "Request collab" on a creator page</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td></tr>
+    <tr><td style="padding:9px 12px;border:1px solid #E7E4EF;">Dashboard: Posts / Products / Earnings / Collabs</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:9px 12px;border:1px solid #E7E4EF;">Create posts, tag / fix / remove products</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td></tr>
+    <tr><td style="padding:9px 12px;border:1px solid #E7E4EF;">Dashboard <b>Settings</b> (managers, links, connections)</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#FF6B5C;">hidden</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:9px 12px;border:1px solid #E7E4EF;">Business surface: requirements, threads</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;color:#C9C4D6;">&mdash;</td><td style="text-align:center;border:1px solid #E7E4EF;">&#10003;</td></tr>
+  </tbody>
+</table>
+<p style="font-size:13.5px;line-height:1.6;color:#54505F;margin:8px 0;"><b style="color:#12101C;">Caps:</b> an account holds at most <b>5 profiles</b>; each profile invites at most <b>3 Managers</b>. Creating a profile needs at least one connected social. A "shopper account" is simply an account with no profiles and no business.</p>
+
+<!-- ===== 2. THEMING & TOKENS ===== -->
+<div style="break-before:page;"></div>
+<div style="break-inside:avoid;margin-top:8px;">
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7C3AED;">02 &middot; Foundations</div>
+<h2 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.025em;color:#12101C;margin:6px 0 0;">Theming &amp; design tokens</h2>
+<p style="font-size:15px;line-height:1.65;color:#2A2735;margin:12px 0;">Components <b>never hardcode hex</b>. Everything reads a semantic CSS variable, so one delivered palette restyles the whole product. Define the tokens once on <code style="font-family:'Space Mono',monospace;font-size:12.5px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">:root</code> and again under <code style="font-family:'Space Mono',monospace;font-size:12.5px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">.dark</code>. Both themes must ship; either can be the default (open question &sect;9).</p>
+</div>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:24px 0 8px;">Brand palette (the raw values behind the tokens)</h3>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0;break-inside:avoid;">
+  <div style="border:1px solid #E7E4EF;border-radius:10px;overflow:hidden;"><div style="height:52px;background:#7C3AED;"></div><div style="padding:8px 10px;"><div style="font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;color:#12101C;">Brand Violet</div><div style="font-family:'Space Mono',monospace;font-size:11px;color:#8C8798;">#7C3AED</div></div></div>
+  <div style="border:1px solid #E7E4EF;border-radius:10px;overflow:hidden;"><div style="height:52px;background:#5B21B6;"></div><div style="padding:8px 10px;"><div style="font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;color:#12101C;">Violet Deep</div><div style="font-family:'Space Mono',monospace;font-size:11px;color:#8C8798;">#5B21B6</div></div></div>
+  <div style="border:1px solid #E7E4EF;border-radius:10px;overflow:hidden;"><div style="height:52px;background:#12101C;"></div><div style="padding:8px 10px;"><div style="font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;color:#12101C;">Ink</div><div style="font-family:'Space Mono',monospace;font-size:11px;color:#8C8798;">#12101C</div></div></div>
+  <div style="border:1px solid #E7E4EF;border-radius:10px;overflow:hidden;"><div style="height:52px;background:#C6FF3D;"></div><div style="padding:8px 10px;"><div style="font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;color:#12101C;">Electric Lime</div><div style="font-family:'Space Mono',monospace;font-size:11px;color:#8C8798;">#C6FF3D</div></div></div>
+  <div style="border:1px solid #E7E4EF;border-radius:10px;overflow:hidden;"><div style="height:52px;background:#A78BFA;"></div><div style="padding:8px 10px;"><div style="font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;color:#12101C;">Violet Tint</div><div style="font-family:'Space Mono',monospace;font-size:11px;color:#8C8798;">#A78BFA</div></div></div>
+  <div style="border:1px solid #E7E4EF;border-radius:10px;overflow:hidden;"><div style="height:52px;background:#FF6B5C;"></div><div style="padding:8px 10px;"><div style="font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;color:#12101C;">Coral</div><div style="font-family:'Space Mono',monospace;font-size:11px;color:#8C8798;">#FF6B5C</div></div></div>
+  <div style="border:1px solid #E7E4EF;border-radius:10px;overflow:hidden;"><div style="height:52px;background:#EFEAFB;"></div><div style="padding:8px 10px;"><div style="font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;color:#12101C;">Violet Wash</div><div style="font-family:'Space Mono',monospace;font-size:11px;color:#8C8798;">#EFEAFB</div></div></div>
+  <div style="border:1px solid #E7E4EF;border-radius:10px;overflow:hidden;"><div style="height:52px;background:#F5F4F8;"></div><div style="padding:8px 10px;"><div style="font-family:'Sora',sans-serif;font-size:12.5px;font-weight:600;color:#12101C;">Canvas</div><div style="font-family:'Space Mono',monospace;font-size:11px;color:#8C8798;">#F5F4F8</div></div></div>
+</div>
+<div style="break-inside:avoid;background:#FFF6F4;border:1px solid #FFD9D2;border-radius:12px;padding:14px 18px;margin:16px 0;">
+  <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:#D6493A;margin-bottom:5px;">Lime rule &mdash; enforce in code review</div>
+  <div style="font-size:14px;line-height:1.6;color:#54505F;">Electric Lime is a <b style="color:#12101C;">fill only, always with dark text on top</b>. Never lime type on white, never lime as <code style="font-family:'Space Mono',monospace;font-size:12px;background:#fff;border:1px solid #FFD9D2;border-radius:4px;padding:0 5px;">--color-accent</code> text color. It fails AA as a text color on light. Use it for the coupon code chip, the "tracked" flourish, and dark-surface prongs.</div>
+</div>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:24px 0 8px;">Semantic tokens &rarr; the values engineering consumes</h3>
+<table style="width:100%;border-collapse:collapse;font-size:12.5px;margin:12px 0;break-inside:auto;">
+  <thead><tr style="background:#EFEAFB;">
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Token</th>
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Light</th>
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Dark</th>
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Role</th>
+  </tr></thead>
+  <tbody style="color:#2A2735;font-family:'Space Mono',monospace;">
+    <tr><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#5B21B6;">--color-primary</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#7C3AED</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#8B5CF6</td><td style="padding:8px 12px;border:1px solid #E7E4EF;font-family:'Inter';">Primary actions, active chip, links</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#5B21B6;">--color-primary-fg</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#FFFFFF</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#FFFFFF</td><td style="padding:8px 12px;border:1px solid #E7E4EF;font-family:'Inter';">Text/icon on primary</td></tr>
+    <tr><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#5B21B6;">--color-accent</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#C6FF3D</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#C6FF3D</td><td style="padding:8px 12px;border:1px solid #E7E4EF;font-family:'Inter';">Buy CTA fill, coupon chip</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#5B21B6;">--color-accent-fg</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#12101C</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#12101C</td><td style="padding:8px 12px;border:1px solid #E7E4EF;font-family:'Inter';">Dark text on lime (always)</td></tr>
+    <tr><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#5B21B6;">--surface</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#FFFFFF</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#1A1726</td><td style="padding:8px 12px;border:1px solid #E7E4EF;font-family:'Inter';">Cards, sheets</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#5B21B6;">--surface-muted</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#F5F4F8</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#12101C</td><td style="padding:8px 12px;border:1px solid #E7E4EF;font-family:'Inter';">Page bg, input bg</td></tr>
+    <tr><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#5B21B6;">--text</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#12101C</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#F4F2FA</td><td style="padding:8px 12px;border:1px solid #E7E4EF;font-family:'Inter';">Body text</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#5B21B6;">--text-muted</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#54505F</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#9A94AC</td><td style="padding:8px 12px;border:1px solid #E7E4EF;font-family:'Inter';">Captions, @handle, price</td></tr>
+    <tr><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#5B21B6;">--border</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#E7E4EF</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#2C2740</td><td style="padding:8px 12px;border:1px solid #E7E4EF;font-family:'Inter';">Hairlines, dividers, inputs</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#5B21B6;">--ring</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#A78BFA</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">#8B5CF6</td><td style="padding:8px 12px;border:1px solid #E7E4EF;font-family:'Inter';">Focus ring (keyboard)</td></tr>
+  </tbody>
+</table>
+<p style="font-size:13.5px;line-height:1.6;color:#54505F;margin:8px 0;"><b style="color:#12101C;">Radius scale:</b> <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">--radius-sm 8px</code> &middot; <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">md 12px</code> &middot; <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">lg 16px</code> &middot; <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">pill 999px</code> (chips). &nbsp; <b style="color:#12101C;">Spacing:</b> 4-based &mdash; 4 / 8 / 12 / 16 / 24 / 32 / 48. Product-grid gutter is 4px.</p>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:24px 0 8px;">Wiring into Tailwind + shadcn/ui</h3>
+<p style="font-size:14.5px;line-height:1.65;color:#2A2735;margin:10px 0;">shadcn expects tokens as CSS variables it references through Tailwind's theme. Define the variables in <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">globals.css</code>, map them in <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">tailwind.config</code>, and let dark mode flip via a <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">.dark</code> class on <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">&lt;html&gt;</code>.</p>
+<pre style="break-inside:avoid;background:#12101C;border-radius:12px;padding:18px 20px;margin:14px 0;overflow-x:auto;font-family:'Space Mono',monospace;font-size:11.5px;line-height:1.7;color:#D8D3E8;white-space:pre;">/* globals.css */
+:root {
+  --primary: 262 83% 58%;        /* #7C3AED */
+  --primary-foreground: 0 0% 100%;
+  --accent: 76 100% 62%;         /* #C6FF3D — dark text only */
+  --accent-foreground: 258 26% 9%;
+  --background: 252 33% 97%;     /* Canvas */
+  --card: 0 0% 100%;
+  --foreground: 258 26% 9%;      /* Ink */
+  --muted-foreground: 257 9% 34%;
+  --border: 258 26% 92%;
+  --ring: 258 90% 76%;
+  --radius: 0.75rem;
+}
+.dark {
+  --primary: 258 90% 66%;
+  --background: 258 26% 9%;
+  --card: 256 24% 12%;
+  --foreground: 260 40% 96%;
+  --border: 256 24% 21%;
+  /* accent stays lime; keep --accent-foreground dark */
+}</pre>
+<p style="font-size:13.5px;line-height:1.6;color:#54505F;margin:8px 0;">Then in components use only utility classes bound to tokens: <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">bg-primary text-primary-foreground</code>, <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">bg-accent text-accent-foreground</code>, <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">border-border</code>, <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">ring-ring</code>. No hex in JSX, ever.</p>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:24px 0 8px;">Type scale</h3>
+<table style="width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;break-inside:auto;">
+  <thead><tr style="background:#EFEAFB;">
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Face</th>
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Use</th>
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Notes</th>
+  </tr></thead>
+  <tbody style="color:#2A2735;">
+    <tr><td style="padding:9px 12px;border:1px solid #E7E4EF;font-family:'Sora',sans-serif;font-weight:700;">Sora</td><td style="padding:9px 12px;border:1px solid #E7E4EF;">Display, headlines, wordmark (500&ndash;800)</td><td style="padding:9px 12px;border:1px solid #E7E4EF;color:#54505F;">Tracking -2% to -5% at display sizes</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:9px 12px;border:1px solid #E7E4EF;font-family:'Inter',sans-serif;font-weight:600;">Inter</td><td style="padding:9px 12px;border:1px solid #E7E4EF;">UI &amp; body (400&ndash;700)</td><td style="padding:9px 12px;border:1px solid #E7E4EF;color:#54505F;">Body 16px / 1.6; tabular-nums for metrics/prices</td></tr>
+    <tr><td style="padding:9px 12px;border:1px solid #E7E4EF;font-family:'Space Mono',monospace;">Space Mono</td><td style="padding:9px 12px;border:1px solid #E7E4EF;">Micro labels, eyebrows, captions</td><td style="padding:9px 12px;border:1px solid #E7E4EF;color:#54505F;">Uppercase, letter-spacing 0.12&ndash;0.18em</td></tr>
+  </tbody>
+</table>
+<p style="font-size:13.5px;line-height:1.6;color:#54505F;margin:8px 0;"><b style="color:#12101C;">Minimums:</b> mobile hit targets &ge; 44px; body never below 14px; WCAG AA contrast on every text/background pair in both themes.</p>
+
+<!-- ===== 3. COMPONENT LIBRARY ===== -->
+<div style="break-before:page;"></div>
+<div style="break-inside:avoid;margin-top:8px;">
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7C3AED;">03 &middot; Components</div>
+<h2 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.025em;color:#12101C;margin:6px 0 0;">Component library (shadcn/ui grammar)</h2>
+<p style="font-size:15px;line-height:1.65;color:#2A2735;margin:12px 0;">Build within shadcn primitives. The screens below reference these by name. Columns: the shadcn primitive, how we skin it, and where it appears.</p>
+</div>
+
+<table style="width:100%;border-collapse:collapse;font-size:12.5px;margin:12px 0;break-inside:auto;">
+  <thead><tr style="background:#EFEAFB;">
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Primitive</th>
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Variants / skin</th>
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Where</th>
+  </tr></thead>
+  <tbody style="color:#2A2735;">
+    <tr><td style="padding:8px 12px;border:1px solid #E7E4EF;font-weight:600;">Button</td><td style="padding:8px 12px;border:1px solid #E7E4EF;"><code style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5B21B6;">default</code> (violet) &middot; <code style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5B21B6;">accent</code> (lime = Buy) &middot; <code style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5B21B6;">outline</code> (Follow) &middot; <code style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5B21B6;">ghost</code> (Following, Remove); sizes sm/md/lg; disabled+busy label</td><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#54505F;">Everywhere</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:8px 12px;border:1px solid #E7E4EF;font-weight:600;">Card</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">Header (title+desc) + content; <code style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5B21B6;">--surface</code> bg, <code style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5B21B6;">radius-lg</code>, 1px border</td><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#54505F;">Earnings, briefs, product rows</td></tr>
+    <tr><td style="padding:8px 12px;border:1px solid #E7E4EF;font-weight:600;">Input / Textarea</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">Label above, helper muted, inline error line <code style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5B21B6;">role="alert"</code> below</td><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#54505F;">All forms</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:8px 12px;border:1px solid #E7E4EF;font-weight:600;">Skeleton</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">Shimmer on <code style="font-family:'Space Mono',monospace;font-size:11.5px;color:#5B21B6;">--surface-muted</code></td><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#54505F;">Loading states</td></tr>
+    <tr><td style="padding:8px 12px;border:1px solid #E7E4EF;font-weight:600;">Badge</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">Status: <b>Agreed</b> (violet) / <b>Negotiating</b> (muted) &middot; "&middot; manager" &middot; "tracked" &middot; "Their own product"</td><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#54505F;">Threads, cards, earnings</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:8px 12px;border:1px solid #E7E4EF;font-weight:600;">Avatar</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">80px circle (creator header) / 28px (top-bar account slot); placeholder disc</td><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#54505F;">Header, top bar</td></tr>
+    <tr><td style="padding:8px 12px;border:1px solid #E7E4EF;font-weight:600;">Chip / Toggle group</td><td style="padding:8px 12px;border:1px solid #E7E4EF;">Profile switcher (active = primary border); tagging kind toggle</td><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#54505F;">Dashboard, editor</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:8px 12px;border:1px solid #E7E4EF;font-weight:600;">Dialog <span style="color:#7C3AED;">(add)</span></td><td style="padding:8px 12px;border:1px solid #E7E4EF;">Destructive confirm (remove product / manager)</td><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#54505F;">Products, Settings</td></tr>
+    <tr><td style="padding:8px 12px;border:1px solid #E7E4EF;font-weight:600;">Toast <span style="color:#7C3AED;">(add)</span></td><td style="padding:8px 12px;border:1px solid #E7E4EF;">Success feedback (profile created, tag added) &mdash; <b>never</b> for coupon copy (that's inline)</td><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#54505F;">Dashboard</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:8px 12px;border:1px solid #E7E4EF;font-weight:600;">Tabs / Bottom nav <span style="color:#7C3AED;">(add)</span></td><td style="padding:8px 12px;border:1px solid #E7E4EF;">Shopper bottom tab bar; dashboard tab row</td><td style="padding:8px 12px;border:1px solid #E7E4EF;color:#54505F;">Public + dashboard</td></tr>
+  </tbody>
+</table>
+
+<div style="break-inside:avoid;background:#EFEAFB;border:1px solid #E0DCEC;border-radius:14px;padding:18px 20px;margin:18px 0;">
+  <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#7C3AED;margin-bottom:8px;">Persistent chrome &mdash; on every public shopper screen</div>
+  <div style="font-size:14px;line-height:1.65;color:#54505F;"><b style="color:#12101C;">Top bar:</b> PlugMark + <code style="font-family:'Space Mono',monospace;font-size:12px;background:#fff;border:1px solid #E0DCEC;border-radius:4px;padding:0 5px;color:#5B21B6;">plugfolio</code> wordmark (left, &rarr; feed); right side = search + <b style="color:#12101C;">account slot</b> that signals role &mdash; anon = user glyph (&rarr; sign-in), shopper = avatar, business = business mark, owner = avatar + Dashboard link.<br><b style="color:#12101C;">Bottom tab bar:</b> HOME / SHOP / FOLLOWING / ACCOUNT &mdash; Space Mono ~9px uppercase, 20px line icons (home / 2&times;2 grid / heart / user); active tab = the page's accent. Presets and mockups <b>inherit</b> this chrome, never invent their own footer.</div>
+</div>
+
+<!-- ===== 4. THE FIVE JOURNEYS ===== -->
+<div style="break-before:page;"></div>
+<div style="break-inside:avoid;margin-top:8px;">
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7C3AED;">04 &middot; Journeys</div>
+<h2 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.025em;color:#12101C;margin:6px 0 0;">The five user journeys, end to end</h2>
+<p style="font-size:15px;line-height:1.65;color:#2A2735;margin:12px 0;">Each journey lists where it <b>begins</b>, the step-by-step path (with the UI element the user touches), the <b>success state</b>, and the failure/empty handling. Steps are numbered so QA can script them.</p>
+</div>
+
+<!-- Journey helper: reusable step visual done inline per journey below -->
+
+<h3 style="font-family:'Sora',sans-serif;font-size:19px;font-weight:700;letter-spacing:-0.015em;color:#12101C;margin:22px 0 4px;">4.1 &nbsp;Shopper &mdash; tap &rarr; see &rarr; buy <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:400;color:#8C8798;text-transform:uppercase;letter-spacing:0.1em;">the product's soul</span></h3>
+<p style="font-size:13.5px;color:#54505F;margin:4px 0 12px;"><b style="color:#12101C;">Begins:</b> a bio-link tap in Instagram/TikTok, inside the app's in-app browser. <b style="color:#12101C;">Target:</b> bio tap &rarr; retailer in 3 taps. Zero interruptions, no account.</p>
+<div style="break-inside:avoid;display:flex;gap:8px;flex-wrap:wrap;align-items:stretch;margin:12px 0;">
+  <div style="flex:1;min-width:120px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:14px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">STEP 1</div><div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:600;color:#12101C;margin-top:4px;">Bio link tap</div><div style="font-size:12px;color:#54505F;margin-top:4px;">Lands on <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">/[handle]</code> creator page.</div></div>
+  <div style="flex:1;min-width:120px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:14px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">STEP 2</div><div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:600;color:#12101C;margin-top:4px;">Tap a post tile</div><div style="font-size:12px;color:#54505F;margin-top:4px;">3-col grid; whole tile tappable &rarr; post view.</div></div>
+  <div style="flex:1;min-width:120px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:14px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">STEP 3</div><div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:600;color:#12101C;margin-top:4px;">See product</div><div style="font-size:12px;color:#54505F;margin-top:4px;">Tagged product card sits right under the media.</div></div>
+  <div style="flex:1;min-width:120px;background:#12101C;border:1px solid #12101C;border-radius:12px;padding:14px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#C6FF3D;">STEP 4 &middot; WIN</div><div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:600;color:#fff;margin-top:4px;">Tap Buy &rarr; retailer</div><div style="font-size:12px;color:#B4AEC4;margin-top:4px;">Lime CTA, busy "Opening&hellip;", forwards.</div></div>
+</div>
+<p style="font-size:14px;line-height:1.65;color:#2A2735;margin:10px 0;"><b style="color:#12101C;">Buy behaviour (component-level):</b> tap &rarr; button <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">disabled</code>, label &rarr; "Opening&hellip;" &rarr; tap recorded in background &rarr; browser navigates to the affiliate URL. It forwards <b>even if recording fails</b> &mdash; failure is invisible to the shopper. In-app browsers double-fire taps, so the busy state must make single-action feedback obvious; the backend absorbs duplicates. No interstitial, no confirmation, no account prompt ever.</p>
+<p style="font-size:13.5px;line-height:1.6;color:#54505F;margin:8px 0;"><b style="color:#12101C;">Success:</b> retailer site opens in &le;3 taps. <b style="color:#12101C;">Empty:</b> "No products tagged on this post." <b style="color:#12101C;">Not found:</b> foreign post/product id &rarr; 404.</p>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:19px;font-weight:700;letter-spacing:-0.015em;color:#12101C;margin:26px 0 4px;">4.2 &nbsp;Shopper &mdash; the one optional account</h3>
+<p style="font-size:13.5px;color:#54505F;margin:4px 0 12px;"><b style="color:#12101C;">Begins:</b> tapping <b>Follow</b>, or trying to comment, on a creator page. This is the <b>only</b> account trigger &mdash; never fired by a Buy action.</p>
+<div style="break-inside:avoid;display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+  <div style="flex:1;min-width:110px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:14px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">STEP 1</div><div style="font-family:'Sora',sans-serif;font-size:13.5px;font-weight:600;color:#12101C;margin-top:4px;">Tap Follow / comment</div><div style="font-size:12px;color:#54505F;margin-top:4px;">Outline Follow, or the "Sign in to comment" band.</div></div>
+  <div style="flex:1;min-width:110px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:14px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">STEP 2</div><div style="font-family:'Sora',sans-serif;font-size:13.5px;font-weight:600;color:#12101C;margin-top:4px;">Sign-in door</div><div style="font-size:12px;color:#54505F;margin-top:4px;">Email field &rarr; magic link. Reassures: buying needs no account.</div></div>
+  <div style="flex:1;min-width:110px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:14px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">STEP 3</div><div style="font-family:'Sora',sans-serif;font-size:13.5px;font-weight:600;color:#12101C;margin-top:4px;">Magic link &rarr; back</div><div style="font-size:12px;color:#54505F;margin-top:4px;">Returns to the same page, now following.</div></div>
+  <div style="flex:1;min-width:110px;background:#EFEAFB;border:1px solid #E0DCEC;border-radius:12px;padding:14px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">STEP 4 &middot; PAYOFF</div><div style="font-family:'Sora',sans-serif;font-size:13.5px;font-weight:600;color:#12101C;margin-top:4px;">/following</div><div style="font-size:12px;color:#54505F;margin-top:4px;">Simple list of followed <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">@handle</code> links.</div></div>
+</div>
+<p style="font-size:13.5px;line-height:1.6;color:#54505F;margin:8px 0;"><b style="color:#12101C;">Success:</b> Follow toggles to a quiet "Following"; comment composer appears. <b style="color:#12101C;">Empty /following:</b> "You aren't following anyone yet. Tap Follow on a creator's page." <b style="color:#12101C;">Guard:</b> signed-out visit to /following &rarr; sign-in (no flash of protected content).</p>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:19px;font-weight:700;letter-spacing:-0.015em;color:#12101C;margin:26px 0 4px;">4.3 &nbsp;Creator &mdash; sign up &rarr; connect &rarr; profile &rarr; tag &rarr; live</h3>
+<p style="font-size:13.5px;color:#54505F;margin:4px 0 12px;"><b style="color:#12101C;">Begins:</b> Landing "Creator" router, or a direct sign-in. The emotional peak is step 5 &mdash; "my reel is now shoppable." Design its before/after to feel like a win.</p>
+<div style="break-inside:avoid;display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+  <div style="flex:1;min-width:105px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:13px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">1 &middot; SIGN IN</div><div style="font-size:12.5px;color:#54505F;margin-top:5px;">Email &rarr; magic link. Account exists in one step, nothing else asked.</div></div>
+  <div style="flex:1;min-width:105px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:13px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">2 &middot; CONNECT</div><div style="font-size:12.5px;color:#54505F;margin-top:5px;">Connect Google (YouTube) / Meta (IG). <b style="color:#12101C;">[LATER]</b> &mdash; show explanatory notice until OAuth is live.</div></div>
+  <div style="flex:1;min-width:105px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:13px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">3 &middot; PROFILE</div><div style="font-size:12.5px;color:#54505F;margin-top:5px;">"New profile" &rarr; instant page with a random handle (<code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">creator-a1b2c3d4</code>).</div></div>
+  <div style="flex:1;min-width:105px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:13px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">4 &middot; POST</div><div style="font-size:12.5px;color:#54505F;margin-top:5px;">Posts tab &rarr; add post (media URL + caption; <b style="color:#12101C;">[LATER]</b> auto-import).</div></div>
+  <div style="flex:1;min-width:105px;background:#12101C;border-radius:12px;padding:13px;"><div style="font-family:'Space Mono',monospace;font-size:10px;color:#C6FF3D;">5 &middot; TAG &rarr; LIVE</div><div style="font-size:12.5px;color:#B4AEC4;margin-top:5px;">Paste product URL (grabs title/image/price) + affiliate link &rarr; <b style="color:#fff;">Tag product</b>. Post is shoppable.</div></div>
+</div>
+<p style="font-size:13.5px;line-height:1.6;color:#54505F;margin:8px 0;"><b style="color:#12101C;">Success:</b> the tagged product appears in the editor list &mdash; the celebratory moment. <b style="color:#12101C;">Silent fallback:</b> an unreadable product page falls back to its hostname as the title (never an error). <b style="color:#12101C;">Errors (inline):</b> no connection (403), "An account holds at most 5 profiles."</p>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:19px;font-weight:700;letter-spacing:-0.015em;color:#12101C;margin:26px 0 4px;">4.4 &nbsp;Creator Admin &harr; Manager</h3>
+<p style="font-size:14px;line-height:1.65;color:#2A2735;margin:8px 0;"><b style="color:#12101C;">Begins:</b> Admin in Settings &rarr; Managers. Admin invites a Manager by email (cap 3). The Manager signs in with that email, sees the managed profile (badged <b>"&middot; manager"</b>), and can post, tag, fix products, and work Collabs &mdash; but <b>cannot see Settings</b> (the link is hidden and the route is blocked; navigating there silently redirects to /dashboard, leaking nothing). Admin can remove a Manager anytime.</p>
+<p style="font-size:13.5px;line-height:1.6;color:#54505F;margin:8px 0;"><b style="color:#12101C;">Errors (inline):</b> "A profile has at most 3 Managers", self-invite, invalid email. <b style="color:#12101C;">Empty:</b> "No Managers yet."</p>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:19px;font-weight:700;letter-spacing:-0.015em;color:#12101C;margin:26px 0 4px;">4.5 &nbsp;Business &harr; creator collab (two doors)</h3>
+<div style="break-inside:avoid;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0;">
+  <div style="background:#F5F4F8;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;">
+    <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:6px;">Door 1 &middot; open board</div>
+    <div style="font-size:13.5px;line-height:1.6;color:#54505F;">Business posts a requirement (need, brief, budget text, deadline) &rarr; it lists on the open board inside creators' Collabs tab &rarr; a creator taps <b style="color:#12101C;">Approach</b> with an opener &rarr; thread.</div>
+  </div>
+  <div style="background:#F5F4F8;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;">
+    <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:6px;">Door 2 &middot; direct</div>
+    <div style="font-size:13.5px;line-height:1.6;color:#54505F;">Business browses a creator page &rarr; <b style="color:#12101C;">Request collab</b> strip under Follow &rarr; thread lands in the creator's Collabs.</div>
+  </div>
+</div>
+<p style="font-size:14px;line-height:1.65;color:#2A2735;margin:8px 0;"><b style="color:#12101C;">Thread &rarr; agreement:</b> both sides message; each taps <b>Accept terms</b> (accent). After you accept, your button becomes a quiet "You accepted" (irreversible in v1). When <b>both</b> have accepted, the thread header appends the settled badge: <b>"Agreed &mdash; payment settles off-platform."</b></p>
+<div style="break-inside:avoid;background:#12101C;border-radius:12px;padding:14px 18px;margin:14px 0;">
+  <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#C6FF3D;margin-bottom:5px;">Success state &mdash; the "Agreed" moment</div>
+  <div style="font-size:13.5px;line-height:1.6;color:#B4AEC4;">Render as a distinct settled state (badge/banner). The honesty label "payment settles off-platform" must stay &mdash; v1 never touches money. Non-participants get a 404: the thread must not exist for them.</div>
+</div>
+
+<!-- ===== 5. PRODUCT CARD ===== -->
+<div style="break-before:page;"></div>
+<div style="break-inside:avoid;margin-top:8px;">
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7C3AED;">05 &middot; Product card</div>
+<h2 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.025em;color:#12101C;margin:6px 0 0;">The product card &mdash; three faces</h2>
+<p style="font-size:15px;line-height:1.65;color:#2A2735;margin:12px 0;">Every product card is <b>outbound</b> &mdash; never a cart, checkout, or payment on Plugfolio. There are two card kinds plus a coupon that rides on either one. Consider all three together whenever you touch a card.</p>
+</div>
+
+<div style="break-inside:avoid;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;">
+  <div style="border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;">
+    <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:6px;">Face 1 &middot; Affiliate (baseline)</div>
+    <div style="font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#12101C;margin-bottom:6px;">Someone else's product</div>
+    <div style="font-size:13px;line-height:1.6;color:#54505F;">Photo &middot; title &middot; price &middot; one <b style="color:#12101C;">Buy</b> &rarr; retailer via the creator's affiliate link. Creator earns a network commission. <b style="color:#12101C;">No label</b> &mdash; commission is invisible to the shopper. This is the default look everything else diverges from.</div>
+  </div>
+  <div style="border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;">
+    <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:6px;">Face 2 &middot; Creator's own</div>
+    <div style="font-family:'Sora',sans-serif;font-size:15px;font-weight:700;color:#12101C;margin-bottom:6px;">Their own product</div>
+    <div style="font-size:13px;line-height:1.6;color:#54505F;">Same layout, <b style="color:#12101C;">two changes only</b>: a quiet <b>"Their own product"</b> trust tag, and the button reads <b>"Shop their store"</b> (not "Buy"). No commission language anywhere on this card.</div>
+  </div>
+</div>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:22px 0 8px;">Face 3 &middot; Coupon &mdash; an offer that rides on Face 1 or 2 (not a third type)</h3>
+<p style="font-size:14px;line-height:1.65;color:#2A2735;margin:8px 0;">A coupon adds a <b>copyable code chip</b>: tap &rarr; copies &rarr; chip swaps to <b>"Copied &#10003;"</b> inline (no toast; the code never truncates). Optional expiry line ("Valid till 3 Aug"). After expiry it collapses to a muted <b>"Offer ended"</b> and the card returns to its normal face &mdash; the product never disappears. The chip is a <b>sanctioned accent-color moment</b> (the deal is the most persuasive thing on the card) but must not overpower the primary button; mind AA in light <b>and</b> dark.</p>
+
+<div style="break-inside:avoid;margin:14px 0;">
+<div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#8C8798;margin-bottom:8px;">Three redemption channels &mdash; chosen by which fields the creator filled</div>
+<table style="width:100%;border-collapse:collapse;font-size:13px;break-inside:auto;">
+  <thead><tr style="background:#EFEAFB;">
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Channel</th>
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Fields filled</th>
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Actions on card</th>
+  </tr></thead>
+  <tbody style="color:#2A2735;">
+    <tr><td style="padding:9px 12px;border:1px solid #E7E4EF;font-weight:600;">Online</td><td style="padding:9px 12px;border:1px solid #E7E4EF;">code + link</td><td style="padding:9px 12px;border:1px solid #E7E4EF;color:#54505F;">Copy code, <b style="color:#12101C;">then</b> Buy / Shop their store (copy first, go second)</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:9px 12px;border:1px solid #E7E4EF;font-weight:600;">In-store</td><td style="padding:9px 12px;border:1px solid #E7E4EF;">code + shop note, <b>no link</b></td><td style="padding:9px 12px;border:1px solid #E7E4EF;color:#54505F;"><b>No Buy button.</b> Note + code IS the action ("Show this at the counter &mdash; Indiranagar store"). Design so the card doesn't look broken.</td></tr>
+    <tr><td style="padding:9px 12px;border:1px solid #E7E4EF;font-weight:600;">Both</td><td style="padding:9px 12px;border:1px solid #E7E4EF;">code + link + note</td><td style="padding:9px 12px;border:1px solid #E7E4EF;color:#54505F;">All actions present</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:22px 0 8px;">Authoring, reporting &amp; the coupon copy state</h3>
+<ul style="font-size:14px;line-height:1.7;color:#2A2735;margin:8px 0;padding-left:20px;">
+  <li style="margin:4px 0;"><b style="color:#12101C;">Tagging editor:</b> a <b>kind toggle (Affiliate / My own product)</b> + a collapsed <b>"+ Add a coupon"</b> section (code, expiry, in-store note). The default affiliate flow stays exactly as fast as today.</li>
+  <li style="margin:4px 0;"><b style="color:#12101C;">Products tab:</b> rows show the kind tag + a compact coupon summary.</li>
+  <li style="margin:4px 0;"><b style="color:#12101C;">Earnings:</b> shows <b>code copies</b> beside taps; in-store copies are labeled <b>"redemption not tracked."</b></li>
+</ul>
+<div style="break-inside:avoid;background:#FFF6F4;border:1px solid #FFD9D2;border-radius:12px;padding:14px 18px;margin:16px 0;">
+  <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:#D6493A;margin-bottom:5px;">Do NOT build into product cards</div>
+  <div style="font-size:13.5px;line-height:1.6;color:#54505F;">Checkout / cart / payments &middot; coupon auto-apply &middot; QR or tracked in-store redemption &middot; bundles / drops &middot; multiple coupons on one product. One coupon per product, copy-only.</div>
+</div>
+
+<!-- ===== 6. SCREEN REFERENCE ===== -->
+<div style="break-before:page;"></div>
+<div style="break-inside:avoid;margin-top:8px;">
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7C3AED;">06 &middot; Screens</div>
+<h2 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.025em;color:#12101C;margin:6px 0 0;">Screen-by-screen reference</h2>
+<p style="font-size:15px;line-height:1.65;color:#2A2735;margin:12px 0;">Mobile-first, single column at 360px; desktop is a centered column (~448px / <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">max-w-md</code> today). Regions are listed top-to-bottom. Every sub-page carries a <code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 6px;color:#5B21B6;">&larr; back</code> link, top-left.</p>
+</div>
+
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#7C3AED;margin:22px 0 10px;border-top:2px solid #EFEAFB;padding-top:12px;">A &middot; Public (no account ever)</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Landing</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;"><b style="color:#12101C;">Purpose:</b> explain Plugfolio in one scroll and route three roles. Not on the shopper hot path, so richer/heavier is OK. <b style="color:#12101C;">Must contain:</b> headline value prop ("shoppable creator pages"), explicit <b>"no login to shop"</b> promise, role router (Creator &rarr; sign-in/demo &middot; Business &rarr; /collabs &middot; shopper &rarr; sample creator page), footer. <b style="color:#12101C;">Must NOT:</b> any sign-in wall or link implying shopping needs an account. <b style="color:#12101C;">States:</b> static, none.</div>
+</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Creator page &mdash; the shop window</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/[handle]</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;"><b style="color:#12101C;">One page, four viewers</b> &mdash; only the account slot + the band under the header change; the buy path is never walled. Regions:<br>
+  <b style="color:#12101C;">1. Header</b> &mdash; centered avatar (80px), display name (falls back to handle), <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">@handle</code> muted.<br>
+  <b style="color:#12101C;">2. Socials row</b> (required) &mdash; Instagram &middot; YouTube &middot; TikTok &middot; Facebook &middot; personal website, themed per skin; icon-row default, labeled-pill variant for link-heavy creators. Authored in dashboard Settings &rarr; "Your links" (connected socials auto-fill; others pasted; drag to reorder). Empty state points to Settings.<br>
+  <b style="color:#12101C;">3. Follow button</b> &mdash; anon: outline "Follow" &rarr; sign-in &middot; shopper: working Follow / quiet "Following" &middot; owner: no Follow (see below).<br>
+  <b style="color:#12101C;">4. Viewer band:</b> anon = "Sign in to comment" band &middot; shopper = comment composer &middot; business = "You own a business" Request-collab strip &middot; owner = "This is your page" + View-as-visitor, Edit profile/Share, inline layout/featured/metrics edit tools (Managers: same minus Settings).<br>
+  <b style="color:#12101C;">5. Post grid</b> &mdash; 3 cols, 4px gutters, square tiles, small radius, whole tile tappable &rarr; post view.<br>
+  <b style="color:#12101C;">6. Comments</b> &mdash; newest-first (author display name or "Shopper", <b>never an email</b>); then composer (2-row textarea, 500 max, "Post", inline error) or the door.<br>
+  <b style="color:#12101C;">Empty:</b> "No posts yet." / "No comments yet." <b style="color:#12101C;">Not found:</b> unknown handle &rarr; 404.</div>
+</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Post view</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/[handle]/post/[id]</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;"><b style="color:#12101C;">Regions:</b> <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">&larr; @handle</code> back &middot; full-width square media &middot; caption (optional) &middot; <b>tagged product cards</b> (64px photo left &rarr; product page, title+price, Buy/Shop button right, busy "Opening&hellip;") &mdash; each card follows the three-face rules in &sect;05. <b style="color:#12101C;">Empty:</b> "No products tagged on this post." <b style="color:#12101C;">Not found:</b> foreign id &rarr; 404.</div>
+</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Product page</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/[handle]/product/[id]</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;"><b style="color:#12101C;">Regions:</b> <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">&larr; @handle</code> &middot; full-width square photo (omit if none) &middot; title (display) + price (muted, display-only &mdash; retailer owns the real price) &middot; <b>Buy</b> (accent) &middot; "From this post" 96px thumbnail &rarr; source post (omit if none).</div>
+</div>
+
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#7C3AED;margin:22px 0 10px;border-top:2px solid #EFEAFB;padding-top:12px;">B &middot; Auth &amp; shopper account</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Sign-in</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/api/auth/signin</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;"><b style="color:#12101C;">Today:</b> email &rarr; magic link. Brand mark, one email field, submit ("Sign in with Email"), reassurance ("We'll email you a sign-in link. No passwords."), and a line reminding shoppers they don't need this to buy. <b style="color:#12101C;">Post-submit:</b> "Check your email" screen. <b style="color:#12101C;">[LATER]</b> Google / Instagram buttons above email. <b style="color:#12101C;">Errors:</b> invalid email; expired/used link ("link expired &mdash; request a new one"). <b style="color:#12101C;">Asset:</b> magic-link email &mdash; brand header, one button ("Sign in to Plugfolio"), plain-URL fallback, 24h expiry note, ignore-if-not-you line.</div>
+</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Following</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/following</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;">"Following" heading &rarr; simple list of <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">@handle</code> links. <b style="color:#12101C;">Empty:</b> "You aren't following anyone yet. Tap Follow on a creator's page." <b style="color:#12101C;">Guard:</b> signed-out &rarr; sign-in. No aggregated feed in v1.</div>
+</div>
+
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#7C3AED;margin:22px 0 10px;border-top:2px solid #EFEAFB;padding-top:12px;">C &middot; Creator dashboard</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Dashboard home</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/dashboard</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;"><b style="color:#12101C;">Access:</b> any signed-in user (also where a new user becomes a creator). <b style="color:#12101C;">Regions:</b> header ("Dashboard" + account email muted) &middot; tab row (<code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">Posts &middot; Products &middot; Collabs</code> + <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">Settings</code> only when active profile = admin) &middot; <b>Profiles</b> (switcher chips per profile, active = primary border, managed suffixed "&middot; manager"; <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">?profile=</code> re-scopes all tabs; "New profile" top-right) &middot; <b>Earnings</b> (stat card: big number = outbound taps, sub "outbound taps &middot; <b>tracked</b>"; "By post" and "By product" rows, most-tapped first; <b>[LATER]</b> leave room for a differentiated "estimated" conversion label). <b style="color:#12101C;">Empty:</b> no connection &rarr; "Connect a Google or Meta account to create your first profile." / connected &rarr; "No profiles yet." / "No post-driven taps yet." <b style="color:#12101C;">Errors:</b> 403 no-connection, "An account holds at most 5 profiles."</div>
+</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Posts tab</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/dashboard/posts</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;">Post rows (56px thumb &middot; caption/"Untitled post" &middot; right "N tagged") &rarr; tagging editor. <b>Add a post</b> form: Media URL + Caption (optional) + "Add post". <b style="color:#12101C;">Empty:</b> "No posts yet &mdash; add your first below." <b style="color:#12101C;">[LATER]</b> auto-import replaces manual entry &mdash; design the list to survive the swap.</div>
+</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Tagging editor &mdash; the core tool</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/dashboard/posts/[id]</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;"><code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">&larr; Posts</code> &middot; media preview + caption &middot; <b>Tagged products</b> (title &middot; price, "&mdash;" when none) &middot; <b>Tag a product</b> form: Product URL (helper "we grab title, image &amp; price"; unreadable page &rarr; hostname fallback, silent), affiliate link, <b>kind toggle (Affiliate / My own product)</b>, collapsed <b>"+ Add a coupon"</b> (code, expiry, in-store note), "Tag product" (busy "Tagging&hellip;"). <b style="color:#12101C;">Success:</b> product appears in the list &mdash; the celebratory "now shoppable" moment. <b style="color:#12101C;">Empty:</b> "Nothing tagged yet."</div>
+</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Products tab</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/dashboard/products</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;">Divided rows: title + kind tag + compact coupon summary + <b>Remove</b> (ghost, confirm via Dialog) on line 1; affiliate-URL input + <b>Save</b> (enabled only when edited, busy "Saving&hellip;") + inline error on line 2. Includes products whose post was deleted. <b style="color:#12101C;">Empty:</b> "Nothing tagged yet &mdash; tag products from a post in Posts." <b style="color:#12101C;">Note:</b> removing a product also removes its recorded taps from the projection.</div>
+</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Collabs tab</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/dashboard/collabs</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;"><b>Your threads</b> (business name &middot; requirement title muted &middot; right status chip Agreed/Negotiating) &rarr; thread. <b>Open requirements</b> board: card per brief (title, business &middot; budget text, brief body) + <b>Approach</b> composer (opener input + button). No-profile visitors: read-only board + "Create a profile to approach requirements." <b style="color:#12101C;">Empty:</b> "No collabs yet."</div>
+</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Settings &mdash; Admin only</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/dashboard/settings</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;"><b style="color:#12101C;">Managers:</b> explainer + rows (name/email + ghost Remove) + invite (email + Invite; errors: cap 3, self-invite, invalid). <b style="color:#12101C;">Your links</b> (socials authoring): connected socials (IG/YT) auto-fill, others pasted, drag to reorder &mdash; feeds the creator-page socials row. <b style="color:#12101C;">[LATER]</b> Username (pick handle only from connected YT/IG handles; taken-handle state) &middot; Connections (Google/Meta connect/re-auth; "can't disconnect while a profile depends on it"). <b style="color:#12101C;">Guard:</b> a Manager here is silently redirected to /dashboard; leak nothing.</div>
+</div>
+
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#7C3AED;margin:22px 0 10px;border-top:2px solid #EFEAFB;padding-top:12px;">D &middot; Business</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Business home</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/collabs</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;"><b style="color:#12101C;">First visit:</b> "Create your business" + form (Business name 80 &middot; "What do you sell?" 280 &middot; optional logo) &rarr; Create business. <b style="color:#12101C;">After:</b> header (name + description) &middot; <b>Threads</b> (per-row <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">@creator</code>) &middot; <b>Your open requirements</b> (title &middot; budget) + post-requirement form ("What do you need?" 120 &middot; "The brief" 1000 &middot; "Budget or price range (optional)" free text 60 &mdash; <b>never</b> currency-validated).</div>
+</div>
+
+<div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:14px;padding:16px 18px;margin:12px 0;">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;"><div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;color:#12101C;">Collab thread &mdash; both roles, one design</div><code style="font-family:'Space Mono',monospace;font-size:12px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:5px;padding:1px 7px;color:#5B21B6;">/collabs/[id]</code></div>
+  <div style="font-size:13.5px;line-height:1.65;color:#54505F;"><code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">&larr; Collabs</code> &middot; header <b>"Business &times; @creator"</b> (sub = requirement title or "Direct collab"; when fully agreed append "&middot; Agreed &mdash; payment settles off-platform") &middot; message list (oldest-first, sender bold + body muted) &middot; composer (input + Send) &middot; <b>Agreement row:</b> left = honest other-side status; right = <b>Accept terms</b> (accent) &rarr; "You accepted" (irreversible v1). <b style="color:#12101C;">Guard:</b> non-participants &rarr; 404.</div>
+</div>
+
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#7C3AED;margin:22px 0 10px;border-top:2px solid #EFEAFB;padding-top:12px;">E &middot; System screens</div>
+<table style="width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;break-inside:auto;">
+  <thead><tr style="background:#EFEAFB;">
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Screen</th>
+    <th style="text-align:left;padding:9px 12px;font-family:'Sora',sans-serif;font-weight:600;color:#12101C;border:1px solid #E0DCEC;">Spec</th>
+  </tr></thead>
+  <tbody style="color:#2A2735;">
+    <tr><td style="padding:9px 12px;border:1px solid #E7E4EF;font-weight:600;">404</td><td style="padding:9px 12px;border:1px solid #E7E4EF;color:#54505F;">"This page doesn't exist." + link home. Also used for foreign posts/products/threads.</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:9px 12px;border:1px solid #E7E4EF;font-weight:600;">Error boundary</td><td style="padding:9px 12px;border:1px solid #E7E4EF;color:#54505F;">Friendly "something went wrong" + <b>Try again</b> (re-renders). No stack traces.</td></tr>
+    <tr><td style="padding:9px 12px;border:1px solid #E7E4EF;font-weight:600;">Loading</td><td style="padding:9px 12px;border:1px solid #E7E4EF;color:#54505F;">Skeleton mirroring the creator page (avatar disc + name lines + grid blocks); extend to dashboard lists.</td></tr>
+    <tr style="background:#FBFAFE;"><td style="padding:9px 12px;border:1px solid #E7E4EF;font-weight:600;">Redirects</td><td style="padding:9px 12px;border:1px solid #E7E4EF;color:#54505F;">Gated pages bounce to sign-in with no flash of protected content.</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== 7. STATES & TONE ===== -->
+<div style="break-before:page;"></div>
+<div style="break-inside:avoid;margin-top:8px;">
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7C3AED;">07 &middot; States, tone &amp; scope</div>
+<h2 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.025em;color:#12101C;margin:6px 0 0;">Cross-cutting rules</h2>
+</div>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:22px 0 8px;">Honest states &mdash; design all four, none are afterthoughts</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+  <div style="break-inside:avoid;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:14px 16px;"><div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#12101C;">Empty</div><div style="font-size:13px;line-height:1.6;color:#54505F;margin-top:4px;">Specific, human line + the next action. Every list has one (see each screen above).</div></div>
+  <div style="break-inside:avoid;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:14px 16px;"><div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#12101C;">Busy</div><div style="font-size:13px;line-height:1.6;color:#54505F;margin-top:4px;">First tap &rarr; <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">disabled</code> + label change ("Opening&hellip;"/"Tagging&hellip;"/"Saving&hellip;"). In-app browsers double-fire; backend absorbs duplicates.</div></div>
+  <div style="break-inside:avoid;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:14px 16px;"><div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#12101C;">Error</div><div style="font-size:13px;line-height:1.6;color:#54505F;margin-top:4px;">Inline line below the field, <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">role="alert"</code>. Specific &amp; human ("A profile has at most 3 Managers") &mdash; never a code.</div></div>
+  <div style="break-inside:avoid;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:12px;padding:14px 16px;"><div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#12101C;">Loading</div><div style="font-size:13px;line-height:1.6;color:#54505F;margin-top:4px;">Skeletons that mirror the real layout; <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">prefers-reduced-motion</code> respected.</div></div>
+</div>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:22px 0 8px;">Copy &amp; tone</h3>
+<p style="font-size:14px;line-height:1.65;color:#2A2735;margin:8px 0;">Direct, confident, creator-native; short lines, no hype or jargon. The personality is <b>removing friction</b>. Say the quiet parts loudly and keep these honesty labels verbatim in meaning: <b>"shopping never needs an account,"</b> <b>"tracked,"</b> <b>"payment settles off-platform."</b> Wording is polishable; the stated meaning is fixed.</p>
+
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:22px 0 8px;">Explicitly OUT of v1</h3>
+<p style="font-size:13.5px;line-height:1.65;color:#54505F;margin:8px 0;">Referral rewards &middot; wishlists / price alerts &middot; aggregated feed &middot; ratings / badges &middot; media kits &middot; on-platform payments / payouts &middot; TikTok &middot; AI tag suggestions &middot; &gt;5 profiles / &gt;3 managers / finer roles &middot; vanity usernames &middot; creator-to-creator collabs. <b style="color:#12101C;">Coupons are IN</b> (see &sect;05); still out: coupon auto-apply, QR / tracked in-store redemption, bundles / drops, multiple coupons per product.</p>
+
+<!-- ===== 8. OPEN QUESTIONS ===== -->
+<div style="break-inside:avoid;margin-top:26px;">
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7C3AED;">08 &middot; Open questions</div>
+<h2 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.025em;color:#12101C;margin:6px 0 12px;">Decisions still open</h2>
+</div>
+<ol style="font-size:14px;line-height:1.75;color:#2A2735;margin:8px 0;padding-left:22px;">
+  <li style="margin:5px 0;">Dashboard navigation &mdash; light text-tab row, or a persistent bottom tab bar on mobile?</li>
+  <li style="margin:5px 0;">Dark-first or light-first as the default public-page appearance (both must exist)?</li>
+  <li style="margin:5px 0;">Post grid at &gt;3 columns on desktop, or keep the mobile column centered?</li>
+  <li style="margin:5px 0;">Empty-state art &mdash; illustrated, typographic, or minimal?</li>
+  <li style="margin:5px 0;">The "Agreed" settled state in threads &mdash; badge, banner, or timeline event?</li>
+</ol>
+
+<!-- ===== 09. UI KIT ===== -->
+<div style="break-before:page;"></div>
+<div style="break-inside:avoid;margin-top:8px;">
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7C3AED;">09 &middot; UI kit</div>
+<h2 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.025em;color:#12101C;margin:6px 0 0;">The UI kit &mdash; every element, rendered</h2>
+<p style="font-size:15px;line-height:1.65;color:#2A2735;margin:12px 0;">These are the actual components at target fidelity, built on the tokens in &sect;02 and the shadcn primitives in &sect;03. Build these first as the shared kit; every screen composes from them. Each block notes the shadcn base and the token classes to use.</p>
+</div>
+
+<!-- Buttons -->
+<div style="break-inside:avoid;margin:20px 0;">
+<div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#7C3AED;margin-bottom:10px;">Button &mdash; shadcn <code style="font-family:'Space Mono',monospace;font-size:11px;color:#5B21B6;">&lt;Button&gt;</code> variants</div>
+<div style="border:1px solid #E7E4EF;border-radius:14px;padding:20px;background:#fff;">
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+    <div style="text-align:center;"><button style="font-family:'Inter';font-size:14px;font-weight:600;color:#fff;background:#7C3AED;border:none;border-radius:10px;padding:11px 20px;cursor:pointer;">Save</button><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:6px;">default</div></div>
+    <div style="text-align:center;"><button style="font-family:'Inter';font-size:14px;font-weight:700;color:#12101C;background:#C6FF3D;border:none;border-radius:10px;padding:11px 22px;cursor:pointer;">Buy</button><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:6px;">accent (Buy)</div></div>
+    <div style="text-align:center;"><button style="font-family:'Inter';font-size:14px;font-weight:600;color:#12101C;background:#fff;border:1.5px solid #D8D3E8;border-radius:10px;padding:10px 20px;cursor:pointer;">Follow</button><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:6px;">outline</div></div>
+    <div style="text-align:center;"><button style="font-family:'Inter';font-size:14px;font-weight:600;color:#54505F;background:transparent;border:none;border-radius:10px;padding:11px 16px;cursor:pointer;">Following</button><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:6px;">ghost</div></div>
+    <div style="text-align:center;"><button style="font-family:'Inter';font-size:14px;font-weight:700;color:#12101C;background:#C6FF3D;border:none;border-radius:10px;padding:11px 22px;opacity:0.55;cursor:not-allowed;">Opening&hellip;</button><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:6px;">busy / disabled</div></div>
+    <div style="text-align:center;"><button style="font-family:'Inter';font-size:14px;font-weight:600;color:#D6493A;background:transparent;border:none;border-radius:10px;padding:11px 16px;cursor:pointer;">Remove</button><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:6px;">ghost destructive</div></div>
+  </div>
+</div>
+</div>
+
+<!-- Inputs -->
+<div style="break-inside:avoid;margin:20px 0;">
+<div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#7C3AED;margin-bottom:10px;">Input / Textarea &mdash; label &middot; helper &middot; inline error</div>
+<div style="border:1px solid #E7E4EF;border-radius:14px;padding:20px;background:#fff;display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+  <div>
+    <div style="font-family:'Inter';font-size:13px;font-weight:600;color:#12101C;margin-bottom:6px;">Product URL</div>
+    <div style="font-family:'Inter';font-size:14px;color:#12101C;background:#F5F4F8;border:1.5px solid #E7E4EF;border-radius:10px;padding:11px 13px;">store.com/knit-throw</div>
+    <div style="font-family:'Inter';font-size:12px;color:#8C8798;margin-top:6px;">We grab the title, image &amp; price.</div>
+  </div>
+  <div>
+    <div style="font-family:'Inter';font-size:13px;font-weight:600;color:#12101C;margin-bottom:6px;">Invite a manager</div>
+    <div style="font-family:'Inter';font-size:14px;color:#12101C;background:#fff;border:1.5px solid #FF6B5C;border-radius:10px;padding:11px 13px;box-shadow:0 0 0 3px rgba(255,107,92,0.15);">you@studio</div>
+    <div style="font-family:'Inter';font-size:12px;color:#D6493A;margin-top:6px;">Enter a valid email address.</div>
+  </div>
+</div>
+</div>
+
+<!-- Badges + Chips -->
+<div style="break-inside:avoid;margin:20px 0;">
+<div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#7C3AED;margin-bottom:10px;">Badge &amp; Chip &mdash; status, tags, toggles</div>
+<div style="border:1px solid #E7E4EF;border-radius:14px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:16px;">
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+    <span style="font-family:'Inter';font-size:12px;font-weight:600;color:#fff;background:#7C3AED;border-radius:999px;padding:4px 11px;">Agreed</span>
+    <span style="font-family:'Inter';font-size:12px;font-weight:600;color:#54505F;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:999px;padding:3px 11px;">Negotiating</span>
+    <span style="font-family:'Inter';font-size:12px;font-weight:500;color:#54505F;background:#EFEAFB;border-radius:999px;padding:4px 11px;">&middot; manager</span>
+    <span style="font-family:'Inter';font-size:12px;font-weight:600;color:#12101C;background:#C6FF3D;border-radius:999px;padding:4px 11px;">tracked</span>
+    <span style="font-family:'Inter';font-size:12px;font-weight:500;color:#54505F;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:999px;padding:3px 11px;">Their own product</span>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <span style="font-family:'Inter';font-size:13px;font-weight:600;color:#7C3AED;background:#fff;border:1.5px solid #7C3AED;border-radius:999px;padding:6px 14px;">@ana &middot; main</span>
+    <span style="font-family:'Inter';font-size:13px;font-weight:500;color:#54505F;background:#F5F4F8;border:1.5px solid #E7E4EF;border-radius:999px;padding:6px 14px;">@ana.knits</span>
+    <span style="font-family:'Inter';font-size:13px;font-weight:500;color:#54505F;background:#F5F4F8;border:1.5px solid #E7E4EF;border-radius:999px;padding:6px 14px;">+ New profile</span>
+    <span style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-left:6px;">&larr; profile switcher (active = primary border)</span>
+  </div>
+  <div style="display:inline-flex;border:1.5px solid #E7E4EF;border-radius:10px;overflow:hidden;width:max-content;">
+    <span style="font-family:'Inter';font-size:13px;font-weight:600;color:#fff;background:#7C3AED;padding:8px 16px;">Affiliate</span>
+    <span style="font-family:'Inter';font-size:13px;font-weight:500;color:#54505F;background:#fff;padding:8px 16px;">My own product</span>
+    <span style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;align-self:center;padding:0 10px;">tagging kind toggle</span>
+  </div>
+</div>
+</div>
+
+<!-- Card + Avatar + Skeleton -->
+<div style="break-inside:avoid;margin:20px 0;">
+<div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#7C3AED;margin-bottom:10px;">Card &middot; Avatar &middot; Skeleton</div>
+<div style="border:1px solid #E7E4EF;border-radius:14px;padding:20px;background:#fff;display:grid;grid-template-columns:1.1fr 0.9fr;gap:16px;">
+  <div style="background:#fff;border:1px solid #E7E4EF;border-radius:16px;padding:16px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="width:44px;height:44px;border-radius:999px;background:#EFEAFB;border:1px solid #E0DCEC;flex-shrink:0;"></div>
+      <div><div style="font-family:'Sora';font-size:15px;font-weight:700;color:#12101C;">Ana Rivera</div><div style="font-family:'Inter';font-size:12px;color:#8C8798;">@ana.knits</div></div>
+    </div>
+    <div style="font-family:'Inter';font-size:32px;font-weight:700;color:#12101C;font-variant-numeric:tabular-nums;margin-top:14px;">1,284</div>
+    <div style="font-family:'Inter';font-size:12px;color:#8C8798;">outbound taps &middot; <span style="color:#12101C;font-weight:600;">tracked</span></div>
+  </div>
+  <div style="background:#F5F4F8;border:1px solid #E7E4EF;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:9px;">
+    <div style="width:44px;height:44px;border-radius:999px;background:#E7E4EF;"></div>
+    <div style="width:70%;height:12px;border-radius:6px;background:#E7E4EF;"></div>
+    <div style="width:45%;height:12px;border-radius:6px;background:#E7E4EF;"></div>
+    <div style="width:100%;height:56px;border-radius:10px;background:#E7E4EF;margin-top:4px;"></div>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:2px;">skeleton mirrors real layout</div>
+  </div>
+</div>
+</div>
+
+<!-- Product card faces -->
+<div style="break-inside:avoid;margin:24px 0;">
+<div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#7C3AED;margin-bottom:10px;">Product card &mdash; the three faces, rendered (see &sect;05 for rules)</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+  <!-- Face 1 affiliate -->
+  <div style="border:1px solid #E7E4EF;border-radius:14px;padding:12px;background:#fff;">
+    <div style="width:100%;aspect-ratio:1;background:#EFEAFB;border-radius:10px;"></div>
+    <div style="font-family:'Inter';font-size:13.5px;font-weight:600;color:#12101C;margin-top:10px;line-height:1.3;">Merino knit throw</div>
+    <div style="font-family:'Inter';font-size:13px;color:#8C8798;font-variant-numeric:tabular-nums;margin-top:2px;">&#8377;3,200</div>
+    <button style="width:100%;font-family:'Inter';font-size:14px;font-weight:700;color:#12101C;background:#C6FF3D;border:none;border-radius:10px;padding:10px;margin-top:10px;cursor:pointer;">Buy</button>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:8px;text-align:center;">Face 1 &middot; affiliate &middot; no label</div>
+  </div>
+  <!-- Face 2 own -->
+  <div style="border:1px solid #E7E4EF;border-radius:14px;padding:12px;background:#fff;">
+    <div style="width:100%;aspect-ratio:1;background:#EFEAFB;border-radius:10px;position:relative;"><span style="position:absolute;top:8px;left:8px;font-family:'Inter';font-size:10.5px;font-weight:500;color:#54505F;background:#fff;border:1px solid #E7E4EF;border-radius:999px;padding:2px 8px;">Their own product</span></div>
+    <div style="font-family:'Inter';font-size:13.5px;font-weight:600;color:#12101C;margin-top:10px;line-height:1.3;">Studio tote &mdash; sand</div>
+    <div style="font-family:'Inter';font-size:13px;color:#8C8798;font-variant-numeric:tabular-nums;margin-top:2px;">&#8377;1,900</div>
+    <button style="width:100%;font-family:'Inter';font-size:14px;font-weight:700;color:#12101C;background:#C6FF3D;border:none;border-radius:10px;padding:10px;margin-top:10px;cursor:pointer;">Shop their store</button>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:8px;text-align:center;">Face 2 &middot; own &middot; trust tag</div>
+  </div>
+  <!-- Face 3 coupon -->
+  <div style="border:1px solid #E7E4EF;border-radius:14px;padding:12px;background:#fff;">
+    <div style="width:100%;aspect-ratio:1;background:#EFEAFB;border-radius:10px;"></div>
+    <div style="font-family:'Inter';font-size:13.5px;font-weight:600;color:#12101C;margin-top:10px;line-height:1.3;">Ceramic mug set</div>
+    <div style="font-family:'Inter';font-size:13px;color:#8C8798;font-variant-numeric:tabular-nums;margin-top:2px;">&#8377;1,450</div>
+    <div style="display:flex;align-items:center;gap:6px;background:#C6FF3D;border-radius:8px;padding:7px 10px;margin-top:10px;"><span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#12101C;letter-spacing:0.04em;">ANA15</span><span style="font-family:'Inter';font-size:11px;font-weight:600;color:#12101C;margin-left:auto;">Tap to copy</span></div>
+    <div style="font-family:'Inter';font-size:11px;color:#8C8798;margin-top:5px;">Valid till 3 Aug</div>
+    <button style="width:100%;font-family:'Inter';font-size:14px;font-weight:700;color:#12101C;background:#C6FF3D;border:none;border-radius:10px;padding:10px;margin-top:9px;cursor:pointer;">Buy</button>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:8px;text-align:center;">Face 3 &middot; coupon rides on 1/2</div>
+  </div>
+</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px;">
+  <div style="font-family:'Space Mono',monospace;font-size:9.5px;color:#8C8798;">code chip states &rarr;</div>
+  <div style="display:inline-flex;align-items:center;gap:6px;background:#C6FF3D;border-radius:8px;padding:6px 12px;"><span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:#12101C;">ANA15</span><span style="font-family:'Inter';font-size:11px;font-weight:600;color:#12101C;">Tap to copy</span></div>
+  <div style="font-family:'Inter';font-size:14px;color:#8C8798;">&rarr;</div>
+  <div style="display:inline-flex;align-items:center;gap:6px;background:#12101C;border-radius:8px;padding:6px 12px;"><span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:#C6FF3D;">ANA15</span><span style="font-family:'Inter';font-size:11px;font-weight:600;color:#C6FF3D;">Copied &#10003;</span></div>
+  <div style="font-family:'Inter';font-size:14px;color:#8C8798;">&rarr;</div>
+  <div style="display:inline-flex;align-items:center;gap:6px;background:#F5F4F8;border:1px solid #E7E4EF;border-radius:8px;padding:6px 12px;"><span style="font-family:'Inter';font-size:11.5px;font-weight:500;color:#8C8798;">Offer ended</span></div>
+</div>
+</div>
+
+<!-- Persistent chrome rendered -->
+<div style="break-inside:avoid;margin:24px 0;">
+<div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#7C3AED;margin-bottom:10px;">Persistent chrome &mdash; top bar &amp; bottom tab bar</div>
+<div style="border:1px solid #E7E4EF;border-radius:14px;padding:20px;background:#fff;display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
+  <!-- Top bar -->
+  <div>
+    <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #E7E4EF;border-radius:12px;padding:11px 14px;">
+      <div style="width:20px;height:20px;flex-shrink:0;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+      <div style="font-family:'Sora';font-size:15px;font-weight:700;letter-spacing:-0.045em;color:#12101C;display:flex;align-items:flex-end;">plugfolio<span style="width:4px;height:4px;border-radius:1px;background:#7C3AED;margin:0 0 5px 2px;"></span></div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:10px;">
+        <div style="width:18px;height:18px;border-radius:999px;border:2px solid #8C8798;"></div>
+        <div style="width:26px;height:26px;border-radius:999px;background:#EFEAFB;border:1px solid #E0DCEC;"></div>
+      </div>
+    </div>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:7px;">wordmark &rarr; feed &middot; search &middot; account slot (signals role)</div>
+  </div>
+  <!-- Bottom tab bar -->
+  <div>
+    <div style="display:flex;background:#fff;border:1px solid #E7E4EF;border-radius:12px;padding:9px 6px;">
+      <div style="flex:1;text-align:center;"><div style="width:20px;height:20px;margin:0 auto;border:2px solid #8C8798;border-radius:4px;"></div><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:4px;">HOME</div></div>
+      <div style="flex:1;text-align:center;"><div style="width:20px;height:20px;margin:0 auto;border:2px solid #7C3AED;border-radius:4px;display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:2px;box-sizing:border-box;"><span style="background:#7C3AED;border-radius:1px;"></span><span style="background:#7C3AED;border-radius:1px;"></span><span style="background:#7C3AED;border-radius:1px;"></span><span style="background:#7C3AED;border-radius:1px;"></span></div><div style="font-family:'Space Mono',monospace;font-size:9px;color:#7C3AED;font-weight:700;margin-top:4px;">SHOP</div></div>
+      <div style="flex:1;text-align:center;"><div style="width:20px;height:20px;margin:0 auto;border:2px solid #8C8798;border-radius:4px 4px 8px 8px;"></div><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:4px;">FOLLOWING</div></div>
+      <div style="flex:1;text-align:center;"><div style="width:20px;height:20px;margin:0 auto;border:2px solid #8C8798;border-radius:999px;"></div><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:4px;">ACCOUNT</div></div>
+    </div>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;margin-top:7px;">active tab = page accent (SHOP active on creator page)</div>
+  </div>
+</div>
+</div>
+
+<!-- Full shadcn set -->
+<div style="break-before:page;"></div>
+<div style="break-inside:avoid;margin-top:8px;">
+<h3 style="font-family:'Sora',sans-serif;font-size:19px;font-weight:700;letter-spacing:-0.015em;color:#12101C;margin:0 0 6px;">The rest of the shadcn set &mdash; brand-styled</h3>
+<p style="font-size:14px;line-height:1.6;color:#54505F;margin:0 0 16px;">Every shadcn/ui primitive, themed on our tokens. Use these as-is; they cover almost every interaction in &sect;06. Anything not shown (Command, Menubar, Hover&nbsp;card, Carousel) inherits the same token rules and is <b>[LATER]</b>.</p>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+
+  <!-- Tabs -->
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:12px;padding:14px;background:#fff;">
+    <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Tabs</div>
+    <div style="display:inline-flex;background:#F5F4F8;border-radius:10px;padding:3px;">
+      <span style="font-family:'Inter';font-size:13px;font-weight:600;color:#12101C;background:#fff;border-radius:8px;padding:6px 14px;box-shadow:0 1px 2px rgba(18,16,28,0.08);">Posts</span>
+      <span style="font-family:'Inter';font-size:13px;font-weight:500;color:#8C8798;padding:6px 14px;">Products</span>
+      <span style="font-family:'Inter';font-size:13px;font-weight:500;color:#8C8798;padding:6px 14px;">Collabs</span>
+    </div>
+  </div>
+
+  <!-- Select / Dropdown -->
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:12px;padding:14px;background:#fff;">
+    <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Select / Dropdown menu</div>
+    <div style="display:flex;align-items:center;font-family:'Inter';font-size:14px;color:#12101C;background:#fff;border:1.5px solid #E7E4EF;border-radius:10px;padding:9px 12px;width:190px;">Most tapped<span style="margin-left:auto;color:#8C8798;">&#9662;</span></div>
+    <div style="width:190px;background:#fff;border:1px solid #E7E4EF;border-radius:10px;box-shadow:0 6px 18px rgba(18,16,28,0.1);padding:5px;margin-top:6px;">
+      <div style="font-family:'Inter';font-size:13px;color:#12101C;background:#EFEAFB;border-radius:7px;padding:7px 10px;">Most tapped</div>
+      <div style="font-family:'Inter';font-size:13px;color:#54505F;padding:7px 10px;">Newest</div>
+      <div style="font-family:'Inter';font-size:13px;color:#54505F;padding:7px 10px;">A&ndash;Z</div>
+    </div>
+  </div>
+
+  <!-- Switch + Checkbox + Radio -->
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:12px;padding:14px;background:#fff;">
+    <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:12px;">Switch &middot; Checkbox &middot; Radio</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:38px;height:22px;border-radius:999px;background:#7C3AED;position:relative;"><span style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:999px;background:#fff;"></span></div>
+        <div style="width:38px;height:22px;border-radius:999px;background:#E7E4EF;position:relative;"><span style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:999px;background:#fff;"></span></div>
+        <span style="font-family:'Inter';font-size:13px;color:#54505F;">on / off</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="width:19px;height:19px;border-radius:5px;background:#7C3AED;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;">&#10003;</span>
+        <span style="width:19px;height:19px;border-radius:5px;border:1.5px solid #D8D3E8;"></span>
+        <span style="font-family:'Inter';font-size:13px;color:#54505F;">checkbox</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="width:18px;height:18px;border-radius:999px;border:5px solid #7C3AED;box-shadow:inset 0 0 0 2px #fff;"></span>
+        <span style="width:18px;height:18px;border-radius:999px;border:1.5px solid #D8D3E8;"></span>
+        <span style="font-family:'Inter';font-size:13px;color:#54505F;">radio</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert -->
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:12px;padding:14px;background:#fff;">
+    <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Alert</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="background:#EFEAFB;border:1px solid #E0DCEC;border-radius:10px;padding:9px 12px;font-family:'Inter';font-size:12.5px;color:#5B21B6;">Connect a Google or Meta account to create your first profile.</div>
+      <div style="background:#FFF6F4;border:1px solid #FFD9D2;border-radius:10px;padding:9px 12px;font-family:'Inter';font-size:12.5px;color:#D6493A;">This link expired &mdash; request a new one.</div>
+    </div>
+  </div>
+
+  <!-- Dialog -->
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:12px;padding:14px;background:#F5F4F8;">
+    <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Dialog / Alert dialog</div>
+    <div style="background:#fff;border-radius:14px;box-shadow:0 12px 32px rgba(18,16,28,0.16);padding:16px;">
+      <div style="font-family:'Sora';font-size:15px;font-weight:700;color:#12101C;">Remove this product?</div>
+      <div style="font-family:'Inter';font-size:12.5px;color:#54505F;margin-top:5px;line-height:1.5;">It'll be removed from all posts and its taps drop from your totals.</div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+        <button style="font-family:'Inter';font-size:13px;font-weight:600;color:#54505F;background:transparent;border:none;border-radius:9px;padding:8px 14px;">Cancel</button>
+        <button style="font-family:'Inter';font-size:13px;font-weight:600;color:#fff;background:#FF6B5C;border:none;border-radius:9px;padding:8px 16px;">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast + Tooltip -->
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:12px;padding:14px;background:#fff;">
+    <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Toast &middot; Tooltip</div>
+    <div style="display:flex;align-items:center;gap:10px;background:#12101C;border-radius:11px;padding:11px 14px;width:max-content;">
+      <span style="width:18px;height:18px;border-radius:999px;background:#C6FF3D;color:#12101C;display:flex;align-items:center;justify-content:center;font-size:11px;">&#10003;</span>
+      <span style="font-family:'Inter';font-size:13px;color:#fff;">Profile created.</span>
+    </div>
+    <div style="position:relative;width:max-content;margin-top:16px;">
+      <span style="font-family:'Inter';font-size:12px;color:#fff;background:#12101C;border-radius:7px;padding:5px 9px;">Sign in to comment</span>
+      <span style="position:absolute;left:16px;bottom:-4px;width:8px;height:8px;background:#12101C;transform:rotate(45deg);"></span>
+    </div>
+  </div>
+
+  <!-- Accordion -->
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:12px;padding:14px;background:#fff;">
+    <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Accordion</div>
+    <div style="border:1px solid #E7E4EF;border-radius:10px;overflow:hidden;">
+      <div style="display:flex;align-items:center;padding:10px 12px;background:#F5F4F8;font-family:'Inter';font-size:13px;font-weight:600;color:#12101C;">+ Add a coupon<span style="margin-left:auto;color:#8C8798;">&#9652;</span></div>
+      <div style="padding:10px 12px;font-family:'Inter';font-size:12px;color:#54505F;line-height:1.5;">Code &middot; expiry &middot; in-store note</div>
+      <div style="display:flex;align-items:center;padding:10px 12px;border-top:1px solid #E7E4EF;font-family:'Inter';font-size:13px;font-weight:500;color:#54505F;">Advanced<span style="margin-left:auto;color:#8C8798;">&#9662;</span></div>
+    </div>
+  </div>
+
+  <!-- Progress + Slider -->
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:12px;padding:14px;background:#fff;">
+    <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:12px;">Progress &middot; Slider</div>
+    <div style="height:8px;border-radius:999px;background:#EFEAFB;overflow:hidden;"><div style="width:64%;height:100%;background:#7C3AED;"></div></div>
+    <div style="position:relative;height:6px;border-radius:999px;background:#E7E4EF;margin-top:18px;"><div style="width:45%;height:100%;background:#7C3AED;border-radius:999px;"></div><span style="position:absolute;left:45%;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:999px;background:#fff;border:2px solid #7C3AED;box-shadow:0 1px 3px rgba(18,16,28,0.2);"></span></div>
+  </div>
+
+  <!-- Breadcrumb + Pagination -->
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:12px;padding:14px;background:#fff;">
+    <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:12px;">Breadcrumb &middot; Pagination</div>
+    <div style="font-family:'Inter';font-size:13px;color:#8C8798;">Dashboard <span style="color:#C9C4D6;">/</span> Posts <span style="color:#C9C4D6;">/</span> <span style="color:#12101C;font-weight:600;">Editor</span></div>
+    <div style="display:flex;gap:6px;margin-top:14px;">
+      <span style="font-family:'Inter';font-size:13px;color:#8C8798;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1px solid #E7E4EF;border-radius:8px;">&#8249;</span>
+      <span style="font-family:'Inter';font-size:13px;font-weight:600;color:#fff;background:#7C3AED;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px;">1</span>
+      <span style="font-family:'Inter';font-size:13px;color:#54505F;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1px solid #E7E4EF;border-radius:8px;">2</span>
+      <span style="font-family:'Inter';font-size:13px;color:#54505F;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1px solid #E7E4EF;border-radius:8px;">3</span>
+      <span style="font-family:'Inter';font-size:13px;color:#54505F;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1px solid #E7E4EF;border-radius:8px;">&#8250;</span>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:12px;padding:14px;background:#fff;">
+    <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Table</div>
+    <div style="border:1px solid #E7E4EF;border-radius:10px;overflow:hidden;font-family:'Inter';font-size:12.5px;">
+      <div style="display:flex;background:#F5F4F8;color:#8C8798;font-weight:600;padding:7px 12px;"><span style="flex:1;">Product</span><span style="width:52px;text-align:right;">Taps</span><span style="width:60px;text-align:right;">Copies</span></div>
+      <div style="display:flex;padding:8px 12px;border-top:1px solid #E7E4EF;color:#12101C;"><span style="flex:1;">Knit throw</span><span style="width:52px;text-align:right;font-variant-numeric:tabular-nums;">312</span><span style="width:60px;text-align:right;font-variant-numeric:tabular-nums;">48</span></div>
+      <div style="display:flex;padding:8px 12px;border-top:1px solid #E7E4EF;color:#12101C;background:#FBFAFE;"><span style="flex:1;">Mug set</span><span style="width:52px;text-align:right;font-variant-numeric:tabular-nums;">190</span><span style="width:60px;text-align:right;font-variant-numeric:tabular-nums;">27</span></div>
+    </div>
+  </div>
+
+  <!-- Sheet + Separator -->
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:12px;padding:14px;background:#F5F4F8;">
+    <div style="font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Sheet &middot; Separator</div>
+    <div style="display:flex;justify-content:flex-end;height:96px;background:rgba(18,16,28,0.28);border-radius:10px;overflow:hidden;">
+      <div style="width:64%;background:#fff;padding:12px;">
+        <div style="font-family:'Sora';font-size:13px;font-weight:700;color:#12101C;">Filters</div>
+        <div style="height:1px;background:#E7E4EF;margin:9px 0;"></div>
+        <div style="font-family:'Inter';font-size:11.5px;color:#54505F;">In stock</div>
+        <div style="font-family:'Inter';font-size:11.5px;color:#54505F;margin-top:5px;">Has coupon</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- COMPLETE SHADCN REGISTRY -->
+<div style="break-before:page;"></div>
+<div style="break-inside:avoid;margin-top:8px;">
+<h3 style="font-family:'Sora',sans-serif;font-size:19px;font-weight:700;letter-spacing:-0.015em;color:#12101C;margin:0 0 6px;">Complete shadcn registry &mdash; brand-styled</h3>
+<p style="font-size:13.5px;line-height:1.6;color:#54505F;margin:0 0 6px;">Every entry in the shadcn/ui registry, themed on our tokens, alphabetical. Items above are the fully-worked ones used across &sect;06; the gallery below is the exhaustive reference. <span style="color:#8C8798;">"New" = latest registry additions.</span></p>
+<p style="font-size:12px;line-height:1.6;color:#8C8798;margin:0 0 14px;font-family:'Space Mono',monospace;">Shown earlier &rarr; Accordion &middot; Alert &middot; Avatar &middot; Badge &middot; Breadcrumb &middot; Button &middot; Card &middot; Checkbox &middot; Dialog &middot; Input &middot; Label &middot; Pagination &middot; Progress &middot; Radio Group &middot; Select &middot; Separator &middot; Sheet &middot; Skeleton &middot; Slider &middot; Switch &middot; Table &middot; Tabs &middot; Toast &middot; Toggle Group &middot; Tooltip</p>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#F5F4F8;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Alert Dialog</div><div style="background:#fff;border-radius:11px;box-shadow:0 8px 22px rgba(18,16,28,0.14);padding:11px;"><div style="font-family:'Sora';font-size:12px;font-weight:700;color:#12101C;">Remove manager?</div><div style="font-family:'Inter';font-size:10.5px;color:#54505F;margin-top:3px;">They lose access at once.</div><div style="display:flex;gap:6px;justify-content:flex-end;margin-top:10px;"><span style="font-family:'Inter';font-size:11px;font-weight:600;color:#54505F;">Cancel</span><span style="font-family:'Inter';font-size:11px;font-weight:600;color:#fff;background:#FF6B5C;border-radius:7px;padding:5px 10px;">Remove</span></div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Aspect Ratio</div><div style="width:100%;aspect-ratio:16/9;background:#EFEAFB;border:1px dashed #C4B7EC;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;color:#7C3AED;">16 : 9</div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Attachment <span style="color:#C6FF3D;background:#12101C;border-radius:3px;padding:0 3px;">new</span></div><div style="display:flex;align-items:center;gap:8px;border:1px solid #E7E4EF;border-radius:9px;padding:8px 10px;"><span style="width:24px;height:24px;border-radius:6px;background:#EFEAFB;display:flex;align-items:center;justify-content:center;color:#7C3AED;">&#128206;</span><div style="flex:1;min-width:0;"><div style="font-family:'Inter';font-size:11px;font-weight:600;color:#12101C;">brief.pdf</div><div style="font-family:'Inter';font-size:9.5px;color:#8C8798;">128 KB</div></div><span style="color:#8C8798;">&times;</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Bubble <span style="color:#C6FF3D;background:#12101C;border-radius:3px;padding:0 3px;">new</span></div><div style="display:flex;flex-direction:column;gap:6px;"><span style="align-self:flex-start;font-family:'Inter';font-size:11px;color:#12101C;background:#F5F4F8;border-radius:12px 12px 12px 3px;padding:7px 11px;max-width:80%;">Can you ship by Aug?</span><span style="align-self:flex-end;font-family:'Inter';font-size:11px;color:#fff;background:#7C3AED;border-radius:12px 12px 3px 12px;padding:7px 11px;max-width:80%;">Yes &mdash; let's agree terms.</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Button Group</div><div style="display:inline-flex;border:1.5px solid #E7E4EF;border-radius:9px;overflow:hidden;"><span style="font-family:'Inter';font-size:12px;font-weight:600;color:#fff;background:#7C3AED;padding:7px 12px;">Day</span><span style="font-family:'Inter';font-size:12px;font-weight:500;color:#54505F;padding:7px 12px;border-left:1px solid #E7E4EF;">Week</span><span style="font-family:'Inter';font-size:12px;font-weight:500;color:#54505F;padding:7px 12px;border-left:1px solid #E7E4EF;">Month</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Calendar</div><div style="font-family:'Inter';font-size:9.5px;"><div style="display:flex;justify-content:space-between;color:#12101C;font-weight:600;margin-bottom:4px;"><span style="color:#8C8798;">&#8249;</span>Aug 2026<span style="color:#8C8798;">&#8250;</span></div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;text-align:center;color:#54505F;"><span style="padding:2px 0;">1</span><span style="padding:2px 0;">2</span><span style="padding:2px 0;color:#fff;background:#7C3AED;border-radius:5px;">3</span><span style="padding:2px 0;">4</span><span style="padding:2px 0;">5</span><span style="padding:2px 0;">6</span><span style="padding:2px 0;">7</span></div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Carousel</div><div style="display:flex;gap:6px;align-items:center;"><span style="color:#8C8798;">&#8249;</span><div style="flex:1;display:flex;gap:5px;overflow:hidden;"><div style="min-width:46px;height:46px;border-radius:7px;background:#EFEAFB;"></div><div style="min-width:46px;height:46px;border-radius:7px;background:#DCD3F5;"></div><div style="min-width:46px;height:46px;border-radius:7px;background:#EFEAFB;"></div></div><span style="color:#8C8798;">&#8250;</span></div><div style="display:flex;gap:4px;justify-content:center;margin-top:8px;"><span style="width:14px;height:4px;border-radius:9px;background:#7C3AED;"></span><span style="width:4px;height:4px;border-radius:9px;background:#D8D3E8;"></span><span style="width:4px;height:4px;border-radius:9px;background:#D8D3E8;"></span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Chart</div><div style="display:flex;align-items:flex-end;gap:5px;height:52px;"><div style="flex:1;height:40%;background:#A78BFA;border-radius:4px 4px 0 0;"></div><div style="flex:1;height:70%;background:#7C3AED;border-radius:4px 4px 0 0;"></div><div style="flex:1;height:55%;background:#A78BFA;border-radius:4px 4px 0 0;"></div><div style="flex:1;height:100%;background:#7C3AED;border-radius:4px 4px 0 0;"></div><div style="flex:1;height:80%;background:#C6FF3D;border-radius:4px 4px 0 0;"></div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Collapsible</div><div style="display:flex;align-items:center;font-family:'Inter';font-size:12px;font-weight:600;color:#12101C;">Advanced options<span style="margin-left:auto;color:#8C8798;">&#9662;</span></div><div style="height:1px;background:#E7E4EF;margin:8px 0;"></div><div style="font-family:'Inter';font-size:11px;color:#54505F;">Collapsed content region</div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Combobox</div><div style="display:flex;align-items:center;font-family:'Inter';font-size:12px;color:#12101C;border:1.5px solid #E7E4EF;border-radius:9px;padding:7px 10px;">Ceramic mug set<span style="margin-left:auto;color:#8C8798;">&#9662;</span></div><div style="font-family:'Inter';font-size:9.5px;color:#8C8798;margin-top:5px;">searchable select</div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Command</div><div style="border:1px solid #E7E4EF;border-radius:9px;overflow:hidden;"><div style="font-family:'Inter';font-size:11px;color:#8C8798;padding:7px 10px;border-bottom:1px solid #E7E4EF;">&#9906; Type a command&hellip;</div><div style="font-family:'Inter';font-size:11px;color:#12101C;background:#EFEAFB;padding:6px 10px;">Add a post</div><div style="font-family:'Inter';font-size:11px;color:#54505F;padding:6px 10px;">Tag a product</div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Context Menu</div><div style="width:130px;background:#fff;border:1px solid #E7E4EF;border-radius:9px;box-shadow:0 6px 18px rgba(18,16,28,0.1);padding:4px;"><div style="font-family:'Inter';font-size:11px;color:#12101C;padding:6px 9px;border-radius:6px;">Edit</div><div style="font-family:'Inter';font-size:11px;color:#12101C;padding:6px 9px;">Duplicate</div><div style="height:1px;background:#E7E4EF;margin:3px 0;"></div><div style="font-family:'Inter';font-size:11px;color:#D6493A;padding:6px 9px;">Delete</div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Data Table</div><div style="font-family:'Inter';font-size:10px;border:1px solid #E7E4EF;border-radius:8px;overflow:hidden;"><div style="display:flex;background:#F5F4F8;color:#8C8798;font-weight:600;padding:5px 8px;"><span style="flex:1;">Product &#8645;</span><span style="width:34px;text-align:right;">Taps</span></div><div style="display:flex;padding:5px 8px;border-top:1px solid #E7E4EF;color:#12101C;"><span style="flex:1;">Throw</span><span style="width:34px;text-align:right;">312</span></div><div style="display:flex;padding:5px 8px;border-top:1px solid #E7E4EF;color:#12101C;background:#FBFAFE;"><span style="flex:1;">Mug</span><span style="width:34px;text-align:right;">190</span></div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Date Picker</div><div style="display:flex;align-items:center;font-family:'Inter';font-size:12px;color:#12101C;border:1.5px solid #E7E4EF;border-radius:9px;padding:7px 10px;"><span style="color:#8C8798;margin-right:8px;">&#128197;</span>3 Aug 2026<span style="margin-left:auto;color:#8C8798;">&#9662;</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Direction (LTR / RTL)</div><div style="display:flex;gap:6px;"><span style="flex:1;font-family:'Inter';font-size:10px;color:#12101C;background:#F5F4F8;border-radius:7px;padding:6px;text-align:left;">Buy &rarr;</span><span style="flex:1;font-family:'Inter';font-size:10px;color:#12101C;background:#F5F4F8;border-radius:7px;padding:6px;text-align:right;">&larr; شراء</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#F5F4F8;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Drawer</div><div style="display:flex;flex-direction:column;justify-content:flex-end;height:70px;background:rgba(18,16,28,0.25);border-radius:8px;overflow:hidden;"><div style="background:#fff;border-radius:11px 11px 0 0;padding:9px;"><div style="width:28px;height:3px;border-radius:9px;background:#E7E4EF;margin:0 auto 6px;"></div><div style="font-family:'Sora';font-size:11px;font-weight:700;color:#12101C;">Share this page</div></div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Dropdown Menu</div><div style="width:130px;background:#fff;border:1px solid #E7E4EF;border-radius:9px;box-shadow:0 6px 18px rgba(18,16,28,0.1);padding:4px;"><div style="font-family:'Inter';font-size:11px;color:#12101C;padding:6px 9px;border-radius:6px;background:#EFEAFB;">Dashboard</div><div style="font-family:'Inter';font-size:11px;color:#12101C;padding:6px 9px;">View as visitor</div><div style="font-family:'Inter';font-size:11px;color:#54505F;padding:6px 9px;">Sign out</div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Empty</div><div style="text-align:center;padding:8px 4px;"><div style="width:34px;height:34px;border-radius:9px;background:#F5F4F8;border:1px dashed #D8D3E8;margin:0 auto 8px;"></div><div style="font-family:'Inter';font-size:11px;font-weight:600;color:#12101C;">No posts yet</div><div style="font-family:'Inter';font-size:10px;color:#8C8798;">Add your first below.</div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Field</div><div style="font-family:'Inter';font-size:11px;font-weight:600;color:#12101C;margin-bottom:5px;">Affiliate link</div><div style="font-family:'Inter';font-size:11px;color:#12101C;background:#F5F4F8;border:1.5px solid #E7E4EF;border-radius:8px;padding:7px 9px;">store.com/ref</div><div style="font-family:'Inter';font-size:9.5px;color:#8C8798;margin-top:4px;">label + control + description</div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Hover Card</div><div style="width:150px;background:#fff;border:1px solid #E7E4EF;border-radius:11px;box-shadow:0 8px 22px rgba(18,16,28,0.12);padding:10px;"><div style="display:flex;gap:8px;align-items:center;"><div style="width:28px;height:28px;border-radius:999px;background:#EFEAFB;"></div><div><div style="font-family:'Sora';font-size:11px;font-weight:700;color:#12101C;">Ana Rivera</div><div style="font-family:'Inter';font-size:9px;color:#8C8798;">@ana.knits</div></div></div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Input Group</div><div style="display:flex;border:1.5px solid #E7E4EF;border-radius:9px;overflow:hidden;"><span style="font-family:'Inter';font-size:11px;color:#8C8798;background:#F5F4F8;padding:8px 9px;border-right:1px solid #E7E4EF;">https://</span><span style="flex:1;font-family:'Inter';font-size:11px;color:#12101C;padding:8px 9px;">store.com</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Input OTP</div><div style="display:flex;gap:6px;"><span style="width:26px;height:32px;border:1.5px solid #7C3AED;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:14px;color:#12101C;">4</span><span style="width:26px;height:32px;border:1.5px solid #E7E4EF;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:14px;color:#12101C;">1</span><span style="width:26px;height:32px;border:1.5px solid #E7E4EF;border-radius:7px;"></span><span style="width:26px;height:32px;border:1.5px solid #E7E4EF;border-radius:7px;"></span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Item</div><div style="display:flex;align-items:center;gap:9px;border:1px solid #E7E4EF;border-radius:9px;padding:8px 10px;"><div style="width:30px;height:30px;border-radius:7px;background:#EFEAFB;"></div><div style="flex:1;"><div style="font-family:'Inter';font-size:11px;font-weight:600;color:#12101C;">Merino throw</div><div style="font-family:'Inter';font-size:9.5px;color:#8C8798;">312 taps</div></div><span style="color:#8C8798;">&#8250;</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Kbd</div><div style="display:flex;gap:5px;align-items:center;"><span style="font-family:'Space Mono',monospace;font-size:11px;color:#12101C;background:#F5F4F8;border:1px solid #E7E4EF;border-bottom-width:2px;border-radius:6px;padding:3px 8px;">&#8984;</span><span style="font-family:'Space Mono',monospace;font-size:11px;color:#12101C;background:#F5F4F8;border:1px solid #E7E4EF;border-bottom-width:2px;border-radius:6px;padding:3px 8px;">K</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Marker <span style="color:#C6FF3D;background:#12101C;border-radius:3px;padding:0 3px;">new</span></div><div style="position:relative;height:52px;background:#EFEAFB;border-radius:8px;"><span style="position:absolute;left:50%;top:44%;transform:translate(-50%,-100%);width:16px;height:16px;background:#7C3AED;border-radius:999px 999px 999px 0;rotate:45deg;border:2px solid #fff;"></span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Menubar</div><div style="display:flex;gap:2px;border:1px solid #E7E4EF;border-radius:9px;padding:3px;"><span style="font-family:'Inter';font-size:11px;color:#12101C;padding:5px 9px;border-radius:6px;background:#EFEAFB;">File</span><span style="font-family:'Inter';font-size:11px;color:#54505F;padding:5px 9px;">Edit</span><span style="font-family:'Inter';font-size:11px;color:#54505F;padding:5px 9px;">View</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Message <span style="color:#C6FF3D;background:#12101C;border-radius:3px;padding:0 3px;">new</span></div><div style="display:flex;gap:8px;"><div style="width:26px;height:26px;border-radius:999px;background:#EFEAFB;flex-shrink:0;"></div><div><div style="font-family:'Inter';font-size:10.5px;font-weight:600;color:#12101C;">Studio Co <span style="font-weight:400;color:#8C8798;">&middot; 2m</span></div><div style="font-family:'Inter';font-size:10.5px;color:#54505F;">Sounds good, let's proceed.</div></div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Message Scroller <span style="color:#C6FF3D;background:#12101C;border-radius:3px;padding:0 3px;">new</span></div><div style="display:flex;flex-direction:column;gap:5px;height:56px;overflow:hidden;"><span style="align-self:flex-start;font-family:'Inter';font-size:9.5px;color:#12101C;background:#F5F4F8;border-radius:9px;padding:5px 8px;">Hi there</span><span style="align-self:flex-end;font-family:'Inter';font-size:9.5px;color:#fff;background:#7C3AED;border-radius:9px;padding:5px 8px;">Hello!</span><span style="align-self:flex-start;font-family:'Inter';font-size:9.5px;color:#12101C;background:#F5F4F8;border-radius:9px;padding:5px 8px;">Budget?</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Native Select</div><div style="display:flex;align-items:center;font-family:'Inter';font-size:12px;color:#12101C;background:#F5F4F8;border:1.5px solid #E7E4EF;border-radius:8px;padding:7px 10px;">Affiliate<span style="margin-left:auto;color:#8C8798;">&#9662;</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Navigation Menu</div><div style="display:flex;gap:12px;font-family:'Inter';font-size:11px;"><span style="color:#7C3AED;font-weight:600;">Shop</span><span style="color:#54505F;">Following</span><span style="color:#54505F;">Account &#9662;</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Popover</div><div style="width:140px;background:#fff;border:1px solid #E7E4EF;border-radius:11px;box-shadow:0 8px 22px rgba(18,16,28,0.12);padding:10px;"><div style="font-family:'Sora';font-size:11px;font-weight:700;color:#12101C;">Dimensions</div><div style="font-family:'Inter';font-size:10px;color:#54505F;margin-top:3px;">Set width &amp; height.</div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Resizable</div><div style="display:flex;height:50px;border:1px solid #E7E4EF;border-radius:8px;overflow:hidden;"><div style="width:56%;background:#F5F4F8;"></div><div style="width:5px;background:#D8D3E8;position:relative;"><span style="position:absolute;left:1px;top:50%;transform:translateY(-50%);width:3px;height:16px;border-radius:9px;background:#8C8798;"></span></div><div style="flex:1;background:#EFEAFB;"></div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Scroll Area</div><div style="height:52px;border:1px solid #E7E4EF;border-radius:8px;padding:6px 8px;position:relative;overflow:hidden;font-family:'Inter';font-size:10px;color:#54505F;line-height:1.7;">Row one<br>Row two<br>Row three<br>Row four<div style="position:absolute;right:3px;top:6px;width:3px;height:22px;border-radius:9px;background:#D8D3E8;"></div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#F5F4F8;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Sidebar</div><div style="display:flex;height:64px;border-radius:8px;overflow:hidden;background:#fff;border:1px solid #E7E4EF;"><div style="width:46px;background:#12101C;padding:8px 6px;display:flex;flex-direction:column;gap:6px;"><span style="height:7px;border-radius:3px;background:#7C3AED;"></span><span style="height:7px;border-radius:3px;background:#3A3550;"></span><span style="height:7px;border-radius:3px;background:#3A3550;"></span></div><div style="flex:1;padding:8px;"><div style="width:60%;height:8px;border-radius:4px;background:#EFEAFB;"></div></div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Sonner (toast)</div><div style="display:flex;flex-direction:column;gap:5px;"><div style="display:flex;align-items:center;gap:7px;background:#12101C;border-radius:9px;padding:8px 11px;"><span style="width:14px;height:14px;border-radius:999px;background:#C6FF3D;color:#12101C;display:flex;align-items:center;justify-content:center;font-size:9px;">&#10003;</span><span style="font-family:'Inter';font-size:11px;color:#fff;">Tag added</span></div><div style="background:#12101C;border-radius:9px;padding:8px 11px;opacity:0.55;"><span style="font-family:'Inter';font-size:11px;color:#fff;">Saved</span></div></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Spinner</div><div style="display:flex;align-items:center;gap:9px;"><span style="width:22px;height:22px;border-radius:999px;border:3px solid #EFEAFB;border-top-color:#7C3AED;display:inline-block;"></span><span style="font-family:'Inter';font-size:11px;color:#54505F;">Loading&hellip;</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Textarea</div><div style="font-family:'Inter';font-size:11px;color:#12101C;background:#F5F4F8;border:1.5px solid #E7E4EF;border-radius:9px;padding:8px 10px;min-height:38px;">Love this&hellip;</div><div style="font-family:'Inter';font-size:9px;color:#8C8798;text-align:right;margin-top:3px;">9 / 500</div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Toggle</div><div style="display:flex;gap:6px;"><span style="width:32px;height:32px;border-radius:8px;background:#7C3AED;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Sora';font-weight:700;font-size:13px;">B</span><span style="width:32px;height:32px;border-radius:8px;border:1.5px solid #E7E4EF;color:#54505F;display:flex;align-items:center;justify-content:center;font-family:'Sora';font-style:italic;font-size:13px;">I</span></div></div>
+
+  <div style="break-inside:avoid;border:1px solid #E7E4EF;border-radius:11px;padding:12px;background:#fff;"><div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#7C3AED;margin-bottom:9px;">Typography</div><div style="font-family:'Sora';font-size:16px;font-weight:800;color:#12101C;letter-spacing:-0.02em;">H1 Sora</div><div style="font-family:'Inter';font-size:11px;color:#54505F;margin-top:2px;">Body Inter 1.6</div><div style="font-family:'Space Mono',monospace;font-size:9px;color:#8C8798;text-transform:uppercase;letter-spacing:0.14em;margin-top:3px;">Mono eyebrow</div></div>
+
+</div>
+
+<div style="break-inside:avoid;background:#EFEAFB;border:1px solid #E0DCEC;border-radius:12px;padding:14px 18px;margin:16px 0;">
+  <div style="font-size:13.5px;line-height:1.6;color:#54505F;"><b style="color:#12101C;">Build order:</b> ship this kit as the shared component layer (each on its shadcn base, styled only through token classes), then assemble every screen in &sect;06 from it. A component that needs a raw hex is a missing token &mdash; add the token, don't hardcode.</div>
+</div>
+
+<!-- ===== 10. INTERACTIVE ===== -->
+<div style="break-before:page;"></div>
+<div style="break-inside:avoid;margin-top:8px;">
+<div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#7C3AED;">10 &middot; Interactive</div>
+<h2 style="font-family:'Sora',sans-serif;font-size:26px;font-weight:700;letter-spacing:-0.025em;color:#12101C;margin:6px 0 0;">Live components &amp; calendars</h2>
+<p style="font-size:15px;line-height:1.65;color:#2A2735;margin:12px 0;">These are <b>working</b> &mdash; click, toggle, copy, pick a date. They document the exact interaction behaviour to build: active/hover feedback, optimistic toggle, the inline "Copied&nbsp;&#10003;" swap (no toast), and two calendars matching the system.</p>
+</div>
+
+<div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:#7C3AED;margin:14px 0 10px;">Interactive primitives &mdash; try them</div>
+{{ lab }}
+
+<div style="break-inside:avoid;margin-top:22px;">
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:0 0 4px;">Calendar &mdash; date selection</h3>
+<p style="font-size:13px;color:#54505F;margin:0 0 12px;">Coupon expiry, campaign dates. Month nav &middot; single day select &middot; selected fills violet.</p>
+{{ dateCalendar }}
+</div>
+
+<div style="break-inside:avoid;margin-top:22px;">
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:0 0 4px;">Calendar &mdash; date range selection</h3>
+<p style="font-size:13px;color:#54505F;margin:0 0 12px;">Campaign windows, "valid from&ndash;to". First tap sets the start, second sets the end; the span fills violet wash between the two violet endpoints. Tapping again starts a new range.</p>
+{{ rangeCalendar }}
+</div>
+
+<div style="break-inside:avoid;margin-top:22px;">
+<h3 style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#12101C;margin:0 0 4px;">Calendar &mdash; date &amp; time selection</h3>
+<p style="font-size:13px;color:#54505F;margin:0 0 12px;">Scheduling a collab call or a post. Same grid + an hour / minute / AM&ndash;PM picker; the summary updates live.</p>
+{{ dateTimeCalendar }}
+</div>
+
+<div style="break-inside:avoid;margin-top:30px;border-top:1px solid #E7E4EF;padding-top:16px;display:flex;align-items:center;gap:10px;">
+  <div style="width:22px;height:22px;flex-shrink:0;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+  <div style="font-family:'Space Mono',monospace;font-size:11px;color:#8C8798;">Plugfolio &mdash; engineering &amp; UX specification &middot; v1 &middot; July 2026. Visual language per <a href="./Plugfolio Brand.html">Brand Guidelines v1.1</a>.</div>
+</div>
+
+</doc-page>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    tab: 'posts', notif: true, inStock: true, hasCoupon: false,
+    kind: 'affiliate', accOpen: false, copied: false,
+    sortOpen: false, sort: 'Most tapped', slider: 45,
+    bold: true, italic: false,
+    calMonth: new Date(2026, 7, 1), calDate: new Date(2026, 7, 3),
+    dtMonth: new Date(2026, 7, 1), dtDate: new Date(2026, 7, 3),
+    dtHour: 2, dtMin: 30, dtAmPm: 'PM',
+    rMonth: new Date(2026, 7, 1), rStart: new Date(2026, 7, 3), rEnd: new Date(2026, 7, 12)
+  };
+
+  UI = "'Inter',system-ui,sans-serif";
+  MONO = "'Space Mono',monospace";
+  SORA = "'Sora',sans-serif";
+
+  matrix(y, m) {
+    const first = new Date(y, m, 1).getDay();
+    const days = new Date(y, m + 1, 0).getDate();
+    const cells = [];
+    for (let i = 0; i < first; i++) cells.push(null);
+    for (let d = 1; d <= days; d++) cells.push(d);
+    while (cells.length % 7) cells.push(null);
+    const weeks = [];
+    for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+    return weeks;
+  }
+  navMonth(key, delta) { const d = new Date(this.state[key]); d.setMonth(d.getMonth() + delta); this.setState({ [key]: d }); }
+  pickDay(monthKey, dateKey, d) { const mo = this.state[monthKey]; this.setState({ [dateKey]: new Date(mo.getFullYear(), mo.getMonth(), d) }); }
+  copyCode() {
+    try { navigator.clipboard && navigator.clipboard.writeText('ANA15'); } catch (e) {}
+    this.setState({ copied: true });
+    clearTimeout(this._t); this._t = setTimeout(() => this.setState({ copied: false }), 1500);
+  }
+
+  card(label, ...body) {
+    const h = React.createElement;
+    return h('div', { style: { breakInside: 'avoid', border: '1px solid #E7E4EF', borderRadius: 12, padding: 14, background: '#fff' } },
+      h('div', { style: { fontFamily: this.MONO, fontSize: 9.5, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7C3AED', marginBottom: 11 } }, label),
+      ...body);
+  }
+  hint(t) { return React.createElement('div', { style: { fontFamily: this.MONO, fontSize: 9.5, color: '#8C8798', marginTop: 9 } }, t); }
+
+  renderLab() {
+    const h = React.createElement, s = this.state, S = this;
+    const btn = { border: 'none', cursor: 'pointer', fontFamily: this.UI };
+
+    // Tabs
+    const tabs = this.card('Tabs',
+      h('div', { style: { display: 'inline-flex', background: '#F5F4F8', borderRadius: 10, padding: 3 } },
+        ['Posts', 'Products', 'Collabs'].map(t => {
+          const on = s.tab === t.toLowerCase();
+          return h('button', { key: t, onClick: () => S.setState({ tab: t.toLowerCase() }),
+            style: { ...btn, fontSize: 13, fontWeight: on ? 600 : 500, color: on ? '#12101C' : '#8C8798', background: on ? '#fff' : 'transparent', borderRadius: 8, padding: '6px 13px', boxShadow: on ? '0 1px 2px rgba(18,16,28,0.08)' : 'none' } }, t);
+        })),
+      this.hint('active: ' + s.tab));
+
+    // Switch
+    const sw = this.card('Switch',
+      h('div', { style: { display: 'flex', alignItems: 'center', gap: 10 } },
+        h('button', { onClick: () => S.setState(p => ({ notif: !p.notif })), style: { ...btn, width: 40, height: 23, borderRadius: 999, background: s.notif ? '#7C3AED' : '#E7E4EF', position: 'relative', padding: 0, transition: 'background .15s' } },
+          h('span', { style: { position: 'absolute', top: 2, left: s.notif ? 19 : 2, width: 19, height: 19, borderRadius: 999, background: '#fff', boxShadow: '0 1px 2px rgba(18,16,28,0.2)', transition: 'left .15s' } })),
+        h('span', { style: { fontFamily: this.UI, fontSize: 13, color: '#54505F' } }, s.notif ? 'Notifications on' : 'Off')));
+
+    // Checkboxes
+    const chkRow = (label, key) => {
+      const on = s[key];
+      return h('button', { key, onClick: () => S.setState(p => ({ [key]: !p[key] })), style: { ...btn, display: 'flex', alignItems: 'center', gap: 9, background: 'transparent', padding: 0, marginBottom: 8 } },
+        h('span', { style: { width: 19, height: 19, borderRadius: 5, background: on ? '#7C3AED' : '#fff', border: on ? 'none' : '1.5px solid #D8D3E8', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 } }, on ? '\u2713' : ''),
+        h('span', { style: { fontFamily: this.UI, fontSize: 13, color: '#54505F' } }, label));
+    };
+    const checks = this.card('Checkbox', chkRow('In stock', 'inStock'), chkRow('Has coupon', 'hasCoupon'));
+
+    // Radio / kind toggle
+    const kind = this.card('Radio \u00b7 kind toggle',
+      h('div', { style: { display: 'inline-flex', border: '1.5px solid #E7E4EF', borderRadius: 10, overflow: 'hidden' } },
+        [['affiliate', 'Affiliate'], ['own', 'My own product']].map(([k, l], i) => {
+          const on = s.kind === k;
+          return h('button', { key: k, onClick: () => S.setState({ kind: k }), style: { ...btn, fontSize: 13, fontWeight: on ? 600 : 500, color: on ? '#fff' : '#54505F', background: on ? '#7C3AED' : '#fff', padding: '8px 14px', borderLeft: i ? '1px solid #E7E4EF' : 'none' } }, l);
+        })));
+
+    // Accordion
+    const acc = this.card('Accordion',
+      h('div', { style: { border: '1px solid #E7E4EF', borderRadius: 10, overflow: 'hidden' } },
+        h('button', { onClick: () => S.setState(p => ({ accOpen: !p.accOpen })), style: { ...btn, width: '100%', display: 'flex', alignItems: 'center', background: '#F5F4F8', padding: '10px 12px', fontSize: 13, fontWeight: 600, color: '#12101C' } },
+          '+ Add a coupon', h('span', { style: { marginLeft: 'auto', color: '#8C8798' } }, s.accOpen ? '\u25b4' : '\u25be')),
+        s.accOpen ? h('div', { style: { padding: '10px 12px', fontFamily: this.UI, fontSize: 12, color: '#54505F', lineHeight: 1.5 } }, 'Code \u00b7 expiry \u00b7 in-store note') : null));
+
+    // Toggle group
+    const tg = this.card('Toggle group',
+      h('div', { style: { display: 'flex', gap: 6 } },
+        [['bold', 'B', { fontWeight: 700 }], ['italic', 'I', { fontStyle: 'italic' }]].map(([k, l, ex]) => {
+          const on = s[k];
+          return h('button', { key: k, onClick: () => S.setState(p => ({ [k]: !p[k] })), style: { ...btn, width: 34, height: 34, borderRadius: 8, background: on ? '#7C3AED' : '#fff', color: on ? '#fff' : '#54505F', border: on ? 'none' : '1.5px solid #E7E4EF', fontFamily: this.SORA, fontSize: 14, ...ex } }, l);
+        })));
+
+    // Coupon copy chip
+    const coupon = this.card('Coupon chip \u00b7 copy',
+      h('button', { onClick: () => S.copyCode(), style: { ...btn, display: 'flex', alignItems: 'center', gap: 8, background: s.copied ? '#12101C' : '#C6FF3D', borderRadius: 9, padding: '9px 13px' } },
+        h('span', { style: { fontFamily: this.MONO, fontSize: 13, fontWeight: 700, letterSpacing: '0.04em', color: s.copied ? '#C6FF3D' : '#12101C' } }, 'ANA15'),
+        h('span', { style: { fontFamily: this.UI, fontSize: 11, fontWeight: 600, marginLeft: 'auto', color: s.copied ? '#C6FF3D' : '#12101C' } }, s.copied ? 'Copied \u2713' : 'Tap to copy')),
+      this.hint('inline swap \u2014 no toast'));
+
+    // Select dropdown
+    const opts = ['Most tapped', 'Newest', 'A\u2013Z'];
+    const select = this.card('Select \u00b7 dropdown',
+      h('div', { style: { position: 'relative' } },
+        h('button', { onClick: () => S.setState(p => ({ sortOpen: !p.sortOpen })), style: { ...btn, width: '100%', display: 'flex', alignItems: 'center', fontSize: 13, color: '#12101C', background: '#fff', border: '1.5px solid ' + (s.sortOpen ? '#7C3AED' : '#E7E4EF'), borderRadius: 10, padding: '9px 12px' } },
+          s.sort, h('span', { style: { marginLeft: 'auto', color: '#8C8798' } }, '\u25be')),
+        s.sortOpen ? h('div', { style: { position: 'absolute', top: '105%', left: 0, right: 0, background: '#fff', border: '1px solid #E7E4EF', borderRadius: 10, boxShadow: '0 8px 22px rgba(18,16,28,0.12)', padding: 5, zIndex: 5 } },
+          opts.map(o => h('button', { key: o, onClick: () => S.setState({ sort: o, sortOpen: false }), style: { ...btn, display: 'block', width: '100%', textAlign: 'left', fontSize: 12.5, color: o === s.sort ? '#12101C' : '#54505F', background: o === s.sort ? '#EFEAFB' : 'transparent', borderRadius: 7, padding: '7px 10px' } }, o))) : null));
+
+    // Slider
+    const slider = this.card('Slider',
+      h('input', { type: 'range', min: 0, max: 100, value: s.slider, onChange: e => S.setState({ slider: +e.target.value }), style: { width: '100%', accentColor: '#7C3AED' } }),
+      this.hint(s.slider + ' / 100'));
+
+    return h('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 } },
+      tabs, sw, checks, kind, acc, tg, coupon, select, slider);
+  }
+
+  renderCalendar(monthKey, dateKey, withTime) {
+    const h = React.createElement, s = this.state, S = this;
+    const mo = s[monthKey], y = mo.getFullYear(), m = mo.getMonth();
+    const monthName = mo.toLocaleString('en-US', { month: 'long' });
+    const sel = s[dateKey];
+    const isSel = d => sel && sel.getFullYear() === y && sel.getMonth() === m && sel.getDate() === d;
+    const btn = { border: 'none', cursor: 'pointer', fontFamily: this.UI };
+    const navBtn = c => h('button', { onClick: () => S.navMonth(monthKey, c), style: { ...btn, width: 28, height: 28, borderRadius: 8, background: '#F5F4F8', color: '#54505F', fontSize: 15 } }, c < 0 ? '\u2039' : '\u203a');
+
+    const head = h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 } },
+      navBtn(-1),
+      h('div', { style: { fontFamily: this.SORA, fontSize: 15, fontWeight: 700, color: '#12101C' } }, monthName + ' ' + y),
+      navBtn(1));
+
+    const dow = h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 2, marginBottom: 4 } },
+      ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => h('div', { key: i, style: { textAlign: 'center', fontFamily: this.MONO, fontSize: 10, color: '#8C8798' } }, d)));
+
+    const grid = h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 3 } },
+      this.matrix(y, m).flat().map((d, i) => {
+        if (!d) return h('div', { key: i });
+        const on = isSel(d);
+        return h('button', { key: i, onClick: () => S.pickDay(monthKey, dateKey, d),
+          style: { ...btn, aspectRatio: '1', borderRadius: 8, fontSize: 13, fontWeight: on ? 700 : 500, color: on ? '#fff' : '#2A2735', background: on ? '#7C3AED' : 'transparent' } }, d);
+      }));
+
+    let time = null, summary = null;
+    if (withTime) {
+      const stepper = (val, onDown, onUp, w) => h('div', { style: { display: 'flex', alignItems: 'center', gap: 6 } },
+        h('button', { onClick: onDown, style: { ...btn, width: 26, height: 26, borderRadius: 7, border: '1px solid #E7E4EF', background: '#fff', color: '#54505F', fontSize: 15 } }, '\u2212'),
+        h('div', { style: { minWidth: w, textAlign: 'center', fontFamily: this.MONO, fontSize: 16, fontWeight: 700, color: '#12101C' } }, val),
+        h('button', { onClick: onUp, style: { ...btn, width: 26, height: 26, borderRadius: 7, border: '1px solid #E7E4EF', background: '#fff', color: '#54505F', fontSize: 15 } }, '+'));
+      const hh = ('0' + s.dtHour).slice(-2), mm = ('0' + s.dtMin).slice(-2);
+      time = h('div', { style: { display: 'flex', alignItems: 'center', gap: 12, marginTop: 12, paddingTop: 12, borderTop: '1px solid #E7E4EF', flexWrap: 'wrap' } },
+        stepper(hh, () => S.setState(p => ({ dtHour: p.dtHour <= 1 ? 12 : p.dtHour - 1 })), () => S.setState(p => ({ dtHour: p.dtHour >= 12 ? 1 : p.dtHour + 1 })), 26),
+        h('span', { style: { fontFamily: this.SORA, fontSize: 16, fontWeight: 700, color: '#8C8798' } }, ':'),
+        stepper(mm, () => S.setState(p => ({ dtMin: (p.dtMin + 55) % 60 })), () => S.setState(p => ({ dtMin: (p.dtMin + 5) % 60 })), 26),
+        h('button', { onClick: () => S.setState(p => ({ dtAmPm: p.dtAmPm === 'AM' ? 'PM' : 'AM' })), style: { ...btn, borderRadius: 8, border: '1.5px solid #7C3AED', background: '#EFEAFB', color: '#5B21B6', fontSize: 13, fontWeight: 700, padding: '6px 12px' } }, s.dtAmPm));
+      const dl = sel ? sel.getDate() + ' ' + monthName + ' ' + y : 'No date';
+      summary = h('div', { style: { marginTop: 12, background: '#12101C', borderRadius: 10, padding: '10px 14px', fontFamily: this.UI, fontSize: 13, color: '#fff' } },
+        'Scheduled: ', h('b', { style: { color: '#C6FF3D' } }, dl + ' \u00b7 ' + hh + ':' + mm + ' ' + s.dtAmPm));
+    } else {
+      const dl = sel ? sel.getDate() + ' ' + monthName + ' ' + y : 'None';
+      summary = h('div', { style: { marginTop: 12, fontFamily: this.UI, fontSize: 13, color: '#54505F' } }, 'Selected: ', h('b', { style: { color: '#12101C' } }, dl));
+    }
+
+    return h('div', { style: { breakInside: 'avoid', width: 320, maxWidth: '100%', border: '1px solid #E7E4EF', borderRadius: 16, padding: 18, background: '#fff', boxShadow: '0 4px 16px rgba(18,16,28,0.05)' } },
+      head, dow, grid, time, summary);
+  }
+
+  pickRange(monthKey, d) {
+    const mo = this.state[monthKey], cur = new Date(mo.getFullYear(), mo.getMonth(), d);
+    const { rStart, rEnd } = this.state;
+    if (!rStart || rEnd) this.setState({ rStart: cur, rEnd: null });
+    else if (cur < rStart) this.setState({ rStart: cur });
+    else this.setState({ rEnd: cur });
+  }
+
+  renderRangeCalendar(monthKey) {
+    const h = React.createElement, s = this.state, S = this;
+    const mo = s[monthKey], y = mo.getFullYear(), m = mo.getMonth();
+    const monthName = mo.toLocaleString('en-US', { month: 'long' });
+    const rs = s.rStart, re = s.rEnd;
+    const rank = d => {
+      const cur = new Date(y, m, d).getTime();
+      if (!rs) return 0;
+      const a = rs.getTime(), b = re ? re.getTime() : null;
+      if (cur === a || cur === b) return 2;
+      if (b && cur > a && cur < b) return 1;
+      return 0;
+    };
+    const btn = { border: 'none', cursor: 'pointer', fontFamily: this.UI };
+    const navBtn = c => h('button', { onClick: () => S.navMonth(monthKey, c), style: { ...btn, width: 28, height: 28, borderRadius: 8, background: '#F5F4F8', color: '#54505F', fontSize: 15 } }, c < 0 ? '\u2039' : '\u203a');
+    const head = h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 } },
+      navBtn(-1), h('div', { style: { fontFamily: this.SORA, fontSize: 15, fontWeight: 700, color: '#12101C' } }, monthName + ' ' + y), navBtn(1));
+    const dow = h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 2, marginBottom: 4 } },
+      ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => h('div', { key: i, style: { textAlign: 'center', fontFamily: this.MONO, fontSize: 10, color: '#8C8798' } }, d)));
+    const grid = h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 3 } },
+      this.matrix(y, m).flat().map((d, i) => {
+        if (!d) return h('div', { key: i });
+        const r = rank(d);
+        return h('button', { key: i, onClick: () => S.pickRange(monthKey, d),
+          style: { ...btn, aspectRatio: '1', borderRadius: r === 1 ? 5 : 8, fontSize: 13, fontWeight: r === 2 ? 700 : 500, color: r === 2 ? '#fff' : '#2A2735', background: r === 2 ? '#7C3AED' : r === 1 ? '#EFEAFB' : 'transparent' } }, d);
+      }));
+    const fmt = dt => dt ? dt.getDate() + ' ' + dt.toLocaleString('en-US', { month: 'short' }) : null;
+    const label = rs ? (re ? fmt(rs) + ' \u2013 ' + fmt(re) + ' ' + y : fmt(rs) + ' \u2192 pick an end date') : 'Pick a start date';
+    const summary = h('div', { style: { marginTop: 12, fontFamily: this.UI, fontSize: 13, color: '#54505F' } }, 'Range: ', h('b', { style: { color: '#12101C' } }, label));
+    return h('div', { style: { breakInside: 'avoid', width: 320, maxWidth: '100%', border: '1px solid #E7E4EF', borderRadius: 16, padding: 18, background: '#fff', boxShadow: '0 4px 16px rgba(18,16,28,0.05)' } }, head, dow, grid, summary);
+  }
+
+  renderVals() {
+    return {
+      lab: this.renderLab(),
+      dateCalendar: this.renderCalendar('calMonth', 'calDate', false),
+      rangeCalendar: this.renderRangeCalendar('rMonth'),
+      dateTimeCalendar: this.renderCalendar('dtMonth', 'dtDate', true)
+    };
+  }
+}
+</script>
+</body>
+</html>

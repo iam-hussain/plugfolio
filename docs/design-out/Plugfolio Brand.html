@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  a { color: #7C3AED; text-decoration: none; }
+  a:hover { color: #5B21B6; }
+</style>
+</helmet>
+
+<div style="background:#F5F4F8; font-family:'Inter', sans-serif; color:#12101C;">
+
+  <!-- ============ TOP BAR ============ -->
+  <div style="position:sticky; top:0; z-index:20; background:rgba(245,244,248,0.86); backdrop-filter:blur(10px); border-bottom:1px solid #E7E4EF;">
+    <div style="max-width:1240px; margin:0 auto; padding:16px 40px; display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:30px; height:30px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+        <div style="font-family:'Sora',sans-serif; font-size:20px; font-weight:700; letter-spacing:-0.045em; display:flex; align-items:flex-end;">plugfolio<span style="width:5px; height:5px; border-radius:1.5px; background:#7C3AED; margin-left:3px; margin-bottom:4px;"></span></div>
+      </div>
+      <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8C8798;">Brand Guidelines &middot; v1.1 &middot; 2026</div>
+    </div>
+  </div>
+
+  <!-- ============ COVER ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:96px 40px 80px;">
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom:34px;">
+      <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.22em; text-transform:uppercase; color:#8C8798;">Brand Book</div>
+      <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:#12101C; background:#C6FF3D; padding:4px 10px; border-radius:100px;">v1.1 &middot; evolved symbol</div>
+    </div>
+    <div style="display:flex; align-items:flex-start; gap:40px; flex-wrap:wrap;">
+      <div style="width:150px; height:150px; flex-shrink:0;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+      <div style="flex:1; min-width:340px;">
+        <div style="font-family:'Sora',sans-serif; font-size:92px; font-weight:800; letter-spacing:-0.05em; line-height:0.9; display:flex; align-items:flex-end;">plugfolio<span style="width:16px; height:16px; border-radius:4px; background:#7C3AED; margin-left:8px; margin-bottom:14px;"></span></div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:600; letter-spacing:-0.02em; color:#7C3AED; margin-top:26px;">Turn your content into commerce.</div>
+        <div style="font-size:17px; color:#54505F; line-height:1.6; margin-top:16px; max-width:640px;">The shoppable home base for creators. Every post becomes tappable, every product trackable, every profile one link. This edition evolves the symbol so the mark works harder &mdash; the plug now grows.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 01 POSITIONING ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:44px 40px; border-top:1px solid #E7E4EF;">
+    <div style="display:grid; grid-template-columns:220px 1fr; gap:44px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C3AED;">01</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">Positioning</div>
+      </div>
+      <div>
+        <div style="font-size:20px; line-height:1.55; color:#2A2735; font-weight:500; max-width:760px;">Plugfolio is <span style="color:#7C3AED;">cool and credible to creators</span>, and <span style="color:#7C3AED;">professional and trustworthy to brands</span>. The mark owns the name &mdash; a plug &mdash; because a &ldquo;plug&rdquo; is a creator putting people onto what they love. Now the prongs point up: the plug that grows sales.</div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:30px;">
+          <div style="font-family:'Space Mono',monospace; font-size:12px; padding:8px 15px; border:1px solid #E0DCEC; border-radius:100px; color:#54505F;">confident</div>
+          <div style="font-family:'Space Mono',monospace; font-size:12px; padding:8px 15px; border:1px solid #E0DCEC; border-radius:100px; color:#54505F;">modern</div>
+          <div style="font-family:'Space Mono',monospace; font-size:12px; padding:8px 15px; border:1px solid #E0DCEC; border-radius:100px; color:#54505F;">energetic</div>
+          <div style="font-family:'Space Mono',monospace; font-size:12px; padding:8px 15px; border:1px solid #E0DCEC; border-radius:100px; color:#54505F;">premium</div>
+          <div style="font-family:'Space Mono',monospace; font-size:12px; padding:8px 15px; border:1px solid #E0DCEC; border-radius:100px; color:#54505F;">mobile-first</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 02 THE SYMBOL ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:44px 40px; border-top:1px solid #E7E4EF;">
+    <div style="display:grid; grid-template-columns:220px 1fr; gap:44px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C3AED;">02</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">The symbol</div>
+        <div style="font-size:14px; color:#8C8798; line-height:1.6; margin-top:14px;">A two-prong plug whose prongs rise into upward arrows &mdash; plug meets growth. Pictorial, monochrome-safe, legible to 16px. No letter.</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:22px;">
+
+        <!-- evolution / decision strip -->
+        <div style="background:#12101C; border-radius:22px; padding:30px 32px;">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8C8798;">Exploration &rarr; decision</div>
+            <div style="height:1px; flex:1; background:#2A2735;"></div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:12px; opacity:0.5;">
+              <div style="width:66px; height:66px;"><svg viewBox="0 0 100 100" width="100%" height="100%"><rect x="33" y="16" width="12" height="30" rx="4" fill="#6B6577"></rect><rect x="55" y="16" width="12" height="30" rx="4" fill="#6B6577"></rect><rect x="18" y="42" width="64" height="46" rx="11" fill="#6B6577"></rect><circle cx="50" cy="66" r="6" fill="#12101C"></circle></svg></div>
+              <div style="font-family:'Space Mono',monospace; font-size:10px; color:#6B6577; text-align:center;">tag notch</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:12px; opacity:0.5;">
+              <div style="width:66px; height:66px;"><svg viewBox="0 0 100 100" width="100%" height="100%"><rect x="33" y="16" width="12" height="30" rx="4" fill="#6B6577"></rect><rect x="55" y="16" width="12" height="30" rx="4" fill="#6B6577"></rect><path d="M50 42 C74 42 82 58 82 70 C82 82 68 90 50 90 C32 90 18 82 18 70 C18 58 26 42 50 42 Z" fill="#6B6577"></path></svg></div>
+              <div style="font-family:'Space Mono',monospace; font-size:10px; color:#6B6577; text-align:center;">drop body</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:12px; opacity:0.5;">
+              <div style="width:66px; height:66px;"><svg viewBox="0 0 100 100" width="100%" height="100%"><rect x="33" y="16" width="12" height="30" rx="4" fill="#6B6577"></rect><rect x="55" y="16" width="12" height="30" rx="4" fill="#6B6577"></rect><rect x="18" y="42" width="64" height="46" rx="11" fill="#6B6577"></rect><circle cx="50" cy="46" r="5.5" fill="#C6FF3D"></circle></svg></div>
+              <div style="font-family:'Space Mono',monospace; font-size:10px; color:#6B6577; text-align:center;">spark point</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:12px; position:relative;">
+              <div style="position:absolute; top:-9px; right:6px; width:20px; height:20px; border-radius:50%; background:#C6FF3D; display:flex; align-items:center; justify-content:center; color:#12101C; font-size:12px; font-weight:800;">&check;</div>
+              <div style="width:70px; height:70px; border-radius:16px; background:#1C1930; display:flex; align-items:center; justify-content:center; padding:6px; outline:2px solid #C6FF3D; outline-offset:2px;"><div style="width:52px;height:52px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div>
+              <div style="font-family:'Space Mono',monospace; font-size:10px; color:#C6FF3D; text-align:center; font-weight:700;">arrow prongs</div>
+            </div>
+          </div>
+          <div style="font-size:13.5px; color:#B7B2C4; line-height:1.6; margin-top:24px; border-top:1px solid #2A2735; padding-top:20px; max-width:760px;">Chosen: <b style="color:#fff;">prongs as upward arrows.</b> It says sales &mdash; up and to the right &mdash; without adding a second idea. The mark still flattens to one silhouette and survives 16px. The rejected routes each added a detail that muddied the outline or read as a hole at small sizes.</div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px;">
+          <!-- construction -->
+          <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:30px; display:flex; flex-direction:column; gap:20px;">
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#8C8798;">Construction &mdash; 100&times;100 grid</div>
+            <div style="align-self:center; width:230px; height:230px; position:relative; border-radius:12px; background-color:#FBFAFE; background-image:linear-gradient(#EDE9F7 1px, transparent 1px), linear-gradient(90deg, #EDE9F7 1px, transparent 1px); background-size:23px 23px; border:1px solid #EDE9F7;">
+              <div style="position:absolute; inset:0;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+            </div>
+            <div style="display:flex; gap:22px; font-family:'Space Mono',monospace; font-size:11px; color:#54505F;">
+              <div><span style="color:#12101C; font-weight:700;">Arrow</span> apex at 15u &middot; 26&deg;</div>
+              <div><span style="color:#12101C; font-weight:700;">Body</span> 64&times;44u &middot; r13</div>
+            </div>
+          </div>
+          <!-- anatomy -->
+          <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:30px; display:flex; flex-direction:column; gap:22px;">
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#8C8798;">Anatomy</div>
+            <div style="display:flex; gap:18px; align-items:center;">
+              <div style="width:70px; height:70px; flex-shrink:0; background:#EFEAFB; border-radius:14px; display:flex; align-items:center; justify-content:center;"><div style="width:46px;height:46px;"><dc-import name="PlugMark" body="#A78BFA" prong="#7C3AED" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div>
+              <div style="font-size:13.5px; color:#54505F; line-height:1.6;"><b style="color:#12101C;">Arrow prongs</b> &mdash; two pins whose caps rise to a soft point: the growth cue. Color follows the background (see rule below).</div>
+            </div>
+            <div style="display:flex; gap:18px; align-items:center;">
+              <div style="width:70px; height:70px; flex-shrink:0; background:#EFEAFB; border-radius:14px; display:flex; align-items:center; justify-content:center;"><div style="width:46px;height:46px;"><dc-import name="PlugMark" body="#7C3AED" prong="#EFEAFB" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div>
+              <div style="font-size:13.5px; color:#54505F; line-height:1.6;"><b style="color:#12101C;">Body</b> &mdash; a squared, small-radius brick that sits evenly inside any app tile.</div>
+            </div>
+            <div style="font-size:13.5px; color:#54505F; line-height:1.6; border-top:1px solid #EEEBF4; padding-top:18px;">Prongs and body read as <b style="color:#12101C;">one continuous silhouette</b> &mdash; the mark flattens to a single shape in one color.</div>
+          </div>
+        </div>
+
+        <!-- locked prong rule -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:30px 32px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:22px;">
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#7C3AED; font-weight:700;">Locked rule &mdash; prong &amp; spark color</div>
+            <div style="height:1px; flex:1; background:#EEEBF4;"></div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+            <!-- light -->
+            <div style="border:1px solid #E7E4EF; border-radius:16px; padding:24px; display:flex; align-items:center; gap:20px; background:#FBFAFE;">
+              <div style="width:60px; height:60px; flex-shrink:0; background:#fff; border:1px solid #EEEBF4; border-radius:14px; display:flex; align-items:center; justify-content:center;"><div style="width:40px;height:40px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div>
+              <div>
+                <div style="font-size:14px; font-weight:600; color:#12101C;">On light / white</div>
+                <div style="font-size:13px; color:#54505F; line-height:1.6; margin-top:5px;">Violet body, <b style="color:#12101C;">ink prongs #12101C</b>. Wordmark spark in <b style="color:#7C3AED;">violet</b> (or ink) &mdash; never lime.</div>
+              </div>
+            </div>
+            <!-- dark -->
+            <div style="border-radius:16px; padding:24px; display:flex; align-items:center; gap:20px; background:#12101C;">
+              <div style="width:60px; height:60px; flex-shrink:0; background:#1C1930; border-radius:14px; display:flex; align-items:center; justify-content:center;"><div style="width:40px;height:40px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div>
+              <div>
+                <div style="font-size:14px; font-weight:600; color:#fff;">On dark / violet</div>
+                <div style="font-size:13px; color:#B7B2C4; line-height:1.6; margin-top:5px;">White (or violet) body, <b style="color:#C6FF3D;">lime prongs</b> and a <b style="color:#C6FF3D;">lime spark</b>. This is where lime is meant to pop.</div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:12.5px; color:#8C8798; line-height:1.6; margin-top:18px;">One exception: under 24px the mark collapses to a single flat color for legibility.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 03 LOCKUPS ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:44px 40px; border-top:1px solid #E7E4EF;">
+    <div style="display:grid; grid-template-columns:220px 1fr; gap:44px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C3AED;">03</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">Logo lockups</div>
+        <div style="font-size:14px; color:#8C8798; line-height:1.6; margin-top:14px;">Four approved locks. Never re-space, re-weight, or re-typeset the wordmark.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px;">
+        <!-- horizontal -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:34px; display:flex; flex-direction:column; gap:26px; justify-content:space-between;">
+          <div style="display:flex; align-items:center; gap:18px;">
+            <div style="width:58px; height:58px; flex-shrink:0;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+            <div style="font-family:'Sora',sans-serif; font-size:34px; font-weight:700; letter-spacing:-0.045em; line-height:1; display:flex; align-items:flex-end;">plugfolio<span style="width:7px; height:7px; border-radius:2px; background:#7C3AED; margin-left:4px; margin-bottom:5px;"></span></div>
+          </div>
+          <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798;">HORIZONTAL — primary. Headers, sites, decks.</div>
+        </div>
+        <!-- stacked -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:34px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;">
+          <div style="width:62px; height:62px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+          <div style="font-family:'Sora',sans-serif; font-size:28px; font-weight:700; letter-spacing:-0.045em; line-height:1; display:flex; align-items:flex-end;">plugfolio<span style="width:6px; height:6px; border-radius:2px; background:#7C3AED; margin-left:3px; margin-bottom:4px;"></span></div>
+          <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798; margin-top:6px;">STACKED — tiles, badges.</div>
+        </div>
+        <!-- symbol only -->
+        <div style="background:#EFEAFB; border:1px solid #E7E4EF; border-radius:22px; padding:34px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px;">
+          <div style="width:74px; height:74px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+          <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798;">SYMBOL — avatars, favicons, app.</div>
+        </div>
+        <!-- reversed -->
+        <div style="background:#12101C; border-radius:22px; padding:34px; display:flex; flex-direction:column; gap:24px; justify-content:space-between;">
+          <div style="display:flex; align-items:center; gap:18px;">
+            <div style="width:52px; height:52px; flex-shrink:0;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+            <div style="font-family:'Sora',sans-serif; font-size:30px; font-weight:700; letter-spacing:-0.045em; line-height:1; color:#FFFFFF; display:flex; align-items:flex-end;">plugfolio<span style="width:6px; height:6px; border-radius:2px; background:#C6FF3D; margin-left:4px; margin-bottom:5px;"></span></div>
+          </div>
+          <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798;">REVERSED — dark UI, video, merch.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 04 CLEAR SPACE + MIN SIZE ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:44px 40px; border-top:1px solid #E7E4EF;">
+    <div style="display:grid; grid-template-columns:220px 1fr; gap:44px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C3AED;">04</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">Clear space &amp; size</div>
+        <div style="font-size:14px; color:#8C8798; line-height:1.6; margin-top:14px;">Give the mark and the lockup room. Never place either smaller than the digital minimum.</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:22px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px;">
+          <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:34px; display:flex; flex-direction:column; gap:20px;">
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#8C8798;">Symbol clear space = x</div>
+            <div style="align-self:center; position:relative; padding:40px;">
+              <div style="position:absolute; inset:0; border:1px dashed #C7BEE6; border-radius:14px;"></div>
+              <div style="position:absolute; inset:40px; border:1px dashed #E3DCF3;"></div>
+              <div style="width:96px; height:96px; position:relative;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+              <div style="position:absolute; left:14px; top:50%; transform:translateY(-50%); font-family:'Space Mono',monospace; font-size:13px; color:#A78BFA;">x</div>
+              <div style="position:absolute; top:14px; left:50%; transform:translateX(-50%); font-family:'Space Mono',monospace; font-size:13px; color:#A78BFA;">x</div>
+            </div>
+            <div style="font-size:13px; color:#54505F; line-height:1.6;">Clear space equals <b style="color:#12101C;">one prong width (x)</b> on every side.</div>
+          </div>
+          <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:34px; display:flex; flex-direction:column; gap:20px;">
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#8C8798;">Minimum size</div>
+            <div style="flex:1; display:flex; align-items:flex-end; justify-content:center; gap:38px;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:12px;"><div style="width:44px;height:44px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div><div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">44 app</div></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:12px;"><div style="width:24px;height:24px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div><div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">24 ui</div></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:12px;"><div style="width:16px;height:16px;"><dc-import name="PlugMark" body="#12101C" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div><div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">16 min</div></div>
+            </div>
+            <div style="font-size:13px; color:#54505F; line-height:1.6;">Digital minimum <b style="color:#12101C;">16px</b>. Under 24px, switch to the single-color mark.</div>
+          </div>
+        </div>
+        <!-- horizontal lockup clear space (NEW) -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:34px; display:flex; flex-direction:column; gap:22px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#8C8798;">Horizontal lockup clear space = x</div>
+            <div style="font-family:'Space Mono',monospace; font-size:10px; color:#12101C; background:#C6FF3D; padding:3px 8px; border-radius:100px;">new</div>
+          </div>
+          <div style="align-self:center; position:relative; padding:44px 56px;">
+            <div style="position:absolute; inset:0; border:1px dashed #C7BEE6; border-radius:14px;"></div>
+            <div style="display:flex; align-items:center; gap:18px;">
+              <div style="width:56px; height:56px; flex-shrink:0;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+              <div style="font-family:'Sora',sans-serif; font-size:32px; font-weight:700; letter-spacing:-0.045em; line-height:1; display:flex; align-items:flex-end;">plugfolio<span style="width:6px; height:6px; border-radius:2px; background:#7C3AED; margin-left:4px; margin-bottom:5px;"></span></div>
+            </div>
+            <div style="position:absolute; left:20px; top:50%; transform:translateY(-50%); font-family:'Space Mono',monospace; font-size:13px; color:#A78BFA;">x</div>
+            <div style="position:absolute; right:20px; top:50%; transform:translateY(-50%); font-family:'Space Mono',monospace; font-size:13px; color:#A78BFA;">x</div>
+            <div style="position:absolute; top:16px; left:50%; transform:translateX(-50%); font-family:'Space Mono',monospace; font-size:13px; color:#A78BFA;">x</div>
+            <div style="position:absolute; bottom:16px; left:50%; transform:translateX(-50%); font-family:'Space Mono',monospace; font-size:13px; color:#A78BFA;">x</div>
+          </div>
+          <div style="font-size:13px; color:#54505F; line-height:1.6; text-align:center;">For the lockup, <b style="color:#12101C;">x = the height of the symbol</b>. Keep that margin clear of type, edges, and other logos on all four sides.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 05 COLOR ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:44px 40px; border-top:1px solid #E7E4EF;">
+    <div style="display:grid; grid-template-columns:220px 1fr; gap:44px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C3AED;">05</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">Color</div>
+        <div style="font-size:14px; color:#8C8798; line-height:1.6; margin-top:14px;">Charged Violet. Lime is an accent used as a <b style="color:#54505F;">fill with dark text</b> &mdash; never lime type on white.</div>
+      </div>
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8C8798; margin-bottom:14px;">Primary</div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px;">
+          <div style="border:1px solid #E7E4EF; border-radius:18px; overflow:hidden; background:#fff;">
+            <div style="height:110px; background:#7C3AED;"></div>
+            <div style="padding:16px;"><div style="font-size:13px; font-weight:600;">Brand Violet</div><div style="font-family:'Space Mono',monospace; font-size:10.5px; color:#8C8798; margin-top:6px; line-height:1.7;">#7C3AED<br>124 58 237<br><span style="color:#7C3AED;">Primary</span></div></div>
+          </div>
+          <div style="border:1px solid #E7E4EF; border-radius:18px; overflow:hidden; background:#fff;">
+            <div style="height:110px; background:#5B21B6;"></div>
+            <div style="padding:16px;"><div style="font-size:13px; font-weight:600;">Violet Deep</div><div style="font-family:'Space Mono',monospace; font-size:10.5px; color:#8C8798; margin-top:6px; line-height:1.7;">#5B21B6<br>91 33 182<br><span style="color:#7C3AED;">Hover / dark</span></div></div>
+          </div>
+          <div style="border:1px solid #E7E4EF; border-radius:18px; overflow:hidden; background:#fff;">
+            <div style="height:110px; background:#A78BFA;"></div>
+            <div style="padding:16px;"><div style="font-size:13px; font-weight:600;">Violet Tint</div><div style="font-family:'Space Mono',monospace; font-size:10.5px; color:#8C8798; margin-top:6px; line-height:1.7;">#A78BFA<br>167 139 250<br><span style="color:#7C3AED;">Accents / bg</span></div></div>
+          </div>
+          <div style="border:1px solid #E7E4EF; border-radius:18px; overflow:hidden; background:#fff;">
+            <div style="height:110px; background:#12101C;"></div>
+            <div style="padding:16px;"><div style="font-size:13px; font-weight:600;">Ink</div><div style="font-family:'Space Mono',monospace; font-size:10.5px; color:#8C8798; margin-top:6px; line-height:1.7;">#12101C<br>18 16 28<br><span style="color:#7C3AED;">Text / prongs / dark UI</span></div></div>
+          </div>
+        </div>
+        <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8C8798; margin:26px 0 14px;">Accent &amp; surface</div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px;">
+          <div style="border:1px solid #E7E4EF; border-radius:18px; overflow:hidden; background:#fff;">
+            <div style="height:110px; background:#C6FF3D; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Space Mono',monospace; font-size:12px; color:#12101C; font-weight:700;">fill only</span></div>
+            <div style="padding:16px;"><div style="font-size:13px; font-weight:600;">Electric Lime</div><div style="font-family:'Space Mono',monospace; font-size:10.5px; color:#8C8798; margin-top:6px; line-height:1.7;">#C6FF3D<br>198 255 61<br><span style="color:#7C3AED;">CTAs / prongs on dark</span></div></div>
+          </div>
+          <div style="border:1px solid #E7E4EF; border-radius:18px; overflow:hidden; background:#fff;">
+            <div style="height:110px; background:#FF6B5C;"></div>
+            <div style="padding:16px;"><div style="font-size:13px; font-weight:600;">Coral</div><div style="font-family:'Space Mono',monospace; font-size:10.5px; color:#8C8798; margin-top:6px; line-height:1.7;">#FF6B5C<br>255 107 92<br><span style="color:#7C3AED;">Warm alt</span></div></div>
+          </div>
+          <div style="border:1px solid #E7E4EF; border-radius:18px; overflow:hidden; background:#fff;">
+            <div style="height:110px; background:#EFEAFB;"></div>
+            <div style="padding:16px;"><div style="font-size:13px; font-weight:600;">Violet Wash</div><div style="font-family:'Space Mono',monospace; font-size:10.5px; color:#8C8798; margin-top:6px; line-height:1.7;">#EFEAFB<br>239 234 251<br><span style="color:#7C3AED;">Tint field</span></div></div>
+          </div>
+          <div style="border:1px solid #E7E4EF; border-radius:18px; overflow:hidden; background:#fff;">
+            <div style="height:110px; background:#F5F4F8; border-bottom:1px solid #EEEBF4;"></div>
+            <div style="padding:16px;"><div style="font-size:13px; font-weight:600;">Canvas</div><div style="font-family:'Space Mono',monospace; font-size:10.5px; color:#8C8798; margin-top:6px; line-height:1.7;">#F5F4F8<br>245 244 248<br><span style="color:#7C3AED;">Page bg</span></div></div>
+          </div>
+        </div>
+        <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:24px;">
+          <div style="display:flex; align-items:center; gap:10px; background:#7C3AED; color:#fff; border-radius:100px; padding:9px 18px; font-size:13px; font-weight:600;">White on Violet <span style="font-family:'Space Mono',monospace; font-size:11px; opacity:0.75;">AA</span></div>
+          <div style="display:flex; align-items:center; gap:10px; background:#C6FF3D; color:#12101C; border-radius:100px; padding:9px 18px; font-size:13px; font-weight:600;">Ink on Lime <span style="font-family:'Space Mono',monospace; font-size:11px; opacity:0.6;">AAA</span></div>
+          <div style="display:flex; align-items:center; gap:10px; background:#12101C; color:#C6FF3D; border-radius:100px; padding:9px 18px; font-size:13px; font-weight:600;">Lime on Ink <span style="font-family:'Space Mono',monospace; font-size:11px; opacity:0.6;">AAA</span></div>
+          <div style="display:flex; align-items:center; gap:10px; background:#fff; color:#7C3AED; border:1px solid #E7E4EF; border-radius:100px; padding:9px 18px; font-size:13px; font-weight:600;">Violet on White <span style="font-family:'Space Mono',monospace; font-size:11px; color:#BEB9CC;">AA</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 06 TYPOGRAPHY ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:44px 40px; border-top:1px solid #E7E4EF;">
+    <div style="display:grid; grid-template-columns:220px 1fr; gap:44px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C3AED;">06</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">Typography</div>
+        <div style="font-size:14px; color:#8C8798; line-height:1.6; margin-top:14px;">Sora for the wordmark and headlines. Inter for UI and the data-heavy product.</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:22px;">
+        <!-- wordmark font comparison (NEW) -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:34px;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:26px;">
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#8C8798;">Wordmark face &mdash; side-by-side at display size</div>
+            <div style="font-family:'Space Mono',monospace; font-size:10px; color:#12101C; background:#C6FF3D; padding:3px 8px; border-radius:100px;">new</div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px;">
+            <div style="border:2px solid #7C3AED; border-radius:16px; padding:28px 26px; position:relative;">
+              <div style="position:absolute; top:-11px; left:20px; background:#7C3AED; color:#fff; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.1em; padding:3px 10px; border-radius:100px; text-transform:uppercase;">Locked</div>
+              <div style="font-family:'Sora',sans-serif; font-size:52px; font-weight:700; letter-spacing:-0.05em; line-height:1; display:flex; align-items:flex-end;">plugfolio<span style="width:9px; height:9px; border-radius:2px; background:#7C3AED; margin-left:5px; margin-bottom:6px;"></span></div>
+              <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798; margin-top:16px; line-height:1.7;">Sora 700 &middot; even, geometric, calm<br>ubiquitous on web &amp; system stacks</div>
+            </div>
+            <div style="border:1px solid #E7E4EF; border-radius:16px; padding:28px 26px; position:relative;">
+              <div style="position:absolute; top:-11px; left:20px; background:#F5F4F8; color:#8C8798; border:1px solid #E7E4EF; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.1em; padding:3px 10px; border-radius:100px; text-transform:uppercase;">Alt &middot; edge</div>
+              <div style="font-family:'Space Grotesk',sans-serif; font-size:52px; font-weight:600; letter-spacing:-0.03em; line-height:1; display:flex; align-items:flex-end;">plugfolio<span style="width:9px; height:9px; border-radius:2px; background:#7C3AED; margin-left:5px; margin-bottom:6px;"></span></div>
+              <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798; margin-top:16px; line-height:1.7;">Space Grotesk 600 &middot; sharper &lsquo;g&rsquo; &amp; &lsquo;a&rsquo;<br>more character, slightly less neutral</div>
+            </div>
+          </div>
+          <div style="font-size:13.5px; color:#54505F; line-height:1.6; margin-top:22px; border-top:1px solid #EEEBF4; padding-top:18px; max-width:820px;"><b style="color:#12101C;">Verdict &mdash; keep Sora.</b> Space Grotesk has appealing edge, but Sora&rsquo;s even rhythm holds up better across the data-dense product and pairs cleanly with Inter, so the system stays cohesive with one display family. Sora is <b style="color:#12101C;">locked</b> for wordmark and headlines; revisit only if we spin off a bolder sub-brand.</div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px;">
+          <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:32px; display:flex; flex-direction:column; gap:18px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;"><div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700;">Sora</div><div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798;">Display / Wordmark</div></div>
+            <div style="font-family:'Sora',sans-serif; font-size:60px; font-weight:800; letter-spacing:-0.04em; line-height:0.95; color:#12101C;">Aa</div>
+            <div style="font-family:'Sora',sans-serif; font-size:15px; color:#54505F; letter-spacing:0.02em;">ABCDEFGHIJKLM<br>abcdefghijklm 0123456789</div>
+            <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798; line-height:1.8; border-top:1px solid #EEEBF4; padding-top:16px;">Weights 500 &middot; 600 &middot; 700 &middot; 800<br>Tracking &minus;2% to &minus;5% at display sizes</div>
+          </div>
+          <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:32px; display:flex; flex-direction:column; gap:18px;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline;"><div style="font-family:'Inter',sans-serif; font-size:24px; font-weight:700;">Inter</div><div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798;">UI / Body</div></div>
+            <div style="font-family:'Inter',sans-serif; font-size:60px; font-weight:700; letter-spacing:-0.02em; line-height:0.95; color:#12101C;">Aa</div>
+            <div style="font-family:'Inter',sans-serif; font-size:15px; color:#54505F;">ABCDEFGHIJKLM<br>abcdefghijklm 0123456789</div>
+            <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798; line-height:1.8; border-top:1px solid #EEEBF4; padding-top:16px;">Weights 400 &middot; 500 &middot; 600 &middot; 700<br>Body 16px / 1.6 &middot; tabular nums for data</div>
+          </div>
+          <div style="grid-column:span 2; background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:34px;">
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#8C8798; margin-bottom:24px;">Type scale</div>
+            <div style="display:flex; flex-direction:column; gap:20px;">
+              <div style="display:flex; align-items:baseline; gap:24px; border-bottom:1px solid #F2F0F7; padding-bottom:18px;"><div style="width:130px; flex-shrink:0; font-family:'Space Mono',monospace; font-size:11px; color:#BEB9CC;">Display &middot; Sora 800</div><div style="font-family:'Sora',sans-serif; font-size:46px; font-weight:800; letter-spacing:-0.04em; line-height:1;">Plug in. Sell more.</div></div>
+              <div style="display:flex; align-items:baseline; gap:24px; border-bottom:1px solid #F2F0F7; padding-bottom:18px;"><div style="width:130px; flex-shrink:0; font-family:'Space Mono',monospace; font-size:11px; color:#BEB9CC;">H1 &middot; Sora 700</div><div style="font-family:'Sora',sans-serif; font-size:32px; font-weight:700; letter-spacing:-0.03em; line-height:1;">One link, everything shoppable</div></div>
+              <div style="display:flex; align-items:baseline; gap:24px; border-bottom:1px solid #F2F0F7; padding-bottom:18px;"><div style="width:130px; flex-shrink:0; font-family:'Space Mono',monospace; font-size:11px; color:#BEB9CC;">H2 &middot; Sora 600</div><div style="font-family:'Sora',sans-serif; font-size:22px; font-weight:600; letter-spacing:-0.02em; line-height:1.1;">Map every post to a product</div></div>
+              <div style="display:flex; align-items:baseline; gap:24px; border-bottom:1px solid #F2F0F7; padding-bottom:18px;"><div style="width:130px; flex-shrink:0; font-family:'Space Mono',monospace; font-size:11px; color:#BEB9CC;">Body &middot; Inter 400</div><div style="font-family:'Inter',sans-serif; font-size:16px; font-weight:400; line-height:1.6; color:#2A2735; max-width:560px;">Connect your content, tag the products inside it, and share one profile link &mdash; followers tap any post and shop everything in it.</div></div>
+              <div style="display:flex; align-items:baseline; gap:24px;"><div style="width:130px; flex-shrink:0; font-family:'Space Mono',monospace; font-size:11px; color:#BEB9CC;">Caption &middot; Mono</div><div style="font-family:'Space Mono',monospace; font-size:12px; color:#8C8798;">TRACKING CLICKS &middot; REVENUE &middot; ROI</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 07 ICON SYSTEM ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:44px 40px; border-top:1px solid #E7E4EF;">
+    <div style="display:grid; grid-template-columns:220px 1fr; gap:44px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C3AED;">07</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">Icon system</div>
+        <div style="font-size:14px; color:#8C8798; line-height:1.6; margin-top:14px;">On the violet tile the mark is white-body / lime-prong. Centered, even margins, safe zones respected on every platform.</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:22px;">
+        <!-- iOS + circular + favicon -->
+        <div style="display:flex; gap:22px; flex-wrap:wrap; align-items:flex-start;">
+          <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:28px; display:flex; flex-direction:column; align-items:center; gap:18px;">
+            <div style="width:122px; height:122px; border-radius:28px; background:#7C3AED; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px -12px rgba(124,58,237,0.6);"><div style="width:74px;height:74px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div>
+            <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798;">iOS squircle</div>
+          </div>
+          <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:28px; display:flex; flex-direction:column; align-items:center; gap:18px;">
+            <div style="width:122px; height:122px; border-radius:50%; background:#12101C; display:flex; align-items:center; justify-content:center;"><div style="width:70px;height:70px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div>
+            <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798;">Circular avatar</div>
+          </div>
+          <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:28px 30px; display:flex; flex-direction:column; gap:18px; justify-content:center; flex:1; min-width:280px;">
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#8C8798;">Favicon &mdash; to 16px</div>
+            <div style="display:flex; align-items:flex-end; gap:28px;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:9px;"><div style="width:48px; height:48px; border-radius:11px; background:#7C3AED; display:flex; align-items:center; justify-content:center;"><div style="width:30px;height:30px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div><div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">48</div></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:9px;"><div style="width:32px; height:32px; border-radius:8px; background:#7C3AED; display:flex; align-items:center; justify-content:center;"><div style="width:20px;height:20px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div><div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">32</div></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:9px;"><div style="width:16px; height:16px; border-radius:4px; background:#7C3AED; display:flex; align-items:center; justify-content:center;"><div style="width:11px;height:11px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#FFFFFF" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div><div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">16</div></div>
+            </div>
+            <div style="font-size:12.5px; color:#54505F; line-height:1.6;">At 16px the mark collapses to a single flat color.</div>
+          </div>
+        </div>
+        <!-- Android adaptive (NEW) -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:32px; display:flex; gap:32px; flex-wrap:wrap; align-items:center;">
+          <div style="display:flex; flex-direction:column; gap:14px; min-width:230px; flex:1;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#8C8798;">Android adaptive icon</div>
+              <div style="font-family:'Space Mono',monospace; font-size:10px; color:#12101C; background:#C6FF3D; padding:3px 8px; border-radius:100px;">new</div>
+            </div>
+            <div style="font-size:13.5px; color:#54505F; line-height:1.65;">Two layers on a 108&times;108dp canvas. <b style="color:#12101C;">Background:</b> solid Brand Violet, full-bleed. <b style="color:#12101C;">Foreground:</b> the white-body / lime-prong mark, sized inside the <b style="color:#12101C;">66dp safe circle</b> so any OEM mask &mdash; circle, squircle, rounded square &mdash; crops cleanly.</div>
+            <div style="display:flex; gap:14px; margin-top:4px;">
+              <div style="display:flex; align-items:center; gap:8px; font-family:'Space Mono',monospace; font-size:11px; color:#54505F;"><span style="width:14px; height:14px; border-radius:3px; background:#7C3AED;"></span> background</div>
+              <div style="display:flex; align-items:center; gap:8px; font-family:'Space Mono',monospace; font-size:11px; color:#54505F;"><span style="width:14px; height:14px; border-radius:3px; border:1.5px dashed #A78BFA;"></span> foreground</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:20px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+              <div style="width:104px; height:104px; border-radius:16px; background:#7C3AED;"></div>
+              <div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">bg layer</div>
+            </div>
+            <div style="font-size:20px; color:#BEB9CC;">+</div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+              <div style="width:104px; height:104px; border-radius:16px; background:repeating-linear-gradient(45deg,#FBFAFE,#FBFAFE 6px,#F1EDFA 6px,#F1EDFA 12px); position:relative; display:flex; align-items:center; justify-content:center;">
+                <div style="position:absolute; width:68px; height:68px; border-radius:50%; border:1.5px dashed #A78BFA;"></div>
+                <div style="width:58px; height:58px;"><dc-import name="PlugMark" body="#7C3AED" prong="#7C3AED" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+              </div>
+              <div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">fg + safe zone</div>
+            </div>
+            <div style="font-size:20px; color:#BEB9CC;">=</div>
+            <div style="display:flex; align-items:flex-end; gap:16px;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:10px;"><div style="width:74px; height:74px; border-radius:50%; background:#7C3AED; display:flex; align-items:center; justify-content:center;"><div style="width:42px;height:42px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div><div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">circle</div></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:10px;"><div style="width:74px; height:74px; border-radius:22px; background:#7C3AED; display:flex; align-items:center; justify-content:center;"><div style="width:42px;height:42px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div><div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">squircle</div></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:10px;"><div style="width:74px; height:74px; border-radius:12px; background:#7C3AED; display:flex; align-items:center; justify-content:center;"><div style="width:42px;height:42px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div><div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">rounded</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- PWA maskable (NEW) -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:32px; display:flex; gap:32px; flex-wrap:wrap; align-items:center;">
+          <div style="display:flex; flex-direction:column; gap:14px; min-width:230px; flex:1;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#8C8798;">PWA / maskable icon</div>
+              <div style="font-family:'Space Mono',monospace; font-size:10px; color:#12101C; background:#C6FF3D; padding:3px 8px; border-radius:100px;">new</div>
+            </div>
+            <div style="font-size:13.5px; color:#54505F; line-height:1.65;">Ship <b style="color:#12101C;">192&times;192</b> and <b style="color:#12101C;">512&times;512</b> PNGs with <code style="font-family:'Space Mono',monospace; font-size:12px; background:#F2F0F7; padding:1px 5px; border-radius:4px;">purpose=&ldquo;maskable&rdquo;</code>. Keep the mark within the inner <b style="color:#12101C;">80% safe area</b> (10% padding all sides) so aggressive masks never clip a prong.</div>
+          </div>
+          <div style="display:flex; align-items:flex-end; gap:22px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+              <div style="width:120px; height:120px; border-radius:26px; background:#7C3AED; position:relative; display:flex; align-items:center; justify-content:center;">
+                <div style="position:absolute; inset:12px; border:1.5px dashed rgba(255,255,255,0.45); border-radius:50%;"></div>
+                <div style="width:64px;height:64px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+              </div>
+              <div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">512 &middot; safe area</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+              <div style="width:74px; height:74px; border-radius:16px; background:#7C3AED; position:relative; display:flex; align-items:center; justify-content:center;">
+                <div style="position:absolute; inset:7px; border:1.5px dashed rgba(255,255,255,0.45); border-radius:50%;"></div>
+                <div style="width:40px;height:40px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+              </div>
+              <div style="font-family:'Space Mono',monospace; font-size:10px; color:#BEB9CC;">192</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 08 OG BANNER ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:44px 40px; border-top:1px solid #E7E4EF;">
+    <div style="display:grid; grid-template-columns:220px 1fr; gap:44px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C3AED;">08</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">Social / OG banner</div>
+        <div style="font-size:14px; color:#8C8798; line-height:1.6; margin-top:14px;">1200&times;630 share card for links, previews, and OG tags. Reversed lockup, tagline, one lime accent.</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="border:1px solid #E7E4EF; border-radius:22px; overflow:hidden; box-shadow:0 20px 50px -30px rgba(18,16,28,0.5);">
+          <div style="aspect-ratio:1200/630; background:#12101C; position:relative; display:flex; flex-direction:column; justify-content:space-between; padding:6.5%;">
+            <div style="position:absolute; top:-14%; right:-6%; width:44%; height:88%; opacity:0.12;"><dc-import name="PlugMark" body="#C6FF3D" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+            <div style="display:flex; align-items:center; gap:16px; position:relative;">
+              <div style="width:52px; height:52px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+              <div style="font-family:'Sora',sans-serif; font-size:30px; font-weight:700; letter-spacing:-0.045em; color:#fff; display:flex; align-items:flex-end;">plugfolio<span style="width:6px; height:6px; border-radius:2px; background:#C6FF3D; margin-left:4px; margin-bottom:5px;"></span></div>
+            </div>
+            <div style="position:relative;">
+              <div style="font-family:'Sora',sans-serif; font-size:min(5.2vw,58px); font-weight:800; letter-spacing:-0.04em; line-height:1.02; color:#fff;">Turn your content<br>into <span style="color:#C6FF3D;">commerce.</span></div>
+              <div style="font-family:'Space Mono',monospace; font-size:13px; letter-spacing:0.12em; text-transform:uppercase; color:#8C8798; margin-top:20px;">plugfolio.com &middot; one link, everything shoppable</div>
+            </div>
+          </div>
+        </div>
+        <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798; display:flex; gap:20px; flex-wrap:wrap;"><span>1200 &times; 630 px</span><span>Safe margin 6.5%</span><span>Reversed lockup &middot; ink field</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 09 ALT COLORWAY ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:44px 40px; border-top:1px solid #E7E4EF;">
+    <div style="display:grid; grid-template-columns:220px 1fr; gap:44px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C3AED;">09</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">Alt colorway</div>
+        <div style="font-size:14px; color:#8C8798; line-height:1.6; margin-top:14px;">Ink + Lime &mdash; a dark-first sanity check. Not adopted; shown so we can weigh the bolder look before committing to violet.</div>
+      </div>
+      <div style="background:#12101C; border-radius:22px; padding:40px; display:flex; flex-direction:column; gap:30px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8C8798;">Ink #12101C + Lime #C6FF3D</div>
+          <div style="font-family:'Space Mono',monospace; font-size:10px; color:#12101C; background:#C6FF3D; padding:3px 8px; border-radius:100px;">for review</div>
+        </div>
+        <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:center;">
+          <div style="width:118px; height:118px; border-radius:27px; background:#12101C; border:1px solid #2A2735; display:flex; align-items:center; justify-content:center;"><div style="width:70px;height:70px;"><dc-import name="PlugMark" body="#C6FF3D" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div>
+          <div style="width:118px; height:118px; border-radius:27px; background:#C6FF3D; display:flex; align-items:center; justify-content:center;"><div style="width:70px;height:70px;"><dc-import name="PlugMark" body="#12101C" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div>
+          <div style="flex:1; min-width:240px; display:flex; flex-direction:column; gap:18px;">
+            <div style="display:flex; align-items:center; gap:16px;">
+              <div style="width:46px; height:46px;"><dc-import name="PlugMark" body="#C6FF3D" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+              <div style="font-family:'Sora',sans-serif; font-size:30px; font-weight:700; letter-spacing:-0.045em; color:#fff; display:flex; align-items:flex-end;">plugfolio<span style="width:6px; height:6px; border-radius:2px; background:#C6FF3D; margin-left:4px; margin-bottom:5px;"></span></div>
+            </div>
+            <div style="font-size:13.5px; color:#B7B2C4; line-height:1.65;">Lime-forward and confident, but the violet equity is stronger for a trust-first commerce brand. Recommendation: <b style="color:#fff;">keep violet primary</b>, reserve Ink + Lime for merch drops and hype moments.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 10 MISUSE ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:44px 40px; border-top:1px solid #E7E4EF;">
+    <div style="display:grid; grid-template-columns:220px 1fr; gap:44px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C3AED;">10</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">Misuse</div>
+        <div style="font-size:14px; color:#8C8798; line-height:1.6; margin-top:14px;">Protect the mark. These six are never allowed.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:18px;">
+        <!-- stretch -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:18px; overflow:hidden;">
+          <div style="height:130px; background:#FAF9FC; display:flex; align-items:center; justify-content:center;"><div style="width:96px; height:70px; transform:scaleX(1.55);"><svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="none"><g stroke-linejoin="round"><polygon points="33,53 33,27 39.5,15 46,27 46,53" fill="#12101C" stroke="#12101C" stroke-width="3"></polygon><polygon points="54,53 54,27 60.5,15 67,27 67,53" fill="#12101C" stroke="#12101C" stroke-width="3"></polygon><rect x="18" y="43" width="64" height="44" rx="13" fill="#7C3AED" stroke="#7C3AED" stroke-width="3"></rect></g></svg></div></div>
+          <div style="padding:14px 16px; display:flex; gap:9px; align-items:flex-start;"><span style="color:#E5484D; font-weight:700; font-size:15px; line-height:1.2;">&times;</span><div style="font-size:12.5px; color:#54505F; line-height:1.5;">Don&rsquo;t stretch or distort.</div></div>
+        </div>
+        <!-- recolor -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:18px; overflow:hidden;">
+          <div style="height:130px; background:#FAF9FC; display:flex; align-items:center; justify-content:center;"><div style="width:80px;height:80px;"><svg viewBox="0 0 100 100" width="100%" height="100%"><g stroke-linejoin="round"><polygon points="33,53 33,27 39.5,15 46,27 46,53" fill="#FF6B5C" stroke="#FF6B5C" stroke-width="3"></polygon><polygon points="54,53 54,27 60.5,15 67,27 67,53" fill="#FF6B5C" stroke="#FF6B5C" stroke-width="3"></polygon><rect x="18" y="43" width="64" height="44" rx="13" fill="#0EA5A0" stroke="#0EA5A0" stroke-width="3"></rect></g></svg></div></div>
+          <div style="padding:14px 16px; display:flex; gap:9px; align-items:flex-start;"><span style="color:#E5484D; font-weight:700; font-size:15px; line-height:1.2;">&times;</span><div style="font-size:12.5px; color:#54505F; line-height:1.5;">Don&rsquo;t use off-system colors.</div></div>
+        </div>
+        <!-- gradient -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:18px; overflow:hidden;">
+          <div style="height:130px; background:#FAF9FC; display:flex; align-items:center; justify-content:center;"><div style="width:80px;height:80px;"><svg viewBox="0 0 100 100" width="100%" height="100%"><defs><linearGradient id="badgrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF6B5C"></stop><stop offset="1" stop-color="#7C3AED"></stop></linearGradient></defs><g stroke-linejoin="round"><polygon points="33,53 33,27 39.5,15 46,27 46,53" fill="#C6FF3D" stroke="#C6FF3D" stroke-width="3"></polygon><polygon points="54,53 54,27 60.5,15 67,27 67,53" fill="#C6FF3D" stroke="#C6FF3D" stroke-width="3"></polygon><rect x="18" y="43" width="64" height="44" rx="13" fill="url(#badgrad)"></rect></g></svg></div></div>
+          <div style="padding:14px 16px; display:flex; gap:9px; align-items:flex-start;"><span style="color:#E5484D; font-weight:700; font-size:15px; line-height:1.2;">&times;</span><div style="font-size:12.5px; color:#54505F; line-height:1.5;">Don&rsquo;t add gradients or shadows.</div></div>
+        </div>
+        <!-- outline -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:18px; overflow:hidden;">
+          <div style="height:130px; background:#FAF9FC; display:flex; align-items:center; justify-content:center;"><div style="width:80px;height:80px;"><svg viewBox="0 0 100 100" width="100%" height="100%"><g stroke-linejoin="round" fill="none" stroke="#7C3AED" stroke-width="3"><polygon points="33,53 33,27 39.5,15 46,27 46,53"></polygon><polygon points="54,53 54,27 60.5,15 67,27 67,53"></polygon><rect x="18" y="43" width="64" height="44" rx="13"></rect></g></svg></div></div>
+          <div style="padding:14px 16px; display:flex; gap:9px; align-items:flex-start;"><span style="color:#E5484D; font-weight:700; font-size:15px; line-height:1.2;">&times;</span><div style="font-size:12.5px; color:#54505F; line-height:1.5;">Don&rsquo;t outline the mark.</div></div>
+        </div>
+        <!-- rotate -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:18px; overflow:hidden;">
+          <div style="height:130px; background:#FAF9FC; display:flex; align-items:center; justify-content:center;"><div style="width:80px; height:80px; transform:rotate(22deg);"><svg viewBox="0 0 100 100" width="100%" height="100%"><g stroke-linejoin="round"><polygon points="33,53 33,27 39.5,15 46,27 46,53" fill="#12101C" stroke="#12101C" stroke-width="3"></polygon><polygon points="54,53 54,27 60.5,15 67,27 67,53" fill="#12101C" stroke="#12101C" stroke-width="3"></polygon><rect x="18" y="43" width="64" height="44" rx="13" fill="#7C3AED" stroke="#7C3AED" stroke-width="3"></rect></g></svg></div></div>
+          <div style="padding:14px 16px; display:flex; gap:9px; align-items:flex-start;"><span style="color:#E5484D; font-weight:700; font-size:15px; line-height:1.2;">&times;</span><div style="font-size:12.5px; color:#54505F; line-height:1.5;">Don&rsquo;t rotate or tilt.</div></div>
+        </div>
+        <!-- lime prongs on white -->
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:18px; overflow:hidden;">
+          <div style="height:130px; background:#FFFFFF; display:flex; align-items:center; justify-content:center;"><div style="width:80px;height:80px;"><dc-import name="PlugMark" body="#7C3AED" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div></div>
+          <div style="padding:14px 16px; display:flex; gap:9px; align-items:flex-start;"><span style="color:#E5484D; font-weight:700; font-size:15px; line-height:1.2;">&times;</span><div style="font-size:12.5px; color:#54505F; line-height:1.5;">Don&rsquo;t use lime prongs on light &mdash; ink only.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 11 VOICE ============ -->
+  <div style="max-width:1240px; margin:0 auto; padding:44px 40px 40px; border-top:1px solid #E7E4EF;">
+    <div style="display:grid; grid-template-columns:220px 1fr; gap:44px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7C3AED;">11</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">Voice</div>
+        <div style="font-size:14px; color:#8C8798; line-height:1.6; margin-top:14px;">Direct, confident, creator-native. Short lines. No hype, no jargon.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:22px;">
+        <div style="background:#12101C; border-radius:22px; padding:44px; display:flex; flex-direction:column; justify-content:center; gap:16px;">
+          <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8C8798;">Primary tagline</div>
+          <div style="font-family:'Sora',sans-serif; font-size:38px; font-weight:700; letter-spacing:-0.03em; line-height:1.05; color:#FFFFFF;">Turn your content<br>into <span style="color:#C6FF3D;">commerce.</span></div>
+          <div style="font-family:'Space Mono',monospace; font-size:12px; color:#8C8798; margin-top:8px;">Short line — &ldquo;Plug in. Sell more.&rdquo;</div>
+        </div>
+        <div style="background:#FFFFFF; border:1px solid #E7E4EF; border-radius:22px; padding:32px; display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; gap:10px; align-items:flex-start;"><span style="color:#1F9D57; font-weight:700;">&check;</span><div style="font-size:13.5px; color:#54505F; line-height:1.55;"><b style="color:#12101C;">Say:</b> Tag it once. Sell it everywhere.</div></div>
+          <div style="display:flex; gap:10px; align-items:flex-start;"><span style="color:#1F9D57; font-weight:700;">&check;</span><div style="font-size:13.5px; color:#54505F; line-height:1.55;"><b style="color:#12101C;">Say:</b> One link. Everything shoppable.</div></div>
+          <div style="height:1px; background:#EEEBF4;"></div>
+          <div style="display:flex; gap:10px; align-items:flex-start;"><span style="color:#E5484D; font-weight:700;">&times;</span><div style="font-size:13.5px; color:#54505F; line-height:1.55;"><b style="color:#12101C;">Avoid:</b> Synergize your omnichannel funnel.</div></div>
+          <div style="display:flex; gap:10px; align-items:flex-start;"><span style="color:#E5484D; font-weight:700;">&times;</span><div style="font-size:13.5px; color:#54505F; line-height:1.55;"><b style="color:#12101C;">Avoid:</b> The #1 revolutionary game-changer!!!</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <div style="background:#12101C; margin-top:20px;">
+    <div style="max-width:1240px; margin:0 auto; padding:54px 40px; display:flex; align-items:center; justify-content:space-between; gap:30px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:16px;">
+        <div style="width:44px; height:44px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.045em; color:#fff; display:flex; align-items:flex-end;">plugfolio<span style="width:6px; height:6px; border-radius:2px; background:#C6FF3D; margin-left:4px; margin-bottom:5px;"></span></div>
+      </div>
+      <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798; line-height:1.9; text-align:right;">
+        <div>plugfolio.com &middot; Brand Guidelines v1.1</div>
+        <div>Charged Violet &middot; Arrow-plug mark &middot; Sora + Inter</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
