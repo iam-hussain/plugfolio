@@ -242,6 +242,31 @@ export {
   unsuspendMember,
   type AdminMembersDeps,
 } from "./services/admin-members";
+export type {
+  AdminProfileRow,
+  AdminProfileRepository,
+  AdminCommentRow,
+  AdminPostRow,
+  AdminProductRow,
+  AdminContentRepository,
+} from "./ports/admin-repository";
+export {
+  searchProfiles,
+  suspendProfile,
+  unsuspendProfile,
+  releaseProfileUsername,
+  type AdminProfilesDeps,
+} from "./services/admin-profiles";
+export {
+  searchComments,
+  searchPosts,
+  searchProducts,
+  deleteComment,
+  deletePost,
+  deleteProduct,
+  clearProductCoupon,
+  type AdminContentDeps,
+} from "./services/admin-content";
 export {
   followProfile,
   unfollowProfile,

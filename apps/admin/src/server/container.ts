@@ -1,7 +1,9 @@
 import {
   createAdminAuditRepository,
+  createAdminContentRepository,
   createAdminMemberRepository,
   createAdminOverviewRepository,
+  createAdminProfileRepository,
   createAdminUserRepository,
   createAppSettingsRepository,
 } from "@plugfolio/db";
@@ -16,6 +18,8 @@ export const repositories = {
   audit: createAdminAuditRepository(),
   settings: createAppSettingsRepository(),
   members: createAdminMemberRepository(),
+  profiles: createAdminProfileRepository(),
+  content: createAdminContentRepository(),
   overview: createAdminOverviewRepository(),
 };
 
@@ -31,5 +35,18 @@ export const adminMembersDeps = {
 /** The app-settings dependency bundle (reserved usernames, feature flags). */
 export const appSettingsDeps = {
   settings: repositories.settings,
+  audit: repositories.audit,
+};
+
+/** Profile moderation: suspend a page, release a username. */
+export const adminProfilesDeps = {
+  profiles: repositories.profiles,
+  audit: repositories.audit,
+  now: clock.now,
+};
+
+/** Content takedowns: comments, posts, products. */
+export const adminContentDeps = {
+  content: repositories.content,
   audit: repositories.audit,
 };

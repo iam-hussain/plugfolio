@@ -15,12 +15,19 @@ directly via core services + db repositories — no admin endpoints in
 | **Sign in** (`/signin`) | Email + password against `AdminUser`. No sign-up, no reset — operators are seeded by CLI. |
 | **Dashboard** (`/`) | Count tiles: members, profiles, businesses, posts, products, and 7-day taps / code copies / comments. |
 | **Members** (`/members`) | Search by email/@handle/name; role + status badges; **Suspend / Unsuspend** per member. |
+| **Profiles** (`/profiles`) | Search by username/owner email; content counts; **Suspend / Unsuspend** one page (owner still signs in) and **Release username** (drops the page to a fresh random `creator-…` name — settles ADR-0004's "first verified owner keeps it" disputes; the freed name is instantly claimable). |
+| **Posts** (`/posts`) | Search caption/profile; **Remove** (stolen/illegal media). Products stay; taps survive (`postId` SetNull). |
+| **Products** (`/products`) | Search title/profile; kind + coupon (with Expired badge); **Clear coupon** and **Remove** (counterfeit/prohibited links — taps cascade, same as a creator's own removal). |
+| **Comments** (`/comments`) | Newest-first firehose; shows personal `@handle` vs speaks-as-profile badge; **Delete** (replies cascade). |
 | **Settings** (`/settings`) | **Reserved usernames** (admin-managed additions on top of a code baseline) and **feature flags** (add / toggle / remove). |
 | **Audit log** (`/audit`) | The append-only `AdminAction` trail, newest first. |
 
-Planned next (per the admin roadmap): Profiles (takedown/username release),
-content moderation (comments, posts, products), businesses/collabs oversight,
-analytics. The sidebar only links screens that exist.
+Destructive actions confirm first (`ConfirmButton`) and audit what was
+removed — comment/product deletions record a snippet of the deleted body/title
+taken from the DB row, not from the form.
+
+Planned next (per the admin roadmap): businesses/requirements/collabs
+oversight, analytics. The sidebar only links screens that exist.
 
 ## Data model
 
@@ -39,6 +46,11 @@ analytics. The sidebar only links screens that exist.
 - `verifyAdminCredentials` — admin login check.
 - `searchMembers`, `suspendMember`, `unsuspendMember` — member moderation
   (audited; typed `NotFoundError` on unknown ids).
+- `searchProfiles`, `suspendProfile`, `unsuspendProfile`,
+  `releaseProfileUsername` — profile moderation; release reuses
+  `generateProfileUsername()` from creator-content.
+- `searchComments/Posts/Products`, `deleteComment`, `deletePost`,
+  `deleteProduct`, `clearProductCoupon` — content takedowns.
 - `getReservedUsernames`, `setReservedUsernames`, `isUsernameReserved` — the
   admin list *extends* `BASELINE_RESERVED_USERNAMES` (product routes + brand
   terms, e.g. `dashboard`, `explore`, `homepage`); it can never unblock the
