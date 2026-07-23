@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getMyProfiles, listMyCategories, listProfileProducts } from "@plugfolio/core";
-import { ProductRow } from "@/features/product-tagging";
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@plugfolio/ui";
+import { DashboardPageHeader, DashboardShell, ProductRow } from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
 
-// Products tab (lean journey): the things they've tagged. Fix a link, remove one.
+// Products tab (brief 08): the profile's product library — a list you scan.
+// Fix a link, edit the coupon, remove one; changes propagate to every post.
 export const metadata: Metadata = { title: "Products" };
 
 type SearchParams = { profile?: string };
@@ -34,32 +35,27 @@ export default async function DashboardProductsPage({
   ]);
 
   return (
-    <main className="mx-auto max-w-md px-4 pb-8">
-      <nav className="py-4">
-        <Link href="/dashboard" className="text-muted-foreground text-sm">
-          ← Dashboard
-        </Link>
-      </nav>
-      <header className="pb-6">
-        <h1 className="font-display text-2xl font-semibold">
-          Products · <span className="text-muted-foreground">@{active.username}</span>
-        </h1>
-      </header>
+    <DashboardShell profiles={profiles} active={active}>
+      <DashboardPageHeader title="Products" eyebrow={`@${active.username}`} />
       {products.length === 0 ? (
-        <p className="text-muted-foreground text-sm">
-          Nothing tagged yet — tag products from a post in{" "}
-          <Link href={`/dashboard/posts?profile=${active.id}`} className="underline">
-            Posts
-          </Link>
-          .
-        </p>
+        <Empty className="border">
+          <EmptyHeader>
+            <EmptyTitle>No products yet</EmptyTitle>
+            <EmptyDescription>
+              Tag a product on a post to see it here — open a post from the Posts tab and paste a
+              product URL.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       ) : (
-        <div className="divide-border divide-y">
+        <ul className="flex flex-col gap-3">
           {products.map((product) => (
-            <ProductRow key={product.id} product={product} categories={categories} />
+            <li key={product.id}>
+              <ProductRow product={product} categories={categories} />
+            </li>
           ))}
-        </div>
+        </ul>
       )}
-    </main>
+    </DashboardShell>
   );
 }

@@ -11,27 +11,39 @@ import { connectGoogle } from "../connect-social-action";
 
 const subscriberFormat = new Intl.NumberFormat("en", { notation: "compact" });
 
-export function SocialConnections({ youtube }: { youtube: YouTubeConnectionView | null }) {
+export function SocialConnections({
+  youtube,
+  bare = false,
+}: {
+  youtube: YouTubeConnectionView | null;
+  /** Skip the section heading — for callers that supply their own (a Card). */
+  bare?: boolean;
+}) {
+  const body =
+    youtube === null ? (
+      <p className="text-muted-foreground text-sm">
+        Google connect isn&apos;t configured on this server yet. Meta (Instagram) is coming next.
+      </p>
+    ) : youtube.connected ? (
+      <YouTubeChannelList channels={youtube.channels} />
+    ) : (
+      <form action={connectGoogle}>
+        <Button type="submit" variant="outline" size="sm">
+          <SocialGlyph platform="youtube" />
+          Connect Google (YouTube)
+        </Button>
+      </form>
+    );
+
+  if (bare) return body;
+
   return (
     <section aria-label="Connected socials" className="pb-8">
       <h2 className="pb-1 font-medium">Connections</h2>
       <p className="text-muted-foreground pb-4 text-sm">
         Connect the socials you own — profile usernames come from their handles.
       </p>
-      {youtube === null ? (
-        <p className="text-muted-foreground text-sm">
-          Google connect isn&apos;t configured on this server yet. Meta (Instagram) is coming next.
-        </p>
-      ) : youtube.connected ? (
-        <YouTubeChannelList channels={youtube.channels} />
-      ) : (
-        <form action={connectGoogle}>
-          <Button type="submit" variant="outline" size="sm">
-            <SocialGlyph platform="youtube" />
-            Connect Google (YouTube)
-          </Button>
-        </form>
-      )}
+      {body}
     </section>
   );
 }

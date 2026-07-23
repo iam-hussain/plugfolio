@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   getMyProfiles,
@@ -7,6 +6,8 @@ import {
   listOpenRequirements,
 } from "@plugfolio/core";
 import { CollabList, RequirementBoard } from "@/features/business-collab";
+import { DashboardPageHeader, DashboardShell } from "@/features/product-tagging";
+import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { businessCollabDeps, repositories } from "@/server/container";
 
@@ -14,7 +15,13 @@ import { businessCollabDeps, repositories } from "@/server/container";
 // requirements to approach, and the threads you're in.
 export const metadata: Metadata = { title: "Collabs" };
 
-export default async function CreatorCollabsPage() {
+type SearchParams = { profile?: string };
+
+export default async function CreatorCollabsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
   const session = await auth();
   if (!session?.user) redirect("/signin");
 
@@ -23,20 +30,11 @@ export default async function CreatorCollabsPage() {
     listOpenRequirements(businessCollabDeps),
     listMyCreatorCollabs(businessCollabDeps, session.user.id),
   ]);
-  // ponytail: first profile only, same as the dashboard — switcher comes with
-  // multi-profile creation.
-  const active = profiles[0];
+  const active = pickActiveProfile(profiles, (await searchParams).profile);
 
   return (
-    <main className="mx-auto max-w-md px-4 pb-8">
-      <nav className="py-4">
-        <Link href="/dashboard" className="text-muted-foreground text-sm">
-          ← Dashboard
-        </Link>
-      </nav>
-      <header className="pb-6">
-        <h1 className="font-display text-2xl font-semibold">Collabs</h1>
-      </header>
+    <DashboardShell profiles={profiles} active={active}>
+      <DashboardPageHeader title="Collabs" eyebrow={active ? `@${active.username}` : undefined} />
       <section aria-label="Your threads" className="pb-8">
         <h2 className="pb-3 font-medium">Your threads</h2>
         <CollabList collabs={collabs} show="business" />
@@ -51,6 +49,6 @@ export default async function CreatorCollabsPage() {
           </p>
         )}
       </section>
-    </main>
+    </DashboardShell>
   );
 }

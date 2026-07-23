@@ -3,13 +3,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getMyProfiles, getShopperPost, listMyCategories } from "@plugfolio/core";
-import { CategorySelect, TagProductForm } from "@/features/product-tagging";
-import { formatPrice } from "@/lib/format-price";
+import { Button, Card, CardContent, CardHeader, CardTitle } from "@plugfolio/ui";
+import { ArrowLeft, ExternalLink } from "lucide-react";
+import {
+  CategorySelect,
+  DashboardShell,
+  ProductRow,
+  TagProductForm,
+} from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
 
-// The tagging editor (lean journey: "Open a post, paste any product URL…").
+// The tagging editor (brief 07): a focused workspace — the post, what's
+// tagged on it, and the paste-a-URL form. Publish-free: tags go live as
+// they're added.
 export const metadata: Metadata = { title: "Tag products" };
 
 type Params = { postId: string };
@@ -42,53 +50,77 @@ export default async function TagPostPage({
   if (!post) notFound();
 
   return (
-    <main className="mx-auto max-w-md px-4 pb-8">
-      <nav className="py-4">
-        <Link href={`/dashboard/posts?profile=${active.id}`} className="text-muted-foreground text-sm">
-          ← Posts
-        </Link>
+    <DashboardShell profiles={profiles} active={active}>
+      <nav className="flex items-center justify-between pb-4">
+        <Button variant="ghost" size="sm" asChild>
+          <Link href={`/dashboard/posts?profile=${active.id}`}>
+            <ArrowLeft className="size-4" />
+            Posts
+          </Link>
+        </Button>
+        <Button variant="outline" size="sm" asChild>
+          <Link href={`/${active.username}/post/${post.id}`}>
+            <ExternalLink className="size-4" />
+            View as visitor
+          </Link>
+        </Button>
       </nav>
-      <div className="bg-muted relative aspect-square overflow-hidden rounded-md">
-        <Image
-          src={post.mediaUrl}
-          alt={post.caption ?? "Post"}
-          fill
-          unoptimized
-          className="object-cover"
-          priority
-        />
-      </div>
-      {post.caption ? <p className="py-3 text-sm">{post.caption}</p> : null}
-      <div className="py-2">
-        <CategorySelect
-          target={{ kind: "post", postId: post.id, profileId: active.id }}
-          categories={categories}
-          currentCategoryId={post.categoryId}
-        />
-      </div>
 
-      <section aria-label="Tagged products" className="py-4">
-        <h2 className="pb-3 font-medium">Tagged products</h2>
-        {post.products.length === 0 ? (
-          <p className="text-muted-foreground text-sm">Nothing tagged yet.</p>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {post.products.map((product) => (
-              <li key={product.id} className="flex items-baseline justify-between gap-2 text-sm">
-                <span className="truncate">{product.title}</span>
-                <span className="text-muted-foreground shrink-0">
-                  {formatPrice(product.priceCents, product.currency) ?? "—"}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <div className="grid gap-6 sm:grid-cols-2">
+        <div>
+          <div className="bg-muted relative aspect-square overflow-hidden rounded-lg">
+            <Image
+              src={post.mediaUrl}
+              alt={post.caption ?? "Post"}
+              fill
+              unoptimized
+              className="object-cover"
+              priority
+            />
+          </div>
+          {post.caption ? <p className="py-3 text-sm">{post.caption}</p> : null}
+          <div className="py-2">
+            <CategorySelect
+              target={{ kind: "post", postId: post.id, profileId: active.id }}
+              categories={categories}
+              currentCategoryId={post.categoryId}
+            />
+          </div>
+        </div>
 
-      <section aria-label="Tag a product">
-        <h2 className="pb-3 font-medium">Tag a product</h2>
-        <TagProductForm profileId={active.id} postId={post.id} />
-      </section>
-    </main>
+        <div className="flex flex-col gap-6">
+          <section aria-label="Tagged products">
+            <h2 className="pb-3 font-medium">
+              Tagged products
+              {post.products.length > 0 ? (
+                <span className="text-muted-foreground"> · {post.products.length}</span>
+              ) : null}
+            </h2>
+            {post.products.length === 0 ? (
+              <p className="text-muted-foreground text-sm">
+                Nothing tagged yet — paste a product URL below and this post becomes shoppable.
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-3">
+                {post.products.map((product) => (
+                  <li key={product.id}>
+                    <ProductRow product={product} categories={categories} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Tag a product</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TagProductForm profileId={active.id} postId={post.id} />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </DashboardShell>
   );
 }

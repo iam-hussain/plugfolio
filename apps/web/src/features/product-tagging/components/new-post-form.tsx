@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@plugfolio/ui";
+import { Button, Input, Label } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -12,9 +12,10 @@ import { createPost } from "../api";
  */
 export type NewPostFormProps = {
   profileId: string;
+  onDone?: () => void;
 };
 
-export function NewPostForm({ profileId }: NewPostFormProps) {
+export function NewPostForm({ profileId, onDone }: NewPostFormProps) {
   const router = useRouter();
   const [mediaUrl, setMediaUrl] = useState("");
   const [caption, setCaption] = useState("");
@@ -25,43 +26,44 @@ export function NewPostForm({ profileId }: NewPostFormProps) {
       setMediaUrl("");
       setCaption("");
       router.refresh();
+      onDone?.();
     },
   });
 
   return (
     <form
-      className="flex flex-col gap-3"
+      className="flex flex-col gap-4"
       onSubmit={(event) => {
         event.preventDefault();
         if (mediaUrl.trim()) submit.mutate();
       }}
     >
-      <label className="flex flex-col gap-1 text-sm">
-        Media URL
-        <input
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="post-media-url">Media URL</Label>
+        <Input
+          id="post-media-url"
           type="url"
           value={mediaUrl}
           onChange={(event) => setMediaUrl(event.target.value)}
           required
           placeholder="https://…/reel-cover.jpg"
-          className="border-border bg-background rounded-md border p-2"
         />
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        Caption (optional)
-        <input
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="post-caption">Caption (optional)</Label>
+        <Input
+          id="post-caption"
           value={caption}
           onChange={(event) => setCaption(event.target.value)}
           maxLength={500}
-          className="border-border bg-background rounded-md border p-2"
         />
-      </label>
+      </div>
       {submit.isError ? (
-        <p role="alert" className="text-muted-foreground text-xs">
+        <p role="alert" className="text-destructive text-xs">
           {submit.error.message}
         </p>
       ) : null}
-      <Button type="submit" size="sm" disabled={submit.isPending}>
+      <Button type="submit" disabled={submit.isPending}>
         {submit.isPending ? "Adding…" : "Add post"}
       </Button>
     </form>

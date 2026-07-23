@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getMyProfiles, listMyCategories } from "@plugfolio/core";
-import { CategoryManager } from "@/features/product-tagging";
+import { CategoryManager, DashboardPageHeader, DashboardShell } from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -32,18 +31,9 @@ export default async function DashboardCategoriesPage({
   );
 
   return (
-    <main className="mx-auto max-w-md px-4 pb-8">
-      <nav className="py-4">
-        <Link href="/dashboard" className="text-muted-foreground text-sm">
-          ← Dashboard
-        </Link>
-      </nav>
-      <header className="pb-6">
-        <h1 className="font-display text-2xl font-semibold">
-          Categories · <span className="text-muted-foreground">@{active.username}</span>
-        </h1>
-      </header>
+    <DashboardShell profiles={profiles} active={active}>
+      <DashboardPageHeader title="Categories" eyebrow={`@${active.username}`} />
       <CategoryManager profileId={active.id} categories={categories} />
-    </main>
+    </DashboardShell>
   );
 }

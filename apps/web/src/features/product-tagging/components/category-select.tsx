@@ -1,6 +1,7 @@
 "use client";
 
 import type { CategoryView } from "@plugfolio/core";
+import { NativeSelect, NativeSelectOption } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -34,24 +35,23 @@ export function CategorySelect({ target, categories, currentCategoryId }: Catego
   return (
     <label className="text-muted-foreground flex items-center gap-2 text-xs">
       Category
-      <select
+      <NativeSelect
         value={value}
         disabled={save.isPending}
         onChange={(event) => {
           setValue(event.target.value);
           save.mutate(event.target.value || null);
         }}
-        className="border-border bg-background rounded-md border p-1 text-xs"
       >
-        <option value="">None</option>
+        <NativeSelectOption value="">None</NativeSelectOption>
         {categories.map((category) => (
-          <option key={category.id} value={category.id}>
+          <NativeSelectOption key={category.id} value={category.id}>
             {category.title}
-          </option>
+          </NativeSelectOption>
         ))}
-      </select>
+      </NativeSelect>
       {save.isError ? (
-        <span role="alert" className="text-xs">
+        <span role="alert" className="text-destructive text-xs">
           {save.error.message}
         </span>
       ) : null}

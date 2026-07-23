@@ -1,8 +1,9 @@
 "use client";
 
 import type { ManagerView } from "@plugfolio/core";
-import { Button } from "@plugfolio/ui";
+import { Avatar, AvatarFallback, Button, Input } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
+import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -10,6 +11,8 @@ import { useState } from "react";
 export type ManagerControlsProps = {
   profileId: string;
   managers: readonly ManagerView[];
+  /** MAX_MANAGERS_PER_PROFILE, passed from the server — core stays out of the client bundle. */
+  maxManagers: number;
 };
 
 async function send(path: string, method: string, body?: unknown): Promise<void> {
@@ -27,9 +30,10 @@ async function send(path: string, method: string, body?: unknown): Promise<void>
   }
 }
 
-export function ManagerControls({ profileId, managers }: ManagerControlsProps) {
+export function ManagerControls({ profileId, managers, maxManagers }: ManagerControlsProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const atCap = managers.length >= maxManagers;
 
   const invite = useMutation({
     mutationFn: () => send(`/api/profiles/${profileId}/managers`, "POST", { email }),
@@ -45,49 +49,70 @@ export function ManagerControls({ profileId, managers }: ManagerControlsProps) {
   });
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       {managers.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No Managers yet.</p>
+        <p className="text-muted-foreground text-sm">
+          No Managers yet — invite up to {maxManagers} people to help post.
+        </p>
       ) : (
-        <ul className="flex flex-col gap-2">
-          {managers.map((manager) => (
-            <li key={manager.userId} className="flex items-baseline justify-between gap-2 text-sm">
-              <span className="truncate">{manager.name ?? manager.email}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => remove.mutate(manager.userId)}
-                disabled={remove.isPending}
-              >
-                Remove
-              </Button>
-            </li>
-          ))}
+        <ul className="flex flex-col gap-3">
+          {managers.map((manager) => {
+            const display = manager.name ?? manager.email;
+            return (
+              <li key={manager.userId} className="flex items-center gap-3">
+                <Avatar className="size-8">
+                  <AvatarFallback className="bg-muted text-foreground text-xs">
+                    {display.trim().charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="min-w-0 flex-1 truncate text-sm">{display}</span>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={`Remove ${display}`}
+                  onClick={() => {
+                    // Removal is immediate — they lose access on their next request.
+                    if (window.confirm(`Remove ${display}? They lose access immediately.`)) {
+                      remove.mutate(manager.userId);
+                    }
+                  }}
+                  disabled={remove.isPending}
+                >
+                  <X className="size-4" />
+                </Button>
+              </li>
+            );
+          })}
         </ul>
       )}
       <form
-        className="flex items-end gap-2"
+        className="flex items-center gap-2"
         onSubmit={(event) => {
           event.preventDefault();
           if (email.trim()) invite.mutate();
         }}
       >
-        <label className="flex-1">
+        <label className="min-w-0 flex-1">
           <span className="sr-only">Manager email</span>
-          <input
+          <Input
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder="helper@example.com"
-            className="border-border bg-background w-full rounded-md border p-2 text-sm"
+            disabled={atCap}
           />
         </label>
-        <Button type="submit" size="sm" disabled={invite.isPending || !email.trim()}>
-          Invite
+        <Button type="submit" size="sm" disabled={invite.isPending || atCap || !email.trim()}>
+          {invite.isPending ? "Inviting…" : "Invite"}
         </Button>
       </form>
+      {atCap ? (
+        <p className="text-muted-foreground text-xs">
+          This profile has all {maxManagers} Managers — remove one to invite another.
+        </p>
+      ) : null}
       {invite.isError || remove.isError ? (
-        <p role="alert" className="text-muted-foreground text-xs">
+        <p role="alert" className="text-destructive text-xs">
           {(invite.error ?? remove.error)?.message}
         </p>
       ) : null}

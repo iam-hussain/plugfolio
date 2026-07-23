@@ -1,8 +1,8 @@
 import type { EarningsSummary } from "@plugfolio/core";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@plugfolio/ui";
+import { Card, CardContent, CardHeader, CardTitle, StatTile } from "@plugfolio/ui";
 
 /**
- * The Earnings tab's read view: outbound taps tied to the post that drove them
+ * The Earnings read view: outbound taps tied to the post that drove them
  * ("this reel drove 312 taps"). Every figure is TRACKED — a measured tap;
  * estimated conversion figures join only when a network reports back (§6.6).
  */
@@ -13,18 +13,10 @@ export type EarningsSummaryViewProps = {
 export function EarningsSummaryView({ summary }: EarningsSummaryViewProps) {
   return (
     <div className="flex flex-col gap-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>{summary.totalTaps}</CardTitle>
-          <CardDescription>outbound taps · tracked</CardDescription>
-        </CardHeader>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>{summary.totalCodeCopies}</CardTitle>
-          <CardDescription>code copies · redemption not tracked</CardDescription>
-        </CardHeader>
-      </Card>
+      <div className="grid grid-cols-2 gap-4">
+        <StatTile label="Outbound taps · tracked" value={summary.totalTaps} />
+        <StatTile label="Code copies · not tracked" value={summary.totalCodeCopies} />
+      </div>
       <Card>
         <CardHeader>
           <CardTitle>By post</CardTitle>
@@ -37,7 +29,9 @@ export function EarningsSummaryView({ summary }: EarningsSummaryViewProps) {
               {summary.byPost.map((post) => (
                 <li key={post.postId} className="flex items-baseline justify-between gap-2">
                   <span className="truncate text-sm">{post.caption ?? "Untitled post"}</span>
-                  <span className="text-muted-foreground shrink-0 text-sm">{post.taps} taps</span>
+                  <span className="text-muted-foreground shrink-0 text-sm tabular-nums">
+                    {post.taps} taps
+                  </span>
                 </li>
               ))}
             </ul>
@@ -56,7 +50,7 @@ export function EarningsSummaryView({ summary }: EarningsSummaryViewProps) {
               {summary.byProduct.map((product) => (
                 <li key={product.productId} className="flex items-baseline justify-between gap-2">
                   <span className="truncate text-sm">{product.title}</span>
-                  <span className="text-muted-foreground shrink-0 text-sm">
+                  <span className="text-muted-foreground shrink-0 text-sm tabular-nums">
                     {product.taps} taps
                     {product.codeCopies > 0 ? ` · ${product.codeCopies} copies` : ""}
                   </span>

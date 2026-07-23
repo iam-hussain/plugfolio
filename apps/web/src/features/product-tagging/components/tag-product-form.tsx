@@ -1,8 +1,16 @@
 "use client";
 
 import type { ProductKind } from "@plugfolio/core";
-import { Button } from "@plugfolio/ui";
+import {
+  Button,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  Input,
+  Label,
+} from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
+import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { tagProduct } from "../api";
@@ -17,8 +25,6 @@ export type TagProductFormProps = {
   profileId: string;
   postId: string;
 };
-
-const inputClass = "border-border bg-background rounded-md border p-2";
 
 export function TagProductForm({ profileId, postId }: TagProductFormProps) {
   const router = useRouter();
@@ -59,98 +65,120 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
 
   return (
     <form
-      className="flex flex-col gap-3"
+      className="flex flex-col gap-4"
       onSubmit={(event) => {
         event.preventDefault();
         if (canSubmit) submit.mutate();
       }}
     >
-      <label className="flex flex-col gap-1 text-sm">
-        Product URL
-        <input
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="tag-url">Product URL</Label>
+        <Input
+          id="tag-url"
           type="url"
           value={url}
           onChange={(event) => setUrl(event.target.value)}
           required
-          placeholder="https://retailer.com/product — we grab title, image & price"
-          className={inputClass}
+          placeholder="https://retailer.com/product"
         />
-      </label>
+        <p className="text-muted-foreground text-xs">We grab the title, image &amp; price.</p>
+      </div>
 
-      <fieldset className="flex gap-4 text-sm">
+      {/* Kind toggle (ADR-0011): a two-option segmented control, not a dropdown. */}
+      <fieldset>
         <legend className="sr-only">Whose product is this?</legend>
-        <label className="flex items-center gap-1.5">
-          <input
-            type="radio"
-            name="kind"
-            checked={kind === "affiliate"}
-            onChange={() => setKind("affiliate")}
-          />
-          Affiliate product
-        </label>
-        <label className="flex items-center gap-1.5">
-          <input type="radio" name="kind" checked={kind === "own"} onChange={() => setKind("own")} />
-          My own product
-        </label>
+        <div className="border-border grid grid-cols-2 gap-1 rounded-md border p-1" role="presentation">
+          {(
+            [
+              ["affiliate", "Affiliate product"],
+              ["own", "My own product"],
+            ] as const
+          ).map(([value, label]) => (
+            <label
+              key={value}
+              className={`flex h-9 cursor-pointer items-center justify-center rounded-sm text-sm font-medium ${
+                kind === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+              }`}
+            >
+              <input
+                type="radio"
+                name="kind"
+                className="sr-only"
+                checked={kind === value}
+                onChange={() => setKind(value)}
+              />
+              {label}
+            </label>
+          ))}
+        </div>
       </fieldset>
 
-      <label className="flex flex-col gap-1 text-sm">
-        {kind === "own" ? "Your store / product link" : "Your affiliate link"}
-        <input
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="tag-affiliate-url">
+          {kind === "own" ? "Your store / product link" : "Your affiliate link"}
+        </Label>
+        <Input
+          id="tag-affiliate-url"
           type="url"
           value={affiliateUrl}
           onChange={(event) => setAffiliateUrl(event.target.value)}
           placeholder={
             kind === "own" ? "https://your-store.com/product" : "https://…/your-affiliate-link"
           }
-          className={inputClass}
         />
-      </label>
+      </div>
 
-      <details className="text-sm">
-        <summary className="text-muted-foreground cursor-pointer">+ Add a coupon</summary>
-        <div className="flex flex-col gap-3 pt-3">
-          <label className="flex flex-col gap-1">
-            Code
-            <input
-              value={couponCode}
-              onChange={(event) => setCouponCode(event.target.value)}
-              maxLength={40}
-              placeholder="MAYA15"
-              className={inputClass}
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            Valid till (optional)
-            <input
-              type="date"
-              value={offerEnds}
-              onChange={(event) => setOfferEnds(event.target.value)}
-              className={inputClass}
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            In-store note (optional)
-            <input
-              value={inStoreNote}
-              onChange={(event) => setInStoreNote(event.target.value)}
-              maxLength={200}
-              placeholder="Show this code at the counter — Indiranagar store"
-              className={inputClass}
-            />
-            <span className="text-muted-foreground text-xs">
-              A coupon needs the link above, an in-store note, or both.
-            </span>
-          </label>
-        </div>
-      </details>
+      <Collapsible>
+        <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm">
+          <ChevronDown className="size-4" />
+          Add a coupon
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="flex flex-col gap-4 pt-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="tag-coupon-code">Code</Label>
+                <Input
+                  id="tag-coupon-code"
+                  value={couponCode}
+                  onChange={(event) => setCouponCode(event.target.value)}
+                  maxLength={40}
+                  placeholder="MAYA15"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="tag-coupon-ends">Valid till (optional)</Label>
+                <Input
+                  id="tag-coupon-ends"
+                  type="date"
+                  value={offerEnds}
+                  onChange={(event) => setOfferEnds(event.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="tag-coupon-note">In-store note (optional)</Label>
+              <Input
+                id="tag-coupon-note"
+                value={inStoreNote}
+                onChange={(event) => setInStoreNote(event.target.value)}
+                maxLength={200}
+                placeholder="Show this code at the counter — Indiranagar store"
+              />
+              <p className="text-muted-foreground text-xs">
+                A coupon needs the link above, an in-store note, or both.
+              </p>
+            </div>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
 
       {submit.isError ? (
-        <p role="alert" className="text-muted-foreground text-xs">
+        <p role="alert" className="text-destructive text-xs">
           {submit.error.message}
         </p>
       ) : null}
-      <Button type="submit" size="sm" disabled={submit.isPending || !canSubmit}>
+      <Button type="submit" disabled={submit.isPending || !canSubmit}>
         {submit.isPending ? "Tagging…" : "Tag product"}
       </Button>
     </form>
