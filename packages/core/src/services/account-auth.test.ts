@@ -27,7 +27,7 @@ function makeDeps(now = () => new Date("2026-07-22T00:00:00.000Z")) {
     async createWithPassword({ email, passwordHash }) {
       if ([...users.values()].some((u) => u.email === email)) return "exists";
       const id = `user-${users.size + 1}`;
-      users.set(id, { id, email, passwordHash, emailVerified: null });
+      users.set(id, { id, email, passwordHash, emailVerified: null, suspendedAt: null });
       return { id };
     },
     async setPassword(userId, passwordHash) {
@@ -108,6 +108,24 @@ describe("register → verify → login", () => {
     );
   });
 
+  it("a suspended account cannot log in — but only after the password check", async () => {
+    const { deps, lastToken, users } = makeDeps();
+    await registerAccount(deps, { email: EMAIL, password: PASSWORD });
+    await verifyEmail(deps, { token: lastToken() });
+    const [id, user] = [...users.entries()][0]!;
+    users.set(id, { ...user, suspendedAt: new Date() });
+
+    expect(await verifyCredentials(deps, { email: EMAIL, password: PASSWORD })).toEqual({
+      ok: false,
+      reason: "suspended",
+    });
+    // Wrong password stays "invalid" — suspension is never an email oracle.
+    expect(await verifyCredentials(deps, { email: EMAIL, password: "wrong-pass-1" })).toEqual({
+      ok: false,
+      reason: "invalid",
+    });
+  });
+
   it("verification tokens are single-use", async () => {
     const { deps, lastToken } = makeDeps();
     await registerAccount(deps, { email: EMAIL, password: PASSWORD });
@@ -121,7 +139,13 @@ describe("password reset", () => {
   it("resets the password and verifies the email (the invited-Manager first password)", async () => {
     const { deps, lastToken, users } = makeDeps();
     // A passwordless, unverified user — exactly what a Manager invite creates.
-    users.set("user-1", { id: "user-1", email: EMAIL, passwordHash: null, emailVerified: null });
+    users.set("user-1", {
+      id: "user-1",
+      email: EMAIL,
+      passwordHash: null,
+      emailVerified: null,
+      suspendedAt: null,
+    });
 
     await requestPasswordReset(deps, { email: EMAIL });
     await resetPassword(deps, { token: lastToken(), password: PASSWORD });

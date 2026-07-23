@@ -24,7 +24,7 @@ export type SignInScreenProps = {
   initialRole?: AuthRole;
 };
 
-type LoginState = "idle" | "invalid" | "unverified";
+type LoginState = "idle" | "invalid" | "unverified" | "suspended";
 
 export function SignInScreen({ callbackUrl = "/", initialRole = "creator" }: SignInScreenProps) {
   const router = useRouter();
@@ -38,7 +38,11 @@ export function SignInScreen({ callbackUrl = "/", initialRole = "creator" }: Sig
     mutationFn: async () => {
       const result = await signIn("credentials", { email, password, redirect: false });
       if (result?.error) {
-        setState(result.code === "unverified" ? "unverified" : "invalid");
+        setState(
+          result.code === "unverified" || result.code === "suspended"
+            ? result.code
+            : "invalid",
+        );
         return;
       }
       setState("idle");
@@ -86,6 +90,11 @@ export function SignInScreen({ callbackUrl = "/", initialRole = "creator" }: Sig
         {state === "invalid" ? (
           <p role="alert" className="text-brand-coral mt-2.5 text-[12.5px]">
             Wrong email or password.
+          </p>
+        ) : null}
+        {state === "suspended" ? (
+          <p role="alert" className="text-brand-coral mt-2.5 text-[12.5px]">
+            This account is suspended. Contact support.
           </p>
         ) : null}
         {state === "unverified" ? (

@@ -9,6 +9,8 @@ export type AuthAccount = {
   readonly id: string;
   readonly passwordHash: string | null;
   readonly emailVerified: Date | null;
+  /** Admin suspension (docs/implementation/admin-app.md): set = login blocked. */
+  readonly suspendedAt: Date | null;
 };
 
 export type AuthAccountRepository = {

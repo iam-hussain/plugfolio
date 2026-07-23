@@ -206,6 +206,42 @@ export {
   type CredentialsResult,
 } from "./services/account-auth";
 export { hashPassword } from "./auth/password";
+// Admin app (docs/implementation/admin-app.md)
+export type {
+  AdminAccount,
+  AdminUserRepository,
+  AdminAuditEntry,
+  AdminAuditView,
+  AdminAuditRepository,
+  AppSettingsRepository,
+  AdminMemberRow,
+  AdminMemberRepository,
+  AdminOverview,
+  AdminOverviewRepository,
+} from "./ports/admin-repository";
+export {
+  verifyAdminCredentials,
+  type AdminAuthDeps,
+  type AdminCredentialsResult,
+} from "./services/admin-auth";
+export {
+  BASELINE_RESERVED_USERNAMES,
+  getReservedUsernames,
+  setReservedUsernames,
+  isUsernameReserved,
+  getFeatureFlags,
+  isFeatureEnabled,
+  setFeatureFlag,
+  removeFeatureFlag,
+  type AppSettingsDeps,
+  type AppSettingsAdminDeps,
+} from "./services/app-settings";
+export {
+  searchMembers,
+  suspendMember,
+  unsuspendMember,
+  type AdminMembersDeps,
+} from "./services/admin-members";
 export {
   followProfile,
   unfollowProfile,

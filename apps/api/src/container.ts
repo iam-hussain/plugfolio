@@ -1,5 +1,6 @@
 import type { AuthMailer } from "@plugfolio/core";
 import {
+  createAppSettingsRepository,
   createAuthAccountRepository,
   createAuthTokenRepository,
   createBusinessRepository,
@@ -42,6 +43,7 @@ export const repositories = {
   connections: createConnectionRepository(),
   managers: createManagerRepository(),
   users: createUserRepository(),
+  settings: createAppSettingsRepository(),
   postWrites: createPostWriteRepository(),
   productWrites: createProductWriteRepository(),
 };

@@ -191,7 +191,11 @@ app.post("/comments", async (c) => {
 app.patch("/me/handle", async (c) => {
   const userId = await requireUserId(c);
   const input = updateMemberHandleInput.parse(await c.req.json());
-  await updateMemberHandle({ users: repositories.users }, userId, input);
+  await updateMemberHandle(
+    { users: repositories.users, settings: repositories.settings },
+    userId,
+    input,
+  );
   return c.json({ updated: true });
 });
 

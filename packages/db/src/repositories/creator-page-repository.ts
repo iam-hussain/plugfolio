@@ -21,6 +21,10 @@ const productSelect = {
   categoryId: true,
 } as const;
 
+/** Admin suspension (docs/implementation/admin-app.md): a suspended profile —
+ * or any profile of a suspended account — is off every public read (404). */
+const liveProfile = { suspendedAt: null, user: { suspendedAt: null } } as const;
+
 /**
  * Prisma implementation of the `CreatorPageReadRepository` port — the read
  * side of the no-login shopper surface. Selects exactly the read-model shape
@@ -29,8 +33,8 @@ const productSelect = {
 export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorPageReadRepository {
   return {
     async findByUsername(username: string): Promise<CreatorPage | null> {
-      const row = await db.profile.findUnique({
-        where: { username },
+      const row = await db.profile.findFirst({
+        where: { username, ...liveProfile },
         select: {
           id: true,
           username: true,
@@ -58,7 +62,7 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
 
     async listProducts(username: string): Promise<readonly ShopperProduct[]> {
       return db.product.findMany({
-        where: { profile: { username } },
+        where: { profile: { username, ...liveProfile } },
         orderBy: { createdAt: "desc" },
         select: productSelect,
       });
@@ -67,7 +71,7 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
     async findPost(username: string, postId: string): Promise<ShopperPost | null> {
       // Scoped to the handle so /a/post/<id-of-b's-post> is a 404, not a leak.
       return db.post.findFirst({
-        where: { id: postId, profile: { username } },
+        where: { id: postId, profile: { username, ...liveProfile } },
         select: {
           id: true,
           mediaUrl: true,
@@ -80,7 +84,7 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
 
     async findProduct(username: string, productId: string): Promise<ShopperProductView | null> {
       const product = await db.product.findFirst({
-        where: { id: productId, profile: { username } },
+        where: { id: productId, profile: { username, ...liveProfile } },
         select: {
           ...productSelect,
           profileId: true,

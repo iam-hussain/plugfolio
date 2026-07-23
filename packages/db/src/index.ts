@@ -23,6 +23,13 @@ export {
 export { createSessionRepository } from "./repositories/session-repository";
 export { createManagerRepository, createUserRepository } from "./repositories/manager-repository";
 export {
+  createAdminUserRepository,
+  createAdminAuditRepository,
+  createAppSettingsRepository,
+  createAdminMemberRepository,
+  createAdminOverviewRepository,
+} from "./repositories/admin-repository";
+export {
   createConnectionRepository,
   createPostWriteRepository,
   createProductWriteRepository,

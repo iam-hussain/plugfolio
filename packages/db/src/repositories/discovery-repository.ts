@@ -5,6 +5,9 @@ import type {
 } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 
+/** Suspended profiles/accounts never surface on Explore (admin-app note). */
+const liveProfile = { suspendedAt: null, user: { suspendedAt: null } } as const;
+
 /**
  * Prisma implementation of the `DiscoveryReadRepository` port — the public
  * Explore surface's read side. Counts come from relation `_count`; the card
@@ -14,7 +17,10 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
   return {
     async listCreators(query: string, limit: number): Promise<readonly DiscoveryCreator[]> {
       const rows = await db.profile.findMany({
-        where: query ? { username: { contains: query, mode: "insensitive" } } : undefined,
+        where: {
+          ...liveProfile,
+          ...(query ? { username: { contains: query, mode: "insensitive" } } : undefined),
+        },
         orderBy: { createdAt: "desc" },
         take: limit,
         select: {
@@ -40,7 +46,10 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
 
     async listProducts(query: string, limit: number): Promise<readonly DiscoveryProduct[]> {
       const rows = await db.product.findMany({
-        where: query ? { title: { contains: query, mode: "insensitive" } } : undefined,
+        where: {
+          profile: liveProfile,
+          ...(query ? { title: { contains: query, mode: "insensitive" } } : undefined),
+        },
         orderBy: { createdAt: "desc" },
         take: limit,
         select: {

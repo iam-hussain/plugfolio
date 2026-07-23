@@ -119,7 +119,7 @@ export async function resetPassword(
 
 export type CredentialsResult =
   | { readonly ok: true; readonly userId: string }
-  | { readonly ok: false; readonly reason: "invalid" | "unverified" };
+  | { readonly ok: false; readonly reason: "invalid" | "unverified" | "suspended" };
 
 export async function verifyCredentials(
   deps: Pick<AccountAuthDeps, "accounts">,
@@ -130,6 +130,8 @@ export async function verifyCredentials(
   if (!account?.passwordHash || !verifyPassword(input.password, account.passwordHash)) {
     return { ok: false, reason: "invalid" };
   }
+  // Only after the password check — suspension is never an email oracle.
+  if (account.suspendedAt) return { ok: false, reason: "suspended" };
   if (!account.emailVerified) return { ok: false, reason: "unverified" };
   return { ok: true, userId: account.id };
 }
