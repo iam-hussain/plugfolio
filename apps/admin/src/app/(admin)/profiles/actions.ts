@@ -8,7 +8,6 @@ import {
   unsuspendProfile,
 } from "@plugfolio/core";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/server/auth";
 import { adminProfilesDeps } from "@/server/container";
@@ -27,23 +26,26 @@ export async function unsuspendProfileAction(formData: FormData): Promise<void> 
   revalidatePath("/profiles");
 }
 
-export async function releaseUsernameAction(formData: FormData): Promise<void> {
+export type ActionResult = { ok: true } | { ok: false; error: string };
+
+export async function releaseUsernameAction(formData: FormData): Promise<ActionResult> {
   const admin = await requireAdmin();
   const parsed = releaseUsernameInput.safeParse({
     profileId: formData.get("profileId"),
     username: formData.get("username"),
   });
   if (!parsed.success) {
-    redirect(`/profiles?error=${encodeURIComponent("3–30 characters: letters, numbers, dots, dashes")}`);
+    return { ok: false, error: "3–30 characters: lowercase letters, numbers, dots, dashes" };
   }
   try {
     await releaseProfileUsername(adminProfilesDeps, admin.id, parsed.data);
   } catch (error) {
-    // Known outcomes (reserved / taken) surface on the page, not a crash.
+    // Known outcomes (reserved / taken) surface as an error toast, not a crash.
     if (error instanceof ConflictError) {
-      redirect(`/profiles?error=${encodeURIComponent(error.message)}`);
+      return { ok: false, error: `Username not released — ${error.message.toLowerCase()}` };
     }
     throw error;
   }
   revalidatePath("/profiles");
+  return { ok: true };
 }

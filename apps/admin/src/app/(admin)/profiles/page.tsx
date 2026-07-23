@@ -101,6 +101,8 @@ export default async function ProfilesPage({
                           the moment you confirm. Recorded in the audit log.
                         </>
                       }
+                      current={`/${profile.username}`}
+                      becomes={`/${suggested}`}
                       label="New username for this page"
                       name="username"
                       defaultValue={suggested}
@@ -108,16 +110,9 @@ export default async function ProfilesPage({
                       patternHint="3–30 characters: lowercase letters, numbers, dots, dashes. Keep the suggestion or type your own."
                       hiddenFields={{ profileId: profile.id }}
                       confirmLabel="Release & rename"
-                      confirmVariant="destructive"
                       action={releaseUsernameAction}
-                    >
-                      <div className="bg-muted rounded-md p-3 text-sm">
-                        <p className="text-muted-foreground text-xs">Current</p>
-                        <p className="font-mono">/{profile.username}</p>
-                        <p className="text-muted-foreground mt-2 text-xs">Becomes</p>
-                        <p className="font-mono">/{suggested} — or the name you enter below</p>
-                      </div>
-                    </PromptDialog>
+                      successToast="Username released"
+                    />
                     <form
                       action={profile.suspendedAt ? unsuspendProfileAction : suspendProfileAction}
                     >

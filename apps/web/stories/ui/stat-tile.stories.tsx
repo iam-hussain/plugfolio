@@ -14,7 +14,7 @@ export default meta;
 type Story = StoryObj<typeof StatTile>;
 
 export const Single: Story = {
-  args: { label: "Taps · 7d", value: 312 },
+  args: { label: "Taps · 7d", value: "128,904", delta: "+12% vs prior", interactive: true },
 };
 
 export const DashboardGrid: Story = {
