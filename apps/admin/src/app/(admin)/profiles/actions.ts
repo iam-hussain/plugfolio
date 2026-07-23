@@ -1,7 +1,14 @@
 "use server";
 
-import { releaseProfileUsername, suspendProfile, unsuspendProfile } from "@plugfolio/core";
+import {
+  ConflictError,
+  releaseProfileUsername,
+  releaseUsernameInput,
+  suspendProfile,
+  unsuspendProfile,
+} from "@plugfolio/core";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/server/auth";
 import { adminProfilesDeps } from "@/server/container";
@@ -22,10 +29,21 @@ export async function unsuspendProfileAction(formData: FormData): Promise<void> 
 
 export async function releaseUsernameAction(formData: FormData): Promise<void> {
   const admin = await requireAdmin();
-  await releaseProfileUsername(
-    adminProfilesDeps,
-    admin.id,
-    profileId.parse(formData.get("profileId")),
-  );
+  const parsed = releaseUsernameInput.safeParse({
+    profileId: formData.get("profileId"),
+    username: formData.get("username"),
+  });
+  if (!parsed.success) {
+    redirect(`/profiles?error=${encodeURIComponent("3–30 characters: letters, numbers, dots, dashes")}`);
+  }
+  try {
+    await releaseProfileUsername(adminProfilesDeps, admin.id, parsed.data);
+  } catch (error) {
+    // Known outcomes (reserved / taken) surface on the page, not a crash.
+    if (error instanceof ConflictError) {
+      redirect(`/profiles?error=${encodeURIComponent(error.message)}`);
+    }
+    throw error;
+  }
   revalidatePath("/profiles");
 }

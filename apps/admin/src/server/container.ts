@@ -50,6 +50,7 @@ export const appSettingsDeps = {
 export const adminProfilesDeps = {
   profiles: repositories.profiles,
   audit: repositories.audit,
+  settings: repositories.settings,
   now: clock.now,
 };
 

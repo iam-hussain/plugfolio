@@ -15,7 +15,7 @@ directly via core services + db repositories — no admin endpoints in
 | **Sign in** (`/signin`) | Email + password against `AdminUser`. No sign-up, no reset — operators are seeded by CLI. |
 | **Dashboard** (`/`) | Count tiles: members, profiles, businesses, posts, products, and 7-day taps / code copies / comments. |
 | **Members** (`/members`) | Search by email/@handle/name; role + status badges; **Suspend / Unsuspend** per member. |
-| **Profiles** (`/profiles`) | Search by username/owner email; content counts; **Suspend / Unsuspend** one page (owner still signs in) and **Release username** (drops the page to a fresh random `creator-…` name — settles ADR-0004's "first verified owner keeps it" disputes; the freed name is instantly claimable). |
+| **Profiles** (`/profiles`) | Search by username/owner email; content counts; **Suspend / Unsuspend** one page (owner still signs in) and **Release username** — a `PromptDialog` showing current → suggested random `creator-…` name, editable so the admin can accept or type a replacement (validated: slug shape, not reserved, not taken; conflicts surface as a page alert). Settles ADR-0004's "first verified owner keeps it" disputes; the freed name is instantly claimable. |
 | **Posts** (`/posts`) | Search caption/profile; **Remove** (stolen/illegal media). Products stay; taps survive (`postId` SetNull). |
 | **Products** (`/products`) | Search title/profile; kind + coupon (with Expired badge); **Clear coupon** and **Remove** (counterfeit/prohibited links — taps cascade, same as a creator's own removal). |
 | **Comments** (`/comments`) | Newest-first firehose; shows personal `@handle` vs speaks-as-profile badge; **Delete** (replies cascade). |

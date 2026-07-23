@@ -257,6 +257,8 @@ export {
   releaseProfileUsername,
   type AdminProfilesDeps,
 } from "./services/admin-profiles";
+export { releaseUsernameInput, type ReleaseUsernameInput } from "./schemas/admin";
+export { generateProfileUsername } from "./services/creator-content";
 export {
   searchComments,
   searchPosts,
