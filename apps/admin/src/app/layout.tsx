@@ -35,8 +35,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// Same brand chrome as the web app (light default; icons ride the file
-// conventions: icon.svg + apple-icon.tsx, copied from apps/web — one mark).
+// Same brand chrome as the web app (light default). Icons ride the file
+// conventions (icon.svg + apple-icon.tsx) but use the dark-surface variant —
+// lime mark on Ink — so the admin tab is tellable from the violet web tab.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,

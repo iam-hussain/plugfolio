@@ -1,9 +1,9 @@
 import { ImageResponse } from "next/og";
 import { brand } from "@plugfolio/tokens";
 
-// iOS home-screen tile: flat white PlugMark on Brand Violet (under-24px flat
-// rule doesn't apply at 180px, but the tile lockup is the flat symbol per the
-// app-tile spec). iOS rounds the corners itself — full-bleed background.
+// ADMIN home-screen tile: the dark-surface treatment (lime mark on Ink) so a
+// pinned admin app reads differently from the violet web tile. Same flat
+// PlugMark geometry; iOS rounds the corners itself — full-bleed background.
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
@@ -17,14 +17,14 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: brand.violet,
+          background: brand.ink,
         }}
       >
         <svg width="128" height="128" viewBox="0 0 100 100">
           <g
             transform="translate(50 51) scale(0.9) translate(-50 -51)"
-            fill="#FFFFFF"
-            stroke="#FFFFFF"
+            fill={brand.lime}
+            stroke={brand.lime}
             strokeWidth={3}
             strokeLinejoin="round"
           >
