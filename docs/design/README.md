@@ -38,6 +38,12 @@ Priority: **P0** = the core loop (must be flawless); **P1** = supports a v1 jour
 | 12 | Collabs & Negotiation Thread | Creator + Business | P1 | [business/12-collabs-and-thread.md](./business/12-collabs-and-thread.md) |
 | 13 | Products & Offers (affiliate · own · coupon) | Shopper + Creator | P0 | [13-products-and-offers.md](./13-products-and-offers.md) |
 
+## Admin console
+
+The internal operator app (`apps/admin`, ADR-0014) has its own all-screens brief —
+login + twelve console screens, desktop-first, same tokens and UI kit:
+[admin-console.md](./admin-console.md).
+
 ## Change briefs
 
 Product changes that arrive after a page brief was written get a **change brief** rather
