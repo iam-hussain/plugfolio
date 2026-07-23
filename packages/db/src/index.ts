@@ -34,6 +34,12 @@ export {
   createAdminContentRepository,
 } from "./repositories/admin-moderation-repository";
 export {
+  createAdminBusinessRepository,
+  createAdminRequirementRepository,
+  createAdminCollabRepository,
+  createAdminAnalyticsRepository,
+} from "./repositories/admin-oversight-repository";
+export {
   createConnectionRepository,
   createPostWriteRepository,
   createProductWriteRepository,

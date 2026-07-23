@@ -1,9 +1,13 @@
 import {
+  createAdminAnalyticsRepository,
   createAdminAuditRepository,
+  createAdminBusinessRepository,
+  createAdminCollabRepository,
   createAdminContentRepository,
   createAdminMemberRepository,
   createAdminOverviewRepository,
   createAdminProfileRepository,
+  createAdminRequirementRepository,
   createAdminUserRepository,
   createAppSettingsRepository,
 } from "@plugfolio/db";
@@ -20,6 +24,10 @@ export const repositories = {
   members: createAdminMemberRepository(),
   profiles: createAdminProfileRepository(),
   content: createAdminContentRepository(),
+  businesses: createAdminBusinessRepository(),
+  requirements: createAdminRequirementRepository(),
+  collabs: createAdminCollabRepository(),
+  analytics: createAdminAnalyticsRepository(),
   overview: createAdminOverviewRepository(),
 };
 
@@ -48,5 +56,12 @@ export const adminProfilesDeps = {
 /** Content takedowns: comments, posts, products. */
 export const adminContentDeps = {
   content: repositories.content,
+  audit: repositories.audit,
+};
+
+/** Marketplace oversight: business logo strip, scam-brief removal. */
+export const adminOversightDeps = {
+  businesses: repositories.businesses,
+  requirements: repositories.requirements,
   audit: repositories.audit,
 };
