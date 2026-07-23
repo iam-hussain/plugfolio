@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@plugfolio/ui";
+import { Button, Input } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -28,26 +28,21 @@ export function HandleForm({ currentHandle }: HandleFormProps) {
         if (username.trim()) save.mutate();
       }}
     >
-      <label htmlFor="member-handle" className="text-sm font-medium">
-        Your handle
-      </label>
-      <p className="text-muted-foreground text-xs">
-        How you appear when you follow or comment. Not a login — you still sign in by email.
-      </p>
       <div className="flex items-center gap-2">
         <span className="text-muted-foreground" aria-hidden>
           @
         </span>
-        <input
-          id="member-handle"
-          value={username}
-          onChange={(event) => setUsername(event.target.value.toLowerCase())}
-          minLength={3}
-          maxLength={30}
-          pattern="[a-z0-9][a-z0-9._\-]{2,29}"
-          title="3–30 characters: letters, numbers, dots, dashes"
-          className="border-border bg-background flex-1 rounded-md border p-2 text-sm"
-        />
+        <label className="min-w-0 flex-1">
+          <span className="sr-only">Your handle</span>
+          <Input
+            value={username}
+            onChange={(event) => setUsername(event.target.value.toLowerCase())}
+            minLength={3}
+            maxLength={30}
+            pattern="[a-z0-9][a-z0-9._\-]{2,29}"
+            title="3–30 characters: letters, numbers, dots, dashes"
+          />
+        </label>
         <Button
           type="submit"
           size="sm"
@@ -57,7 +52,7 @@ export function HandleForm({ currentHandle }: HandleFormProps) {
         </Button>
       </div>
       {save.isError ? (
-        <p role="alert" className="text-muted-foreground text-xs">
+        <p role="alert" className="text-destructive text-xs">
           {save.error.message}
         </p>
       ) : null}

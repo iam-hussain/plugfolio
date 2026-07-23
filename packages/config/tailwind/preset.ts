@@ -28,7 +28,15 @@ const preset = {
           DEFAULT: "hsl(var(--surface-muted) / <alpha-value>)",
           foreground: "hsl(var(--text-muted) / <alpha-value>)",
         },
-        border: "hsl(var(--border) / <alpha-value>)",
+        // Third text tier (Admin design): timestamps, table eyebrows, hints.
+        faint: "hsl(var(--text-faint) / <alpha-value>)",
+        // Selected fill (Violet Wash on light) — nav-active, soft chips, sel-bar.
+        active: "hsl(var(--surface-active) / <alpha-value>)",
+        border: {
+          DEFAULT: "hsl(var(--border) / <alpha-value>)",
+          // Stronger hairline for inputs & secondary-button outlines.
+          strong: "hsl(var(--border-strong) / <alpha-value>)",
+        },
         ring: "hsl(var(--ring) / <alpha-value>)",
         // shadcn semantic names, aliased onto the same tokens so every
         // generated component themes from tokens.css without new values.
@@ -65,24 +73,33 @@ const preset = {
           canvas: "hsl(var(--brand-canvas) / <alpha-value>)",
         },
         sidebar: {
-          DEFAULT: "hsl(var(--surface-muted) / <alpha-value>)",
+          // Admin design: the rail sits on the page surface (white / #161320-ish).
+          DEFAULT: "hsl(var(--surface) / <alpha-value>)",
           foreground: "hsl(var(--text) / <alpha-value>)",
           primary: "hsl(var(--color-primary) / <alpha-value>)",
           "primary-foreground": "hsl(var(--color-primary-foreground) / <alpha-value>)",
-          // Selected/hover fill: Violet Wash on light, violet-tinted raise on dark.
+          // Selected fill: Violet Wash + violet text (Admin design nav-active).
           accent: "hsl(var(--surface-active) / <alpha-value>)",
-          "accent-foreground": "hsl(var(--text) / <alpha-value>)",
+          "accent-foreground": "hsl(var(--color-primary) / <alpha-value>)",
           border: "hsl(var(--border) / <alpha-value>)",
           ring: "hsl(var(--ring) / <alpha-value>)",
         },
       },
       // Radius scale — Brand/Dev-spec §02: sm 8 · md 12 · lg 16 · pill 999.
+      // `panel` (14px) is the Admin design's card radius.
       borderRadius: {
         sm: "0.5rem",
         md: "0.75rem",
         lg: "var(--radius)",
         xl: "1.25rem",
+        panel: "0.875rem",
         pill: "9999px",
+      },
+      boxShadow: {
+        // Admin design elevations: hovered tiles, menus/dialogs, toasts.
+        raise: "0 10px 26px 0 hsl(var(--brand-ink) / 0.08)",
+        menu: "0 12px 30px 0 hsl(258 33% 5% / 0.18)",
+        overlay: "0 14px 40px 0 hsl(258 33% 5% / 0.22)",
       },
       fontFamily: {
         // Sora = display / wordmark / headlines; Inter = UI & body;

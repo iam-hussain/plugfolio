@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@plugfolio/ui";
+import { Button, Input, Label, Textarea } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -19,35 +19,35 @@ export function BusinessForm() {
 
   return (
     <form
-      className="flex flex-col gap-3"
+      className="flex flex-col gap-4"
       onSubmit={(event) => {
         event.preventDefault();
         if (name.trim() && description.trim()) submit.mutate();
       }}
     >
-      <label className="flex flex-col gap-1 text-sm">
-        Business name
-        <input
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="business-name">Business name</Label>
+        <Input
+          id="business-name"
           value={name}
           onChange={(event) => setName(event.target.value)}
           maxLength={80}
           required
-          className="border-border bg-background rounded-md border p-2"
         />
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        What do you sell?
-        <textarea
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="business-description">What do you sell?</Label>
+        <Textarea
+          id="business-description"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           maxLength={280}
           rows={2}
           required
-          className="border-border bg-background rounded-md border p-2"
         />
-      </label>
+      </div>
       {submit.isError ? (
-        <p role="alert" className="text-muted-foreground text-xs">
+        <p role="alert" className="text-destructive text-xs">
           {submit.error.message}
         </p>
       ) : null}

@@ -1,14 +1,16 @@
 "use client";
 
-import { Button } from "@plugfolio/ui";
+import { Button, Input } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
+import { SendHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { agreeCollab, sendCollabMessage } from "../api";
 
 /**
  * The thread's client actions: send a message, accept the terms. "Agreed"
- * needs BOTH sides; money changes hands off-platform (§2.3).
+ * needs BOTH sides; money changes hands off-platform (§2.3). Accept is the
+ * view's one accent moment (brief 12).
  */
 export type ThreadActionsProps = {
   collabId: string;
@@ -36,27 +38,36 @@ export function ThreadActions({ collabId, hasAgreed, otherSideAgreed }: ThreadAc
   return (
     <div className="flex flex-col gap-3">
       <form
-        className="flex items-end gap-2"
+        className="flex items-center gap-2"
         onSubmit={(event) => {
           event.preventDefault();
           if (body.trim()) send.mutate();
         }}
       >
-        <label className="flex-1">
+        <label className="min-w-0 flex-1">
           <span className="sr-only">Message</span>
-          <input
+          <Input
             value={body}
             onChange={(event) => setBody(event.target.value)}
             maxLength={1000}
             placeholder="Message…"
-            className="border-border bg-background w-full rounded-md border p-2 text-sm"
           />
         </label>
-        <Button type="submit" size="sm" disabled={send.isPending || !body.trim()}>
-          Send
+        <Button
+          type="submit"
+          size="icon"
+          aria-label="Send message"
+          disabled={send.isPending || !body.trim()}
+        >
+          <SendHorizontal className="size-4" />
         </Button>
       </form>
-      <div className="flex items-center justify-between">
+      {send.isError || agree.isError ? (
+        <p role="alert" className="text-destructive text-xs">
+          {(send.error ?? agree.error)?.message}
+        </p>
+      ) : null}
+      <div className="flex items-center justify-between gap-3">
         <p className="text-muted-foreground text-xs">
           {otherSideAgreed ? "The other side has accepted." : "The other side hasn't accepted yet."}
         </p>

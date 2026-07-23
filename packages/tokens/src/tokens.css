@@ -43,11 +43,13 @@
      follow the design table (dark: page #12101C, cards #1A1726). */
   --surface: 258 26% 9%; /* #12101C page bg */
   --surface-muted: 256 24% 12%; /* #1A1726 cards, sheets, inputs */
-  --surface-active: 258 30% 18%; /* selected fills (active nav, chosen row) */
+  --surface-active: 257 26% 16%; /* #241E33 selected fills (active nav, chosen row) */
   --text: 260 40% 96%; /* #F4F2FA */
   --text-muted: 257 12% 63%; /* #9A94AC captions, @handle, price */
+  --text-faint: 258 9% 56%; /* #8C8798 third tier — timestamps, table eyebrows */
 
   --border: 256 24% 21%; /* #2C2740 hairlines, dividers, inputs */
+  --border-strong: 254 14% 24%; /* #393546 input & secondary-button borders */
   --ring: 258 90% 66%; /* keyboard focus ring */
 
   /* Destructive actions (delete/remove) — shadcn components expect it. */
@@ -74,8 +76,10 @@
   --surface-active: 255 60% 95%; /* #EFEAFB Violet Wash — selected fills */
   --text: 258 26% 9%; /* #12101C Ink */
   --text-muted: 257 9% 34%; /* #54505F */
+  --text-faint: 258 9% 56%; /* #8C8798 third tier — timestamps, table eyebrows */
 
   --border: 258 26% 92%; /* #E7E4EF */
+  --border-strong: 258 29% 86%; /* #D8D2E6 input & secondary-button borders */
   --ring: 255 92% 76%; /* #A78BFA Violet Tint */
 
   --destructive: 0 72% 45%;
@@ -94,8 +98,10 @@
     --surface-active: 255 60% 95%;
     --text: 258 26% 9%;
     --text-muted: 257 9% 34%;
+    --text-faint: 258 9% 56%;
 
     --border: 258 26% 92%;
+    --border-strong: 258 29% 86%;
     --ring: 255 92% 76%;
 
     --destructive: 0 72% 45%;

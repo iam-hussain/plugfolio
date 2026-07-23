@@ -1,4 +1,5 @@
 import type { CollabSummary } from "@plugfolio/core";
+import { Avatar, AvatarFallback, Badge, Card, CardContent } from "@plugfolio/ui";
 import Link from "next/link";
 
 /** Server-rendered list of collab threads (either side's view). */
@@ -14,25 +15,34 @@ export function CollabList({ collabs, show }: CollabListProps) {
   }
 
   return (
-    <ul className="flex flex-col gap-2">
-      {collabs.map((collab) => (
-        <li key={collab.id}>
-          <Link href={`/collabs/${collab.id}`} className="flex items-baseline justify-between gap-2">
-            <span className="truncate text-sm font-medium">
-              {show === "creator" ? `@${collab.username}` : collab.businessName}
-              {collab.requirementTitle ? (
-                <span className="text-muted-foreground font-normal">
-                  {" "}
-                  · {collab.requirementTitle}
-                </span>
-              ) : null}
-            </span>
-            <span className="text-muted-foreground shrink-0 text-xs">
-              {collab.agreed ? "Agreed" : "Negotiating"}
-            </span>
-          </Link>
-        </li>
-      ))}
+    <ul className="flex flex-col gap-3">
+      {collabs.map((collab) => {
+        const counterparty = show === "creator" ? `@${collab.username}` : collab.businessName;
+        return (
+          <li key={collab.id}>
+            <Card>
+              <CardContent className="p-0">
+                <Link href={`/collabs/${collab.id}`} className="flex items-center gap-3 p-4">
+                  <Avatar className="size-10">
+                    <AvatarFallback className="bg-muted text-foreground">
+                      {counterparty.replace("@", "").charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{counterparty}</p>
+                    <p className="text-muted-foreground truncate text-xs">
+                      {collab.requirementTitle ?? "Direct collab"}
+                    </p>
+                  </div>
+                  <Badge variant={collab.agreed ? "default" : "outline"}>
+                    {collab.agreed ? "Agreed" : "Negotiating"}
+                  </Badge>
+                </Link>
+              </CardContent>
+            </Card>
+          </li>
+        );
+      })}
     </ul>
   );
 }

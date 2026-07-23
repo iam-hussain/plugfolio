@@ -1,10 +1,28 @@
 "use client"
 
 import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@plugfolio/ui/lib/cn"
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+const tableVariants = cva("w-full caption-bottom text-sm", {
+  variants: {
+    variant: {
+      default: "",
+      // Admin design density: mono-eyebrow headers, 44px rows, muted hover.
+      dense:
+        "[&_th]:h-auto [&_th]:px-3.5 [&_th]:py-[11px] [&_th]:font-mono [&_th]:text-[10px] [&_th]:font-bold [&_th]:uppercase [&_th]:tracking-[0.09em] [&_th]:text-faint " +
+        "[&_td]:h-11 [&_td]:px-3.5 [&_td]:py-2 [&_td]:text-[13.5px] [&_tbody_tr:hover]:bg-muted",
+    },
+  },
+  defaultVariants: { variant: "default" },
+})
+
+function Table({
+  className,
+  variant,
+  ...props
+}: React.ComponentProps<"table"> & VariantProps<typeof tableVariants>) {
   return (
     <div
       data-slot="table-container"
@@ -12,7 +30,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
     >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn(tableVariants({ variant }), className)}
         {...props}
       />
     </div>
@@ -57,7 +75,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
+        "border-b transition-colors hover:bg-muted/50 has-[[aria-expanded]]:bg-muted/50 data-[state=selected]:bg-muted",
         className
       )}
       {...props}

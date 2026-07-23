@@ -20,10 +20,23 @@ const badgeVariants = cva(
           "border-border text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         ghost: "[a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         link: "text-primary underline-offset-4 [a&]:hover:underline",
+        // Admin design chips (pair with shape="square"):
+        // soft violet-wash chip — roles, live coupons, "speaks as brand".
+        "soft-primary": "bg-active text-primary",
+        // soft danger chip — Suspended / Expired / owner-suspended.
+        "soft-destructive": "bg-destructive/10 text-destructive",
+        // quiet outline chip — Active / Live / kinds / categories.
+        "outline-muted": "border-border-strong text-muted-foreground",
+      },
+      shape: {
+        pill: "",
+        // Admin design: 6px-radius chips at 11px/600.
+        square: "rounded-[6px] px-2 py-0.5 text-[11px] font-semibold leading-normal",
       },
     },
     defaultVariants: {
       variant: "default",
+      shape: "pill",
     },
   }
 )
@@ -31,6 +44,7 @@ const badgeVariants = cva(
 function Badge({
   className,
   variant = "default",
+  shape = "pill",
   asChild = false,
   ...props
 }: React.ComponentProps<"span"> &
@@ -41,7 +55,7 @@ function Badge({
     <Comp
       data-slot="badge"
       data-variant={variant}
-      className={cn(badgeVariants({ variant }), className)}
+      className={cn(badgeVariants({ variant, shape }), className)}
       {...props}
     />
   )
