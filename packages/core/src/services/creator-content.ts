@@ -54,6 +54,12 @@ async function requireOwnProfile(
   }
 }
 
+/** Random username so a page works instantly; collision odds are negligible.
+ * Also what an admin username release falls back to (admin-app note). */
+export function generateProfileUsername(): string {
+  return `creator-${randomUUID().slice(0, 8)}`;
+}
+
 export async function createProfile(
   deps: CreatorContentDeps,
   userId: string,
@@ -65,9 +71,7 @@ export async function createProfile(
   if ((await deps.profiles.countByUser(userId)) >= MAX_PROFILES_PER_ACCOUNT) {
     throw new ConflictError(`An account holds at most ${MAX_PROFILES_PER_ACCOUNT} profiles`);
   }
-  // Random username so the page works instantly; collision odds are negligible.
-  const username = `creator-${randomUUID().slice(0, 8)}`;
-  return deps.profiles.create({ userId, username });
+  return deps.profiles.create({ userId, username: generateProfileUsername() });
 }
 
 export async function createPost(

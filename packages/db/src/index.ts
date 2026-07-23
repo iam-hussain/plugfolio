@@ -30,6 +30,10 @@ export {
   createAdminOverviewRepository,
 } from "./repositories/admin-repository";
 export {
+  createAdminProfileRepository,
+  createAdminContentRepository,
+} from "./repositories/admin-moderation-repository";
+export {
   createConnectionRepository,
   createPostWriteRepository,
   createProductWriteRepository,

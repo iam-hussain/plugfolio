@@ -12,20 +12,44 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@plugfolio/ui";
-import { LayoutDashboard, LogOut, ScrollText, SlidersHorizontal, Users } from "lucide-react";
+import {
+  Image as ImageIcon,
+  LayoutDashboard,
+  LogOut,
+  MessageSquare,
+  ScrollText,
+  ShoppingBag,
+  SlidersHorizontal,
+  UserSquare,
+  Users,
+} from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logout } from "@/server/actions";
 
+type NavItem = { title: string; href: Route; icon: React.ComponentType };
+
 /** The admin nav — one entry per shipped screen, no dead links (ADR-0014). */
-const NAV = [
+const NAV: readonly { label: string | null; items: readonly NavItem[] }[] = [
   {
     label: null,
     items: [{ title: "Dashboard", href: "/", icon: LayoutDashboard }],
   },
   {
     label: "People",
-    items: [{ title: "Members", href: "/members", icon: Users }],
+    items: [
+      { title: "Members", href: "/members", icon: Users },
+      { title: "Profiles", href: "/profiles", icon: UserSquare },
+    ],
+  },
+  {
+    label: "Content",
+    items: [
+      { title: "Posts", href: "/posts", icon: ImageIcon },
+      { title: "Products", href: "/products", icon: ShoppingBag },
+      { title: "Comments", href: "/comments", icon: MessageSquare },
+    ],
   },
   {
     label: "System",
@@ -34,7 +58,7 @@ const NAV = [
       { title: "Audit log", href: "/audit", icon: ScrollText },
     ],
   },
-] as const;
+];
 
 export function AdminSidebar({ adminEmail }: { adminEmail: string }) {
   const pathname = usePathname();

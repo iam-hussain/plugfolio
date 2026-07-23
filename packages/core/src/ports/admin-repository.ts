@@ -63,6 +63,78 @@ export type AdminMemberRepository = {
   setSuspended(userId: string, at: Date | null): Promise<"ok" | "not_found">;
 };
 
+export type AdminProfileRow = {
+  readonly id: string;
+  readonly username: string;
+  readonly ownerEmail: string;
+  readonly suspendedAt: Date | null;
+  /** The owning account's suspension — darkens the page too (ADR-0014). */
+  readonly ownerSuspendedAt: Date | null;
+  readonly managerCount: number;
+  readonly postCount: number;
+  readonly productCount: number;
+  readonly followerCount: number;
+  readonly createdAt: Date;
+};
+
+export type AdminProfileRepository = {
+  /** Newest first; query matches username or owner email substring. */
+  search(query: string | undefined, limit: number): Promise<readonly AdminProfileRow[]>;
+  setSuspended(profileId: string, at: Date | null): Promise<"ok" | "not_found">;
+  /** Returns the released (previous) username for the audit trail. */
+  setUsername(
+    profileId: string,
+    username: string,
+  ): Promise<{ previous: string } | "not_found" | "taken">;
+};
+
+export type AdminCommentRow = {
+  readonly id: string;
+  readonly body: string;
+  readonly authorHandle: string;
+  /** Set when the comment speaks as a profile (ADR-0009). */
+  readonly asProfileUsername: string | null;
+  readonly pageUsername: string;
+  readonly productTitle: string | null;
+  readonly replyCount: number;
+  readonly createdAt: Date;
+};
+
+export type AdminPostRow = {
+  readonly id: string;
+  readonly mediaUrl: string;
+  readonly caption: string | null;
+  readonly username: string;
+  readonly productCount: number;
+  readonly createdAt: Date;
+};
+
+export type AdminProductRow = {
+  readonly id: string;
+  readonly title: string;
+  readonly username: string;
+  readonly kind: "affiliate" | "own";
+  readonly affiliateUrl: string | null;
+  readonly couponCode: string | null;
+  readonly offerEndsAt: Date | null;
+  readonly priceCents: number | null;
+  readonly currency: string;
+  readonly createdAt: Date;
+};
+
+/** The takedown surface: everything creators publish, searchable and removable. */
+export type AdminContentRepository = {
+  searchComments(query: string | undefined, limit: number): Promise<readonly AdminCommentRow[]>;
+  /** Replies go with their parent (schema cascade). Returns the removed body
+   * so the audit detail records what was actually deleted. */
+  deleteComment(commentId: string): Promise<{ body: string } | "not_found">;
+  searchPosts(query: string | undefined, limit: number): Promise<readonly AdminPostRow[]>;
+  deletePost(postId: string): Promise<"ok" | "not_found">;
+  searchProducts(query: string | undefined, limit: number): Promise<readonly AdminProductRow[]>;
+  deleteProduct(productId: string): Promise<{ title: string } | "not_found">;
+  clearCoupon(productId: string): Promise<"ok" | "not_found">;
+};
+
 /** The dashboard tiles — counts, plus 7-day activity. */
 export type AdminOverview = {
   readonly members: number;
