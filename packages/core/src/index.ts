@@ -267,6 +267,24 @@ export {
   clearProductCoupon,
   type AdminContentDeps,
 } from "./services/admin-content";
+export type {
+  AdminBusinessRow,
+  AdminBusinessRepository,
+  AdminRequirementRow,
+  AdminRequirementRepository,
+  AdminCollabRow,
+  AdminCollabRepository,
+  AdminAnalytics,
+  AdminAnalyticsRepository,
+} from "./ports/admin-repository";
+export {
+  searchBusinesses,
+  searchRequirements,
+  listCollabs,
+  clearBusinessLogo,
+  removeRequirement,
+  type AdminOversightDeps,
+} from "./services/admin-oversight";
 export {
   followProfile,
   unfollowProfile,

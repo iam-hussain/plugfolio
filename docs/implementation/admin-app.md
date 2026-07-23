@@ -19,6 +19,10 @@ directly via core services + db repositories — no admin endpoints in
 | **Posts** (`/posts`) | Search caption/profile; **Remove** (stolen/illegal media). Products stay; taps survive (`postId` SetNull). |
 | **Products** (`/products`) | Search title/profile; kind + coupon (with Expired badge); **Clear coupon** and **Remove** (counterfeit/prohibited links — taps cascade, same as a creator's own removal). |
 | **Comments** (`/comments`) | Newest-first firehose; shows personal `@handle` vs speaks-as-profile badge; **Delete** (replies cascade). |
+| **Businesses** (`/businesses`) | Search name/description/owner email; requirement + collab counts; **Clear logo** (inappropriate image — account-wide abuse stays on Members). |
+| **Requirements** (`/requirements`) | The open collab board; **Remove** a scam brief (existing threads survive — schema `SetNull`). |
+| **Collabs** (`/collabs`) | Read-only thread oversight: business ↔ creator, source (board vs direct), message count, agreement state. |
+| **Analytics** (`/analytics`) | Projections over the append-only `Tap`/`CodeCopy` events: 7/30-day totals, tap-source split, top profiles + products. Tables only — charts wait for demand. |
 | **Settings** (`/settings`) | **Reserved usernames** (admin-managed additions on top of a code baseline) and **feature flags** (add / toggle / remove). |
 | **Audit log** (`/audit`) | The append-only `AdminAction` trail, newest first. |
 
@@ -26,8 +30,8 @@ Destructive actions confirm first (`ConfirmButton`) and audit what was
 removed — comment/product deletions record a snippet of the deleted body/title
 taken from the DB row, not from the form.
 
-Planned next (per the admin roadmap): businesses/requirements/collabs
-oversight, analytics. The sidebar only links screens that exist.
+That completes the planned v1 admin surface — the sidebar only links screens
+that exist.
 
 ## Data model
 
@@ -51,6 +55,8 @@ oversight, analytics. The sidebar only links screens that exist.
   `generateProfileUsername()` from creator-content.
 - `searchComments/Posts/Products`, `deleteComment`, `deletePost`,
   `deleteProduct`, `clearProductCoupon` — content takedowns.
+- `searchBusinesses`, `searchRequirements`, `listCollabs`,
+  `clearBusinessLogo`, `removeRequirement` — marketplace oversight.
 - `getReservedUsernames`, `setReservedUsernames`, `isUsernameReserved` — the
   admin list *extends* `BASELINE_RESERVED_USERNAMES` (product routes + brand
   terms, e.g. `dashboard`, `explore`, `homepage`); it can never unblock the

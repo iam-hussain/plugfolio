@@ -13,6 +13,10 @@ import {
   SidebarMenuItem,
 } from "@plugfolio/ui";
 import {
+  BarChart3,
+  Briefcase,
+  ClipboardList,
+  Handshake,
   Image as ImageIcon,
   LayoutDashboard,
   LogOut,
@@ -50,6 +54,18 @@ const NAV: readonly { label: string | null; items: readonly NavItem[] }[] = [
       { title: "Products", href: "/products", icon: ShoppingBag },
       { title: "Comments", href: "/comments", icon: MessageSquare },
     ],
+  },
+  {
+    label: "Marketplace",
+    items: [
+      { title: "Businesses", href: "/businesses", icon: Briefcase },
+      { title: "Requirements", href: "/requirements", icon: ClipboardList },
+      { title: "Collabs", href: "/collabs", icon: Handshake },
+    ],
+  },
+  {
+    label: "Insight",
+    items: [{ title: "Analytics", href: "/analytics", icon: BarChart3 }],
   },
   {
     label: "System",
