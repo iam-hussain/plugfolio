@@ -1,3 +1,4 @@
-/** Landing surface (Dev Spec §06) — public marketing + role router for `/`. */
+/** Landing surface (design-out landing) — public marketing for `/`. */
 export { LandingPage } from "./components/landing-page";
-export { RoleCard, type RoleCardProps } from "./components/role-card";
+export { LandingCta, type LandingCtaProps } from "./components/landing-cta";
+export { CreatorMock } from "./components/creator-mock";

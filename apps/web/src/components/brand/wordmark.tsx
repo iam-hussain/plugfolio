@@ -17,6 +17,8 @@ const sparkVariants = cva("inline-block rounded-[2px] align-baseline", {
       onLight: "bg-brand-violet",
       onDark: "bg-brand-lime",
       violet: "bg-brand-lime",
+      // Follows the active theme: violet spark on light, lime on dark.
+      auto: "bg-brand-violet dark:bg-brand-lime",
     },
   },
   defaultVariants: { tone: "onDark" },

@@ -43,7 +43,8 @@ export function Logo({ layout = "horizontal", tone, markSize, className, ...prop
   const markTone = tone ?? "onDark";
   const size = markSize ?? (layout === "stacked" ? "lg" : "md");
   const showWordmark = layout !== "symbol";
-  const wordmarkTone = markTone === "onLight" ? "onLight" : "onDark";
+  // The spark tracks the mark's tone (auto stays theme-reactive).
+  const wordmarkTone = markTone === "onLight" ? "onLight" : markTone === "auto" ? "auto" : "onDark";
 
   return (
     <span className={cn(logoVariants({ layout }), className)} {...props}>

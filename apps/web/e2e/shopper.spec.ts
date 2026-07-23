@@ -9,12 +9,11 @@ import { expect, test } from "@playwright/test";
 test("home page renders the value prop without a login wall", async ({ page }) => {
   await page.goto("/");
 
-  // The value prop leads the page (brand eyebrow) and the no-login promise is
-  // explicit — copy per Brand Guidelines v1.1, but the intent is unchanged.
-  await expect(page.getByText(/shoppable creator pages/i)).toBeVisible();
-  await expect(page.getByText(/never needs an account/i)).toBeVisible();
-  // Nothing on the landing path should demand sign-in.
-  await expect(page.getByRole("link", { name: /sign in|log in/i })).toHaveCount(0);
+  // The value-prop headline leads and the no-login promise is explicit (copy per
+  // the design-out landing); the shop entry is a plain link, never a wall.
+  await expect(page.getByRole("heading", { name: /buy what your favorites post/i })).toBeVisible();
+  await expect(page.getByText(/no login to shop/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: /explore creators/i }).first()).toBeVisible();
 });
 
 test("a creator page is reachable by handle with no account", async ({ page }) => {
@@ -92,10 +91,9 @@ test("manager settings are gated; the invite API refuses anonymous callers", asy
   await page.goto("/dashboard/settings");
   await page.waitForURL("**/signin**");
 
-  const invite = await request.post(
-    "/api/profiles/00000000-0000-0000-0000-0000000000b1/managers",
-    { data: { email: "x@example.com" } },
-  );
+  const invite = await request.post("/api/profiles/00000000-0000-0000-0000-0000000000b1/managers", {
+    data: { email: "x@example.com" },
+  });
   expect(invite.status()).toBe(401);
 });
 
