@@ -3,7 +3,9 @@
 The internal operations app at `admin.plugfolio.com` (`apps/admin`). Operators sign in,
 moderate people and content, settle username disputes, flip runtime settings, and read
 platform analytics. This brief covers **every screen** — the login page plus the twelve
-console screens — in enough detail to design the full set.
+console screens — in enough detail to design the full set. Milestone-2 screens (detail pages, reports
+queue, admins screen, new dialogs and modules) live in the companion
+[admin-console-m2.md](./admin-console-m2.md) — design both in one pass.
 
 **Read first:** [`00-foundations.md`](./00-foundations.md) for tokens, type, and spacing.
 The admin uses the **same "Charged Violet" system and the same UI components** as the

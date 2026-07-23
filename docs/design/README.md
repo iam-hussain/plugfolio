@@ -42,7 +42,9 @@ Priority: **P0** = the core loop (must be flawless); **P1** = supports a v1 jour
 
 The internal operator app (`apps/admin`, ADR-0014) has its own all-screens brief —
 login + twelve console screens, desktop-first, same tokens and UI kit:
-[admin-console.md](./admin-console.md).
+[admin-console.md](./admin-console.md). Milestone-2 additions (detail pages, collab
+thread reader, reports queue, admins screen, dialogs & modules) are in
+[admin-console-m2.md](./admin-console-m2.md) — design both together.
 
 ## Change briefs
 
