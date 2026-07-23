@@ -21,9 +21,11 @@ Migration `20260720120000_business_collabs`:
 
 ## Surfaces
 
-- `/collabs` (business): create-business form on first visit; then threads + own requirements + post form.
-- `/collabs/:id` (both roles): the thread — messages, send, "Accept terms", with the other side's acceptance state shown honestly.
-- `/dashboard/collabs` (creator): the Collabs tab — your threads + the open board with per-requirement Approach forms (first profile; switcher comes with multi-profile).
+All three run on the themed UI kit per briefs 11–12 (business chrome = brand top bar + sign-out; same tokens, a touch more utilitarian).
+
+- `/collabs` (business): create-business form on first visit; then the business identity header, thread cards (Agreed/Negotiating badge), own requirement cards (budget badge + deadline), the post form (now sends the optional **deadline** the schema always accepted), and a "Find creators" pointer to `/explore`.
+- `/collabs/:id` (both roles): the thread — terms card pinned on top with the agreed-state badge, message bubbles (mine right/primary, theirs left/muted, author + time headers), send, and "Accept terms" as the view's one accent moment; the other side's acceptance state shown honestly.
+- `/dashboard/collabs` (creator): the Collabs tab inside the dashboard shell — your thread cards + the open board with per-requirement Approach forms (profile switcher applies).
 
 ## Edge cases
 

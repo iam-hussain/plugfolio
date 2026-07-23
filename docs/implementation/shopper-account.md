@@ -16,6 +16,11 @@ Migration `20260720100000_follows_and_comments`:
 - All three: session required (401 `UnauthorizedError` otherwise); the actor is **always** `session.user.id`, never a body field. Unknown profile → 404.
 - Reads have no endpoints: the public page server-renders comments (`getComments`, latest 50) and follow state; `/following` renders the followed-creators list — the payoff, with the rich feed still deferred.
 
+## Surfaces (themed, per brief 04 + the shopper chrome)
+
+- `/following` — followed-creator cards (avatar, @username, page URL) each with the live `FollowButton` toggle; empty state points to `/explore`.
+- `/account` — the member-handle card (ADR-0009), a "Your other hats" card linking to the creator dashboard and/or the business `/collabs` when this email holds those roles, and sign-out.
+
 ## Components (feature `shopper-account`)
 
 - `FollowButton` (client) — signed-out: a door to sign-in; signed-in: toggle backed by `router.refresh()` (server state stays the truth).
