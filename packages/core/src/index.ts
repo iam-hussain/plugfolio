@@ -59,6 +59,13 @@ export type {
   ProductMetadata,
   ProductMetadataGateway,
 } from "./ports/creator-content-repository";
+export type {
+  SocialProvider,
+  SocialTokens,
+  SocialConnectionRepository,
+  YouTubeChannel,
+  YouTubeGateway,
+} from "./ports/social-connection-repository";
 export type { FollowRepository } from "./ports/follow-repository";
 export type {
   CommentRepository,
@@ -164,6 +171,11 @@ export { exploreCreators, exploreProducts, type ExploreDeps } from "./services/e
 export { getEarnings, type EarningsReadDeps } from "./services/get-earnings";
 export { getMyProfiles, type ProfileReadDeps } from "./services/get-my-profiles";
 export {
+  listYouTubeChannels,
+  type ListYouTubeChannelsDeps,
+  type YouTubeConnectionView,
+} from "./services/list-youtube-channels";
+export {
   inviteManager,
   inviteManagerInput,
   type InviteManagerInput,
@@ -257,6 +269,8 @@ export {
   releaseProfileUsername,
   type AdminProfilesDeps,
 } from "./services/admin-profiles";
+export { releaseUsernameInput, type ReleaseUsernameInput } from "./schemas/admin";
+export { generateProfileUsername } from "./services/creator-content";
 export {
   searchComments,
   searchPosts,

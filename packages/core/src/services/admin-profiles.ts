@@ -3,8 +3,10 @@ import type {
   AdminAuditRepository,
   AdminProfileRepository,
   AdminProfileRow,
+  AppSettingsRepository,
 } from "../ports/admin-repository";
-import { generateProfileUsername } from "./creator-content";
+import type { ReleaseUsernameInput } from "../schemas/admin";
+import { isUsernameReserved } from "./app-settings";
 
 /**
  * Profile moderation (docs/implementation/admin-app.md): suspend takes ONE
@@ -16,6 +18,7 @@ import { generateProfileUsername } from "./creator-content";
 export type AdminProfilesDeps = {
   profiles: AdminProfileRepository;
   audit: AdminAuditRepository;
+  settings: AppSettingsRepository;
   now: () => Date;
 };
 
@@ -61,17 +64,23 @@ export async function unsuspendProfile(
   await setProfileSuspension(deps, adminId, profileId, null);
 }
 
-/** The freed username becomes claimable again the moment this returns. */
+/**
+ * Frees the profile's current username (claimable again the moment this
+ * returns) and moves the page to the admin-chosen replacement — usually the
+ * suggested random `creator-…`, but any valid, unreserved, untaken name.
+ */
 export async function releaseProfileUsername(
   deps: AdminProfilesDeps,
   adminId: string,
-  profileId: string,
+  input: ReleaseUsernameInput,
 ): Promise<string> {
-  const username = generateProfileUsername();
+  const { profileId, username } = input;
+  if (await isUsernameReserved({ settings: deps.settings }, username)) {
+    throw new ConflictError("That username is reserved");
+  }
   const result = await deps.profiles.setUsername(profileId, username);
   if (result === "not_found") throw new NotFoundError("No such profile");
-  // A random-uuid collision — vanishingly rare; the operator just retries.
-  if (result === "taken") throw new ConflictError("Name collision — try again");
+  if (result === "taken") throw new ConflictError("That username is already taken");
   await deps.audit.record({
     adminId,
     action: "profile.releaseUsername",
