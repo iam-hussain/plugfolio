@@ -24,6 +24,8 @@ const bodyVariants = cva("", {
       onDark: "fill-white stroke-white",
       violet: "fill-white stroke-white",
       flat: "fill-current stroke-current",
+      // Follows the active theme: violet body on light, white on dark.
+      auto: "fill-brand-violet stroke-brand-violet dark:fill-white dark:stroke-white",
     },
   },
   defaultVariants: { tone: "onDark" },
@@ -36,6 +38,8 @@ const prongVariants = cva("", {
       onDark: "fill-brand-lime stroke-brand-lime",
       violet: "fill-brand-lime stroke-brand-lime",
       flat: "fill-current stroke-current",
+      // Follows the active theme: ink prongs on light, lime on dark.
+      auto: "fill-brand-ink stroke-brand-ink dark:fill-brand-lime dark:stroke-brand-lime",
     },
   },
   defaultVariants: { tone: "onDark" },
