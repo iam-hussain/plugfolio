@@ -38,6 +38,64 @@ the shadcn kit); the admin keeps only composition (`SearchHeader`,
 That completes the planned v1 admin surface — the sidebar only links screens
 that exist.
 
+## Milestone 2 — backlog (unrefined)
+
+The agreed gap list, July 2026. **Not yet refined** — before building, this
+section gets turned into a scoped plan (what's in, what stays deferred, order);
+items may be cut or reshaped in that discussion. Tiered by how soon each bites
+in real operations.
+
+### Tier 1 — felt in the first week of real operations
+
+1. **Detail pages** — everything is list-only today. A member detail (their
+   profiles, comments, follows, connected socials), a profile detail (inspect
+   posts before suspending), and most consequentially a **collab thread
+   reader**: Collabs shows message *counts* but a reported harassment thread
+   cannot be read at all.
+2. **Pagination** — lists cap at the newest 50. The design brief
+   (`docs/design/admin-console.md` §3.3) already fixes the pattern: numbered
+   pages (25/row) everywhere, load-more only for the Comments stream.
+3. **Member actions beyond suspend** — resend verification, force a
+   password-reset email, admin reset of a member `@handle` (the reserved list
+   can't retroactively free a name someone already holds), and **account
+   deletion** (today a GDPR/erasure request has no path).
+4. **Suspension reason** — `suspendedAt` is a bare timestamp; suspensions need
+   a required note that lands in the audit detail.
+5. **Admins screen** — operators are CLI-seeded only; no UI to list/add/remove
+   admins, no self-service password change.
+
+### Tier 2 — structural, deliberately deferred
+
+6. **Reports / moderation queue** — nothing lets users flag content, so
+   moderation is proactive-only. Needs a product-side "report" affordance
+   first; the admin side is the triage queue.
+7. **Admin auth hardening** — rate-limited login, audited admin sign-ins
+   (only mutations are audited today), revocable sessions (a lost laptop's
+   12h JWT can't be killed).
+8. **Message-level moderation** — delete one abusive collab message without
+   suspending the whole member.
+9. **Business text takedowns** — logo can be cleared, an offensive
+   name/description cannot.
+10. **Feature-flag call sites** — Settings writes flags and `isFeatureEnabled`
+    exists, but product code doesn't read any flag yet; the switchboard is
+    wired to nothing.
+
+### Tier 3 — polish
+
+11. Replace remaining native `confirm()` takedowns with `AlertDialog`
+    (release-username already has its `PromptDialog`; the design brief §3.5
+    specifies the rest).
+12. List filters (status / date / action type — audit log especially) and CSV
+    export.
+13. Success toasts (today the changed row is the only feedback).
+14. Analytics time-series/trends; the dashboard "recent activity" feed slot.
+15. Bulk actions (select-many → suspend/remove).
+
+Dependencies to note during refinement: reports (6) needs product-side UI;
+member email actions (3) need the real mail transport (still console-logged);
+several Tier-1 items (1, 2, 11) are already specified in the design brief and
+should land together with the designer's pass.
+
 ## Data model
 
 - `AdminUser` — operator identity (email, scrypt `passwordHash`, name).
