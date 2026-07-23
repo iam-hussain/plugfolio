@@ -30,6 +30,11 @@ Destructive actions confirm first (`ConfirmButton`) and audit what was
 removed — comment/product deletions record a snippet of the deleted body/title
 taken from the DB row, not from the form.
 
+The reusable pieces live in `@plugfolio/ui` with Storybook stories
+(`ConfirmButton`, `StatTile`, the brand `Logo` the sidebar header uses, plus
+the shadcn kit); the admin keeps only composition (`SearchHeader`,
+`AdminSidebar`) and pages.
+
 That completes the planned v1 admin surface — the sidebar only links screens
 that exist.
 

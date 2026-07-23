@@ -1,5 +1,6 @@
 import { searchRequirements } from "@plugfolio/core";
 import {
+  ConfirmButton,
   Table,
   TableBody,
   TableCell,
@@ -8,7 +9,7 @@ import {
   TableRow,
 } from "@plugfolio/ui";
 import type { Metadata } from "next";
-import { ConfirmButton } from "@/components/confirm-button";
+
 import { SearchHeader } from "@/components/search-header";
 import { repositories } from "@/server/container";
 import { removeRequirementAction } from "./actions";

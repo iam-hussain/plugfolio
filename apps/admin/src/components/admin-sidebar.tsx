@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Logo,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -82,9 +83,8 @@ export function AdminSidebar({ adminEmail }: { adminEmail: string }) {
   return (
     <Sidebar>
       <SidebarHeader className="px-4 py-3">
-        <p className="font-display text-lg font-bold tracking-display">
-          plugfolio<span className="text-primary">.</span>
-        </p>
+        {/* The real lockup (§7: never redraw the mark) + the surface's role. */}
+        <Logo tone="auto" />
         <p className="font-mono tracking-eyebrow text-muted-foreground text-[10px] uppercase">
           Admin
         </p>

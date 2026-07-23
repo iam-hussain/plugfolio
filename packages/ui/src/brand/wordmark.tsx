@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@plugfolio/ui";
+import { cn } from "../lib/cn";
 
 /**
  * Wordmark — lowercase `plugfolio` set in Sora 700 with a small square "spark"

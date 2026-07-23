@@ -4,6 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  StatTile,
   Table,
   TableBody,
   TableCell,
@@ -48,14 +49,7 @@ export default async function AnalyticsPage() {
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {tiles.map((tile) => (
-          <Card key={tile.label}>
-            <CardHeader>
-              <CardDescription className="font-mono tracking-eyebrow text-[11px] uppercase">
-                {tile.label}
-              </CardDescription>
-              <CardTitle className="text-3xl tabular-nums">{tile.value}</CardTitle>
-            </CardHeader>
-          </Card>
+          <StatTile key={tile.label} label={tile.label} value={tile.value} />
         ))}
       </div>
 

@@ -1,4 +1,4 @@
-import { Card, CardDescription, CardHeader, CardTitle } from "@plugfolio/ui";
+import { StatTile } from "@plugfolio/ui";
 import { clock, repositories } from "@/server/container";
 
 export const dynamic = "force-dynamic";
@@ -24,14 +24,7 @@ export default async function DashboardPage() {
       <h1 className="font-display text-2xl font-bold">Dashboard</h1>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {tiles.map((tile) => (
-          <Card key={tile.label}>
-            <CardHeader>
-              <CardDescription className="font-mono tracking-eyebrow text-[11px] uppercase">
-                {tile.label}
-              </CardDescription>
-              <CardTitle className="text-3xl tabular-nums">{tile.value}</CardTitle>
-            </CardHeader>
-          </Card>
+          <StatTile key={tile.label} label={tile.label} value={tile.value} />
         ))}
       </div>
     </div>

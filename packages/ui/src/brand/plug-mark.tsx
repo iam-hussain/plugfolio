@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@plugfolio/ui";
+import { cn } from "../lib/cn";
 
 /**
  * PlugMark — the Plugfolio symbol (Brand Guidelines v1.1 §02): a two-prong plug
