@@ -11,8 +11,10 @@ import {
   createFollowRepository,
   createProfileRepository,
   createRequirementRepository,
+  createSocialConnectionRepository,
   createUserRepository,
 } from "@plugfolio/db";
+import { createYouTubeGateway } from "./youtube";
 
 /**
  * Composition root: the app wires domain services to their concrete Prisma
@@ -31,6 +33,7 @@ export const repositories = {
   requirements: createRequirementRepository(),
   collabs: createCollabRepository(),
   connections: createConnectionRepository(),
+  socialConnections: createSocialConnectionRepository(),
   managers: createManagerRepository(),
   users: createUserRepository(),
 };
@@ -43,6 +46,12 @@ export const businessCollabDeps = {
   requirements: repositories.requirements,
   collabs: repositories.collabs,
   profiles: repositories.profiles,
+  now: clock.now,
+};
+
+export const youtubeDeps = {
+  connections: repositories.socialConnections,
+  youtube: createYouTubeGateway(),
   now: clock.now,
 };
 

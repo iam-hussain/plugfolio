@@ -7,7 +7,7 @@
 Auth.js Prisma-adapter tables (migration `20260718170000_authjs_identity`, hand-written RENAMEs so existing rows survive):
 
 - `Account` → **`User`** (the ADR-0004 "account"): + `emailVerified`, `name`, `image`. `Profile.accountId` → `userId`.
-- New `Account` = Auth.js provider links — a future Google/Meta row **is** the "connected social" of ADR-0004.
+- New `Account` = Auth.js provider links — a Google/Meta row **is** the "connected social" of ADR-0004, and its `access_token`/`refresh_token`/`expires_at` columns are the credentials the social reads use.
 - `Session` (database sessions), `VerificationToken` (magic links).
 
 ## Auth surface
@@ -22,6 +22,15 @@ Auth.js Prisma-adapter tables (migration `20260718170000_authjs_identity`, hand-
 - Server component; `auth()` → no session → `redirect("/api/auth/signin")`. **Never a shop wall** — every shopper path stays account-free (§2.2); e2e asserts the gate exists AND the shop paths stay open.
 - Reads via `getMyProfiles(userId)` (new `ProfileReadRepository` port) then `getEarnings(profileId)` for the first profile — earnings scoping comes from the session-derived profile list, never from client input.
 - Renders the `earnings` feature's `EarningsSummaryView` (total taps · by post · by product, labeled tracked). Posts/Products/Collabs tabs and the profile switcher land with tagging, social connects, and multi-profile creation.
+
+## Social connections (Google/YouTube — first half of ADR-0004)
+
+- **Connect, not login:** the creator signs in by email+password first, then hits "Connect Google (YouTube)" on the dashboard — a server action calling `signIn("google")`; Auth.js links the resulting `Account` row to the signed-in user.
+- Google provider requests `youtube.readonly` with `access_type=offline&prompt=consent` so a refresh token is stored (without it the connection dies in ~1h).
+- `listYouTubeChannels` (core service; ports `SocialConnectionRepository` + `YouTubeGateway`) reads the stored token, refreshes it when stale (persisting the fresh one), then lists the account's channels — id, title, `@handle`, thumbnail, subscribers. The `@handle`s are the ADR-0004 username pool for a later username picker.
+- Gateway impl lives at the web server seam (`apps/web/src/server/youtube.ts` — refresh needs the env client credentials); token columns read/written by `createSocialConnectionRepository` in `@plugfolio/db`.
+- Degraded states surface honestly: env unconfigured → notice; connected but unrefreshable (revoked / pre-consent token) → empty list + Reconnect button, never a crashed dashboard.
+- Meta/Instagram follows the same shape (Facebook provider is already env-gated; Graph API gateway + `listInstagramAccounts` pending).
 
 ## Edge cases
 

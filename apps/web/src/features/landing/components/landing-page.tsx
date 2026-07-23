@@ -1,8 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@plugfolio/ui";
 import { Logo } from "@/components/brand";
 import { LandingCta } from "./landing-cta";
 import { CreatorMock } from "./creator-mock";
+
+/** The session slice the nav needs — passed by the route (presentational, §5). */
+export type LandingUser = {
+  name: string | null;
+  email: string | null;
+  image: string | null;
+};
 
 /**
  * Landing (`/`) — a faithful build of the design-out landing: nav, a two-column
@@ -30,7 +38,8 @@ const STEPS = [
   },
 ];
 
-export function LandingPage() {
+export function LandingPage({ user = null }: { user?: LandingUser | null }) {
+  const initial = (user?.name ?? user?.email ?? "?").trim().charAt(0).toUpperCase();
   return (
     <main className="bg-background text-foreground min-h-dvh">
       {/* ── nav ── */}
@@ -46,18 +55,42 @@ export function LandingPage() {
             >
               Explore
             </Link>
-            <Link
-              href="/signin"
-              className="text-muted-foreground hover:text-foreground hidden text-sm font-medium lg:inline"
-            >
-              For creators
-            </Link>
-            <Link href="/signin" className="text-foreground text-sm font-semibold">
-              Log in
-            </Link>
-            <LandingCta href="/explore" size="sm">
-              Explore creators
-            </LandingCta>
+            {user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="text-muted-foreground hover:text-foreground hidden text-sm font-medium lg:inline"
+                >
+                  Dashboard
+                </Link>
+                <LandingCta href="/explore" size="sm">
+                  Explore creators
+                </LandingCta>
+                <Link href="/account" aria-label="Your account">
+                  <Avatar className="size-8">
+                    {user.image ? <AvatarImage src={user.image} alt="" /> : null}
+                    <AvatarFallback className="bg-muted text-foreground text-xs">
+                      {initial}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/signin"
+                  className="text-muted-foreground hover:text-foreground hidden text-sm font-medium lg:inline"
+                >
+                  For creators
+                </Link>
+                <Link href="/signin" className="text-foreground text-sm font-semibold">
+                  Log in
+                </Link>
+                <LandingCta href="/explore" size="sm">
+                  Explore creators
+                </LandingCta>
+              </>
+            )}
           </div>
         </div>
       </nav>

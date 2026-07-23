@@ -41,6 +41,7 @@ export {
 } from "./repositories/admin-oversight-repository";
 export {
   createConnectionRepository,
+  createSocialConnectionRepository,
   createPostWriteRepository,
   createProductWriteRepository,
 } from "./repositories/creator-content-repository";

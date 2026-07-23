@@ -12,7 +12,7 @@ const schema = z.object({
   DEVICE_TOKEN_SECRET: z.string().min(32, "DEVICE_TOKEN_SECRET must be at least 32 chars"),
   PORT: z.coerce.number().int().positive().default(3001),
   /** Where auth email links land (verify/reset pages live in apps/web). */
-  WEB_ORIGIN: z.string().url().default("http://localhost:3000"),
+  WEB_ORIGIN: z.string().url().default("http://localhost:7077"),
 });
 
 const parsed = schema.safeParse(process.env);

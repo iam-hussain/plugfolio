@@ -1,5 +1,6 @@
 import { LandingPage } from "@/features/landing";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { auth } from "@/server/auth";
 
 // Server Component (§5 server-first). The landing composes the landing feature;
 // no business logic lives here (app/ stays thin, §5).
@@ -56,14 +57,22 @@ const structuredData = {
   ],
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+  const user = session?.user
+    ? {
+        name: session.user.name ?? null,
+        email: session.user.email ?? null,
+        image: session.user.image ?? null,
+      }
+    : null;
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <LandingPage />
+      <LandingPage user={user} />
     </>
   );
 }

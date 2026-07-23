@@ -2,6 +2,8 @@ import type {
   ConnectionReadRepository,
   PostWriteRepository,
   ProductWriteRepository,
+  SocialConnectionRepository,
+  SocialProvider,
 } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 
@@ -13,6 +15,37 @@ export function createConnectionRepository(db: PrismaClient = prisma): Connectio
       // Auth.js Account rows ARE the connected socials (ADR-0007).
       const count = await db.account.count({ where: { userId } });
       return count > 0;
+    },
+  };
+}
+
+export function createSocialConnectionRepository(
+  db: PrismaClient = prisma,
+): SocialConnectionRepository {
+  return {
+    async getTokens(userId: string, provider: SocialProvider) {
+      const account = await db.account.findFirst({
+        where: { userId, provider },
+        select: { access_token: true, refresh_token: true, expires_at: true },
+      });
+      if (!account) return null;
+      return {
+        accessToken: account.access_token,
+        refreshToken: account.refresh_token,
+        // Auth.js stores expires_at as epoch seconds.
+        expiresAt: account.expires_at ? new Date(account.expires_at * 1000) : null,
+      };
+    },
+
+    async updateTokens(userId, provider, tokens) {
+      await db.account.updateMany({
+        where: { userId, provider },
+        data: {
+          access_token: tokens.accessToken,
+          ...(tokens.refreshToken ? { refresh_token: tokens.refreshToken } : {}),
+          expires_at: tokens.expiresAt ? Math.floor(tokens.expiresAt.getTime() / 1000) : null,
+        },
+      });
     },
   };
 }

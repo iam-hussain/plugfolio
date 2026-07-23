@@ -2,6 +2,7 @@
 export { CreatorHeader, type CreatorHeaderProps } from "./components/creator-header";
 export {
   SocialsRow,
+  SocialGlyph,
   type SocialsRowProps,
   type SocialLink,
   type SocialPlatform,

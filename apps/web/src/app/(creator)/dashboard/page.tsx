@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getEarnings, getMyProfiles } from "@plugfolio/core";
+import { getEarnings, getMyProfiles, listYouTubeChannels } from "@plugfolio/core";
+import { env } from "@/env";
+import { SocialConnections } from "@/features/account-auth";
 import { EarningsSummaryView } from "@/features/earnings";
 import { NewProfileButton } from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
-import { repositories } from "@/server/container";
+import { repositories, youtubeDeps } from "@/server/container";
 
 // The creator's back room (lean journey: four tabs, not thirteen). Gated by
 // session — this is an "act as yourself" surface, never a shop path (§2.2).
@@ -22,9 +24,11 @@ export default async function DashboardPage({
   const session = await auth();
   if (!session?.user) redirect("/signin");
 
-  const [profiles, connected] = await Promise.all([
+  const googleConfigured = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);
+  const [profiles, connected, youtube] = await Promise.all([
     getMyProfiles({ profiles: repositories.profiles }, session.user.id),
     repositories.connections.hasAny(session.user.id),
+    googleConfigured ? listYouTubeChannels(youtubeDeps, session.user.id) : null,
   ]);
   const active = pickActiveProfile(profiles, (await searchParams).profile);
   const earnings = active
@@ -89,16 +93,9 @@ export default async function DashboardPage({
             ))}
           </ul>
         )}
-        {!connected ? (
-          <p className="text-muted-foreground pt-3 text-xs">
-            Social connects (YouTube · Instagram) appear on the{" "}
-            <Link href="/signin" className="underline">
-              sign-in page
-            </Link>{" "}
-            once OAuth apps are configured.
-          </p>
-        ) : null}
       </section>
+
+      <SocialConnections youtube={youtube} />
 
       {active && earnings ? (
         <section aria-label="Earnings">

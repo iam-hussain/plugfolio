@@ -66,6 +66,11 @@ const ICONS: Record<SocialPlatform, React.ReactNode> = {
   website: <Globe aria-hidden strokeWidth={1.6} className="h-5 w-5" />,
 };
 
+/** One brand glyph for reuse outside the row (connect buttons, empty states). */
+export function SocialGlyph({ platform }: { platform: SocialPlatform }) {
+  return <>{ICONS[platform]}</>;
+}
+
 export type SocialsRowProps = {
   links: SocialLink[];
   className?: string;

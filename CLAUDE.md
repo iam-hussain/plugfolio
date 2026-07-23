@@ -239,6 +239,12 @@ Format: **Context → Decision → Consequences → Status** (proposed / accepte
 
 ## 10. Git & PR workflow
 
+> **Interim mode (since July 2026): commit directly to `main`.** While the product is
+> stabilizing, changes land as small, verified commits straight on `main` — no feature
+> branches, no PRs. Everything else in this section (doc sync, commit style, CI green,
+> definition of done) still applies per commit. When we call the codebase stable, this
+> note gets removed and the branch-and-PR flow below resumes.
+
 - **Branch** off the default branch; never commit product-behavior code without the matching doc/ADR update (§3).
 - **Small, focused PRs**, each mapping to a journey step or feature slice where possible.
 - **Commits** are imperative and explain *why* (`Add outbound-tap event recording for earnings attribution`).

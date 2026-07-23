@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
-import { credentialsInput, verifyCredentials } from "@plugfolio/core";
-import { createAuthAccountRepository, createAuthAdapter } from "@plugfolio/db";
+import { credentialsInput, verifyCredentials, type SocialProvider } from "@plugfolio/core";
+import {
+  createAuthAccountRepository,
+  createAuthAdapter,
+  createSocialConnectionRepository,
+} from "@plugfolio/db";
 import NextAuth, { CredentialsSignin, type DefaultSession, type NextAuthResult } from "next-auth";
 import { encode as defaultJwtEncode } from "next-auth/jwt";
 import type { Provider } from "next-auth/providers";
@@ -36,6 +40,7 @@ class SuspendedAccountError extends CredentialsSignin {
 
 const adapter = createAuthAdapter();
 const authAccounts = createAuthAccountRepository();
+const socialConnections = createSocialConnectionRepository();
 
 const SESSION_MAX_AGE_S = 30 * 24 * 60 * 60;
 
@@ -48,7 +53,13 @@ const oauthProviders: Provider[] = [
           clientId: env.GOOGLE_CLIENT_ID,
           clientSecret: env.GOOGLE_CLIENT_SECRET,
           authorization: {
-            params: { scope: "openid email profile https://www.googleapis.com/auth/youtube.readonly" },
+            params: {
+              scope: "openid email profile https://www.googleapis.com/auth/youtube.readonly",
+              // Google only issues a refresh_token with offline+consent; without
+              // it the stored access token dies in ~1h and channel reads break.
+              access_type: "offline",
+              prompt: "consent",
+            },
           },
         }),
       ]
@@ -94,6 +105,20 @@ const nextAuth = NextAuth({
       },
     }),
   ],
+  events: {
+    // Re-consent (ADR-0004 "re-authenticate any time") returns fresh tokens,
+    // but Auth.js never updates an existing Account row — persist them here
+    // or a reconnect changes nothing.
+    async signIn({ user, account }) {
+      if (account && account.provider !== "credentials" && user.id && account.access_token) {
+        await socialConnections.updateTokens(user.id, account.provider as SocialProvider, {
+          accessToken: account.access_token,
+          refreshToken: account.refresh_token ?? undefined,
+          expiresAt: account.expires_at ? new Date(account.expires_at * 1000) : null,
+        });
+      }
+    },
+  },
   callbacks: {
     // Credentials sign-ins default to JWT cookies, which apps/api couldn't
     // validate — so create the DB session here and smuggle its token out
