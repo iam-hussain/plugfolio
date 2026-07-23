@@ -29,6 +29,11 @@ class UnverifiedEmailError extends CredentialsSignin {
   override code = "unverified";
 }
 
+/** Admin suspension (docs/implementation/admin-app.md): login blocked. */
+class SuspendedAccountError extends CredentialsSignin {
+  override code = "suspended";
+}
+
 const adapter = createAuthAdapter();
 const authAccounts = createAuthAccountRepository();
 
@@ -82,6 +87,7 @@ const nextAuth = NextAuth({
         const result = await verifyCredentials({ accounts: authAccounts }, parsed.data);
         if (!result.ok) {
           if (result.reason === "unverified") throw new UnverifiedEmailError();
+          if (result.reason === "suspended") throw new SuspendedAccountError();
           return null; // one generic failure for wrong email OR password
         }
         return { id: result.userId, email: parsed.data.email };

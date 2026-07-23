@@ -13,7 +13,7 @@ export function createAuthAccountRepository(db: PrismaClient = prisma): AuthAcco
     async findByEmail(email: string): Promise<AuthAccount | null> {
       return db.user.findUnique({
         where: { email },
-        select: { id: true, passwordHash: true, emailVerified: true },
+        select: { id: true, passwordHash: true, emailVerified: true, suspendedAt: true },
       });
     },
 
