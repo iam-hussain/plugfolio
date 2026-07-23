@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Globe } from "lucide-react";
 import { cn } from "@plugfolio/ui";
 
 /**
@@ -19,32 +20,50 @@ export type SocialLink = {
   label: string;
 };
 
+/* Brand glyphs stay hand-drawn — lucide dropped its brand icons (§8 icon
+   rule: lucide everywhere it has the icon; the generic `website` uses Globe). */
+function BrandIcon({ children }: { children: React.ReactNode }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      className="h-5 w-5"
+    >
+      {children}
+    </svg>
+  );
+}
+
 const ICONS: Record<SocialPlatform, React.ReactNode> = {
   instagram: (
-    <>
+    <BrandIcon>
       <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
       <circle cx="12" cy="12" r="4" />
       <circle cx="17" cy="7" r="1.1" fill="currentColor" stroke="none" />
-    </>
+    </BrandIcon>
   ),
   youtube: (
-    <>
+    <BrandIcon>
       <rect x="2.5" y="5.5" width="19" height="13" rx="4" />
       <path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none" />
-    </>
+    </BrandIcon>
   ),
   tiktok: (
-    <path d="M14 3v10.2a3.2 3.2 0 1 1-2.6-3.14V12a1.5 1.5 0 1 0 1.1 1.45V3h1.5c.2 1.8 1.5 3.1 3.5 3.3v1.5c-1.3-.05-2.5-.45-3.5-1.15" />
+    <BrandIcon>
+      <path d="M14 3v10.2a3.2 3.2 0 1 1-2.6-3.14V12a1.5 1.5 0 1 0 1.1 1.45V3h1.5c.2 1.8 1.5 3.1 3.5 3.3v1.5c-1.3-.05-2.5-.45-3.5-1.15" />
+    </BrandIcon>
   ),
   facebook: (
-    <path d="M14.5 8.5h2V6h-2c-1.7 0-2.8 1.1-2.8 2.9v1.6H9.8V13h1.9v6h2.4v-6h2l.4-2.5h-2.4V9.2c0-.5.2-.7.8-.7" />
+    <BrandIcon>
+      <path d="M14.5 8.5h2V6h-2c-1.7 0-2.8 1.1-2.8 2.9v1.6H9.8V13h1.9v6h2.4v-6h2l.4-2.5h-2.4V9.2c0-.5.2-.7.8-.7" />
+    </BrandIcon>
   ),
-  website: (
-    <>
-      <circle cx="12" cy="12" r="8.5" />
-      <path d="M3.5 12h17M12 3.5c2.4 2.4 2.4 14.6 0 17M12 3.5c-2.4 2.4-2.4 14.6 0 17" />
-    </>
-  ),
+  website: <Globe aria-hidden strokeWidth={1.6} className="h-5 w-5" />,
 };
 
 export type SocialsRowProps = {
@@ -67,18 +86,7 @@ export function SocialsRow({ links, className }: SocialsRowProps) {
             aria-label={link.label}
             className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2"
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.6}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-              className="h-5 w-5"
-            >
-              {ICONS[link.platform]}
-            </svg>
+            {ICONS[link.platform]}
           </a>
         </li>
       ))}

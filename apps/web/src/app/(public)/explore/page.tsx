@@ -1,31 +1,42 @@
 import type { Metadata } from "next";
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@plugfolio/ui";
-import { GridIcon } from "@/components/chrome/icons";
+import { exploreCreators, exploreProducts } from "@plugfolio/core";
+import { ExploreScreen, type ExploreTab } from "@/features/explore";
+import { auth } from "@/server/auth";
+import { repositories } from "@/server/container";
 
-// A static `explore` segment takes precedence over the `[handle]` route.
-// Discovery search is [LATER] (Dev Spec §06); this is the framed placeholder
-// that keeps the SHOP tab and top-bar search live — and never walls shopping.
-export const metadata: Metadata = { title: "Explore" };
+// The no-login discovery surface (design-out discover, Dev Spec §06). A static
+// `explore` segment takes precedence over the `[handle]` route. RSC calls the
+// read service directly (§6.11); search/tab arrive as URL params — never a wall.
+export const metadata: Metadata = {
+  title: "Explore",
+  description:
+    "Browse creators and shop their tagged products — search freely, no account needed.",
+};
 
-export default function ExplorePage() {
+type SearchParams = { q?: string; tab?: string };
+
+export default async function ExplorePage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const { q, tab: rawTab } = await searchParams;
+  const tab: ExploreTab = rawTab === "products" ? "products" : "creators";
+  const session = await auth();
+
+  const deps = { discovery: repositories.discovery };
+  const [creators, products] = await Promise.all([
+    tab === "creators" ? exploreCreators(deps, q) : Promise.resolve([]),
+    tab === "products" ? exploreProducts(deps, q) : Promise.resolve([]),
+  ]);
+
   return (
-    <main className="mx-auto max-w-md px-4 py-10">
-      <p className="text-primary tracking-eyebrow font-mono text-[11px] uppercase">Explore</p>
-      <h1 className="font-display tracking-display mt-2 text-2xl font-semibold">
-        Browse creators &amp; products
-      </h1>
-      <Empty className="mt-8">
-        <EmptyHeader>
-          <div className="bg-muted text-muted-foreground mx-auto flex size-12 items-center justify-center rounded-lg">
-            <GridIcon className="h-6 w-6" />
-          </div>
-          <EmptyTitle>Discovery is coming soon</EmptyTitle>
-          <EmptyDescription>
-            Browsing creators and their products lands here. For now, open a creator&rsquo;s link to
-            shop their posts — no account needed.
-          </EmptyDescription>
-        </EmptyHeader>
-      </Empty>
-    </main>
+    <ExploreScreen
+      tab={tab}
+      query={(q ?? "").trim()}
+      creators={creators}
+      products={products}
+      signedIn={!!session?.user}
+    />
   );
 }

@@ -5,11 +5,12 @@ import { Logo } from "@/components/brand";
 import { SearchIcon, UserIcon } from "./icons";
 
 /**
- * App top bar — carried by every public shopper screen (Dev Spec §03).
- * Left: PlugMark + `plugfolio` wordmark → feed. Right: search + the account
- * slot, which signals role: anonymous = user glyph → sign-in; signed-in =
- * their avatar → account. Server Component so the slot reflects the session
- * without a client round-trip; nothing here ever walls the buy path (§2.2).
+ * App top bar — carried by every public shopper screen (Dev Spec §03, design-
+ * out discover/creator top bar). Left: PlugMark + wordmark → home, on the
+ * 1180px inner. Right on mobile: search + the account slot (the app chrome);
+ * right on desktop: Explore / Log in text nav + the "Create your page" CTA,
+ * or the avatar when signed in. Server Component so the slot reflects the
+ * session without a client round-trip; nothing here ever walls the buy path.
  */
 export async function AppTopBar() {
   const session = await auth();
@@ -18,12 +19,18 @@ export async function AppTopBar() {
 
   return (
     <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-md items-center justify-between px-4">
+      <div className="mx-auto flex h-14 w-full max-w-[1180px] items-center justify-between px-5 lg:h-[62px] lg:px-11">
         <Link href="/" aria-label="Plugfolio home" className="flex items-center">
-          <Logo layout="horizontal" />
+          <Logo layout="horizontal" tone="auto" />
         </Link>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon-sm" asChild>
+        <div className="flex items-center gap-1 lg:gap-4">
+          <Link
+            href="/explore"
+            className="text-muted-foreground hover:text-foreground hidden text-sm font-semibold lg:inline"
+          >
+            Explore
+          </Link>
+          <Button variant="ghost" size="icon-sm" asChild className="lg:hidden">
             <Link href="/explore" aria-label="Search creators">
               <SearchIcon />
             </Link>
@@ -38,11 +45,25 @@ export async function AppTopBar() {
               </Avatar>
             </Link>
           ) : (
-            <Button variant="ghost" size="icon-sm" asChild>
-              <Link href="/signin" aria-label="Sign in">
-                <UserIcon />
+            <>
+              <Link
+                href="/signin"
+                className="text-foreground hidden text-sm font-semibold lg:inline"
+              >
+                Log in
               </Link>
-            </Button>
+              <Link
+                href="/join?as=creator"
+                className="bg-primary text-primary-foreground rounded-pill hidden px-[18px] py-[9px] text-sm font-semibold lg:inline-flex"
+              >
+                Create your page
+              </Link>
+              <Button variant="ghost" size="icon-sm" asChild className="lg:hidden">
+                <Link href="/signin" aria-label="Sign in">
+                  <UserIcon />
+                </Link>
+              </Button>
+            </>
           )}
         </div>
       </div>

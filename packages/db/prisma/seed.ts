@@ -1,3 +1,4 @@
+import { hashPassword } from "@plugfolio/core";
 import { PrismaClient } from "@prisma/client";
 
 /**
@@ -18,10 +19,12 @@ const POST_UNTAGGED_ID = "00000000-0000-0000-0000-0000000000d2";
 const CATEGORY_ID = "00000000-0000-0000-0000-0000000000c9";
 
 async function main() {
+  // Verified + password so `creator@example.com` / `password123` logs in for dev.
+  const creatorAuth = { passwordHash: hashPassword("password123"), emailVerified: new Date() };
   await prisma.user.upsert({
     where: { id: ACCOUNT_ID },
-    update: {},
-    create: { id: ACCOUNT_ID, email: "creator@example.com", username: "maya" },
+    update: creatorAuth,
+    create: { id: ACCOUNT_ID, email: "creator@example.com", username: "maya", ...creatorAuth },
   });
 
   // A connected social (Auth.js Account row) — profile creation requires one
@@ -59,14 +62,14 @@ async function main() {
 
   await prisma.product.upsert({
     where: { id: PRODUCT_ID },
-    update: { categoryId: CATEGORY_ID },
+    update: { categoryId: CATEGORY_ID, imageUrl: "/images/products-sample/product-00001.jpg" },
     create: {
       id: PRODUCT_ID,
       profileId: PROFILE_ID,
       categoryId: CATEGORY_ID,
       title: "Everyday Tote",
       affiliateUrl: "https://example.com/affiliate/everyday-tote",
-      imageUrl: "https://example.com/images/everyday-tote.jpg",
+      imageUrl: "/images/products-sample/product-00001.jpg",
       priceCents: 4900,
       currency: "usd",
     },
@@ -77,12 +80,13 @@ async function main() {
   const OWN_PRODUCT_ID = "00000000-0000-0000-0000-0000000000c2";
   await prisma.product.upsert({
     where: { id: OWN_PRODUCT_ID },
-    update: {},
+    update: { imageUrl: "/images/products-sample/product-00002.jpg" },
     create: {
       id: OWN_PRODUCT_ID,
       profileId: PROFILE_ID,
       kind: "own",
       title: "Lena's Desk Mat",
+      imageUrl: "/images/products-sample/product-00002.jpg",
       affiliateUrl: "https://lena.example.com/shop/desk-mat",
       couponCode: "LENA15",
       inStoreNote: "Show this code at the Indiranagar studio store",
@@ -98,12 +102,13 @@ async function main() {
     update: {
       products: { connect: [{ id: PRODUCT_ID }, { id: OWN_PRODUCT_ID }] },
       categoryId: CATEGORY_ID,
+      mediaUrl: "/images/products-sample/product-00005.jpg",
     },
     create: {
       id: POST_TAGGED_ID,
       profileId: PROFILE_ID,
       categoryId: CATEGORY_ID,
-      mediaUrl: "https://example.com/media/morning-routine.jpg",
+      mediaUrl: "/images/products-sample/product-00005.jpg",
       caption: "Morning routine",
       products: { connect: [{ id: PRODUCT_ID }, { id: OWN_PRODUCT_ID }] },
     },
@@ -111,11 +116,11 @@ async function main() {
 
   await prisma.post.upsert({
     where: { id: POST_UNTAGGED_ID },
-    update: {},
+    update: { mediaUrl: "/images/products-sample/product-00006.jpg" },
     create: {
       id: POST_UNTAGGED_ID,
       profileId: PROFILE_ID,
-      mediaUrl: "https://example.com/media/beach-day.jpg",
+      mediaUrl: "/images/products-sample/product-00006.jpg",
       caption: "Beach day",
     },
   });

@@ -46,6 +46,15 @@ magic-link provider is gone; `pages.signIn = "/signin"`. Unverified logins throw
 `CredentialsSignin` subclass with `code = "unverified"`, read client-side from
 `signIn(..., { redirect: false })`.
 
+Two guards this workaround needs: (1) Auth.js's `assertConfig` rejects
+database-strategy + credentials when credentials is the **only** provider — since our
+OAuth providers are env-gated, a placeholder Google provider (dummy credentials, never
+shown on /signin) is registered when no real OAuth creds exist, purely to satisfy the
+assert; (2) the `session` callback returns an **explicit** `{ expires, user: {id, name,
+email, image} }` shape — with a database adapter the callback receives raw rows, and
+returning them would leak `passwordHash`/`sessionToken` through `/api/auth/session`.
+Dev seed: `creator@example.com` / `password123` is verified and can log in.
+
 ## Pages & components (feature `account-auth`)
 
 Routes `(auth)/join · /signin · /verify · /forgot · /reset` on a shared centered layout.

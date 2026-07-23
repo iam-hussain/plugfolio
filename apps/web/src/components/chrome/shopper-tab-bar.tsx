@@ -74,7 +74,7 @@ export function ShopperTabBar() {
   return (
     <nav
       aria-label="Shopper navigation"
-      className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky bottom-0 z-40 border-t backdrop-blur"
+      className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky bottom-0 z-40 border-t backdrop-blur lg:hidden"
     >
       <ul className="mx-auto flex max-w-md items-stretch">
         {TABS.map((tab) => {

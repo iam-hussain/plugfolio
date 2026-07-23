@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 
-/** Password field with a labeled show/hide toggle (brief 04: no blind typing). */
+/**
+ * Password field with a labeled show/hide toggle inside the input (brief 04:
+ * mobile keyboards make blind typing error-prone). Same 9px-radius raised
+ * field as the other auth inputs.
+ */
 export type PasswordInputProps = {
   id: string;
   value: string;
@@ -14,7 +18,7 @@ export function PasswordInput({ id, value, onChange, autoComplete }: PasswordInp
   const [visible, setVisible] = useState(false);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="bg-muted border-border focus-within:border-ring flex items-center rounded-[9px] border">
       <input
         id={id}
         type={visible ? "text" : "password"}
@@ -24,12 +28,13 @@ export function PasswordInput({ id, value, onChange, autoComplete }: PasswordInp
         minLength={8}
         maxLength={100}
         autoComplete={autoComplete}
-        className="border-border bg-background flex-1 rounded-md border p-2 text-sm"
+        className="text-foreground min-w-0 flex-1 bg-transparent py-[13px] pl-3.5 text-sm outline-none"
       />
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
-        className="text-muted-foreground text-xs underline"
+        aria-pressed={visible}
+        className="text-muted-foreground hover:text-foreground shrink-0 px-3.5 py-[13px] font-mono text-[10.5px] uppercase tracking-[0.08em]"
       >
         {visible ? "Hide" : "Show"}
       </button>

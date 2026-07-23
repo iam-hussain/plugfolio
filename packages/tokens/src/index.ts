@@ -20,6 +20,7 @@ export const brand = {
   primary: "#7C3AED",
   accent: "#C6FF3D",
   surfaceDark: "#12101C", // dark page background (theme-color)
+  surfaceLight: "#FFFFFF", // light page background (theme-color, Dev Spec)
 } as const;
 
 export type BrandColor = keyof typeof brand;

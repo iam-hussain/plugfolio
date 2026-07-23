@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Sora, Space_Mono } from "next/font/google";
 import { brand } from "@plugfolio/tokens";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -27,25 +28,48 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Plugfolio",
-    template: "%s · Plugfolio",
+    default: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    template: `%s · ${SITE_NAME}`,
   },
-  description: "Shoppable creator pages. No login to buy.",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [
+    "shoppable creator pages",
+    "creator storefront",
+    "link in bio shop",
+    "shop creator posts",
+    "creator commerce",
+  ],
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
-// Mobile-first: the brand is violet-tinted dark (§7).
+// Light is the shipped default (design-out prototype default; handoff §10
+// resolved); dark stays fully supported via tokens.
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: brand.surfaceDark,
+  themeColor: brand.surfaceLight,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      data-theme="dark"
+      data-theme="light"
       className={`${sora.variable} ${inter.variable} ${spaceMono.variable}`}
     >
       <body>

@@ -66,8 +66,10 @@
   --color-accent: 76 100% 62%; /* lime stays lime — fill only, never text */
   --color-accent-foreground: 258 26% 9%;
 
-  --surface: 252 33% 97%; /* #F5F4F8 Canvas page bg */
-  --surface-muted: 0 0% 100%; /* #FFFFFF cards, sheets, inputs */
+  /* Dev Spec token table: light pages are WHITE; raised fills carry the faint
+     violet tint (#FBFAFE surface2) — borders do the delineation. */
+  --surface: 0 0% 100%; /* #FFFFFF page bg */
+  --surface-muted: 255 67% 99%; /* #FBFAFE cards, sheets, inputs */
   --text: 258 26% 9%; /* #12101C Ink */
   --text-muted: 257 9% 34%; /* #54505F */
 
@@ -85,8 +87,8 @@
     --color-accent: 76 100% 62%;
     --color-accent-foreground: 258 26% 9%;
 
-    --surface: 252 33% 97%;
-    --surface-muted: 0 0% 100%;
+    --surface: 0 0% 100%;
+    --surface-muted: 255 67% 99%;
     --text: 258 26% 9%;
     --text-muted: 257 9% 34%;
 

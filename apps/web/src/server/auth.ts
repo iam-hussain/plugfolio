@@ -53,6 +53,19 @@ const oauthProviders: Provider[] = [
     : []),
 ];
 
+// Auth.js rejects "database sessions + credentials" ONLY when credentials is
+// the sole provider type (assertConfig's UnsupportedStrategy). Our OAuth
+// providers are env-gated, so without their credentials the list collapses to
+// credentials-only and every auth() call fails. This placeholder keeps one
+// non-credentials provider registered; it's absent from /signin and a sign-in
+// attempt against it just fails at Google.
+// ponytail: drops out automatically wherever real OAuth credentials exist.
+if (oauthProviders.length === 0) {
+  oauthProviders.push(
+    Google({ clientId: "unused-placeholder", clientSecret: "unused-placeholder" }),
+  );
+}
+
 const nextAuth = NextAuth({
   adapter,
   secret: env.AUTH_SECRET,
@@ -91,9 +104,14 @@ const nextAuth = NextAuth({
       return token;
     },
     // Expose the user id so server components can scope reads (getMyProfiles).
+    // Return an EXPLICIT shape: with a database adapter the callback receives
+    // raw rows, and returning them leaks passwordHash + sessionToken through
+    // /api/auth/session.
     session({ session, user }) {
-      session.user.id = user.id;
-      return session;
+      return {
+        expires: session.expires,
+        user: { id: user.id, name: user.name, email: user.email, image: user.image },
+      };
     },
   },
   jwt: {

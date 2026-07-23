@@ -35,6 +35,11 @@ export type {
   ShopperProductView,
 } from "./ports/creator-page-repository";
 export type {
+  DiscoveryReadRepository,
+  DiscoveryCreator,
+  DiscoveryProduct,
+} from "./ports/discovery-repository";
+export type {
   EarningsReadRepository,
   EarningsSummary,
   PostTapCount,
@@ -155,6 +160,7 @@ export {
   listProfileProducts,
   type CreatorPageReadDeps,
 } from "./services/creator-page-reads";
+export { exploreCreators, exploreProducts, type ExploreDeps } from "./services/explore";
 export { getEarnings, type EarningsReadDeps } from "./services/get-earnings";
 export { getMyProfiles, type ProfileReadDeps } from "./services/get-my-profiles";
 export {
@@ -199,6 +205,7 @@ export {
   type AccountAuthDeps,
   type CredentialsResult,
 } from "./services/account-auth";
+export { hashPassword } from "./auth/password";
 export {
   followProfile,
   unfollowProfile,

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { getComments, getCreatorPage, getMemberHandle, isFollowingProfile } from "@plugfolio/core";
 import { CategoryChips, CreatorHeader, PostGrid } from "@/features/creator-page";
 import { RequestCollabForm } from "@/features/business-collab";
 import { CommentForm, CommentList, FollowButton } from "@/features/shopper-account";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
 
@@ -15,9 +17,31 @@ import { repositories } from "@/server/container";
 type Params = { handle: string };
 type SearchParams = { category?: string };
 
+// One fetch per request, shared by generateMetadata and the page.
+const loadCreatorPage = cache((handle: string) =>
+  getCreatorPage({ creatorPages: repositories.creatorPages }, handle),
+);
+
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { handle } = await params;
-  return { title: `@${handle}` };
+  const page = await loadCreatorPage(handle);
+  if (!page) return { title: `@${handle}` };
+  const description = `Shop @${page.username}'s posts on ${SITE_NAME} — every tagged product, straight from the retailer. No account needed.`;
+  const firstMedia = page.posts[0]?.mediaUrl;
+  return {
+    title: `@${page.username}`,
+    description,
+    alternates: { canonical: `/${page.username}` },
+    openGraph: {
+      type: "profile",
+      url: `/${page.username}`,
+      title: `@${page.username} · ${SITE_NAME}`,
+      description,
+      // The creator's latest post is the truest share card; the brand og:image
+      // is the fallback when they haven't posted yet.
+      ...(firstMedia ? { images: [firstMedia] } : {}),
+    },
+  };
 }
 
 export default async function CreatorPage({
@@ -28,8 +52,21 @@ export default async function CreatorPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { handle } = await params;
-  const page = await getCreatorPage({ creatorPages: repositories.creatorPages }, handle);
+  const page = await loadCreatorPage(handle);
   if (!page) notFound();
+
+  // ProfilePage JSON-LD — tells search/answer engines this is a creator's
+  // shoppable page (AEO); only public facts, nothing session-derived.
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    mainEntity: {
+      "@type": "Person",
+      name: `@${page.username}`,
+      identifier: page.username,
+      url: `${SITE_URL}/${page.username}`,
+    },
+  };
 
   const session = await auth();
   const [following, comments, business, ownHandle, memberships] = await Promise.all([
@@ -63,17 +100,27 @@ export default async function CreatorPage({
     : null;
 
   return (
-    <main className="mx-auto max-w-md px-4 pb-8">
-      <CreatorHeader handle={page.username} />
-      <div className="flex justify-center pb-6">
-        <FollowButton
-          profileId={page.id}
-          isAuthenticated={!!session?.user}
-          initiallyFollowing={following}
-        />
-      </div>
+    <main className="mx-auto w-full max-w-[1180px] px-5 pb-14 lg:px-11">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <CreatorHeader
+        handle={page.username}
+        followerCount={page.followerCount}
+        action={
+          <FollowButton
+            profileId={page.id}
+            isAuthenticated={!!session?.user}
+            initiallyFollowing={following}
+          />
+        }
+      />
       {business ? (
-        <div className="pb-6">
+        <div className="border-border bg-muted mt-4 rounded-[14px] border px-4 py-3.5">
+          <p className="text-primary mb-2 font-mono text-[10px] uppercase tracking-[0.08em]">
+            You own a business
+          </p>
           <RequestCollabForm profileId={page.id} />
         </div>
       ) : null}
@@ -93,8 +140,11 @@ export default async function CreatorPage({
       ) : (
         <PostGrid handle={page.username} posts={posts} />
       )}
-      <section aria-label="Comments" className="pt-8">
-        <h2 className="pb-3 font-medium">Comments</h2>
+      <section aria-label="Comments" className="mt-[34px]">
+        <div className="mb-3 flex items-baseline gap-2">
+          <h2 className="font-display text-lg font-bold">Comments</h2>
+          <span className="text-muted-foreground font-mono text-[11px]">{comments.length}</span>
+        </div>
         <CommentList
           comments={comments}
           replyContext={
@@ -110,8 +160,8 @@ export default async function CreatorPage({
               defaultAsProfileId={defaultAsProfileId}
             />
           ) : (
-            <p className="text-muted-foreground text-sm">
-              <Link href="/signin" className="underline">
+            <p className="border-border text-muted-foreground rounded-xl border border-dashed p-4 text-center text-[13.5px]">
+              <Link href="/signin" className="text-primary font-semibold">
                 Sign in
               </Link>{" "}
               to comment — shopping never needs an account.

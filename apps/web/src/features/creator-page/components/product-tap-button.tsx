@@ -1,7 +1,7 @@
 "use client";
 
 import type { TapSource } from "@plugfolio/core";
-import { Button } from "@plugfolio/ui";
+import { Button, cn } from "@plugfolio/ui";
 import { useRecordTap } from "../hooks/use-record-tap";
 
 /**
@@ -16,6 +16,7 @@ export type ProductTapButtonProps = {
   postId?: string;
   source?: TapSource;
   label?: string;
+  className?: string;
 };
 
 export function ProductTapButton({
@@ -24,6 +25,7 @@ export function ProductTapButton({
   postId,
   source = "product",
   label = "Buy",
+  className,
 }: ProductTapButtonProps) {
   const recordTap = useRecordTap();
 
@@ -39,7 +41,12 @@ export function ProductTapButton({
   }
 
   return (
-    <Button variant="accent" onClick={handleTap} disabled={recordTap.isPending}>
+    <Button
+      variant="accent"
+      onClick={handleTap}
+      disabled={recordTap.isPending}
+      className={cn("rounded-pill", className)}
+    >
       {recordTap.isPending ? "Opening…" : label}
     </Button>
   );

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Logo } from "@/components/brand";
 import { LandingCta } from "./landing-cta";
@@ -38,7 +39,7 @@ export function LandingPage() {
           <Link href="/" aria-label="Plugfolio home">
             <Logo layout="horizontal" tone="auto" />
           </Link>
-          <div className="flex items-center gap-5 lg:gap-[22px]">
+          <div className="flex items-center gap-3 lg:gap-[22px]">
             <Link
               href="/explore"
               className="text-muted-foreground hover:text-foreground hidden text-sm font-medium lg:inline"
@@ -86,23 +87,37 @@ export function LandingPage() {
               No login to shop
             </div>
 
-            <div className="mt-6 flex flex-wrap gap-3 lg:mt-8">
-              <LandingCta href="/explore" tone="solid">
+            <div className="mt-6 flex gap-3 lg:mt-8">
+              <LandingCta
+                href="/explore"
+                tone="solid"
+                className="flex-1 px-4 text-sm lg:flex-none lg:px-[26px] lg:text-[15px]"
+              >
                 Explore creators →
               </LandingCta>
-              <LandingCta href="/explore" tone="outline">
+              <LandingCta
+                href="/explore"
+                tone="outline"
+                className="flex-1 px-4 text-sm lg:flex-none lg:px-[26px] lg:text-[15px]"
+              >
                 Browse products
               </LandingCta>
             </div>
 
             <div className="mt-8 flex items-center gap-2.5">
               <div className="flex">
-                {[0, 1, 2].map((i) => (
+                {[
+                  "/images/avatar-sample/avatar-00001.jpg",
+                  "/images/avatar-sample/avatar-00002.jpg",
+                  "/images/avatar-sample/avatar-00003.jpg",
+                ].map((src, i) => (
                   <span
-                    key={i}
+                    key={src}
                     aria-hidden
-                    className={`border-background bg-muted-foreground/25 size-8 rounded-full border-2 ${i > 0 ? "-ml-2.5" : ""}`}
-                  />
+                    className={`border-background relative size-8 overflow-hidden rounded-full border-2 ${i > 0 ? "-ml-2.5" : ""}`}
+                  >
+                    <Image src={src} alt="" fill sizes="32px" className="object-cover" />
+                  </span>
                 ))}
               </div>
               <p className="text-muted-foreground text-[13px]">

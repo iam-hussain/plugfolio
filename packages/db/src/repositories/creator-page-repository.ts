@@ -29,11 +29,12 @@ const productSelect = {
 export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorPageReadRepository {
   return {
     async findByUsername(username: string): Promise<CreatorPage | null> {
-      return db.profile.findUnique({
+      const row = await db.profile.findUnique({
         where: { username },
         select: {
           id: true,
           username: true,
+          _count: { select: { followers: true } },
           categories: {
             orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
             select: { id: true, title: true, description: true },
@@ -50,6 +51,9 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
           },
         },
       });
+      if (!row) return null;
+      const { _count, ...page } = row;
+      return { ...page, followerCount: _count.followers };
     },
 
     async listProducts(username: string): Promise<readonly ShopperProduct[]> {

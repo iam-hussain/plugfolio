@@ -42,6 +42,7 @@ export type PageCategory = {
 export type CreatorPage = {
   readonly id: string;
   readonly username: string;
+  readonly followerCount: number;
   readonly categories: readonly PageCategory[];
   readonly posts: readonly ShopperPost[];
 };

@@ -185,7 +185,7 @@ The design source of truth is **Brand Guidelines v1.1** and the **Engineering Sp
 - **Persistent shopper chrome.** Every public shopper screen carries the app top bar (PlugMark + wordmark, search, role-signaling account slot) and the bottom tab bar (HOME / SHOP / FOLLOWING / ACCOUNT). Both live in `apps/web/src/components/chrome/`; wrap surfaces via `ShopperShell` — screens never invent their own header/footer.
 - **Storybook.** `pnpm --filter @plugfolio/web storybook` renders the design-system gallery — foundations (color, type), the brand mark, the chrome, and the themed UI kit. Stories live in `apps/web/stories/`; config (Vite framework + `next/*` stubs) in `apps/web/.storybook/`. Add a `.stories.tsx` when you add a shared component.
 - **Mobile-first & accessible:** design at 360px first; hit WCAG AA contrast in **both** themes (mind lime-on-light — it's fill-only for this reason); ≥44px hit targets; body never below 14px; every control keyboard- and screen-reader-usable; respect `prefers-reduced-motion`.
-- **Dark-first surfaces** (the brand is violet-tinted dark), but tokens support light mode cleanly.
+- **Light is the shipped default** (`data-theme="light"`, per the design-out prototype default — light pages are white, raised fills carry the faint violet tint); dark stays fully supported through the same tokens.
 
 ---
 
@@ -199,6 +199,7 @@ The design source of truth is **Brand Guidelines v1.1** and the **Engineering Sp
 - **Comments explain *why*, not *what*.** The code says what. Match the surrounding density.
 
 **Components**
+- **Icons come from [lucide](https://lucide.dev/icons/) (`lucide-react`) — always.** Never hand-draw an SVG icon lucide already has; pass size/stroke via props and color via `currentColor` + token classes. The only sanctioned hand-drawn vectors: the **PlugMark/wordmark** (brand, never redrawn by hand anyway — reuse the component) and **social brand glyphs** lucide doesn't ship (Instagram/YouTube/TikTok/Facebook, kept in `features/creator-page/components/socials-row.tsx`).
 - **shadcn/ui first — always.** If shadcn/ui has a component for what you need (Button, Dialog, Sheet, Input, Select, Dropdown, Tabs, Toast, Table, …), **use it — do not build a custom one.** Add it with the shadcn CLI into `components/ui/`, then theme it via our tokens (§7). Only build a custom component when shadcn has **no** equivalent, and even then compose it from shadcn primitives where possible. Extend a shadcn component by wrapping it, not by forking a parallel version. Never reintroduce a hand-rolled Button/Modal/etc. that duplicates one shadcn already provides.
 - **Variants via `class-variance-authority` (CVA) — never hardcoded colors, never inline styles.** Any component with visual states (size, tone, active/inactive, kind) declares them with `cva`, keyed on token utility classes (`bg-primary`, `text-accent-foreground`, `border-border`, …). No raw hex, no `style={{ … }}` attribute, and no runtime-built Tailwind strings (`` `h-[${n}px]` ``) that the JIT can't see — use named CVA size/tone variants so every value stays on the token scale. Pick a variant with a prop; don't branch styling with ad-hoc `className` string concatenation.
 - **Function components + hooks only.** One component per file; the file is named for the component.

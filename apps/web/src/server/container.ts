@@ -6,6 +6,7 @@ import {
   createCollabRepository,
   createCommentRepository,
   createCreatorPageRepository,
+  createDiscoveryRepository,
   createEarningsRepository,
   createFollowRepository,
   createProfileRepository,
@@ -20,6 +21,7 @@ import {
  */
 export const repositories = {
   creatorPages: createCreatorPageRepository(),
+  discovery: createDiscoveryRepository(),
   earnings: createEarningsRepository(),
   profiles: createProfileRepository(),
   follows: createFollowRepository(),

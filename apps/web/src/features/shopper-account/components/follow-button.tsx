@@ -27,7 +27,7 @@ export function FollowButton({ profileId, isAuthenticated, initiallyFollowing }:
 
   if (!isAuthenticated) {
     return (
-      <Button variant="outline" size="sm" onClick={() => router.push("/signin")}>
+      <Button variant="outline" size="sm" className="rounded-pill px-5" onClick={() => router.push("/signin")}>
         Follow
       </Button>
     );
@@ -37,6 +37,7 @@ export function FollowButton({ profileId, isAuthenticated, initiallyFollowing }:
     <Button
       variant={initiallyFollowing ? "ghost" : "outline"}
       size="sm"
+      className="rounded-pill px-5"
       onClick={() => toggle.mutate()}
       disabled={toggle.isPending}
     >
