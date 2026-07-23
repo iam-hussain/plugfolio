@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@plugfolio/core": "workspace:*",
@@ -28,14 +30,22 @@
     "@eslint/eslintrc": "^3.2.0",
     "@playwright/test": "^1.55.0",
     "@plugfolio/config": "workspace:*",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-themes": "^8.6.18",
+    "@storybook/react": "^8.6.18",
+    "@storybook/react-vite": "^8.6.18",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.17.0",
     "eslint-config-next": "^15.1.2",
     "postcss": "^8.4.49",
+    "storybook": "^8.6.18",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vite": "^5.4.21",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

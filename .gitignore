@@ -31,3 +31,6 @@ test-results/
 .vercel/
 *.tsbuildinfo
 graphify-out/
+
+# storybook build output
+storybook-static/
