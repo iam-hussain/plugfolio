@@ -21,6 +21,10 @@
 - Product page `/[handle]/product/[productId]` — photo, price, the post it came from, one Buy (`source: "product"`, carries the source post's id when known).
 - Images render `next/image` **unoptimized** until the social-import pipeline pins the real image domains for `remotePatterns`.
 
+## One page, four viewers (design-out)
+
+The creator page adapts only its chrome to the session — the buy path never changes: anonymous (outline Follow → sign-in) · signed-in shopper (working Follow + comment composer) · business viewer (the "You own a business" Request-collab strip) · **owner** (Admin or Manager): Share (native share sheet, clipboard fallback) + Edit profile (Admin only) replace Follow, plus a "This is your page — visitors see exactly this" band with a Dashboard link (and an add-your-links nudge when the socials row is empty). The business strip is suppressed on your own page. Inline layout/featured editing from the prototype stays deferred (no layout model).
+
 ## Edge cases
 
 - Unknown handle / post / product → `notFound()` (404 page), never an error screen.

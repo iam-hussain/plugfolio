@@ -9,7 +9,8 @@ import {
   getProfileLinks,
   isFollowingProfile,
 } from "@plugfolio/core";
-import { CategoryChips, CreatorHeader, PostGrid } from "@/features/creator-page";
+import { Button } from "@plugfolio/ui";
+import { CategoryChips, CreatorHeader, PostGrid, ShareButton } from "@/features/creator-page";
 import { RequestCollabForm } from "@/features/business-collab";
 import { CommentForm, CommentList, FollowButton } from "@/features/shopper-account";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
@@ -110,6 +111,10 @@ export default async function CreatorPage({
     ? page.posts.filter((post) => post.categoryId === activeCategory.id)
     : page.posts;
 
+  // One page, four viewers (design-out): the owner (Admin or Manager) gets
+  // owner tools where visitors get Follow — the buy path never changes.
+  const ownMembership = memberships.find((membership) => membership.id === page.id) ?? null;
+
   // ADR-0009 default: on your own page you speak as the profile; the picker
   // lets a member choose otherwise, per comment.
   const identities = memberships.map(({ id, username }) => ({ id, username }));
@@ -128,14 +133,45 @@ export default async function CreatorPage({
         followerCount={page.followerCount}
         socials={socials}
         action={
-          <FollowButton
-            profileId={page.id}
-            isAuthenticated={!!session?.user}
-            initiallyFollowing={following}
-          />
+          ownMembership ? (
+            <div className="flex items-center gap-2">
+              <ShareButton path={`/${page.username}`} />
+              {ownMembership.role === "admin" ? (
+                <Button variant="outline" size="sm" className="rounded-pill px-5" asChild>
+                  <Link href={{ pathname: "/dashboard/settings", query: { profile: page.id } }}>
+                    Edit profile
+                  </Link>
+                </Button>
+              ) : null}
+            </div>
+          ) : (
+            <FollowButton
+              profileId={page.id}
+              isAuthenticated={!!session?.user}
+              initiallyFollowing={following}
+            />
+          )
         }
       />
-      {business ? (
+      {ownMembership ? (
+        <div className="border-border bg-muted mt-4 flex flex-wrap items-center justify-between gap-2 rounded-[14px] border px-4 py-3.5">
+          <p className="text-sm">
+            <span className="text-primary font-mono text-[10px] tracking-[0.08em] uppercase">
+              This is your page
+            </span>
+            <span className="text-muted-foreground block">
+              Visitors see exactly this{ownMembership.role === "admin" && socials.length === 0
+                ? " — add your links in Settings to show your socials"
+                : ""}
+              .
+            </span>
+          </p>
+          <Button variant="outline" size="sm" asChild>
+            <Link href={{ pathname: "/dashboard", query: { profile: page.id } }}>Dashboard</Link>
+          </Button>
+        </div>
+      ) : null}
+      {business && !ownMembership ? (
         <div className="border-border bg-muted mt-4 rounded-[14px] border px-4 py-3.5">
           <p className="text-primary mb-2 font-mono text-[10px] uppercase tracking-[0.08em]">
             You own a business

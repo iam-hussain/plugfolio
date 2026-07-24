@@ -8,6 +8,7 @@ export {
   type SocialPlatform,
 } from "./components/socials-row";
 export { PostGrid, type PostGridProps } from "./components/post-grid";
+export { ShareButton } from "./components/share-button";
 export { CategoryChips, type CategoryChipsProps } from "./components/category-chips";
 export { TaggedProductCard, type TaggedProductCardProps } from "./components/tagged-product-card";
 export { ProductTapButton, type ProductTapButtonProps } from "./components/product-tap-button";
