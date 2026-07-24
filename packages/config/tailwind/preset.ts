@@ -85,6 +85,12 @@ const preset = {
           ring: "hsl(var(--ring) / <alpha-value>)",
         },
       },
+      // Bare `border`/`border-b`/`divide-*` (no color suffix) must resolve to
+      // the token, not Tailwind's gray-200 default — in dark mode that default
+      // renders glaring light hairlines (shadcn table rows use bare border-b).
+      borderColor: {
+        DEFAULT: "hsl(var(--border) / <alpha-value>)",
+      },
       // Radius scale — Brand/Dev-spec §02: sm 8 · md 12 · lg 16 · pill 999.
       // `panel` (14px) is the Admin design's card radius.
       borderRadius: {

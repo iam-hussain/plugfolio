@@ -56,6 +56,9 @@
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
 
+  /* Native controls (checkboxes, selects, scrollbars) follow the theme. */
+  color-scheme: dark;
+
   /* Shape & type. */
   --radius: 1rem; /* radius-lg (16px); md/sm derive in the preset */
   --font-display: var(--font-sora, "Sora"), system-ui, sans-serif;
@@ -64,6 +67,7 @@
 }
 
 :root[data-theme="light"] {
+  color-scheme: light;
   --color-primary: 262 83% 58%; /* #7C3AED */
   --color-primary-foreground: 0 0% 100%;
   --color-accent: 76 100% 62%; /* lime stays lime — fill only, never text */
@@ -88,6 +92,7 @@
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
+    color-scheme: light;
     --color-primary: 262 83% 58%;
     --color-primary-foreground: 0 0% 100%;
     --color-accent: 76 100% 62%;
