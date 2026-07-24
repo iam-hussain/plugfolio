@@ -31,6 +31,9 @@ import {
   followProfileInput,
   postRequirement,
   postRequirementInput,
+  closeRequirement,
+  proposeCollabTerms,
+  proposeTermsInput,
   setProfileLinks,
   setProfileLinksInput,
   updateProfileIdentity,
@@ -247,6 +250,23 @@ app.post("/collabs/:collabId/agree", async (c) => {
   const collabId = uuidParam.parse(c.req.param("collabId"));
   await agreeCollab(businessCollabDeps, userId, collabId);
   return c.json({ agreed: true });
+});
+
+// Propose terms (brief 12): either side; resets both agreements.
+app.post("/collabs/:collabId/terms", async (c) => {
+  const userId = await requireUserId(c);
+  const collabId = uuidParam.parse(c.req.param("collabId"));
+  const input = proposeTermsInput.parse(await c.req.json());
+  await proposeCollabTerms(businessCollabDeps, userId, collabId, input);
+  return c.json({ proposed: true });
+});
+
+// Close a requirement (brief 11): off the board; threads persist.
+app.post("/requirements/:requirementId/close", async (c) => {
+  const userId = await requireUserId(c);
+  const requirementId = uuidParam.parse(c.req.param("requirementId"));
+  await closeRequirement(businessCollabDeps, userId, requirementId);
+  return c.json({ closed: true });
 });
 
 // --- The creator's back room (lean journey: Posts + Products tabs) ---

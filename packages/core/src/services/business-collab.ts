@@ -14,6 +14,7 @@ import type {
   CollabMessageInput,
   CreateBusinessInput,
   PostRequirementInput,
+  ProposeTermsInput,
   RequestCollabInput,
 } from "../schemas/business-collab";
 
@@ -117,8 +118,11 @@ export async function approachRequirement(
   if (!profiles.some((profile) => profile.id === input.profileId)) {
     throw new ForbiddenError("You can only approach with your own profile");
   }
-  const businessId = await deps.requirements.findBusinessId(input.requirementId);
-  if (!businessId) throw new NotFoundError("Requirement not found");
+  const target = await deps.requirements.findApproachTarget(input.requirementId);
+  if (!target) throw new NotFoundError("Requirement not found");
+  // Brief 12 edge: approaching a just-closed requirement fails honestly.
+  if (target.closed) throw new ConflictError("This requirement has closed");
+  const businessId = target.businessId;
 
   // One thread per (business, profile, requirement) — a double-fired approach
   // lands in the existing thread instead of opening a duplicate.
@@ -171,6 +175,39 @@ export async function sendCollabMessage(
     throw new NotFoundError("Collab not found");
   }
   await deps.collabs.addMessage(collabId, userId, input.body);
+}
+
+/** Propose terms (brief 12): either side; the latest proposal is the live
+ * one and RESETS both agreements — Agreed always means agreed to these. */
+export async function proposeCollabTerms(
+  deps: BusinessCollabDeps,
+  userId: string,
+  collabId: string,
+  input: ProposeTermsInput,
+): Promise<void> {
+  if (!(await resolveSide(deps, userId, collabId))) {
+    throw new NotFoundError("Collab not found");
+  }
+  await deps.collabs.setTerms(collabId, {
+    content: input.content,
+    price: input.price ?? null,
+    deadline: input.deadline ?? null,
+  });
+}
+
+/** Close a requirement (brief 11): off the board; threads persist. */
+export async function closeRequirement(
+  deps: Pick<BusinessCollabDeps, "businesses" | "requirements">,
+  userId: string,
+  requirementId: string,
+): Promise<void> {
+  const business = await deps.businesses.findByUser(userId);
+  if (!business) throw new ForbiddenError("Create a business first");
+  const target = await deps.requirements.findApproachTarget(requirementId);
+  if (!target || target.businessId !== business.id) {
+    throw new NotFoundError("Requirement not found");
+  }
+  await deps.requirements.close(requirementId);
 }
 
 /** Accept the terms for the caller's side; agreed once both sides have. */

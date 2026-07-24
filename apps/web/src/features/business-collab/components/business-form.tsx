@@ -11,9 +11,10 @@ export function BusinessForm() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
 
   const submit = useMutation({
-    mutationFn: () => createBusiness({ name, description }),
+    mutationFn: () => createBusiness({ name, description, logoUrl: logoUrl.trim() || null }),
     onSuccess: () => router.refresh(),
   });
 
@@ -44,6 +45,16 @@ export function BusinessForm() {
           maxLength={280}
           rows={2}
           required
+        />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="business-logo">Logo URL (optional)</Label>
+        <Input
+          id="business-logo"
+          type="url"
+          value={logoUrl}
+          onChange={(event) => setLogoUrl(event.target.value)}
+          placeholder="https://…/logo.png"
         />
       </div>
       {submit.isError ? (

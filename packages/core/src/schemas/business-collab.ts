@@ -23,6 +23,15 @@ export const postRequirementInput = z.object({
 
 export type PostRequirementInput = z.infer<typeof postRequirementInput>;
 
+/** Propose terms (brief 12): content, price, deadline — the pinned brief. */
+export const proposeTermsInput = z.object({
+  content: z.string().trim().min(1).max(300),
+  price: z.string().trim().max(60).nullish(),
+  deadline: z.coerce.date().nullish(),
+});
+
+export type ProposeTermsInput = z.infer<typeof proposeTermsInput>;
+
 export const approachRequirementInput = z.object({
   requirementId: z.string().uuid(),
   profileId: z.string().uuid(),

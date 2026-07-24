@@ -15,7 +15,7 @@ import {
   MessageHeader,
 } from "@plugfolio/ui";
 import { ArrowLeft } from "lucide-react";
-import { ThreadActions } from "@/features/business-collab";
+import { ProposeTermsForm, ThreadActions } from "@/features/business-collab";
 import { auth } from "@/server/auth";
 import { businessCollabDeps } from "@/server/container";
 
@@ -32,6 +32,7 @@ const timeFormat = new Intl.DateTimeFormat("en", {
   hour: "numeric",
   minute: "2-digit",
 });
+const termsDateFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric" });
 
 export default async function CollabThreadPage({ params }: { params: Promise<Params> }) {
   const session = await auth();
@@ -64,18 +65,34 @@ export default async function CollabThreadPage({ params }: { params: Promise<Par
 
       {/* The terms, always visible at the top (brief 12). */}
       <Card className="mb-6">
-        <CardContent className="flex items-center gap-3">
-          <div className="min-w-0 flex-1">
-            <h1 className="font-display truncate text-lg font-semibold">
-              {thread.businessName} × @{thread.username}
-            </h1>
-            <p className="text-muted-foreground truncate text-sm">
-              {thread.requirementTitle ?? "Direct collab"}
-            </p>
+        <CardContent className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <h1 className="font-display truncate text-lg font-semibold">
+                {thread.businessName} × @{thread.username}
+              </h1>
+              <p className="text-muted-foreground truncate text-sm">
+                {thread.requirementTitle ?? "Direct collab"}
+              </p>
+            </div>
+            <Badge variant={agreed ? "default" : "outline"}>
+              {agreed ? "Agreed" : "Negotiating"}
+            </Badge>
           </div>
-          <Badge variant={agreed ? "default" : "outline"}>
-            {agreed ? "Agreed" : "Negotiating"}
-          </Badge>
+          {thread.termsContent ? (
+            <p className="border-border bg-muted rounded-md border px-3 py-2 text-sm">
+              <span className="text-muted-foreground font-mono text-[10px] tracking-[0.08em] uppercase">
+                The terms ·{" "}
+              </span>
+              {thread.termsContent}
+              {thread.termsPrice ? ` · ${thread.termsPrice}` : ""}
+              {thread.termsDeadline ? ` · by ${termsDateFormat.format(thread.termsDeadline)}` : ""}
+            </p>
+          ) : (
+            <p className="text-muted-foreground text-xs">
+              No terms proposed yet — pin what gets made, the price, and the deadline below.
+            </p>
+          )}
         </CardContent>
       </Card>
       {agreed ? (
@@ -120,11 +137,14 @@ export default async function CollabThreadPage({ params }: { params: Promise<Par
         </ul>
       </section>
 
-      <ThreadActions
-        collabId={thread.id}
-        hasAgreed={mine !== null}
-        otherSideAgreed={theirs !== null}
-      />
+      <div className="flex flex-col gap-4">
+        <ThreadActions
+          collabId={thread.id}
+          hasAgreed={mine !== null}
+          otherSideAgreed={theirs !== null}
+        />
+        <ProposeTermsForm collabId={thread.id} />
+      </div>
     </main>
   );
 }

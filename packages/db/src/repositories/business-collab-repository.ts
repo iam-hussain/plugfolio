@@ -15,8 +15,10 @@ const requirementSelect = {
   brief: true,
   budget: true,
   deadline: true,
+  closedAt: true,
   createdAt: true,
   business: { select: { name: true } },
+  _count: { select: { collabs: true } },
 } as const;
 
 type RequirementRow = {
@@ -25,13 +27,15 @@ type RequirementRow = {
   brief: string;
   budget: string | null;
   deadline: Date | null;
+  closedAt: Date | null;
   createdAt: Date;
   business: { name: string };
+  _count: { collabs: number };
 };
 
 function toRequirementView(row: RequirementRow): RequirementView {
-  const { business, ...rest } = row;
-  return { ...rest, businessName: business.name };
+  const { business, _count, ...rest } = row;
+  return { ...rest, businessName: business.name, approachCount: _count.collabs };
 }
 
 const summarySelect = {
@@ -91,6 +95,7 @@ export function createRequirementRepository(db: PrismaClient = prisma): Requirem
     },
     async listOpen(limit): Promise<readonly RequirementView[]> {
       const rows = await db.requirement.findMany({
+        where: { closedAt: null },
         orderBy: { createdAt: "desc" },
         take: limit,
         select: requirementSelect,
@@ -105,12 +110,20 @@ export function createRequirementRepository(db: PrismaClient = prisma): Requirem
       });
       return rows.map(toRequirementView);
     },
-    async findBusinessId(requirementId): Promise<string | null> {
+    async findApproachTarget(requirementId) {
       const row = await db.requirement.findUnique({
         where: { id: requirementId },
-        select: { businessId: true },
+        select: { businessId: true, closedAt: true },
       });
-      return row?.businessId ?? null;
+      return row ? { businessId: row.businessId, closed: row.closedAt !== null } : null;
+    },
+
+    async close(requirementId): Promise<void> {
+      // Keeps the first close timestamp on retries.
+      await db.requirement.updateMany({
+        where: { id: requirementId, closedAt: null },
+        data: { closedAt: new Date() },
+      });
     },
   };
 }
@@ -152,6 +165,9 @@ export function createCollabRepository(db: PrismaClient = prisma): CollabReposit
           id: true,
           businessId: true,
           profileId: true,
+          termsContent: true,
+          termsPrice: true,
+          termsDeadline: true,
           businessAgreedAt: true,
           creatorAgreedAt: true,
           business: { select: { name: true, userId: true } },
@@ -171,6 +187,9 @@ export function createCollabRepository(db: PrismaClient = prisma): CollabReposit
         businessName: row.business.name,
         username: row.profile.username,
         requirementTitle: row.requirement?.title ?? null,
+        termsContent: row.termsContent,
+        termsPrice: row.termsPrice,
+        termsDeadline: row.termsDeadline,
         businessAgreedAt: row.businessAgreedAt,
         creatorAgreedAt: row.creatorAgreedAt,
         messages: row.messages.map((message) => ({
@@ -202,6 +221,20 @@ export function createCollabRepository(db: PrismaClient = prisma): CollabReposit
 
     async addMessage(collabId, senderUserId, body): Promise<void> {
       await db.collabMessage.create({ data: { collabId, senderUserId, body } });
+    },
+
+    async setTerms(collabId, terms): Promise<void> {
+      // The latest proposal is the live one; both agreements reset with it.
+      await db.collab.update({
+        where: { id: collabId },
+        data: {
+          termsContent: terms.content,
+          termsPrice: terms.price,
+          termsDeadline: terms.deadline,
+          businessAgreedAt: null,
+          creatorAgreedAt: null,
+        },
+      });
     },
 
     async setAgreed(collabId, side, at): Promise<void> {

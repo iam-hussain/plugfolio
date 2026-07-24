@@ -12,9 +12,11 @@ import type { ProfileRepository } from "../ports/profile-repository";
 import {
   agreeCollab,
   approachRequirement,
+  closeRequirement,
   createBusiness,
   getCollabThread,
   postRequirement,
+  proposeCollabTerms,
   requestCollab,
   sendCollabMessage,
 } from "./business-collab";
@@ -31,12 +33,17 @@ type CollabRow = {
   businessId: string;
   profileId: string;
   requirementId: string | null;
+  termsContent: string | null;
+  termsPrice: string | null;
+  termsDeadline: Date | null;
   businessAgreedAt: Date | null;
   creatorAgreedAt: Date | null;
   messages: { senderUserId: string; body: string }[];
 };
 
-function makeDeps(options: { withBusiness?: boolean } = { withBusiness: true }) {
+function makeDeps(
+  options: { withBusiness?: boolean; requirementClosed?: boolean } = { withBusiness: true },
+) {
   const business: Business = {
     id: BUSINESS_ID,
     userId: BIZ_USER,
@@ -56,6 +63,7 @@ function makeDeps(options: { withBusiness?: boolean } = { withBusiness: true }) 
     },
   };
 
+  let requirementClosed = options.requirementClosed ?? false;
   const requirements: RequirementRepository = {
     async create(input) {
       return {
@@ -65,6 +73,8 @@ function makeDeps(options: { withBusiness?: boolean } = { withBusiness: true }) 
         brief: input.brief,
         budget: input.budget,
         deadline: input.deadline,
+        closedAt: null,
+        approachCount: 0,
         createdAt: new Date(0),
       } satisfies RequirementView;
     },
@@ -74,8 +84,13 @@ function makeDeps(options: { withBusiness?: boolean } = { withBusiness: true }) 
     async listByBusiness() {
       return [];
     },
-    async findBusinessId(requirementId) {
-      return requirementId === REQUIREMENT_ID ? BUSINESS_ID : null;
+    async findApproachTarget(requirementId: string) {
+      return requirementId === REQUIREMENT_ID
+        ? { businessId: BUSINESS_ID, closed: requirementClosed }
+        : null;
+    },
+    async close() {
+      requirementClosed = true;
     },
   };
 
@@ -87,6 +102,9 @@ function makeDeps(options: { withBusiness?: boolean } = { withBusiness: true }) 
         businessId: input.businessId,
         profileId: input.profileId,
         requirementId: input.requirementId,
+        termsContent: null,
+        termsPrice: null,
+        termsDeadline: null,
         businessAgreedAt: null,
         creatorAgreedAt: null,
         messages: [{ senderUserId: input.firstMessage.senderUserId, body: input.firstMessage.body }],
@@ -117,6 +135,9 @@ function makeDeps(options: { withBusiness?: boolean } = { withBusiness: true }) 
         businessName: "Verve",
         username: "lena",
         requirementTitle: null,
+        termsContent: row.termsContent,
+        termsPrice: row.termsPrice,
+        termsDeadline: row.termsDeadline,
         businessAgreedAt: row.businessAgreedAt,
         creatorAgreedAt: row.creatorAgreedAt,
         messages: row.messages.map((message, index) => ({
@@ -141,6 +162,15 @@ function makeDeps(options: { withBusiness?: boolean } = { withBusiness: true }) 
       if (!row) return;
       if (side === "business") row.businessAgreedAt ??= at;
       else row.creatorAgreedAt ??= at;
+    },
+    async setTerms(collabId, terms) {
+      const row = collabRows.find((r) => r.id === collabId);
+      if (!row) return;
+      row.termsContent = terms.content;
+      row.termsPrice = terms.price;
+      row.termsDeadline = terms.deadline;
+      row.businessAgreedAt = null;
+      row.creatorAgreedAt = null;
     },
   };
 
@@ -272,5 +302,51 @@ describe("thread access and agreement", () => {
 
     await agreeCollab(deps, CREATOR_USER, id);
     expect(collabRows[0]!.creatorAgreedAt).not.toBeNull();
+  });
+});
+
+describe("terms and requirement close (briefs 11–12)", () => {
+  async function openThread(deps: ReturnType<typeof makeDeps>["deps"]) {
+    return approachRequirement(deps, CREATOR_USER, {
+      requirementId: REQUIREMENT_ID,
+      profileId: PROFILE_ID,
+      message: "hi",
+    });
+  }
+
+  it("a new proposal resets BOTH agreements", async () => {
+    const { deps, collabRows } = makeDeps();
+    const id = await openThread(deps);
+    await agreeCollab(deps, BIZ_USER, id);
+    await proposeCollabTerms(deps, CREATOR_USER, id, {
+      content: "One 30s reel",
+      price: "$200",
+      deadline: null,
+    });
+    expect(collabRows[0]!.termsContent).toBe("One 30s reel");
+    expect(collabRows[0]!.businessAgreedAt).toBeNull();
+    expect(collabRows[0]!.creatorAgreedAt).toBeNull();
+  });
+
+  it("outsiders cannot propose — NotFound, not Forbidden", async () => {
+    const { deps } = makeDeps();
+    const id = await openThread(deps);
+    await expect(
+      proposeCollabTerms(deps, OUTSIDER, id, { content: "x" }),
+    ).rejects.toBeInstanceOf(NotFoundError);
+  });
+
+  it("approaching a closed requirement fails honestly", async () => {
+    const { deps } = makeDeps({ withBusiness: true, requirementClosed: true });
+    await expect(openThread(deps)).rejects.toBeInstanceOf(ConflictError);
+  });
+
+  it("only the owning business can close its requirement", async () => {
+    const { deps } = makeDeps();
+    await expect(closeRequirement(deps, CREATOR_USER, REQUIREMENT_ID)).rejects.toBeInstanceOf(
+      ForbiddenError,
+    );
+    await closeRequirement(deps, BIZ_USER, REQUIREMENT_ID);
+    await expect(openThread(deps)).rejects.toBeInstanceOf(ConflictError);
   });
 });

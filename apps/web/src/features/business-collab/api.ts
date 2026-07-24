@@ -3,6 +3,7 @@ import type {
   CollabMessageInput,
   CreateBusinessInput,
   PostRequirementInput,
+  ProposeTermsInput,
   RequestCollabInput,
 } from "@plugfolio/core";
 
@@ -34,3 +35,7 @@ export const requestCollab = (input: RequestCollabInput) => post("/api/collabs/r
 export const sendCollabMessage = (collabId: string, input: CollabMessageInput) =>
   post(`/api/collabs/${collabId}/messages`, input);
 export const agreeCollab = (collabId: string) => post(`/api/collabs/${collabId}/agree`);
+export const proposeTerms = (collabId: string, input: ProposeTermsInput) =>
+  post(`/api/collabs/${collabId}/terms`, input);
+export const closeRequirement = (requirementId: string) =>
+  post(`/api/requirements/${requirementId}/close`);

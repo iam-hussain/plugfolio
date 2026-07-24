@@ -5,6 +5,7 @@ import { getMyBusiness, listMyBusinessCollabs, listMyRequirements } from "@plugf
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
   Badge,
   Button,
   Card,
@@ -20,7 +21,12 @@ import {
 } from "@plugfolio/ui";
 import { ArrowRight, LogOut } from "lucide-react";
 import { Logo } from "@/components/brand";
-import { BusinessForm, CollabList, RequirementForm } from "@/features/business-collab";
+import {
+  BusinessForm,
+  CloseRequirementButton,
+  CollabList,
+  RequirementForm,
+} from "@/features/business-collab";
 import { auth } from "@/server/auth";
 import { businessCollabDeps } from "@/server/container";
 
@@ -69,6 +75,7 @@ export default async function BusinessCollabsPage() {
     <BusinessChrome>
       <header className="flex items-center gap-3 py-8">
         <Avatar className="size-12">
+          {business.logoUrl ? <AvatarImage src={business.logoUrl} alt="" /> : null}
           <AvatarFallback className="bg-muted text-foreground">
             {business.name.charAt(0).toUpperCase()}
           </AvatarFallback>
@@ -111,7 +118,7 @@ export default async function BusinessCollabsPage() {
         </section>
 
         <section aria-label="Your requirements">
-          <h2 className="pb-3 font-medium">Your open requirements</h2>
+          <h2 className="pb-3 font-medium">Your requirements</h2>
           {requirements.length === 0 ? (
             <p className="text-muted-foreground pb-3 text-sm">
               Nothing posted yet — creators who fit can approach the moment you post one.
@@ -122,12 +129,24 @@ export default async function BusinessCollabsPage() {
                 <li key={requirement.id}>
                   <Card>
                     <CardHeader>
-                      <CardTitle>{requirement.title}</CardTitle>
+                      <div className="flex items-start justify-between gap-2">
+                        <CardTitle>{requirement.title}</CardTitle>
+                        {requirement.closedAt ? (
+                          <Badge variant="secondary">Closed</Badge>
+                        ) : (
+                          <CloseRequirementButton requirementId={requirement.id} />
+                        )}
+                      </div>
                       <CardDescription className="flex flex-wrap items-center gap-2">
                         {requirement.budget ? <Badge variant="outline">{requirement.budget}</Badge> : null}
                         {requirement.deadline ? (
                           <span>by {dateFormat.format(requirement.deadline)}</span>
                         ) : null}
+                        <span>
+                          {requirement.approachCount === 0
+                            ? "no approaches yet"
+                            : `${requirement.approachCount} approached`}
+                        </span>
                       </CardDescription>
                     </CardHeader>
                     <CardContent>

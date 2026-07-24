@@ -119,6 +119,8 @@ export {
   type RequestCollabInput,
   collabMessageInput,
   type CollabMessageInput,
+  proposeTermsInput,
+  type ProposeTermsInput,
 } from "./schemas/business-collab";
 export {
   createPostInput,
@@ -392,6 +394,8 @@ export {
   approachRequirement,
   requestCollab,
   sendCollabMessage,
+  proposeCollabTerms,
+  closeRequirement,
   agreeCollab,
   getCollabThread,
   listMyBusinessCollabs,

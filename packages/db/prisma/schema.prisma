@@ -167,6 +167,8 @@ model Requirement {
   brief      String
   budget     String?
   deadline   DateTime?
+  /// Closed = off the open board; existing threads persist (brief 11).
+  closedAt   DateTime?
   collabs    Collab[]
   createdAt  DateTime @default(now())
 
@@ -185,6 +187,11 @@ model Collab {
   profile          Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
   requirementId    String?         @db.Uuid
   requirement      Requirement?    @relation(fields: [requirementId], references: [id], onDelete: SetNull)
+  /// The live proposal (brief 12): latest Propose-terms wins and resets both
+  /// agreements — "Agreed" always means agreed to THESE terms.
+  termsContent     String?
+  termsPrice       String?
+  termsDeadline    DateTime?
   businessAgreedAt DateTime?
   creatorAgreedAt  DateTime?
   messages         CollabMessage[]
