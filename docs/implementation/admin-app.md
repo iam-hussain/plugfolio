@@ -63,6 +63,13 @@ the collab thread reader, pagination + filters + CSV, member actions
 (resend/reset/handle/delete), suspension reasons, the Admins screen with
 invites, the Reports queue (admin side; the product-side "Report" affordance
 is still to come and gets its own product brief), message-level moderation,
-bulk actions, toasts, and the theme toggle. Remaining deliberate gaps:
-login rate-limiting / revocable admin sessions, and product-side feature-flag
-call sites (`isFeatureEnabled` has no readers yet).
+bulk actions, toasts, and the theme toggle. All four follow-up gaps closed since: the **product-side Report flow**
+(shopper-facing `ReportButton` on pages/products/comments → `POST
+/api/reports`, account-free, feature-flag gated) feeds the queue; **feature
+flags have real readers** — `comments` (kill switch for the composer + POST
+/comments) and `reports` (gates the inflow), both defaulting ON;
+**admin auth is hardened** — login rate limit (5 fails / 15 min per email)
+and revocable sessions (`AdminUser.sessionVersion` rides the JWT; password
+change/reset or removal kills outstanding sessions on their next request);
+and **mail is real** (ADR-0015: Resend HTTP API, env-gated, console
+fallback) for member verification/reset and operator invites.

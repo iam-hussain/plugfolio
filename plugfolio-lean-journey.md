@@ -53,6 +53,8 @@ No popup. No signup wall. No wishlist to manage, no rewards to understand, no fe
 
 **The one optional account.** If a shopper wants to **follow** a creator (so their new posts show up later) or **comment** — on a creator's page or on one of their products — *then* they create a lightweight shopper account — email + password, one verification click, nothing more. Buying never asks for it; only these two social actions do. Follow and comment are the *only* things behind that door in v1. Comments thread **one level deep**: anyone can reply to a comment (the creator's answer speaks as the profile, per the rule below), but replies to replies wait.
 
+**Reporting — account-free, like shopping.** Anything a shopper can see — a comment, a product, a page — carries a quiet **Report** action (reason + optional note). No account needed; the flag lands in the internal admin queue for triage. Reporting never interrupts the buy path.
+
 **Who a comment speaks as — a smart default plus a picker.** By default a comment is signed by the commenter's **`@member-handle`**. Anyone who belongs to creator profiles (as Admin or Manager) gets an **identity picker** on the comment box and can speak **as any of those profiles** (brand name + a "Creator" badge) — on any page, including other creators' pages. The default always does the right thing untouched: on a page one of your profiles owns, it preselects **that profile** (owner replies read the way they do on Instagram/YouTube); everywhere else it preselects your personal handle — so speaking as a brand on someone else's page is always a deliberate choice, never an accident.
 
 ---
