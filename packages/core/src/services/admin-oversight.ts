@@ -5,15 +5,18 @@ import type {
   AdminBusinessRow,
   AdminCollabRepository,
   AdminCollabRow,
+  AdminCollabThread,
   AdminRequirementRepository,
   AdminRequirementRow,
+  Page,
+  PageQuery,
 } from "../ports/admin-repository";
 
 /**
- * Marketplace oversight (docs/implementation/admin-app.md): the two mutations
- * the collab side needs — strip an inappropriate business logo and pull a
- * scam brief off the open board. Threads themselves are read-only oversight;
- * a bad actor is handled by member suspension.
+ * Marketplace oversight (docs/implementation/admin-app.md): strip an
+ * inappropriate business logo, pull a scam brief off the open board, read a
+ * reported thread, and remove a single abusive message. Admins never write
+ * into threads; a bad actor is handled by member suspension.
  */
 
 export type AdminOversightDeps = {
@@ -22,27 +25,64 @@ export type AdminOversightDeps = {
   audit: AdminAuditRepository;
 };
 
-const SEARCH_LIMIT = 50;
+export type AdminCollabsDeps = {
+  collabs: AdminCollabRepository;
+  audit: AdminAuditRepository;
+};
+
+const DETAIL_SNIPPET_LENGTH = 80;
 
 export async function searchBusinesses(
   deps: Pick<AdminOversightDeps, "businesses">,
-  query?: string,
-): Promise<readonly AdminBusinessRow[]> {
-  return deps.businesses.search(query?.trim() || undefined, SEARCH_LIMIT);
+  query: string | undefined,
+  page: PageQuery,
+): Promise<Page<AdminBusinessRow>> {
+  return deps.businesses.search(query?.trim() || undefined, page);
 }
 
 export async function searchRequirements(
   deps: Pick<AdminOversightDeps, "requirements">,
-  query?: string,
-): Promise<readonly AdminRequirementRow[]> {
-  return deps.requirements.search(query?.trim() || undefined, SEARCH_LIMIT);
+  query: string | undefined,
+  page: PageQuery,
+): Promise<Page<AdminRequirementRow>> {
+  return deps.requirements.search(query?.trim() || undefined, page);
 }
 
 export async function listCollabs(
-  deps: { collabs: AdminCollabRepository },
-  query?: string,
-): Promise<readonly AdminCollabRow[]> {
-  return deps.collabs.list(query?.trim() || undefined, SEARCH_LIMIT);
+  deps: Pick<AdminCollabsDeps, "collabs">,
+  query: string | undefined,
+  page: PageQuery,
+): Promise<Page<AdminCollabRow>> {
+  return deps.collabs.list(query?.trim() || undefined, page);
+}
+
+export async function getAdminCollabThread(
+  deps: Pick<AdminCollabsDeps, "collabs">,
+  collabId: string,
+): Promise<AdminCollabThread> {
+  const thread = await deps.collabs.thread(collabId);
+  if (!thread) throw new NotFoundError("No such collab");
+  return thread;
+}
+
+export async function deleteCollabMessage(
+  deps: AdminCollabsDeps,
+  adminId: string,
+  messageId: string,
+): Promise<void> {
+  const deleted = await deps.collabs.deleteMessage(messageId);
+  if (deleted === "not_found") throw new NotFoundError("No such message");
+  const body =
+    deleted.body.length > DETAIL_SNIPPET_LENGTH
+      ? `${deleted.body.slice(0, DETAIL_SNIPPET_LENGTH)}…`
+      : deleted.body;
+  await deps.audit.record({
+    adminId,
+    action: "collab.deleteMessage",
+    targetType: "collabMessage",
+    targetId: messageId,
+    detail: body,
+  });
 }
 
 export async function clearBusinessLogo(

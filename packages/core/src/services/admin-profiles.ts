@@ -1,9 +1,13 @@
 import { ConflictError, NotFoundError } from "../errors";
 import type {
   AdminAuditRepository,
+  AdminProfileDetail,
   AdminProfileRepository,
   AdminProfileRow,
   AppSettingsRepository,
+  Page,
+  PageQuery,
+  ProfileStatusFilter,
 } from "../ports/admin-repository";
 import type { ReleaseUsernameInput } from "../schemas/admin";
 import { isUsernameReserved } from "./app-settings";
@@ -22,38 +26,45 @@ export type AdminProfilesDeps = {
   now: () => Date;
 };
 
-const SEARCH_LIMIT = 50;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 export async function searchProfiles(
   deps: Pick<AdminProfilesDeps, "profiles">,
-  query?: string,
-): Promise<readonly AdminProfileRow[]> {
-  return deps.profiles.search(query?.trim() || undefined, SEARCH_LIMIT);
+  query: string | undefined,
+  status: ProfileStatusFilter | undefined,
+  page: PageQuery,
+): Promise<Page<AdminProfileRow>> {
+  return deps.profiles.search(query?.trim() || undefined, status, page);
 }
 
-async function setProfileSuspension(
-  deps: AdminProfilesDeps,
-  adminId: string,
+export async function getProfileDetail(
+  deps: Pick<AdminProfilesDeps, "profiles" | "now">,
   profileId: string,
-  at: Date | null,
-): Promise<void> {
-  if ((await deps.profiles.setSuspended(profileId, at)) === "not_found") {
-    throw new NotFoundError("No such profile");
-  }
-  await deps.audit.record({
-    adminId,
-    action: at ? "profile.suspend" : "profile.unsuspend",
-    targetType: "profile",
-    targetId: profileId,
-  });
+): Promise<AdminProfileDetail> {
+  const detail = await deps.profiles.detail(
+    profileId,
+    new Date(deps.now().getTime() - 30 * DAY_MS),
+  );
+  if (!detail) throw new NotFoundError("No such profile");
+  return detail;
 }
 
 export async function suspendProfile(
   deps: AdminProfilesDeps,
   adminId: string,
   profileId: string,
+  reason: string,
 ): Promise<void> {
-  await setProfileSuspension(deps, adminId, profileId, deps.now());
+  if ((await deps.profiles.setSuspended(profileId, deps.now())) === "not_found") {
+    throw new NotFoundError("No such profile");
+  }
+  await deps.audit.record({
+    adminId,
+    action: "profile.suspend",
+    targetType: "profile",
+    targetId: profileId,
+    detail: reason,
+  });
 }
 
 export async function unsuspendProfile(
@@ -61,7 +72,15 @@ export async function unsuspendProfile(
   adminId: string,
   profileId: string,
 ): Promise<void> {
-  await setProfileSuspension(deps, adminId, profileId, null);
+  if ((await deps.profiles.setSuspended(profileId, null)) === "not_found") {
+    throw new NotFoundError("No such profile");
+  }
+  await deps.audit.record({
+    adminId,
+    action: "profile.unsuspend",
+    targetType: "profile",
+    targetId: profileId,
+  });
 }
 
 /**

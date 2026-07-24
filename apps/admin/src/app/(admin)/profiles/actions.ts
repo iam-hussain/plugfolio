@@ -2,6 +2,7 @@
 
 import {
   ConflictError,
+  NotFoundError,
   releaseProfileUsername,
   releaseUsernameInput,
   suspendProfile,
@@ -12,21 +13,46 @@ import { z } from "zod";
 import { requireAdmin } from "@/server/auth";
 import { adminProfilesDeps } from "@/server/container";
 
-const profileId = z.string().uuid();
-
-export async function suspendProfileAction(formData: FormData): Promise<void> {
-  const admin = await requireAdmin();
-  await suspendProfile(adminProfilesDeps, admin.id, profileId.parse(formData.get("profileId")));
-  revalidatePath("/profiles");
-}
-
-export async function unsuspendProfileAction(formData: FormData): Promise<void> {
-  const admin = await requireAdmin();
-  await unsuspendProfile(adminProfilesDeps, admin.id, profileId.parse(formData.get("profileId")));
-  revalidatePath("/profiles");
-}
-
 export type ActionResult = { ok: true } | { ok: false; error: string };
+
+const profileId = z.string().uuid();
+const reason = z.string().trim().min(1);
+
+function fail(error: unknown): ActionResult {
+  if (error instanceof NotFoundError || error instanceof ConflictError) {
+    return { ok: false, error: error.message };
+  }
+  throw error;
+}
+
+export async function suspendProfileAction(formData: FormData): Promise<ActionResult> {
+  const admin = await requireAdmin();
+  const parsedReason = reason.safeParse(formData.get("reason"));
+  if (!parsedReason.success) return { ok: false, error: "A reason is required" };
+  try {
+    await suspendProfile(
+      adminProfilesDeps,
+      admin.id,
+      profileId.parse(formData.get("profileId")),
+      parsedReason.data,
+    );
+  } catch (error) {
+    return fail(error);
+  }
+  revalidatePath("/profiles");
+  return { ok: true };
+}
+
+export async function unsuspendProfileAction(formData: FormData): Promise<ActionResult> {
+  const admin = await requireAdmin();
+  try {
+    await unsuspendProfile(adminProfilesDeps, admin.id, profileId.parse(formData.get("profileId")));
+  } catch (error) {
+    return fail(error);
+  }
+  revalidatePath("/profiles");
+  return { ok: true };
+}
 
 export async function releaseUsernameAction(formData: FormData): Promise<ActionResult> {
   const admin = await requireAdmin();
@@ -40,11 +66,10 @@ export async function releaseUsernameAction(formData: FormData): Promise<ActionR
   try {
     await releaseProfileUsername(adminProfilesDeps, admin.id, parsed.data);
   } catch (error) {
-    // Known outcomes (reserved / taken) surface as an error toast, not a crash.
     if (error instanceof ConflictError) {
       return { ok: false, error: `Username not released — ${error.message.toLowerCase()}` };
     }
-    throw error;
+    return fail(error);
   }
   revalidatePath("/profiles");
   return { ok: true };

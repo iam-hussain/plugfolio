@@ -237,16 +237,32 @@ export {
 export { hashPassword } from "./auth/password";
 // Admin app (docs/implementation/admin-app.md)
 export type {
+  Page,
+  PageQuery,
   AdminAccount,
+  AdminOperatorRow,
   AdminUserRepository,
   AdminAuditEntry,
   AdminAuditView,
+  AdminAuditFilter,
   AdminAuditRepository,
   AppSettingsRepository,
   AdminMemberRow,
+  AdminMemberDetail,
+  MemberStatusFilter,
   AdminMemberRepository,
   AdminOverview,
   AdminOverviewRepository,
+  AdminProfileDetail,
+  ProfileStatusFilter,
+  ProductCouponFilter,
+  AdminCollabMessage,
+  AdminCollabThread,
+  ReportTargetType,
+  ReportCategory,
+  ReportStatus,
+  AdminReportRow,
+  AdminReportRepository,
 } from "./ports/admin-repository";
 export {
   verifyAdminCredentials,
@@ -267,10 +283,30 @@ export {
 } from "./services/app-settings";
 export {
   searchMembers,
+  getMemberDetail,
   suspendMember,
   unsuspendMember,
+  suspendMembersBulk,
+  deleteMemberAccount,
+  resetMemberHandle,
   type AdminMembersDeps,
+  type AdminResetHandleDeps,
 } from "./services/admin-members";
+export {
+  listReports,
+  resolveReport,
+  dismissReport,
+  type AdminReportsDeps,
+} from "./services/admin-reports";
+export {
+  listOperators,
+  inviteOperator,
+  removeOperator,
+  sendOperatorPasswordReset,
+  setOperatorPasswordWithToken,
+  changeOwnPassword,
+  type AdminOperatorsDeps,
+} from "./services/admin-operators";
 export type {
   AdminProfileRow,
   AdminProfileRepository,
@@ -281,6 +317,7 @@ export type {
 } from "./ports/admin-repository";
 export {
   searchProfiles,
+  getProfileDetail,
   suspendProfile,
   unsuspendProfile,
   releaseProfileUsername,
@@ -296,6 +333,9 @@ export {
   deletePost,
   deleteProduct,
   clearProductCoupon,
+  deleteCommentsBulk,
+  deletePostsBulk,
+  deleteProductsBulk,
   type AdminContentDeps,
 } from "./services/admin-content";
 export type {
@@ -312,9 +352,12 @@ export {
   searchBusinesses,
   searchRequirements,
   listCollabs,
+  getAdminCollabThread,
+  deleteCollabMessage,
   clearBusinessLogo,
   removeRequirement,
   type AdminOversightDeps,
+  type AdminCollabsDeps,
 } from "./services/admin-oversight";
 export {
   followProfile,

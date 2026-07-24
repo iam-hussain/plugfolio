@@ -1,18 +1,7 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  StatTile,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@plugfolio/ui";
+import { StatTile } from "@plugfolio/ui";
 import type { Metadata } from "next";
+import { MeterBar, TrendColumn } from "@/components/meter";
+import { Panel } from "@/components/panel";
 import { clock, repositories } from "@/server/container";
 
 export const metadata: Metadata = { title: "Analytics" };
@@ -21,8 +10,6 @@ export const dynamic = "force-dynamic";
 const DAY_MS = 24 * 60 * 60 * 1000;
 const TOP_LIMIT = 10;
 
-// ponytail: tiles + leader tables; a time-series chart lands when operators
-// actually ask for trend lines.
 export default async function AnalyticsPage() {
   const now = clock.now().getTime();
   const analytics = await repositories.analytics.analytics(
@@ -37,116 +24,111 @@ export default async function AnalyticsPage() {
     { label: "Code copies · 7d", value: analytics.codeCopies7d },
     { label: "Code copies · 30d", value: analytics.codeCopies30d },
   ];
+  const splitTotal = analytics.sourceSplit.reduce((sum, s) => sum + s.taps, 0);
+  const trendMax = Math.max(1, ...analytics.tapsPerDay.map((d) => d.taps));
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-display text-2xl font-bold">Analytics</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Projections over the append-only tap and code-copy events — the same truth Earnings reads.
-        </p>
-      </div>
+    <div className="max-w-[1100px]">
+      <h1 className="font-display text-2xl font-bold tracking-[-0.02em]">Analytics</h1>
+      <p className="text-muted-foreground mb-5 mt-1 text-[13.5px]">
+        Projections over the append-only tap and code-copy events — the same truth Earnings reads.
+      </p>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3.5 md:grid-cols-4">
         {tiles.map((tile) => (
-          <StatTile key={tile.label} label={tile.label} value={tile.value} />
+          <StatTile key={tile.label} label={tile.label} value={tile.value.toLocaleString()} />
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Top profiles · 30d</CardTitle>
-            <CardDescription>Pages driving the most outbound taps.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Profile</TableHead>
-                  <TableHead className="text-right">Taps</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {analytics.topProfiles.map((row) => (
-                  <TableRow key={row.username}>
-                    <TableCell className="font-mono text-xs">/{row.username}</TableCell>
-                    <TableCell className="text-right tabular-nums">{row.taps}</TableCell>
-                  </TableRow>
-                ))}
-                {analytics.topProfiles.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={2} className="text-muted-foreground text-center">
-                      No taps yet.
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Top products · 30d</CardTitle>
-            <CardDescription>The things shoppers actually tapped out for.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Product</TableHead>
-                  <TableHead className="text-right">Taps</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {analytics.topProducts.map((row, index) => (
-                  <TableRow key={`${row.title}-${index}`}>
-                    <TableCell>
-                      <p className="text-sm">{row.title}</p>
-                      <p className="text-muted-foreground font-mono text-xs">/{row.username}</p>
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">{row.taps}</TableCell>
-                  </TableRow>
-                ))}
-                {analytics.topProducts.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={2} className="text-muted-foreground text-center">
-                      No taps yet.
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <Panel className="px-5 py-[18px]">
+          <h2 className="font-display mb-2 text-[15px] font-bold">Top profiles · 30d</h2>
+          {analytics.topProfiles.map((row) => (
+            <div
+              key={row.username}
+              className="border-border flex items-center justify-between border-t py-[7px]"
+            >
+              <span className="font-mono text-muted-foreground text-xs">/{row.username}</span>
+              <span className="text-[13.5px] font-semibold tabular-nums">
+                {row.taps.toLocaleString()}
+              </span>
+            </div>
+          ))}
+          {analytics.topProfiles.length === 0 ? (
+            <p className="text-faint border-border border-t py-6 text-center text-[13px]">
+              No taps yet.
+            </p>
+          ) : null}
+        </Panel>
+        <Panel className="px-5 py-[18px]">
+          <h2 className="font-display mb-2 text-[15px] font-bold">Top products · 30d</h2>
+          {analytics.topProducts.map((row, index) => (
+            <div
+              key={`${row.title}-${index}`}
+              className="border-border flex items-center justify-between gap-3 border-t py-[7px]"
+            >
+              <span className="min-w-0">
+                <span className="block truncate text-[13px] font-medium">{row.title}</span>
+                <span className="font-mono text-muted-foreground block text-xs">
+                  /{row.username}
+                </span>
+              </span>
+              <span className="shrink-0 text-[13.5px] font-semibold tabular-nums">
+                {row.taps.toLocaleString()}
+              </span>
+            </div>
+          ))}
+          {analytics.topProducts.length === 0 ? (
+            <p className="text-faint border-border border-t py-6 text-center text-[13px]">
+              No taps yet.
+            </p>
+          ) : null}
+        </Panel>
       </div>
 
-      <Card className="max-w-md">
-        <CardHeader>
-          <CardTitle>Tap sources · 30d</CardTitle>
-          <CardDescription>Which surface the tap came from.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableBody>
-              {analytics.sourceSplit.map((row) => (
-                <TableRow key={row.source}>
-                  <TableCell className="font-mono text-xs">{row.source}</TableCell>
-                  <TableCell className="text-right tabular-nums">{row.taps}</TableCell>
-                </TableRow>
-              ))}
-              {analytics.sourceSplit.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={2} className="text-muted-foreground text-center">
-                    No taps yet.
-                  </TableCell>
-                </TableRow>
-              ) : null}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <Panel className="mt-4 max-w-[520px] px-5 py-[18px]">
+        <h2 className="font-display mb-3 text-[15px] font-bold">Tap sources · 30d</h2>
+        {analytics.sourceSplit.map((row) => {
+          const pct = splitTotal === 0 ? 0 : Math.round((row.taps / splitTotal) * 100);
+          return (
+            <div key={row.source} className="mb-3">
+              <div className="mb-[5px] flex items-center justify-between text-[13px]">
+                <span className="capitalize">{row.source}</span>
+                <span className="text-muted-foreground tabular-nums">
+                  {row.taps.toLocaleString()} · {pct}%
+                </span>
+              </div>
+              <MeterBar pct={pct} label={`${row.source}: ${pct}% of taps`} />
+            </div>
+          );
+        })}
+        {analytics.sourceSplit.length === 0 ? (
+          <p className="text-faint py-4 text-center text-[13px]">No taps yet.</p>
+        ) : null}
+      </Panel>
+
+      <Panel className="mt-4 px-5 py-[18px]">
+        <div className="mb-3.5 flex items-center justify-between">
+          <h2 className="font-display text-[15px] font-bold">Taps · last 30 days</h2>
+          <span className="text-muted-foreground flex items-center gap-1.5 text-[11px]">
+            <span aria-hidden className="bg-primary size-[9px] rounded-[2px]" />
+            Taps
+          </span>
+        </div>
+        <div className="flex h-[140px] items-end gap-[3px]">
+          {analytics.tapsPerDay.map((day) => (
+            <TrendColumn
+              key={day.day}
+              pct={Math.round((day.taps / trendMax) * 100)}
+              title={`${day.day}: ${day.taps.toLocaleString()} taps`}
+            />
+          ))}
+        </div>
+        <div className="font-mono text-faint mt-2 flex justify-between text-[10px]">
+          <span>30d ago</span>
+          <span>Today</span>
+        </div>
+      </Panel>
     </div>
   );
 }

@@ -43,7 +43,10 @@ const nextAuth = NextAuth({
       async authorize(raw) {
         const parsed = credentialsInput.safeParse(raw);
         if (!parsed.success) return null;
-        const result = await verifyAdminCredentials({ admins: repositories.admins }, parsed.data);
+        const result = await verifyAdminCredentials(
+          { admins: repositories.admins, now: () => new Date() },
+          parsed.data,
+        );
         if (!result.ok) return null; // one generic failure — no admin oracle
         return { id: result.adminId, email: result.email, name: result.name };
       },

@@ -4,13 +4,10 @@ import {
   getReservedUsernames,
 } from "@plugfolio/core";
 import {
+  ActionForm,
   Badge,
   Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  ConfirmDialog,
   Input,
   Table,
   TableBody,
@@ -21,6 +18,7 @@ import {
   Textarea,
 } from "@plugfolio/ui";
 import type { Metadata } from "next";
+import { Panel } from "@/components/panel";
 import { repositories } from "@/server/container";
 import {
   removeFeatureFlagAction,
@@ -36,109 +34,118 @@ export default async function SettingsPage() {
   const [reserved, flags] = await Promise.all([getReservedUsernames(deps), getFeatureFlags(deps)]);
 
   return (
-    <div className="flex max-w-3xl flex-col gap-6">
-      <h1 className="font-display text-2xl font-bold">Settings</h1>
+    <div className="max-w-3xl">
+      <h1 className="font-display mb-5 text-2xl font-bold tracking-[-0.02em]">Settings</h1>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Reserved usernames</CardTitle>
-          <CardDescription>
-            Names no member handle (and, when username claiming lands, no profile username) may
-            take. One per line; saved lowercase. The baseline below is always blocked and can’t be
-            removed.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <div className="flex flex-wrap gap-1">
-            {BASELINE_RESERVED_USERNAMES.map((name) => (
-              <Badge key={name} variant="outline" className="font-mono">
-                {name}
-              </Badge>
-            ))}
-          </div>
-          <form action={saveReservedUsernamesAction} className="flex flex-col items-start gap-3">
-            <Textarea
-              name="usernames"
-              defaultValue={reserved.join("\n")}
-              rows={6}
-              placeholder={"vip\nwinner\ngiveaway"}
-              aria-label="Additional reserved usernames, one per line"
-              className="font-mono"
-            />
-            <Button type="submit">Save reserved usernames</Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Feature flags</CardTitle>
-          <CardDescription>
-            Runtime switches product code reads via <code>isFeatureEnabled</code>. Removing a flag
-            returns that feature to its built-in default.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Flag</TableHead>
-                <TableHead>State</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {Object.entries(flags).map(([name, enabled]) => (
-                <TableRow key={name}>
-                  <TableCell className="font-mono">{name}</TableCell>
-                  <TableCell>
-                    <Badge variant={enabled ? "secondary" : "outline"}>
-                      {enabled ? "On" : "Off"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <form action={setFeatureFlagAction}>
-                        <input type="hidden" name="name" value={name} />
-                        <input type="hidden" name="enabled" value={String(!enabled)} />
-                        <Button type="submit" size="sm" variant="secondary">
-                          Turn {enabled ? "off" : "on"}
-                        </Button>
-                      </form>
-                      <form action={removeFeatureFlagAction}>
-                        <input type="hidden" name="name" value={name} />
-                        <Button type="submit" size="sm" variant="ghost">
-                          Remove
-                        </Button>
-                      </form>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {Object.keys(flags).length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={3} className="text-muted-foreground text-center">
-                    No flags set — everything runs on defaults.
-                  </TableCell>
-                </TableRow>
-              ) : null}
-            </TableBody>
-          </Table>
-          <form action={setFeatureFlagAction} className="flex gap-2">
-            <Input
-              name="name"
-              placeholder="new-flag-name"
-              aria-label="New flag name"
-              className="w-56 font-mono"
-              required
-            />
-            <input type="hidden" name="enabled" value="true" />
-            <Button type="submit" variant="secondary">
-              Add flag (on)
+      <Panel className="px-6 py-[22px]">
+        <h2 className="font-display text-base font-bold">Reserved usernames</h2>
+        <p className="text-muted-foreground mb-3.5 mt-1.5 text-[13px] leading-[1.55]">
+          Names no member handle — and, when username claiming lands, no profile username — may
+          take.
+        </p>
+        <p className="font-mono text-faint mb-2 text-[10px] font-bold uppercase tracking-[0.1em]">
+          Always blocked
+        </p>
+        <div className="mb-4 flex flex-wrap gap-1.5">
+          {BASELINE_RESERVED_USERNAMES.map((name) => (
+            <Badge key={name} shape="square" variant="outline-muted" className="font-mono opacity-75">
+              {name}
+            </Badge>
+          ))}
+        </div>
+        <p className="font-mono text-faint mb-2 text-[10px] font-bold uppercase tracking-[0.1em]">
+          Admin additions
+        </p>
+        <ActionForm action={saveReservedUsernamesAction} successToast="Reserved usernames saved">
+          <Textarea
+            name="usernames"
+            defaultValue={reserved.join("\n")}
+            rows={4}
+            placeholder={"vip\nwinner\ngiveaway"}
+            aria-label="Additional reserved usernames, one per line"
+            className="font-mono resize-y leading-[1.6]"
+          />
+          <div className="mt-3.5">
+            <Button type="submit" size="xs">
+              Save reserved usernames
             </Button>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+        </ActionForm>
+      </Panel>
+
+      <Panel className="mt-4 px-6 py-[22px]">
+        <h2 className="font-display text-base font-bold">Feature flags</h2>
+        <p className="text-muted-foreground mb-3.5 mt-1.5 text-[13px] leading-[1.55]">
+          Removing a flag returns the feature to its built-in default.
+        </p>
+        <Table variant="dense">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Flag</TableHead>
+              <TableHead>State</TableHead>
+              <TableHead />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Object.entries(flags).map(([name, enabled]) => (
+              <TableRow key={name}>
+                <TableCell className="font-mono text-xs">{name}</TableCell>
+                <TableCell>
+                  <Badge shape="square" variant={enabled ? "soft-primary" : "outline-muted"}>
+                    {enabled ? "On" : "Off"}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  <span className="flex justify-end gap-1.5">
+                    <ActionForm
+                      action={setFeatureFlagAction}
+                      hiddenFields={{ name, enabled: String(!enabled) }}
+                      successToast={`Flag ${name} turned ${enabled ? "off" : "on"}`}
+                    >
+                      <Button type="submit" size="xs" variant="outline-strong">
+                        Turn {enabled ? "off" : "on"}
+                      </Button>
+                    </ActionForm>
+                    <ConfirmDialog
+                      trigger={<Button size="xs" variant="ghost-muted">Remove</Button>}
+                      title="Remove this flag?"
+                      body="The feature returns to its built-in default. Recorded in the audit log."
+                      confirmLabel="Remove flag"
+                      action={removeFeatureFlagAction}
+                      hiddenFields={{ name }}
+                      successToast="Flag removed"
+                    />
+                  </span>
+                </TableCell>
+              </TableRow>
+            ))}
+            {Object.keys(flags).length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={3} className="text-faint py-6 text-center">
+                  No flags set — everything runs on defaults.
+                </TableCell>
+              </TableRow>
+            ) : null}
+          </TableBody>
+        </Table>
+        <ActionForm
+          action={setFeatureFlagAction}
+          hiddenFields={{ enabled: "true" }}
+          successToast="Flag added"
+          className="mt-3.5 flex gap-2"
+        >
+          <Input
+            name="name"
+            placeholder="new-flag-name"
+            aria-label="New flag name"
+            required
+            className="font-mono max-w-[280px]"
+          />
+          <Button type="submit" size="xs" variant="outline-strong">
+            Add flag (on)
+          </Button>
+        </ActionForm>
+      </Panel>
     </div>
   );
 }

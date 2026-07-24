@@ -1,7 +1,11 @@
 import { searchBusinesses } from "@plugfolio/core";
 import {
-  ConfirmButton,
   Badge,
+  Button,
+  ConfirmDialog,
+  PageHeader,
+  Pager,
+  SearchField,
   Table,
   TableBody,
   TableCell,
@@ -9,9 +13,10 @@ import {
   TableHeader,
   TableRow,
 } from "@plugfolio/ui";
+import { Download } from "lucide-react";
 import type { Metadata } from "next";
-
-import { SearchHeader } from "@/components/search-header";
+import { Panel } from "@/components/panel";
+import { pagedHref, pageQuery, type ListParams } from "@/lib/list-params";
 import { repositories } from "@/server/container";
 import { clearLogoAction } from "./actions";
 
@@ -21,70 +26,99 @@ export const dynamic = "force-dynamic";
 export default async function BusinessesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<ListParams>;
 }) {
-  const { q } = await searchParams;
-  const businesses = await searchBusinesses({ businesses: repositories.businesses }, q);
+  const params = await searchParams;
+  const page = pageQuery(params);
+  const { rows, total } = await searchBusinesses(
+    { businesses: repositories.businesses },
+    params.q,
+    page,
+  );
 
   return (
-    <div className="flex flex-col gap-6">
-      <SearchHeader title="Businesses" query={q} placeholder="Search name, owner email…" />
+    <>
+      <PageHeader title="Businesses">
+        <form className="flex flex-wrap items-center gap-2">
+          <SearchField
+            name="q"
+            defaultValue={params.q ?? ""}
+            placeholder="Search name / description / owner"
+            className="w-[280px]"
+          />
+          <Button type="submit" size="xs" variant="outline-strong">
+            Search
+          </Button>
+          <Button asChild size="xs" variant="ghost-muted">
+            <a href={`/businesses/export${params.q ? `?q=${encodeURIComponent(params.q)}` : ""}`}>
+              <Download aria-hidden className="size-[15px]" /> Export CSV
+            </a>
+          </Button>
+        </form>
+      </PageHeader>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Business</TableHead>
-            <TableHead>Owner</TableHead>
-            <TableHead>Activity</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {businesses.map((business) => (
-            <TableRow key={business.id}>
-              <TableCell className="max-w-md">
-                <p className="text-sm font-medium">{business.name}</p>
-                <p className="text-muted-foreground truncate text-xs">{business.description}</p>
-              </TableCell>
-              <TableCell className="text-xs">{business.ownerEmail}</TableCell>
-              <TableCell className="text-muted-foreground text-xs tabular-nums">
-                {business.requirementCount} requirements · {business.collabCount} collabs
-              </TableCell>
-              <TableCell>
-                {business.ownerSuspendedAt ? (
-                  <Badge variant="destructive">Owner suspended</Badge>
-                ) : (
-                  <Badge variant="outline">Active</Badge>
-                )}
-              </TableCell>
-              <TableCell className="text-right">
-                {business.logoUrl ? (
-                  <form action={clearLogoAction}>
-                    <input type="hidden" name="businessId" value={business.id} />
-                    <ConfirmButton
-                      size="sm"
-                      variant="ghost"
-                      message={`Remove ${business.name}'s logo? They can upload a new one.`}
-                    >
-                      Clear logo
-                    </ConfirmButton>
-                  </form>
-                ) : (
-                  <span className="text-muted-foreground text-xs">No logo</span>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-          {businesses.length === 0 ? (
+      <Panel className="overflow-hidden">
+        <Table variant="dense">
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={5} className="text-muted-foreground text-center">
-                No businesses match.
-              </TableCell>
+              <TableHead>Business</TableHead>
+              <TableHead>Owner</TableHead>
+              <TableHead>Activity</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead />
             </TableRow>
-          ) : null}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {rows.map((business) => (
+              <TableRow key={business.id}>
+                <TableCell className="max-w-[340px]">
+                  <span className="block font-semibold">{business.name}</span>
+                  <span className="text-muted-foreground mt-0.5 block truncate text-xs">
+                    {business.description}
+                  </span>
+                </TableCell>
+                <TableCell className="text-muted-foreground text-[13px]">
+                  {business.ownerEmail}
+                </TableCell>
+                <TableCell className="text-muted-foreground tabular-nums">
+                  {business.requirementCount} requirement{business.requirementCount === 1 ? "" : "s"} ·{" "}
+                  {business.collabCount} collab{business.collabCount === 1 ? "" : "s"}
+                </TableCell>
+                <TableCell>
+                  {business.ownerSuspendedAt ? (
+                    <Badge shape="square" variant="soft-destructive">Owner suspended</Badge>
+                  ) : (
+                    <Badge shape="square" variant="outline-muted">Active</Badge>
+                  )}
+                </TableCell>
+                <TableCell className="text-right">
+                  {business.logoUrl ? (
+                    <ConfirmDialog
+                      trigger={<Button size="xs" variant="ghost-muted">Clear logo</Button>}
+                      title="Clear this logo?"
+                      body="The uploaded logo is removed and the business shows its default mark. Recorded in the audit log."
+                      confirmLabel="Clear logo"
+                      action={clearLogoAction}
+                      hiddenFields={{ businessId: business.id }}
+                      successToast="Logo cleared"
+                    />
+                  ) : (
+                    <span className="text-faint text-xs">No logo</span>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+            {rows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-faint py-8 text-center">
+                  No businesses match.
+                </TableCell>
+              </TableRow>
+            ) : null}
+          </TableBody>
+        </Table>
+      </Panel>
+      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/businesses", params)} />
+    </>
   );
 }

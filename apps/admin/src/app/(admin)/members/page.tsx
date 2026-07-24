@@ -1,8 +1,11 @@
-import { searchMembers } from "@plugfolio/core";
+import { searchMembers, type MemberStatusFilter } from "@plugfolio/core";
 import {
   Badge,
   Button,
-  Input,
+  ConfirmDialog,
+  PageHeader,
+  Pager,
+  SearchField,
   Table,
   TableBody,
   TableCell,
@@ -10,101 +13,173 @@ import {
   TableHeader,
   TableRow,
 } from "@plugfolio/ui";
+import { Download } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { BulkAllCheckbox, BulkBar, BulkCheckbox, BulkSelect } from "@/components/bulk-select";
+import { FilterSelect } from "@/components/filter-select";
+import { Panel } from "@/components/panel";
+import { pagedHref, pageQuery, statusFilter, type ListParams } from "@/lib/list-params";
 import { repositories } from "@/server/container";
-import { suspendMemberAction, unsuspendMemberAction } from "./actions";
+import {
+  bulkSuspendMembersAction,
+  suspendMemberAction,
+  unsuspendMemberAction,
+} from "./actions";
 
 export const metadata: Metadata = { title: "Members" };
 export const dynamic = "force-dynamic";
 
+const STATUSES = ["active", "unverified", "suspended"] as const;
+
+function statusBadge(member: { suspendedAt: Date | null; emailVerified: Date | null }) {
+  if (member.suspendedAt) return <Badge shape="square" variant="soft-destructive">Suspended</Badge>;
+  if (!member.emailVerified) return <Badge shape="square" variant="outline-muted">Unverified</Badge>;
+  return <Badge shape="square" variant="outline-muted">Active</Badge>;
+}
+
 export default async function MembersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<ListParams>;
 }) {
-  const { q } = await searchParams;
-  const members = await searchMembers({ members: repositories.members }, q);
+  const params = await searchParams;
+  const status = statusFilter<MemberStatusFilter>(params.status, STATUSES);
+  const page = pageQuery(params);
+  const { rows, total } = await searchMembers(
+    { members: repositories.members },
+    params.q,
+    status,
+    page,
+  );
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-display text-2xl font-bold">Members</h1>
-        <form className="flex gap-2">
-          <Input
-            name="q"
-            defaultValue={q ?? ""}
-            placeholder="Search email, @handle, name…"
-            className="w-64"
-            aria-label="Search members"
+    <BulkSelect>
+      <PageHeader title="Members">
+        <form className="flex flex-wrap items-center gap-2">
+          <FilterSelect
+            name="status"
+            defaultValue={params.status}
+            label="Filter by status"
+            options={[["", "All statuses"], ["active", "Active"], ["unverified", "Unverified"], ["suspended", "Suspended"]]}
           />
-          <Button type="submit" variant="secondary">
+          <SearchField
+            name="q"
+            defaultValue={params.q ?? ""}
+            placeholder="Search email / @handle / name"
+            className="w-60"
+          />
+          <Button type="submit" size="xs" variant="outline-strong">
             Search
           </Button>
+          <Button asChild size="xs" variant="ghost-muted">
+            <a href={`/members/export${params.q ? `?q=${encodeURIComponent(params.q)}` : ""}`}>
+              <Download aria-hidden className="size-[15px]" /> Export CSV
+            </a>
+          </Button>
         </form>
-      </div>
+      </PageHeader>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Member</TableHead>
-            <TableHead>@handle</TableHead>
-            <TableHead>Roles</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Joined</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {members.map((member) => (
-            <TableRow key={member.id}>
-              <TableCell>
-                <p className="font-medium">{member.email}</p>
-                {member.name ? <p className="text-muted-foreground text-xs">{member.name}</p> : null}
-              </TableCell>
-              <TableCell className="font-mono text-xs">@{member.username}</TableCell>
-              <TableCell>
-                <div className="flex gap-1">
-                  {member.profileCount > 0 ? (
-                    <Badge variant="secondary">Creator · {member.profileCount}</Badge>
-                  ) : null}
-                  {member.hasBusiness ? <Badge variant="secondary">Business</Badge> : null}
-                </div>
-              </TableCell>
-              <TableCell>
-                {member.suspendedAt ? (
-                  <Badge variant="destructive">Suspended</Badge>
-                ) : member.emailVerified ? (
-                  <Badge variant="outline">Active</Badge>
-                ) : (
-                  <Badge variant="outline">Unverified</Badge>
-                )}
-              </TableCell>
-              <TableCell className="text-muted-foreground text-xs tabular-nums">
-                {member.createdAt.toISOString().slice(0, 10)}
-              </TableCell>
-              <TableCell className="text-right">
-                <form action={member.suspendedAt ? unsuspendMemberAction : suspendMemberAction}>
-                  <input type="hidden" name="userId" value={member.id} />
-                  <Button
-                    type="submit"
-                    size="sm"
-                    variant={member.suspendedAt ? "secondary" : "destructive"}
-                  >
-                    {member.suspendedAt ? "Unsuspend" : "Suspend"}
-                  </Button>
-                </form>
-              </TableCell>
-            </TableRow>
-          ))}
-          {members.length === 0 ? (
+      <BulkBar
+        verb="Suspend"
+        title={(n) => `Suspend ${n} members?`}
+        body="The action applies to every selected row. Reversible — nothing is deleted. Recorded in the audit log."
+        confirmLabel={(n) => `Suspend ${n}`}
+        action={bulkSuspendMembersAction}
+        requireReason
+        successToast={(n) => `Suspended ${n} members`}
+      />
+
+      <Panel className="overflow-hidden">
+        <Table variant="dense">
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={6} className="text-muted-foreground text-center">
-                No members match.
-              </TableCell>
+              <TableHead className="w-[34px]">
+                <BulkAllCheckbox ids={rows.map((r) => r.id)} />
+              </TableHead>
+              <TableHead>Member</TableHead>
+              <TableHead>@handle</TableHead>
+              <TableHead>Roles</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Joined</TableHead>
+              <TableHead />
             </TableRow>
-          ) : null}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {rows.map((member) => (
+              <TableRow key={member.id}>
+                <TableCell className="w-[34px]">
+                  <BulkCheckbox id={member.id} label={`Select ${member.email}`} />
+                </TableCell>
+                <TableCell>
+                  <Link href={`/members/${member.id}`} className="block">
+                    <span className="block font-semibold">{member.email}</span>
+                    {member.name ? (
+                      <span className="text-muted-foreground mt-0.5 block text-xs">
+                        {member.name}
+                      </span>
+                    ) : null}
+                  </Link>
+                </TableCell>
+                <TableCell className="font-mono text-muted-foreground text-xs">
+                  {member.username ? `@${member.username}` : "—"}
+                </TableCell>
+                <TableCell>
+                  <span className="flex gap-1">
+                    {member.profileCount > 0 ? (
+                      <Badge shape="square" variant="soft-primary">
+                        Creator · {member.profileCount}
+                      </Badge>
+                    ) : null}
+                    {member.hasBusiness ? (
+                      <Badge shape="square" variant="soft-primary">
+                        Business
+                      </Badge>
+                    ) : null}
+                  </span>
+                </TableCell>
+                <TableCell>{statusBadge(member)}</TableCell>
+                <TableCell className="text-muted-foreground tabular-nums">
+                  {member.createdAt.toISOString().slice(0, 10)}
+                </TableCell>
+                <TableCell className="text-right">
+                  {member.suspendedAt ? (
+                    <ConfirmDialog
+                      trigger={<Button size="xs" variant="outline-strong">Unsuspend</Button>}
+                      title="Unsuspend this member?"
+                      body="They regain access and their profiles return to shoppers. Recorded in the audit log."
+                      confirmLabel="Unsuspend"
+                      tone="primary"
+                      action={unsuspendMemberAction}
+                      hiddenFields={{ userId: member.id }}
+                      successToast="Unsuspended"
+                    />
+                  ) : (
+                    <ConfirmDialog
+                      trigger={<Button size="xs" variant="destructive-outline">Suspend</Button>}
+                      title="Suspend member"
+                      body="They will be blocked from signing in and every profile they own is hidden from shoppers. Reversible — nothing is deleted. Recorded in the audit log."
+                      confirmLabel="Suspend"
+                      action={suspendMemberAction}
+                      hiddenFields={{ userId: member.id }}
+                      requireReason={{}}
+                      successToast="Suspended"
+                    />
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+            {rows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-faint py-8 text-center">
+                  No members match.
+                </TableCell>
+              </TableRow>
+            ) : null}
+          </TableBody>
+        </Table>
+      </Panel>
+      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/members", params)} />
+    </BulkSelect>
   );
 }

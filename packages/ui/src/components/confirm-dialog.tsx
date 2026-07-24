@@ -55,6 +55,8 @@ export type ConfirmDialogProps = VariantProps<typeof iconBoxVariants> & {
   /** Type-to-confirm guard: the input must match `value` exactly. */
   requireMatch?: { value: string; note?: React.ReactNode };
   successToast?: string;
+  /** Called after the action settles (true = success). */
+  onDone?: (ok: boolean) => void;
   /** Extra fields/content rendered inside the form, above the footer. */
   children?: React.ReactNode;
 };
@@ -71,6 +73,7 @@ export function ConfirmDialog({
   requireReason,
   requireMatch,
   successToast,
+  onDone,
   children,
 }: ConfirmDialogProps) {
   const [open, setOpen] = React.useState(false);
@@ -101,6 +104,7 @@ export function ConfirmDialog({
       } else {
         toast.error(result.error);
       }
+      onDone?.(result.ok);
     });
   }
 

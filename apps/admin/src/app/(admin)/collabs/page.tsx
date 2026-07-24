@@ -1,6 +1,9 @@
 import { listCollabs } from "@plugfolio/core";
 import {
-  Badge,
+  Button,
+  PageHeader,
+  Pager,
+  SearchField,
   Table,
   TableBody,
   TableCell,
@@ -8,78 +11,101 @@ import {
   TableHeader,
   TableRow,
 } from "@plugfolio/ui";
+import { Download } from "lucide-react";
 import type { Metadata } from "next";
-import { SearchHeader } from "@/components/search-header";
+import Link from "next/link";
+import { Panel } from "@/components/panel";
+import { CollabStateBadge } from "@/components/status-badges";
+import { pagedHref, pageQuery, type ListParams } from "@/lib/list-params";
 import { repositories } from "@/server/container";
 
 export const metadata: Metadata = { title: "Collabs" };
 export const dynamic = "force-dynamic";
 
-function agreementState(businessAgreedAt: Date | null, creatorAgreedAt: Date | null): string {
-  if (businessAgreedAt && creatorAgreedAt) return "Agreed";
-  if (businessAgreedAt || creatorAgreedAt) return "One side agreed";
-  return "Negotiating";
-}
-
 export default async function CollabsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<ListParams>;
 }) {
-  const { q } = await searchParams;
-  const collabs = await listCollabs({ collabs: repositories.collabs }, q);
+  const params = await searchParams;
+  const page = pageQuery(params);
+  const { rows, total } = await listCollabs({ collabs: repositories.collabs }, params.q, page);
 
   return (
-    <div className="flex flex-col gap-6">
-      <SearchHeader title="Collabs" query={q} placeholder="Search business, profile…" />
-      <p className="text-muted-foreground text-sm">
-        Read-only oversight — a bad actor in a thread is handled by suspending the member.
-      </p>
+    <>
+      <PageHeader
+        title="Collabs"
+        subtitle="Read-only oversight — a bad actor in a thread is handled by suspending the member."
+      >
+        <form className="flex flex-wrap items-center gap-2">
+          <SearchField
+            name="q"
+            defaultValue={params.q ?? ""}
+            placeholder="Search business / profile"
+            className="w-[280px]"
+          />
+          <Button type="submit" size="xs" variant="outline-strong">
+            Search
+          </Button>
+          <Button asChild size="xs" variant="ghost-muted">
+            <a href={`/collabs/export${params.q ? `?q=${encodeURIComponent(params.q)}` : ""}`}>
+              <Download aria-hidden className="size-[15px]" /> Export CSV
+            </a>
+          </Button>
+        </form>
+      </PageHeader>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Business ↔ Creator</TableHead>
-            <TableHead>Source</TableHead>
-            <TableHead>Messages</TableHead>
-            <TableHead>State</TableHead>
-            <TableHead>Started</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {collabs.map((collab) => {
-            const state = agreementState(collab.businessAgreedAt, collab.creatorAgreedAt);
-            return (
+      <Panel className="overflow-hidden">
+        <Table variant="dense">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Business ↔ Creator</TableHead>
+              <TableHead>Source</TableHead>
+              <TableHead>Messages</TableHead>
+              <TableHead>State</TableHead>
+              <TableHead>Started</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((collab) => (
               <TableRow key={collab.id}>
-                <TableCell className="text-sm">
-                  {collab.businessName}{" "}
-                  <span className="text-muted-foreground">↔</span>{" "}
-                  <span className="font-mono text-xs">/{collab.profileUsername}</span>
+                <TableCell>
+                  <Link href={`/collabs/${collab.id}`} className="block">
+                    <span className="font-medium">{collab.businessName}</span>{" "}
+                    <span className="text-faint">↔</span>{" "}
+                    <span className="font-mono text-muted-foreground text-xs">
+                      /{collab.profileUsername}
+                    </span>
+                  </Link>
                 </TableCell>
-                <TableCell className="text-muted-foreground max-w-60 truncate text-xs">
+                <TableCell className="text-muted-foreground text-[13px]">
                   {collab.requirementTitle ?? "Direct reach-out"}
                 </TableCell>
-                <TableCell className="text-muted-foreground text-xs tabular-nums">
+                <TableCell className="text-muted-foreground tabular-nums">
                   {collab.messageCount}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={state === "Agreed" ? "secondary" : "outline"}>{state}</Badge>
+                  <CollabStateBadge
+                    businessAgreedAt={collab.businessAgreedAt}
+                    creatorAgreedAt={collab.creatorAgreedAt}
+                  />
                 </TableCell>
-                <TableCell className="text-muted-foreground text-xs tabular-nums">
+                <TableCell className="text-muted-foreground tabular-nums">
                   {collab.createdAt.toISOString().slice(0, 10)}
                 </TableCell>
               </TableRow>
-            );
-          })}
-          {collabs.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={5} className="text-muted-foreground text-center">
-                No collabs match.
-              </TableCell>
-            </TableRow>
-          ) : null}
-        </TableBody>
-      </Table>
-    </div>
+            ))}
+            {rows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-faint py-8 text-center">
+                  No collabs match.
+                </TableCell>
+              </TableRow>
+            ) : null}
+          </TableBody>
+        </Table>
+      </Panel>
+      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/collabs", params)} />
+    </>
   );
 }

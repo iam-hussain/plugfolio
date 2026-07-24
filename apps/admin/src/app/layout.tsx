@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Sora, Space_Mono } from "next/font/google";
 import { brand } from "@plugfolio/tokens";
+import { Toaster } from "@plugfolio/ui";
+import { cookies } from "next/headers";
 import "./globals.css";
 
 // Same brand type system as apps/web (Brand Guidelines v1.1 §06) — the tokens
@@ -44,14 +46,18 @@ export const viewport: Viewport = {
   themeColor: brand.surfaceLight,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const theme = (await cookies()).get("admin-theme")?.value === "dark" ? "dark" : "light";
   return (
     <html
       lang="en"
-      data-theme="light"
+      data-theme={theme}
       className={`${sora.variable} ${inter.variable} ${spaceMono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

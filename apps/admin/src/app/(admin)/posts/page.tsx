@@ -1,6 +1,10 @@
 import { searchPosts } from "@plugfolio/core";
 import {
-  ConfirmButton,
+  Button,
+  ConfirmDialog,
+  PageHeader,
+  Pager,
+  SearchField,
   Table,
   TableBody,
   TableCell,
@@ -8,81 +12,118 @@ import {
   TableHeader,
   TableRow,
 } from "@plugfolio/ui";
+import { Download } from "lucide-react";
 import type { Metadata } from "next";
-
-import { SearchHeader } from "@/components/search-header";
+import { BulkAllCheckbox, BulkBar, BulkCheckbox, BulkSelect } from "@/components/bulk-select";
+import { Panel } from "@/components/panel";
+import { pagedHref, pageQuery, type ListParams } from "@/lib/list-params";
 import { repositories } from "@/server/container";
-import { deletePostAction } from "./actions";
+import { bulkDeletePostsAction, deletePostAction } from "./actions";
 
 export const metadata: Metadata = { title: "Posts" };
 export const dynamic = "force-dynamic";
 
-export default async function PostsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>;
-}) {
-  const { q } = await searchParams;
-  const posts = await searchPosts({ content: repositories.content }, q);
+export default async function PostsPage({ searchParams }: { searchParams: Promise<ListParams> }) {
+  const params = await searchParams;
+  const page = pageQuery(params);
+  const { rows, total } = await searchPosts({ content: repositories.content }, params.q, page);
 
   return (
-    <div className="flex flex-col gap-6">
-      <SearchHeader title="Posts" query={q} placeholder="Search caption, profile…" />
+    <BulkSelect>
+      <PageHeader title="Posts">
+        <form className="flex flex-wrap items-center gap-2">
+          <SearchField
+            name="q"
+            defaultValue={params.q ?? ""}
+            placeholder="Search caption / profile"
+            className="w-[260px]"
+          />
+          <Button type="submit" size="xs" variant="outline-strong">
+            Search
+          </Button>
+          <Button asChild size="xs" variant="ghost-muted">
+            <a href={`/posts/export${params.q ? `?q=${encodeURIComponent(params.q)}` : ""}`}>
+              <Download aria-hidden className="size-[15px]" /> Export CSV
+            </a>
+          </Button>
+        </form>
+      </PageHeader>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Post</TableHead>
-            <TableHead>Profile</TableHead>
-            <TableHead>Products</TableHead>
-            <TableHead>When</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {posts.map((post) => (
-            <TableRow key={post.id}>
-              <TableCell className="max-w-md">
-                <p className="truncate text-sm">{post.caption ?? "(no caption)"}</p>
-                <a
-                  href={post.mediaUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-primary text-xs underline"
-                >
-                  View media
-                </a>
-              </TableCell>
-              <TableCell className="font-mono text-xs">/{post.username}</TableCell>
-              <TableCell className="text-muted-foreground text-xs tabular-nums">
-                {post.productCount}
-              </TableCell>
-              <TableCell className="text-muted-foreground text-xs tabular-nums">
-                {post.createdAt.toISOString().slice(0, 10)}
-              </TableCell>
-              <TableCell className="text-right">
-                <form action={deletePostAction}>
-                  <input type="hidden" name="postId" value={post.id} />
-                  <ConfirmButton
-                    size="sm"
-                    variant="destructive"
-                    message="Remove this post? Its tagged products stay; recorded taps survive. This can't be undone."
-                  >
-                    Remove
-                  </ConfirmButton>
-                </form>
-              </TableCell>
-            </TableRow>
-          ))}
-          {posts.length === 0 ? (
+      <BulkBar
+        verb="Remove"
+        title={(n) => `Remove ${n} posts?`}
+        body="The action applies to every selected row. This cannot be undone. Recorded in the audit log."
+        confirmLabel={(n) => `Remove ${n}`}
+        action={bulkDeletePostsAction}
+        successToast={(n) => `Removed ${n} posts`}
+      />
+
+      <Panel className="overflow-hidden">
+        <Table variant="dense">
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={5} className="text-muted-foreground text-center">
-                No posts match.
-              </TableCell>
+              <TableHead className="w-[34px]">
+                <BulkAllCheckbox ids={rows.map((r) => r.id)} />
+              </TableHead>
+              <TableHead>Post</TableHead>
+              <TableHead>Profile</TableHead>
+              <TableHead>Products</TableHead>
+              <TableHead>When</TableHead>
+              <TableHead />
             </TableRow>
-          ) : null}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {rows.map((post) => (
+              <TableRow key={post.id}>
+                <TableCell className="w-[34px]">
+                  <BulkCheckbox id={post.id} label={`Select post ${post.caption ?? post.id}`} />
+                </TableCell>
+                <TableCell className="max-w-[420px]">
+                  <span className="block truncate font-medium">
+                    {post.caption ?? "(no caption)"}
+                  </span>
+                  <a
+                    href={post.mediaUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-mono text-primary text-[11px]"
+                  >
+                    View media ↗
+                  </a>
+                </TableCell>
+                <TableCell className="font-mono text-muted-foreground text-xs">
+                  /{post.username}
+                </TableCell>
+                <TableCell className="text-muted-foreground tabular-nums">
+                  {post.productCount}
+                </TableCell>
+                <TableCell className="text-muted-foreground tabular-nums">
+                  {post.createdAt.toISOString().slice(0, 10)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <ConfirmDialog
+                    trigger={<Button size="xs" variant="destructive-outline">Remove</Button>}
+                    title="Remove this post?"
+                    body="The post and its media come off Plugfolio. Tagged products stay live and recorded taps survive. This cannot be undone. Recorded in the audit log."
+                    confirmLabel="Remove post"
+                    action={deletePostAction}
+                    hiddenFields={{ postId: post.id }}
+                    successToast="Post removed"
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+            {rows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-faint py-8 text-center">
+                  No posts match.
+                </TableCell>
+              </TableRow>
+            ) : null}
+          </TableBody>
+        </Table>
+      </Panel>
+      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/posts", params)} />
+    </BulkSelect>
   );
 }

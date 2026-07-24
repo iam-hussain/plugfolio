@@ -1,6 +1,10 @@
 import { searchRequirements } from "@plugfolio/core";
 import {
-  ConfirmButton,
+  Button,
+  ConfirmDialog,
+  PageHeader,
+  Pager,
+  SearchField,
   Table,
   TableBody,
   TableCell,
@@ -8,9 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from "@plugfolio/ui";
+import { Download } from "lucide-react";
 import type { Metadata } from "next";
-
-import { SearchHeader } from "@/components/search-header";
+import { Panel } from "@/components/panel";
+import { pagedHref, pageQuery, type ListParams } from "@/lib/list-params";
 import { repositories } from "@/server/container";
 import { removeRequirementAction } from "./actions";
 
@@ -20,66 +25,92 @@ export const dynamic = "force-dynamic";
 export default async function RequirementsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<ListParams>;
 }) {
-  const { q } = await searchParams;
-  const requirements = await searchRequirements({ requirements: repositories.requirements }, q);
+  const params = await searchParams;
+  const page = pageQuery(params);
+  const { rows, total } = await searchRequirements(
+    { requirements: repositories.requirements },
+    params.q,
+    page,
+  );
 
   return (
-    <div className="flex flex-col gap-6">
-      <SearchHeader title="Requirements" query={q} placeholder="Search title, brief, business…" />
+    <>
+      <PageHeader title="Requirements">
+        <form className="flex flex-wrap items-center gap-2">
+          <SearchField
+            name="q"
+            defaultValue={params.q ?? ""}
+            placeholder="Search title / brief / business"
+            className="w-[280px]"
+          />
+          <Button type="submit" size="xs" variant="outline-strong">
+            Search
+          </Button>
+          <Button asChild size="xs" variant="ghost-muted">
+            <a href={`/requirements/export${params.q ? `?q=${encodeURIComponent(params.q)}` : ""}`}>
+              <Download aria-hidden className="size-[15px]" /> Export CSV
+            </a>
+          </Button>
+        </form>
+      </PageHeader>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Brief</TableHead>
-            <TableHead>Business</TableHead>
-            <TableHead>Budget</TableHead>
-            <TableHead>Deadline</TableHead>
-            <TableHead>Approaches</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {requirements.map((requirement) => (
-            <TableRow key={requirement.id}>
-              <TableCell className="max-w-md">
-                <p className="text-sm font-medium">{requirement.title}</p>
-                <p className="text-muted-foreground truncate text-xs">{requirement.brief}</p>
-              </TableCell>
-              <TableCell className="text-xs">{requirement.businessName}</TableCell>
-              <TableCell className="text-muted-foreground text-xs">
-                {requirement.budget ?? "—"}
-              </TableCell>
-              <TableCell className="text-muted-foreground text-xs tabular-nums">
-                {requirement.deadline ? requirement.deadline.toISOString().slice(0, 10) : "—"}
-              </TableCell>
-              <TableCell className="text-muted-foreground text-xs tabular-nums">
-                {requirement.collabCount}
-              </TableCell>
-              <TableCell className="text-right">
-                <form action={removeRequirementAction}>
-                  <input type="hidden" name="requirementId" value={requirement.id} />
-                  <ConfirmButton
-                    size="sm"
-                    variant="destructive"
-                    message="Remove this requirement from the board? Existing collab threads survive."
-                  >
-                    Remove
-                  </ConfirmButton>
-                </form>
-              </TableCell>
-            </TableRow>
-          ))}
-          {requirements.length === 0 ? (
+      <Panel className="overflow-hidden">
+        <Table variant="dense">
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={6} className="text-muted-foreground text-center">
-                No requirements match.
-              </TableCell>
+              <TableHead>Brief</TableHead>
+              <TableHead>Business</TableHead>
+              <TableHead>Budget</TableHead>
+              <TableHead>Deadline</TableHead>
+              <TableHead>Approaches</TableHead>
+              <TableHead />
             </TableRow>
-          ) : null}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {rows.map((requirement) => (
+              <TableRow key={requirement.id}>
+                <TableCell className="max-w-[360px]">
+                  <span className="block font-medium">{requirement.title}</span>
+                  <span className="text-muted-foreground mt-0.5 block truncate text-xs">
+                    {requirement.brief}
+                  </span>
+                </TableCell>
+                <TableCell className="text-[13px]">{requirement.businessName}</TableCell>
+                <TableCell className="text-muted-foreground tabular-nums">
+                  {requirement.budget ?? "—"}
+                </TableCell>
+                <TableCell className="text-muted-foreground tabular-nums">
+                  {requirement.deadline ? requirement.deadline.toISOString().slice(0, 10) : "—"}
+                </TableCell>
+                <TableCell className="text-muted-foreground tabular-nums">
+                  {requirement.collabCount}
+                </TableCell>
+                <TableCell className="text-right">
+                  <ConfirmDialog
+                    trigger={<Button size="xs" variant="destructive-outline">Remove</Button>}
+                    title="Remove this requirement?"
+                    body="The brief comes off the open board. Existing collab threads on it survive. Recorded in the audit log."
+                    confirmLabel="Remove requirement"
+                    action={removeRequirementAction}
+                    hiddenFields={{ requirementId: requirement.id }}
+                    successToast="Requirement removed"
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+            {rows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-faint py-8 text-center">
+                  No requirements match.
+                </TableCell>
+              </TableRow>
+            ) : null}
+          </TableBody>
+        </Table>
+      </Panel>
+      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/requirements", params)} />
+    </>
   );
 }

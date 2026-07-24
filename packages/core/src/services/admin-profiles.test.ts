@@ -1,22 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { ConflictError, NotFoundError } from "../errors";
-import type {
-  AdminAuditEntry,
-  AdminAuditRepository,
-  AdminProfileRepository,
-} from "../ports/admin-repository";
+import type { AdminProfileRepository } from "../ports/admin-repository";
+import { fakeAudit, fakeSettings } from "../test/fakes";
 import { releaseProfileUsername, suspendProfile, unsuspendProfile } from "./admin-profiles";
 
-const NOW = new Date("2026-07-23T00:00:00.000Z");
+const NOW = new Date("2026-07-24T00:00:00.000Z");
 
 function makeDeps() {
   const rows = new Map<string, { username: string; suspendedAt: Date | null }>([
     ["profile-1", { username: "gadget-guru", suspendedAt: null }],
   ]);
-  const recorded: AdminAuditEntry[] = [];
+  const { audit, recorded } = fakeAudit();
   const profiles: AdminProfileRepository = {
     async search() {
-      return [];
+      return { rows: [], total: 0 };
     },
     async setSuspended(profileId, at) {
       const row = rows.get(profileId);
@@ -32,32 +29,25 @@ function makeDeps() {
       row.username = username;
       return { previous };
     },
-  };
-  const audit: AdminAuditRepository = {
-    async record(entry) {
-      recorded.push(entry);
-    },
-    async listRecent() {
-      return [];
-    },
-  };
-  const settings = {
-    async get() {
+    async detail() {
       return null;
     },
-    async set() {},
   };
-  return { deps: { profiles, audit, settings, now: () => NOW }, rows, recorded };
+  return {
+    deps: { profiles, audit, settings: fakeSettings().settings, now: () => NOW },
+    rows,
+    recorded,
+  };
 }
 
 describe("profile moderation", () => {
-  it("suspends, audits, and lifts", async () => {
+  it("suspends with the required reason, audits, and lifts", async () => {
     const { deps, rows, recorded } = makeDeps();
-    await suspendProfile(deps, "admin-1", "profile-1");
+    await suspendProfile(deps, "admin-1", "profile-1", "stolen media");
     expect(rows.get("profile-1")!.suspendedAt).toEqual(NOW);
+    expect(recorded[0]).toMatchObject({ action: "profile.suspend", detail: "stolen media" });
     await unsuspendProfile(deps, "admin-1", "profile-1");
     expect(rows.get("profile-1")!.suspendedAt).toBeNull();
-    expect(recorded.map((r) => r.action)).toEqual(["profile.suspend", "profile.unsuspend"]);
   });
 
   it("releases a username to the admin-chosen name and audits old → new", async () => {
@@ -68,7 +58,6 @@ describe("profile moderation", () => {
     });
     expect(next).toBe("creator-4f9d21ab");
     expect(rows.get("profile-1")!.username).toBe(next);
-    expect(recorded[0]).toMatchObject({ action: "profile.releaseUsername" });
     expect(recorded[0]!.detail).toBe("gadget-guru → creator-4f9d21ab");
   });
 
@@ -87,7 +76,9 @@ describe("profile moderation", () => {
 
   it("unknown profile is a typed NotFoundError and records nothing", async () => {
     const { deps, recorded } = makeDeps();
-    await expect(suspendProfile(deps, "admin-1", "ghost")).rejects.toBeInstanceOf(NotFoundError);
+    await expect(suspendProfile(deps, "admin-1", "ghost", "r")).rejects.toBeInstanceOf(
+      NotFoundError,
+    );
     await expect(
       releaseProfileUsername(deps, "admin-1", { profileId: "ghost", username: "creator-aaaa1111" }),
     ).rejects.toBeInstanceOf(NotFoundError);

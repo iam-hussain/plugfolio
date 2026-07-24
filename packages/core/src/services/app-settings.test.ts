@@ -32,6 +32,12 @@ function makeDeps() {
     async listRecent() {
       return [];
     },
+    async search() {
+      return { rows: [], total: 0 };
+    },
+    async admins() {
+      return [];
+    },
   };
   return { deps: { settings, audit }, store, recorded };
 }

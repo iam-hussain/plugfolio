@@ -354,8 +354,10 @@ model AdminUser {
   id           String        @id @default(uuid()) @db.Uuid
   email        String        @unique
   /// scrypt `salt:hash`, same helper as product accounts (ADR-0012).
-  passwordHash String
+  /// Null = an invited operator who hasn't set a password yet.
+  passwordHash String?
   name         String?
+  lastSignInAt DateTime?
   createdAt    DateTime      @default(now())
   actions      AdminAction[]
 }
@@ -384,6 +386,50 @@ model AppSetting {
   key       String   @id
   value     Json
   updatedAt DateTime @updatedAt
+}
+
+/// A user/shopper flag on a piece of content — the admin triage queue
+/// (Milestone 2). The target is a loose (type, id) pair on purpose: reports
+/// must survive their target's deletion so the queue keeps its history.
+model Report {
+  id            String           @id @default(uuid()) @db.Uuid
+  targetType    ReportTargetType
+  targetId      String           @db.Uuid
+  category      ReportCategory
+  /// The reporter's free-text note.
+  note          String?
+  /// "@handle" for signed-in reporters, "Anonymous shopper" otherwise —
+  /// denormalized so the queue never joins on a deletable account.
+  reporterLabel String           @default("Anonymous shopper")
+  /// One line describing the target at report time (comment snippet, product
+  /// title) — the queue's preview, stable even after takedown.
+  snippet       String
+  status        ReportStatus     @default(open)
+  createdAt     DateTime         @default(now())
+  resolvedAt    DateTime?
+
+  @@index([status, createdAt])
+}
+
+enum ReportTargetType {
+  comment
+  product
+  profile
+  post
+}
+
+enum ReportCategory {
+  spam
+  scam
+  offensive
+  impersonation
+  other
+}
+
+enum ReportStatus {
+  open
+  resolved
+  dismissed
 }
 
 enum TapSource {

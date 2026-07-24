@@ -28,6 +28,7 @@ export {
   createAdminAuditRepository,
   createAppSettingsRepository,
   createAdminMemberRepository,
+  createAdminReportRepository,
   createAdminOverviewRepository,
 } from "./repositories/admin-repository";
 export {
