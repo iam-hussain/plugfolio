@@ -94,6 +94,13 @@ export async function verifyEmail(deps: AccountAuthDeps, input: VerifyEmailInput
   if (!account.emailVerified) await deps.accounts.markVerified(account.id);
 }
 
+/** The invited-Manager first-password path (brief 04): mail a set-password
+ * link straight from the invite — the /reset screen doubles as set-password,
+ * and consuming the link marks the email verified. */
+export async function sendSetPasswordLink(deps: AccountAuthDeps, email: string): Promise<void> {
+  await sendLink(deps, "reset", email);
+}
+
 export async function requestPasswordReset(
   deps: AccountAuthDeps,
   input: { email: string },

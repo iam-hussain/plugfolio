@@ -98,7 +98,7 @@ describe("handle reset", () => {
     const handles = new Map([["user-1", "maya"]]);
     const users: UserRepository = {
       async findOrCreateByEmail() {
-        return { id: "user-x" };
+        return { id: "user-x", passwordless: false };
       },
       async getHandle(userId) {
         return handles.get(userId) ?? null;

@@ -5,7 +5,7 @@
 ## Managers
 
 - **Data model** (`20260720160000_profile_managers`): `ProfileManager` with composite `(profileId, userId)` PK — invites are idempotent by construction. The Admin is simply `Profile.userId`; no role column exists.
-- **Invite by email**: a `User` row is found-or-created for the invitee (`UserRepository.findOrCreateByEmail`); their normal magic-link sign-in picks the membership up — no separate acceptance flow in v1.
+- **Invite by email**: a `User` row is found-or-created for the invitee (`UserRepository.findOrCreateByEmail`); their normal sign-in picks the membership up — no separate acceptance flow in v1. **A passwordless invitee** (brief 04 edge: no account before the invite) is mailed a **set-password link** straight from the invite (`sendSetPasswordLink` — the reset-token flow; `/reset` doubles as the set-password screen and consuming the link marks the email verified, ADR-0012). Invitees who already have a password get no mail.
 - **Permission split, enforced in services** per the ADR-0004 table:
   - *Admin or Manager* (`listAccessibleByUser`): post content, tag products, fix/remove products, act in collab threads, see Posts/Products/Earnings/Collabs tabs.
   - *Admin only* (`listByUser`): invite/remove Managers (`/dashboard/settings`), and — when they land — connections, username, profile create/delete. A Manager calling a settings API gets 403; the settings page redirects them.
@@ -19,6 +19,6 @@ Signed-in users who own a business see a **Request collab** form on any creator 
 
 ## Verification
 
-- Unit (`profile-managers.test.ts`, 6 tests): admin-only invite/remove/list, 3-cap, self-invite conflict, invitee find-or-create.
+- Unit (`profile-managers.test.ts`, 7 tests): admin-only invite/remove/list, 3-cap, self-invite conflict, invitee find-or-create, set-password mail for passwordless invitees only.
 - e2e: `/dashboard/settings` redirects unauthenticated; invite API 401s anonymously.
 - Curl loop: admin invites a fresh email → invitee signs in via magic link and sees the managed profile → posts to it (allowed) → tries the settings API (403) → business user sends a door-two request from the creator page.

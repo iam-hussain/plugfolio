@@ -44,14 +44,15 @@ export function createManagerRepository(db: PrismaClient = prisma): ManagerRepos
 
 export function createUserRepository(db: PrismaClient = prisma): UserRepository {
   return {
-    async findOrCreateByEmail(email: string): Promise<{ id: string }> {
-      return db.user.upsert({
+    async findOrCreateByEmail(email: string): Promise<{ id: string; passwordless: boolean }> {
+      const row = await db.user.upsert({
         where: { email },
         update: {},
         // Every account gets a member handle from birth (ADR-0009).
         create: { email, username: generateMemberHandle() },
-        select: { id: true },
+        select: { id: true, passwordHash: true },
       });
+      return { id: row.id, passwordless: row.passwordHash === null };
     },
 
     async getHandle(userId: string): Promise<string | null> {

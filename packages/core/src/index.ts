@@ -251,6 +251,7 @@ export {
   requestPasswordReset,
   resetPassword,
   verifyCredentials,
+  sendSetPasswordLink,
   type AccountAuthDeps,
   type CredentialsResult,
 } from "./services/account-auth";

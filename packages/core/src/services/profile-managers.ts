@@ -2,6 +2,7 @@ import { z } from "zod";
 import { ConflictError, ForbiddenError } from "../errors";
 import type { ManagerRepository, ManagerView, UserRepository } from "../ports/manager-repository";
 import type { ProfileRepository } from "../ports/profile-repository";
+import { sendSetPasswordLink, type AccountAuthDeps } from "./account-auth";
 
 /**
  * Manager administration (ADR-0004): every profile has exactly one Admin (the
@@ -35,7 +36,7 @@ async function requireAdmin(
 }
 
 export async function inviteManager(
-  deps: ProfileManagerDeps,
+  deps: ProfileManagerDeps & { auth: AccountAuthDeps },
   userId: string,
   input: InviteManagerInput,
 ): Promise<void> {
@@ -48,6 +49,10 @@ export async function inviteManager(
     throw new ConflictError("You are the Admin of this profile");
   }
   await deps.managers.add(input.profileId, invitee.id);
+  // Brief 04 edge: an invitee with no password yet gets a set-password link —
+  // the /reset screen doubles as their first-password screen, and consuming
+  // it marks the email verified (ADR-0012).
+  if (invitee.passwordless) await sendSetPasswordLink(deps.auth, input.email);
 }
 
 export async function removeManager(

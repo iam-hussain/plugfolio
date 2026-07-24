@@ -411,7 +411,7 @@ app.post("/profiles/:profileId/managers", async (c) => {
     ...(await c.req.json()),
     profileId: c.req.param("profileId"),
   });
-  await inviteManager(profileManagerDeps, userId, input);
+  await inviteManager({ ...profileManagerDeps, auth: accountAuthDeps }, userId, input);
   return c.json({ invited: true }, 201);
 });
 

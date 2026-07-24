@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { ConflictError, ForbiddenError } from "../errors";
 import type { ManagerRepository, UserRepository } from "../ports/manager-repository";
 import type { ProfileRepository } from "../ports/profile-repository";
+import type { AccountAuthDeps } from "./account-auth";
 import {
   MAX_MANAGERS_PER_PROFILE,
   inviteManager,
@@ -13,9 +14,10 @@ const ADMIN = "10000000-0000-0000-0000-000000000001";
 const MANAGER_USER = "10000000-0000-0000-0000-000000000002";
 const PROFILE_ID = "20000000-0000-0000-0000-000000000001";
 
-function makeDeps(existingManagers = 0) {
+function makeDeps(existingManagers = 0, options: { inviteePasswordless?: boolean } = {}) {
   const added: string[] = [];
   const removed: string[] = [];
+  const setPasswordMails: string[] = [];
 
   const profiles: ProfileRepository = {
     async listByUser(userId) {
@@ -52,7 +54,10 @@ function makeDeps(existingManagers = 0) {
   };
   const users: UserRepository = {
     async findOrCreateByEmail(email) {
-      return { id: email === "admin@example.com" ? ADMIN : MANAGER_USER };
+      return {
+        id: email === "admin@example.com" ? ADMIN : MANAGER_USER,
+        passwordless: options.inviteePasswordless ?? false,
+      };
     },
     async getHandle() {
       return "user-abc12345";
@@ -62,14 +67,36 @@ function makeDeps(existingManagers = 0) {
     },
   };
 
-  return { deps: { profiles, managers, users }, added, removed };
+  // Only what sendSetPasswordLink touches — accounts stays unused there.
+  const auth = {
+    tokens: { create: async () => undefined, consume: async () => null },
+    mailer: {
+      sendVerification: async () => undefined,
+      sendPasswordReset: async (email: string) => {
+        setPasswordMails.push(email);
+      },
+    },
+    webOrigin: "http://localhost",
+    now: () => new Date("2026-07-24"),
+  } as unknown as AccountAuthDeps;
+
+  return { deps: { profiles, managers, users, auth }, added, removed, setPasswordMails };
 }
 
 describe("inviteManager", () => {
   it("admin invites by email; the invitee user is found or created", async () => {
-    const { deps, added } = makeDeps();
+    const { deps, added, setPasswordMails } = makeDeps();
     await inviteManager(deps, ADMIN, { profileId: PROFILE_ID, email: "helper@example.com" });
     expect(added).toEqual([MANAGER_USER]);
+    // An invitee who already has a password gets no set-password mail.
+    expect(setPasswordMails).toEqual([]);
+  });
+
+  it("a passwordless invitee gets the set-password link (brief 04)", async () => {
+    const { deps, added, setPasswordMails } = makeDeps(0, { inviteePasswordless: true });
+    await inviteManager(deps, ADMIN, { profileId: PROFILE_ID, email: "new@example.com" });
+    expect(added).toEqual([MANAGER_USER]);
+    expect(setPasswordMails).toEqual(["new@example.com"]);
   });
 
   it("only the Admin can invite — a Manager cannot", async () => {

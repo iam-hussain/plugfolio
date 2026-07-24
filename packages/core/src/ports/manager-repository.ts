@@ -19,7 +19,9 @@ export type ManagerRepository = {
 };
 
 export type UserRepository = {
-  findOrCreateByEmail(email: string): Promise<{ id: string }>;
+  /** `passwordless` = no password set yet (brief 04: an invited Manager gets
+   * a set-password link instead of being stranded). */
+  findOrCreateByEmail(email: string): Promise<{ id: string; passwordless: boolean }>;
   /** The member handle (ADR-0009); null only for an unknown user id. */
   getHandle(userId: string): Promise<string | null>;
   /** "taken" surfaces the global-uniqueness constraint for a typed ConflictError. */
