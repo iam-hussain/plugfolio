@@ -31,7 +31,7 @@ export function DashboardShell({ profiles, active, children }: DashboardShellPro
             maxProfiles={MAX_PROFILES_PER_ACCOUNT}
           />
         </div>
-        <DashboardTabs profileId={active?.id} isAdmin={active?.role === "admin"} />
+        <DashboardTabs profileId={active?.id} />
       </header>
       <main className="mx-auto w-full max-w-2xl px-4 pt-6 pb-16">{children}</main>
     </div>

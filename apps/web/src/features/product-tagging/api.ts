@@ -4,6 +4,7 @@ import type {
   SetPostCategoryInput,
   SetProductCategoryInput,
   SetProfileLinksInput,
+  UpdateProfileIdentityInput,
   SetProductCouponInput,
   TagProductInput,
   UpdateProductInput,
@@ -55,3 +56,10 @@ export const saveProfileLinks = (
   profileId: string,
   body: Omit<SetProfileLinksInput, "profileId">,
 ) => send(`/api/profiles/${profileId}/links`, "PUT", body);
+
+// Public identity + deletion (brief 10).
+export const updateProfileIdentity = (
+  profileId: string,
+  body: Omit<UpdateProfileIdentityInput, "profileId">,
+) => send(`/api/profiles/${profileId}`, "PATCH", body);
+export const deleteProfile = (profileId: string) => send(`/api/profiles/${profileId}`, "DELETE");

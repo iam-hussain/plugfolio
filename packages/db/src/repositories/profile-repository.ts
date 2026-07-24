@@ -1,4 +1,10 @@
-import type { AccessibleProfile, ProfileRepository, ProfileSummary } from "@plugfolio/core";
+import type {
+  AccessibleProfile,
+  ProfileIdentity,
+  ProfileIdentityRepository,
+  ProfileRepository,
+  ProfileSummary,
+} from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 
 /** Prisma implementation of the `ProfileRepository` port. */
@@ -45,6 +51,28 @@ export function createProfileRepository(db: PrismaClient = prisma): ProfileRepos
         data: profile,
         select: { id: true, username: true },
       });
+    },
+  };
+}
+
+/** Prisma implementation of the `ProfileIdentityRepository` port (brief 10). */
+export function createProfileIdentityRepository(
+  db: PrismaClient = prisma,
+): ProfileIdentityRepository {
+  return {
+    async get(profileId: string): Promise<ProfileIdentity | null> {
+      return db.profile.findUnique({
+        where: { id: profileId },
+        select: { displayName: true, avatarUrl: true, bio: true },
+      });
+    },
+
+    async update(profileId: string, patch: Partial<ProfileIdentity>): Promise<void> {
+      await db.profile.update({ where: { id: profileId }, data: patch });
+    },
+
+    async delete(profileId: string): Promise<void> {
+      await db.profile.delete({ where: { id: profileId } });
     },
   };
 }

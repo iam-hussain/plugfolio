@@ -42,6 +42,10 @@ export type PageCategory = {
 export type CreatorPage = {
   readonly id: string;
   readonly username: string;
+  /** Public identity (brief 10); null = show @username / an initial tile. */
+  readonly displayName: string | null;
+  readonly avatarUrl: string | null;
+  readonly bio: string | null;
   readonly followerCount: number;
   readonly categories: readonly PageCategory[];
   readonly posts: readonly ShopperPost[];

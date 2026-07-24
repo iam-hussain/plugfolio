@@ -7,7 +7,9 @@ import { usePathname } from "next/navigation";
 /**
  * Dashboard section tabs (design handoff open question resolved: text tabs
  * under the top bar — creators work on desktop too, a bottom bar doesn't).
- * Space Mono uppercase per the brand's micro-label rule.
+ * Space Mono uppercase per the brand's micro-label rule. Settings shows for
+ * Managers too (brief 10: they get the picture control) — the page itself
+ * gates everything else to the Admin.
  */
 const TABS = [
   { href: "/dashboard", label: "Home" },
@@ -15,20 +17,19 @@ const TABS = [
   { href: "/dashboard/products", label: "Products" },
   { href: "/dashboard/categories", label: "Categories" },
   { href: "/dashboard/collabs", label: "Collabs" },
-  { href: "/dashboard/settings", label: "Settings", adminOnly: true },
+  { href: "/dashboard/settings", label: "Settings" },
 ];
 
 export type DashboardTabsProps = {
   profileId?: string;
-  isAdmin: boolean;
 };
 
-export function DashboardTabs({ profileId, isAdmin }: DashboardTabsProps) {
+export function DashboardTabs({ profileId }: DashboardTabsProps) {
   const pathname = usePathname();
   return (
     <nav aria-label="Dashboard sections" className="overflow-x-auto">
       <ul className="mx-auto flex w-full max-w-2xl px-4">
-        {TABS.filter((tab) => !tab.adminOnly || isAdmin).map((tab) => {
+        {TABS.map((tab) => {
           const active =
             tab.href === "/dashboard" ? pathname === tab.href : pathname.startsWith(tab.href);
           return (

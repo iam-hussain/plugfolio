@@ -6,7 +6,10 @@ export { createProductRepository } from "./repositories/product-repository";
 export { createCreatorPageRepository } from "./repositories/creator-page-repository";
 export { createDiscoveryRepository } from "./repositories/discovery-repository";
 export { createEarningsRepository } from "./repositories/earnings-repository";
-export { createProfileRepository } from "./repositories/profile-repository";
+export {
+  createProfileRepository,
+  createProfileIdentityRepository,
+} from "./repositories/profile-repository";
 export { createFollowRepository } from "./repositories/follow-repository";
 export { createCommentRepository } from "./repositories/comment-repository";
 export { createCategoryRepository } from "./repositories/category-repository";

@@ -38,6 +38,9 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
         select: {
           id: true,
           username: true,
+          displayName: true,
+          avatarUrl: true,
+          bio: true,
           _count: { select: { followers: true } },
           categories: {
             orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],

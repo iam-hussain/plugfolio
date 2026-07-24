@@ -162,6 +162,20 @@ export {
   type ProfileLinkDeps,
 } from "./services/profile-links";
 export {
+  updateProfileIdentityInput,
+  type UpdateProfileIdentityInput,
+} from "./schemas/profile-identity";
+export {
+  type ProfileIdentity,
+  type ProfileIdentityRepository,
+} from "./ports/profile-identity-repository";
+export {
+  getMyProfileIdentity,
+  updateProfileIdentity,
+  deleteProfile,
+  type ProfileIdentityDeps,
+} from "./services/profile-identity";
+export {
   registerInput,
   type RegisterInput,
   credentialsInput,

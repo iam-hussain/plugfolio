@@ -14,3 +14,8 @@ export {
 } from "./components/dashboard-shell";
 export { ProfileSwitcher, type ProfileSwitcherProps } from "./components/profile-switcher";
 export { ProfileLinksForm, type ProfileLinksFormProps } from "./components/profile-links-form";
+export {
+  ProfileIdentityForm,
+  type ProfileIdentityFormProps,
+} from "./components/profile-identity-form";
+export { DeleteProfileButton } from "./components/delete-profile-button";

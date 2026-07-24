@@ -131,6 +131,9 @@ export default async function CreatorPage({
       <CreatorHeader
         handle={page.username}
         followerCount={page.followerCount}
+        displayName={page.displayName ?? undefined}
+        avatarUrl={page.avatarUrl ?? undefined}
+        bio={page.bio ?? undefined}
         socials={socials}
         action={
           ownMembership ? (
