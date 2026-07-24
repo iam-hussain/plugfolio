@@ -29,6 +29,9 @@ export type ShopperPost = {
   readonly mediaUrl: string;
   readonly caption: string | null;
   readonly categoryId: string | null;
+  /** Hidden by the creator (brief 07): public surfaces filter these out;
+   * the dashboard shows them with a "hidden" chip. */
+  readonly hiddenAt: Date | null;
   readonly products: readonly ShopperProduct[];
 };
 
@@ -58,10 +61,13 @@ export type ShopperProductView = ShopperProduct & {
   readonly fromPost: { readonly id: string; readonly mediaUrl: string } | null;
 };
 
+/** The creator's Products tab row: the product + how many posts use it. */
+export type CreatorProductRow = ShopperProduct & { readonly postCount: number };
+
 export type CreatorPageReadRepository = {
   findByUsername(username: string): Promise<CreatorPage | null>;
   /** Every product of the profile — including ones whose post was deleted. */
-  listProducts(username: string): Promise<readonly ShopperProduct[]>;
+  listProducts(username: string): Promise<readonly CreatorProductRow[]>;
   /** Scoped by username so a post can't be reached under another creator's handle. */
   findPost(username: string, postId: string): Promise<ShopperPost | null>;
   findProduct(username: string, productId: string): Promise<ShopperProductView | null>;

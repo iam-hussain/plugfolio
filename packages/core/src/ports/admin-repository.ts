@@ -18,6 +18,9 @@ export type AdminAccount = {
   readonly name: string | null;
   /** Null = invited, password not set yet — cannot sign in. */
   readonly passwordHash: string | null;
+  /** Bumped on password set/change — outstanding JWTs with an older version
+   * die immediately (the revocation lever for a lost laptop). */
+  readonly sessionVersion: number;
 };
 
 export type AdminOperatorRow = {
@@ -30,11 +33,13 @@ export type AdminOperatorRow = {
 
 export type AdminUserRepository = {
   findByEmail(email: string): Promise<AdminAccount | null>;
+  findById(adminId: string): Promise<AdminAccount | null>;
   list(): Promise<readonly AdminOperatorRow[]>;
   /** Passwordless row — the emailed link sets the first password. */
   create(operator: { email: string; name: string | null }): Promise<{ id: string } | "exists">;
   remove(adminId: string): Promise<"ok" | "not_found">;
   count(): Promise<number>;
+  /** Also bumps sessionVersion — a password change signs out every session. */
   setPassword(adminId: string, passwordHash: string): Promise<void>;
   recordSignIn(adminId: string, at: Date): Promise<void>;
 };

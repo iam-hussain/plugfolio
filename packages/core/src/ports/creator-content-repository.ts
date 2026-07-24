@@ -18,6 +18,8 @@ export type PostWriteRepository = {
   belongsToProfile(postId: string, profileId: string): Promise<boolean>;
   /** Put the post on a shelf, or take it off (null) — ADR-0010. */
   setCategory(postId: string, categoryId: string | null): Promise<void>;
+  /** Hide from / restore to the public page (brief 07). */
+  setHidden(postId: string, hidden: boolean): Promise<void>;
 };
 
 export type ProductWriteRepository = {

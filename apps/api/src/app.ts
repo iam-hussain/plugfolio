@@ -51,6 +51,8 @@ import {
   sendCollabMessage,
   setPostCategory,
   setPostCategoryInput,
+  setPostHidden,
+  setPostHiddenInput,
   setProductCategory,
   setProductCategoryInput,
   setProductCoupon,
@@ -62,10 +64,14 @@ import {
   updateCategoryInput,
   updateMemberHandle,
   updateMemberHandleInput,
+  createReport,
+  createReportInput,
+  isFeatureEnabled,
+  ForbiddenError,
   updateProductAffiliateUrl,
   updateProductInput,
 } from "@plugfolio/core";
-import { deviceIdentity, requireUserId } from "./auth";
+import { deviceIdentity, requireUserId, sessionUserId } from "./auth";
 import {
   accountAuthDeps,
   businessCollabDeps,
@@ -192,9 +198,35 @@ app.delete("/follows/:profileId", async (c) => {
 
 app.post("/comments", async (c) => {
   const userId = await requireUserId(c);
+  // Kill switch (admin Settings): flags default ON; off = read-only comments.
+  if (!(await isFeatureEnabled({ settings: repositories.settings }, "comments", true))) {
+    throw new ForbiddenError("Comments are switched off right now");
+  }
   const input = addCommentInput.parse(await c.req.json());
   const comment = await addComment(shopperSocialDeps, userId, input);
   return c.json({ comment }, 201);
+});
+
+// Reporting (admin queue inflow): account-free like shopping — the signed
+// device cookie is identity enough; a signed-in member reports as @handle.
+app.post("/reports", async (c) => {
+  if (!(await isFeatureEnabled({ settings: repositories.settings }, "reports", true))) {
+    throw new ForbiddenError("Reporting is switched off right now");
+  }
+  const input = createReportInput.parse(await c.req.json());
+  const userId = await sessionUserId(c);
+  const handle = userId ? await repositories.users.getHandle(userId) : null;
+  await createReport({ reports: repositories.reportWrites }, input, { handle });
+  const { issued } = deviceIdentity(c);
+  if (issued) {
+    setCookie(c, DEVICE_COOKIE, issued.token, {
+      httpOnly: true,
+      sameSite: "Lax",
+      maxAge: ONE_YEAR_SECONDS,
+      path: "/",
+    });
+  }
+  return c.json({ reported: true }, 201);
 });
 
 // The member handle (ADR-0009): public identity, never a login.
@@ -344,6 +376,15 @@ app.delete("/categories/:categoryId", async (c) => {
   const categoryId = uuidParam.parse(c.req.param("categoryId"));
   await removeCategory(creatorContentDeps, userId, categoryId);
   return c.json({ removed: true });
+});
+
+// Hide a post from the public page, or bring it back (brief 07).
+app.patch("/posts/:postId/hidden", async (c) => {
+  const userId = await requireUserId(c);
+  const postId = uuidParam.parse(c.req.param("postId"));
+  const input = setPostHiddenInput.parse(await c.req.json());
+  await setPostHidden(creatorContentDeps, userId, postId, input);
+  return c.json({ updated: true });
 });
 
 app.patch("/posts/:postId/category", async (c) => {

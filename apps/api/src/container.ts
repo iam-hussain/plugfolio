@@ -1,6 +1,7 @@
-import type { AuthMailer } from "@plugfolio/core";
+import { createResendMailer, type AuthMailer } from "@plugfolio/core";
 import {
   createAppSettingsRepository,
+  createReportWriteRepository,
   createAuthAccountRepository,
   createAuthTokenRepository,
   createBusinessRepository,
@@ -48,6 +49,7 @@ export const repositories = {
   managers: createManagerRepository(),
   users: createUserRepository(),
   settings: createAppSettingsRepository(),
+  reportWrites: createReportWriteRepository(),
   postWrites: createPostWriteRepository(),
   productWrites: createProductWriteRepository(),
 };
@@ -95,8 +97,6 @@ export const profileIdentityDeps = {
   identity: repositories.profileIdentity,
 };
 
-// ponytail: no mail transport yet — links go to the server console; a real
-// provider (SMTP/Resend) replaces this object at deployment time.
 const consoleMailer: AuthMailer = {
   async sendVerification(email, url) {
     console.log(`[auth] verification link for ${email}: ${url}`);
@@ -106,10 +106,16 @@ const consoleMailer: AuthMailer = {
   },
 };
 
+// Real transport when configured (ADR-0015); links log to the console in dev.
+export const mailer: AuthMailer =
+  env.RESEND_API_KEY && env.EMAIL_FROM
+    ? createResendMailer({ apiKey: env.RESEND_API_KEY, from: env.EMAIL_FROM })
+    : consoleMailer;
+
 export const accountAuthDeps = {
   accounts: createAuthAccountRepository(),
   tokens: createAuthTokenRepository(),
-  mailer: consoleMailer,
+  mailer,
   webOrigin: env.WEB_ORIGIN,
   now: clock.now,
 };

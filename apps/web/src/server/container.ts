@@ -1,4 +1,5 @@
 import {
+  createAppSettingsRepository,
   createBusinessRepository,
   createCategoryRepository,
   createConnectionRepository,
@@ -40,6 +41,7 @@ export const repositories = {
   socialConnections: createSocialConnectionRepository(),
   managers: createManagerRepository(),
   users: createUserRepository(),
+  settings: createAppSettingsRepository(),
 };
 
 export const clock = { now: () => new Date() };

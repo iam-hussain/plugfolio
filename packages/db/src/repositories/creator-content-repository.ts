@@ -64,6 +64,13 @@ export function createPostWriteRepository(db: PrismaClient = prisma): PostWriteR
     async setCategory(postId: string, categoryId: string | null): Promise<void> {
       await db.post.update({ where: { id: postId }, data: { categoryId } });
     },
+
+    async setHidden(postId: string, hidden: boolean): Promise<void> {
+      await db.post.update({
+        where: { id: postId },
+        data: { hiddenAt: hidden ? new Date() : null },
+      });
+    },
   };
 }
 

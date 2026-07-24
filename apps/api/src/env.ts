@@ -13,6 +13,9 @@ const schema = z.object({
   PORT: z.coerce.number().int().positive().default(3001),
   /** Where auth email links land (verify/reset pages live in apps/web). */
   WEB_ORIGIN: z.string().url().default("http://localhost:7077"),
+  // Real mail transport (ADR-0015) — console fallback when absent.
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
 });
 
 const parsed = schema.safeParse(process.env);

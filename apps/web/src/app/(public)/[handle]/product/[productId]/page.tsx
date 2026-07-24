@@ -10,6 +10,8 @@ import {
 } from "@plugfolio/core";
 import { CouponBlock, CreatorHeader, ProductTapButton } from "@/features/creator-page";
 import { CommentClaim, CommentForm, CommentList } from "@/features/shopper-account";
+import { ReportButton } from "@/features/reporting";
+import { isFeatureEnabled } from "@plugfolio/core";
 import { formatPrice } from "@/lib/format-price";
 import { retailerName } from "@/lib/retailer-name";
 import { auth } from "@/server/auth";
@@ -42,6 +44,11 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
   if (!page || !product) notFound();
 
   const session = await auth();
+  const commentsEnabled = await isFeatureEnabled(
+    { settings: repositories.settings },
+    "comments",
+    true,
+  );
   const [comments, ownHandle, memberships] = await Promise.all([
     getProductComments({ comments: repositories.comments }, product.id),
     session?.user
@@ -162,11 +169,14 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
         <div className="mb-3 flex items-baseline gap-2">
           <h2 className="font-display text-lg font-bold">Comments</h2>
           <span className="text-muted-foreground font-mono text-[11px]">{comments.length}</span>
+          <span className="ml-auto">
+            <ReportButton targetType="product" targetId={product.id} targetLabel="this product" />
+          </span>
         </div>
         <CommentList
           comments={comments}
           replyContext={
-            session?.user
+            session?.user && commentsEnabled
               ? {
                   profileId: product.profileId,
                   productId: product.id,
@@ -178,7 +188,9 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
           }
         />
         <div className="pt-4">
-          {session?.user ? (
+          {!commentsEnabled ? (
+            <p className="text-muted-foreground text-sm">Comments are switched off right now.</p>
+          ) : session?.user ? (
             <CommentForm
               profileId={product.profileId}
               productId={product.id}

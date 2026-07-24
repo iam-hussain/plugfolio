@@ -99,6 +99,13 @@ export const setPostCategoryInput = z.object({
 
 export type SetPostCategoryInput = z.infer<typeof setPostCategoryInput>;
 
+export const setPostHiddenInput = z.object({
+  profileId: z.string().uuid(),
+  hidden: z.boolean(),
+});
+
+export type SetPostHiddenInput = z.infer<typeof setPostHiddenInput>;
+
 export const setProductCategoryInput = z.object({
   categoryId: z.string().uuid().nullable(),
 });

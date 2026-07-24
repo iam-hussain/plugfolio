@@ -29,6 +29,7 @@ export type {
 export type {
   CreatorPageReadRepository,
   CreatorPage,
+  CreatorProductRow,
   PageCategory,
   ShopperPost,
   ShopperProduct,
@@ -139,6 +140,8 @@ export {
   type UpdateCategoryInput,
   setPostCategoryInput,
   type SetPostCategoryInput,
+  setPostHiddenInput,
+  type SetPostHiddenInput,
   setProductCategoryInput,
   type SetProductCategoryInput,
 } from "./schemas/creator-content";
@@ -229,6 +232,7 @@ export {
   updateCategory,
   removeCategory,
   setPostCategory,
+  setPostHidden,
   setProductCategory,
   MAX_PROFILES_PER_ACCOUNT,
   type CreatorContentDeps,
@@ -314,6 +318,14 @@ export {
   dismissReport,
   type AdminReportsDeps,
 } from "./services/admin-reports";
+export { createReportInput, type CreateReportInput } from "./schemas/report";
+export {
+  createReport,
+  type CreateReportDeps,
+  type NewReport,
+  type ReportWriteRepository,
+} from "./services/reports";
+export { createResendMailer, type ResendMailerConfig } from "./adapters/resend-mailer";
 export {
   listOperators,
   inviteOperator,

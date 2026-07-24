@@ -15,7 +15,13 @@ export type AdminAuthDeps = {
 };
 
 export type AdminCredentialsResult =
-  | { readonly ok: true; readonly adminId: string; readonly email: string; readonly name: string | null }
+  | {
+      readonly ok: true;
+      readonly adminId: string;
+      readonly email: string;
+      readonly name: string | null;
+      readonly sessionVersion: number;
+    }
   | { readonly ok: false };
 
 export async function verifyAdminCredentials(
@@ -28,5 +34,11 @@ export async function verifyAdminCredentials(
     return { ok: false };
   }
   await deps.admins.recordSignIn(admin.id, deps.now());
-  return { ok: true, adminId: admin.id, email: admin.email, name: admin.name };
+  return {
+    ok: true,
+    adminId: admin.id,
+    email: admin.email,
+    name: admin.name,
+    sessionVersion: admin.sessionVersion,
+  };
 }

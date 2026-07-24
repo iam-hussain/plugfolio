@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import { redirect } from "next/navigation";
 import { env } from "@/env";
 import { repositories } from "./container";
+import { clearFailures, isRateLimited, recordFailure } from "./rate-limit";
 
 /**
  * Admin sign-in (ADR-0014): credentials against the AdminUser table — never
@@ -16,6 +17,8 @@ import { repositories } from "./container";
 declare module "next-auth" {
   interface Session {
     user: { id: string } & DefaultSession["user"];
+    /** The AdminUser.sessionVersion this JWT was minted against. */
+    sessionVersion: number;
   }
 }
 
@@ -43,19 +46,37 @@ const nextAuth = NextAuth({
       async authorize(raw) {
         const parsed = credentialsInput.safeParse(raw);
         if (!parsed.success) return null;
+        // Rate limit BEFORE touching credentials; limited = same generic no.
+        if (isRateLimited(parsed.data.email)) return null;
         const result = await verifyAdminCredentials(
           { admins: repositories.admins, now: () => new Date() },
           parsed.data,
         );
-        if (!result.ok) return null; // one generic failure — no admin oracle
-        return { id: result.adminId, email: result.email, name: result.name };
+        if (!result.ok) {
+          recordFailure(parsed.data.email);
+          return null; // one generic failure — no admin oracle
+        }
+        clearFailures(parsed.data.email);
+        return {
+          id: result.adminId,
+          email: result.email,
+          name: result.name,
+          sessionVersion: result.sessionVersion,
+        } as { id: string; email: string; name: string | null };
       },
     }),
   ],
   callbacks: {
+    jwt({ token, user }) {
+      if (user && "sessionVersion" in user) {
+        token.sv = (user as { sessionVersion: number }).sessionVersion;
+      }
+      return token;
+    },
     session({ session, token }) {
       return {
         expires: session.expires,
+        sessionVersion: typeof token.sv === "number" ? token.sv : -1,
         user: {
           id: token.sub ?? "",
           email: token.email ?? "",
@@ -74,9 +95,22 @@ export const auth: NextAuthResult["auth"] = nextAuth.auth;
 export const signIn: NextAuthResult["signIn"] = nextAuth.signIn;
 export const signOut: NextAuthResult["signOut"] = nextAuth.signOut;
 
+/**
+ * A JWT alone is not enough (revocation): the admin row must still exist and
+ * the token's sessionVersion must match — a removed operator or a password
+ * change kills outstanding sessions on their next request.
+ */
+export async function validAdminSession(): Promise<{ id: string; email: string } | null> {
+  const session = await auth();
+  if (!session?.user.id) return null;
+  const admin = await repositories.admins.findById(session.user.id);
+  if (!admin || admin.sessionVersion !== session.sessionVersion) return null;
+  return { id: admin.id, email: admin.email };
+}
+
 /** Layout/action guard: the signed-in admin, or a redirect to /signin. */
 export async function requireAdmin(): Promise<{ id: string; email: string }> {
-  const session = await auth();
-  if (!session?.user.id) redirect("/signin");
-  return { id: session.user.id, email: session.user.email ?? "" };
+  const admin = await validAdminSession();
+  if (!admin) redirect("/signin");
+  return admin;
 }

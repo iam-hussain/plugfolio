@@ -18,6 +18,7 @@ import {
   createProfile,
   removeProduct,
   setPostCategory,
+  setPostHidden,
   setProductCategory,
   setProductCoupon,
   tagProductToPost,
@@ -76,6 +77,7 @@ function makeDeps(
     },
   };
   const postCategoryChanges: (string | null)[] = [];
+  const postHiddenChanges: boolean[] = [];
   const posts: PostWriteRepository = {
     async create() {
       return { id: "new-post" };
@@ -85,6 +87,9 @@ function makeDeps(
     },
     async setCategory(_postId, categoryId) {
       postCategoryChanges.push(categoryId);
+    },
+    async setHidden(_postId, hidden) {
+      postHiddenChanges.push(hidden);
     },
   };
   const products: ProductReadRepository = {
@@ -162,6 +167,7 @@ function makeDeps(
     removals,
     couponUpdates,
     postCategoryChanges,
+    postHiddenChanges,
     productCategoryChanges,
   };
 }
@@ -305,5 +311,18 @@ describe("categories (ADR-0010)", () => {
       setProductCategory(deps, USER, PRODUCT_ID, { categoryId: FOREIGN_CATEGORY_ID }),
     ).rejects.toBeInstanceOf(NotFoundError);
     expect(productCategoryChanges).toEqual([]);
+  });
+
+  it("hides and restores a post; another profile's post is a 404", async () => {
+    const { deps, postHiddenChanges } = makeDeps();
+    await setPostHidden(deps, USER, POST_ID, { profileId: PROFILE_ID, hidden: true });
+    await setPostHidden(deps, USER, POST_ID, { profileId: PROFILE_ID, hidden: false });
+    expect(postHiddenChanges).toEqual([true, false]);
+    await expect(
+      setPostHidden(deps, USER, "99999999-0000-0000-0000-000000000000", {
+        profileId: PROFILE_ID,
+        hidden: true,
+      }),
+    ).rejects.toBeInstanceOf(NotFoundError);
   });
 });

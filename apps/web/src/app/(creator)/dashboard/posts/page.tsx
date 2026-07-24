@@ -4,7 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCreatorPage, getMyProfiles } from "@plugfolio/core";
 import { cn, Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@plugfolio/ui";
-import { ShoppingBag } from "lucide-react";
+import { EyeOff, ShoppingBag } from "lucide-react";
 import { AddPostDialog, DashboardPageHeader, DashboardShell } from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
@@ -98,6 +98,12 @@ export default async function DashboardPostsPage({
                   unoptimized
                   className="object-cover"
                 />
+                {post.hiddenAt ? (
+                  <span className="bg-background/90 text-muted-foreground rounded-pill absolute top-1.5 left-1.5 inline-flex items-center gap-1 px-2 py-0.5 text-[11px]">
+                    <EyeOff className="size-3" aria-hidden />
+                    hidden
+                  </span>
+                ) : null}
                 {post.products.length > 0 ? (
                   <span className="bg-background/90 text-foreground rounded-pill absolute right-1.5 bottom-1.5 inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium">
                     <ShoppingBag className="size-3" aria-hidden />

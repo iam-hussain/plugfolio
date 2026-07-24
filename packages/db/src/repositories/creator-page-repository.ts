@@ -1,6 +1,7 @@
 import type {
   CreatorPage,
   CreatorPageReadRepository,
+  CreatorProductRow,
   ShopperPost,
   ShopperProduct,
   ShopperProductView,
@@ -53,6 +54,7 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
               mediaUrl: true,
               caption: true,
               categoryId: true,
+              hiddenAt: true,
               products: { select: productSelect },
             },
           },
@@ -63,12 +65,13 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
       return { ...page, followerCount: _count.followers };
     },
 
-    async listProducts(username: string): Promise<readonly ShopperProduct[]> {
-      return db.product.findMany({
+    async listProducts(username: string): Promise<readonly CreatorProductRow[]> {
+      const rows = await db.product.findMany({
         where: { profile: { username, ...liveProfile } },
         orderBy: { createdAt: "desc" },
-        select: productSelect,
+        select: { ...productSelect, _count: { select: { posts: true } } },
       });
+      return rows.map(({ _count, ...product }) => ({ ...product, postCount: _count.posts }));
     },
 
     async findPost(username: string, postId: string): Promise<ShopperPost | null> {
@@ -80,6 +83,7 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
           mediaUrl: true,
           caption: true,
           categoryId: true,
+          hiddenAt: true,
           products: { select: productSelect },
         },
       });

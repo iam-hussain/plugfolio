@@ -286,6 +286,9 @@ model Post {
   profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   mediaUrl  String
   caption   String?
+  /// Hidden by the creator (brief 07): off the public page, still in the
+  /// dashboard. Null = visible.
+  hiddenAt  DateTime?
   categoryId String?   @db.Uuid
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   products  Product[]
@@ -370,6 +373,8 @@ model AdminUser {
   passwordHash String?
   name         String?
   lastSignInAt DateTime?
+  /// Bumped on password set/change; JWTs carry it — stale = signed out.
+  sessionVersion Int         @default(0)
   createdAt    DateTime      @default(now())
   actions      AdminAction[]
 }

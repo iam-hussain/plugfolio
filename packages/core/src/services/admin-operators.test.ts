@@ -14,8 +14,19 @@ import {
 const NOW = new Date("2026-07-24T00:00:00.000Z");
 
 function makeDeps() {
-  const operators = new Map<string, { id: string; email: string; passwordHash: string | null }>([
-    ["admin-1", { id: "admin-1", email: "ops@plugfolio.com", passwordHash: hashPassword("current-pass-1") }],
+  const operators = new Map<
+    string,
+    { id: string; email: string; passwordHash: string | null; sessionVersion: number }
+  >([
+    [
+      "admin-1",
+      {
+        id: "admin-1",
+        email: "ops@plugfolio.com",
+        passwordHash: hashPassword("current-pass-1"),
+        sessionVersion: 0,
+      },
+    ],
   ]);
   const tokens = new Map<string, { identifier: string; expires: Date }>();
   const sentLinks: string[] = [];
@@ -26,13 +37,17 @@ function makeDeps() {
       const row = [...operators.values()].find((o) => o.email === email);
       return row ? { ...row, name: null } : null;
     },
+    async findById(id) {
+      const row = operators.get(id);
+      return row ? { ...row, name: null } : null;
+    },
     async list() {
       return [];
     },
     async create({ email }) {
       if ([...operators.values()].some((o) => o.email === email)) return "exists";
       const id = `admin-${operators.size + 1}`;
-      operators.set(id, { id, email, passwordHash: null });
+      operators.set(id, { id, email, passwordHash: null, sessionVersion: 0 });
       return { id };
     },
     async remove(id) {
@@ -43,7 +58,10 @@ function makeDeps() {
     },
     async setPassword(id, passwordHash) {
       const row = operators.get(id);
-      if (row) row.passwordHash = passwordHash;
+      if (row) {
+        row.passwordHash = passwordHash;
+        row.sessionVersion += 1;
+      }
     },
     async recordSignIn() {},
   };
@@ -103,7 +121,7 @@ describe("operator management", () => {
     const { deps, operators } = makeDeps();
     await expect(removeOperator(deps, "admin-1", "admin-1")).rejects.toBeInstanceOf(ForbiddenError);
     await expect(removeOperator(deps, "admin-1", "ghost")).rejects.toBeInstanceOf(ForbiddenError); // last operator guard
-    operators.set("admin-2", { id: "admin-2", email: "kay@plugfolio.com", passwordHash: null });
+    operators.set("admin-2", { id: "admin-2", email: "kay@plugfolio.com", passwordHash: null, sessionVersion: 0 });
     await expect(removeOperator(deps, "admin-1", "ghost")).rejects.toBeInstanceOf(NotFoundError);
     await removeOperator(deps, "admin-1", "admin-2");
     expect(operators.has("admin-2")).toBe(false);
@@ -120,6 +138,8 @@ describe("operator management", () => {
       newPassword: "next-pass-12",
     });
     expect(operators.get("admin-1")!.passwordHash).not.toBeNull();
+    // The bump is the revocation lever — outstanding JWTs die on next check.
+    expect(operators.get("admin-1")!.sessionVersion).toBe(1);
   });
 
   it("expired/foreign tokens never set a password", async () => {

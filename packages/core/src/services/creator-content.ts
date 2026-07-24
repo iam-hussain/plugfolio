@@ -13,6 +13,7 @@ import type {
   CreateCategoryInput,
   CreatePostInput,
   SetPostCategoryInput,
+  SetPostHiddenInput,
   SetProductCategoryInput,
   SetProductCouponInput,
   TagProductInput,
@@ -265,6 +266,21 @@ export async function setPostCategory(
   }
   await requireCategoryOnProfile(deps, input.categoryId, input.profileId);
   await deps.posts.setCategory(postId, input.categoryId);
+}
+
+/** Hide a post from the public page, or bring it back (brief 07). Content
+ * work, so Admin AND Managers — same tier as tagging. */
+export async function setPostHidden(
+  deps: CreatorContentDeps,
+  userId: string,
+  postId: string,
+  input: SetPostHiddenInput,
+): Promise<void> {
+  await requireOwnProfile(deps, userId, input.profileId);
+  if (!(await deps.posts.belongsToProfile(postId, input.profileId))) {
+    throw new NotFoundError("Post not found");
+  }
+  await deps.posts.setHidden(postId, input.hidden);
 }
 
 export async function setProductCategory(

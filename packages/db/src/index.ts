@@ -38,6 +38,7 @@ export {
   createAdminProfileRepository,
   createAdminContentRepository,
 } from "./repositories/admin-moderation-repository";
+export { createReportWriteRepository } from "./repositories/report-repository";
 export {
   createAdminBusinessRepository,
   createAdminRequirementRepository,

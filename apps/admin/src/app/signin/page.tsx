@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
 import { Panel } from "@/components/panel";
-import { auth, signIn } from "@/server/auth";
+import { signIn, validAdminSession } from "@/server/auth";
 
 export const metadata: Metadata = { title: "Sign in" };
 
@@ -31,7 +31,7 @@ export default async function SignInPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  if ((await auth())?.user) redirect("/");
+  if (await validAdminSession()) redirect("/");
   const { error } = await searchParams;
 
   return (

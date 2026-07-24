@@ -1,6 +1,7 @@
 import type { CommentThread, CommentView } from "@plugfolio/core";
 import type { CommentIdentityOption } from "./comment-form";
 import { ReplyToggle } from "./reply-toggle";
+import { ReportButton } from "@/features/reporting";
 
 /**
  * Server-rendered comment threads — reading needs no account (§2.2).
@@ -45,10 +46,15 @@ function CommentIdentity({ comment }: { comment: CommentView }) {
 
 function CommentBody({ comment }: { comment: CommentView }) {
   return (
-    <p className="text-sm">
-      <CommentIdentity comment={comment} />{" "}
-      <span className="text-muted-foreground">{comment.body}</span>
-    </p>
+    <div className="group flex items-start gap-1">
+      <p className="text-sm">
+        <CommentIdentity comment={comment} />{" "}
+        <span className="text-muted-foreground">{comment.body}</span>
+      </p>
+      <span className="opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
+        <ReportButton targetType="comment" targetId={comment.id} targetLabel="this comment" iconOnly />
+      </span>
+    </div>
   );
 }
 

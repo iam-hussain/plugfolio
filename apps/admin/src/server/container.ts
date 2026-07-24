@@ -1,4 +1,4 @@
-import type { AuthMailer } from "@plugfolio/core";
+import { createResendMailer, type AuthMailer } from "@plugfolio/core";
 import {
   createAdminAnalyticsRepository,
   createAdminAuditRepository,
@@ -44,8 +44,7 @@ export const repositories = {
 
 export const clock = { now: () => new Date() };
 
-/** Dev transport: links land in the server log until a real mailer is wired. */
-export const consoleMailer: AuthMailer = {
+const consoleMailer: AuthMailer = {
   async sendVerification(email, url) {
     console.log(`[admin mailer] verification for ${email}: ${url}`);
   },
@@ -53,6 +52,12 @@ export const consoleMailer: AuthMailer = {
     console.log(`[admin mailer] password link for ${email}: ${url}`);
   },
 };
+
+/** Real transport when configured (ADR-0015); console fallback in dev. */
+export const mailer: AuthMailer =
+  env.RESEND_API_KEY && env.EMAIL_FROM
+    ? createResendMailer({ apiKey: env.RESEND_API_KEY, from: env.EMAIL_FROM })
+    : consoleMailer;
 
 /** The member-moderation dependency bundle, wired once. */
 export const adminMembersDeps = {
@@ -73,7 +78,7 @@ export const adminResetHandleDeps = {
 export const memberEmailDeps = {
   accounts: repositories.accounts,
   tokens: repositories.tokens,
-  mailer: consoleMailer,
+  mailer,
   webOrigin: env.WEB_ORIGIN,
   now: clock.now,
 };
@@ -124,7 +129,7 @@ export const adminOperatorsDeps = {
   admins: repositories.admins,
   audit: repositories.audit,
   tokens: repositories.tokens,
-  mailer: consoleMailer,
+  mailer,
   adminOrigin: env.ADMIN_ORIGIN,
   now: clock.now,
 };

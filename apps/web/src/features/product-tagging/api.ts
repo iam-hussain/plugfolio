@@ -2,6 +2,7 @@ import type {
   CreateCategoryInput,
   CreatePostInput,
   SetPostCategoryInput,
+  SetPostHiddenInput,
   SetProductCategoryInput,
   SetProfileLinksInput,
   UpdateProfileIdentityInput,
@@ -48,6 +49,8 @@ export const removeCategory = (categoryId: string) =>
   send(`/api/categories/${categoryId}`, "DELETE");
 export const setPostCategory = (postId: string, input: SetPostCategoryInput) =>
   send(`/api/posts/${postId}/category`, "PATCH", input);
+export const setPostHidden = (postId: string, input: SetPostHiddenInput) =>
+  send(`/api/posts/${postId}/hidden`, "PATCH", input);
 export const setProductCategory = (productId: string, input: SetProductCategoryInput) =>
   send(`/api/products/${productId}/category`, "PATCH", input);
 

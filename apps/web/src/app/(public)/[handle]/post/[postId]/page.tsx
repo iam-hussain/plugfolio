@@ -24,7 +24,8 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
     getCreatorPage(deps, handle),
     getShopperPost(deps, handle, postId),
   ]);
-  if (!page || !post) notFound();
+  // A hidden post (brief 07) is a 404 for visitors, same as a deleted one.
+  if (!page || !post || post.hiddenAt !== null) notFound();
 
   const productCount = post.products.length;
 

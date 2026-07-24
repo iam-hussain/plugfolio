@@ -8,6 +8,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import {
   CategorySelect,
   DashboardShell,
+  HidePostButton,
   ProductRow,
   TagProductForm,
 } from "@/features/product-tagging";
@@ -58,13 +59,26 @@ export default async function TagPostPage({
             Posts
           </Link>
         </Button>
-        <Button variant="outline" size="sm" asChild>
-          <Link href={`/${active.username}/post/${post.id}`}>
-            <ExternalLink className="size-4" />
-            View as visitor
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <HidePostButton
+            profileId={active.id}
+            postId={post.id}
+            hidden={post.hiddenAt !== null}
+          />
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/${active.username}/post/${post.id}`}>
+              <ExternalLink className="size-4" />
+              View as visitor
+            </Link>
+          </Button>
+        </div>
       </nav>
+      {post.hiddenAt ? (
+        <p className="text-muted-foreground pb-4 text-xs">
+          Hidden from your public page — visitors can&apos;t see this post until you show it
+          again.
+        </p>
+      ) : null}
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div>

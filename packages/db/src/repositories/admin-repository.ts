@@ -33,7 +33,14 @@ export function createAdminUserRepository(db: PrismaClient = prisma): AdminUserR
     async findByEmail(email: string): Promise<AdminAccount | null> {
       return db.adminUser.findUnique({
         where: { email },
-        select: { id: true, email: true, name: true, passwordHash: true },
+        select: { id: true, email: true, name: true, passwordHash: true, sessionVersion: true },
+      });
+    },
+
+    async findById(adminId: string): Promise<AdminAccount | null> {
+      return db.adminUser.findUnique({
+        where: { id: adminId },
+        select: { id: true, email: true, name: true, passwordHash: true, sessionVersion: true },
       });
     },
 
@@ -65,7 +72,11 @@ export function createAdminUserRepository(db: PrismaClient = prisma): AdminUserR
     },
 
     async setPassword(adminId: string, passwordHash: string): Promise<void> {
-      await db.adminUser.update({ where: { id: adminId }, data: { passwordHash } });
+      // The version bump signs out every outstanding session (port contract).
+      await db.adminUser.update({
+        where: { id: adminId },
+        data: { passwordHash, sessionVersion: { increment: 1 } },
+      });
     },
 
     async recordSignIn(adminId: string, at: Date): Promise<void> {

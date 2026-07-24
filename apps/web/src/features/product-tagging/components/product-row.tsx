@@ -18,9 +18,11 @@ import { CategorySelect } from "./category-select";
 export type ProductRowProps = {
   product: ShopperProduct;
   categories: readonly CategoryView[];
+  /** "used in N posts" (brief 08) — the Products tab passes it; the editor omits it. */
+  postCount?: number;
 };
 
-export function ProductRow({ product, categories }: ProductRowProps) {
+export function ProductRow({ product, categories, postCount }: ProductRowProps) {
   const router = useRouter();
   const [affiliateUrl, setAffiliateUrl] = useState(product.affiliateUrl ?? "");
   const [couponCode, setCouponCode] = useState(product.couponCode ?? "");
@@ -73,6 +75,13 @@ export function ProductRow({ product, categories }: ProductRowProps) {
             <p className="truncate font-medium">{product.title}</p>
             <p className="text-muted-foreground flex flex-wrap items-center gap-x-2 text-sm">
               {price ? <span className="tabular-nums">{price}</span> : null}
+              {postCount !== undefined ? (
+                <span className="text-xs">
+                  {postCount === 0
+                    ? "not on any post"
+                    : `in ${postCount} ${postCount === 1 ? "post" : "posts"}`}
+                </span>
+              ) : null}
               {product.kind === "own" ? <Badge variant="outline">Their own product</Badge> : null}
               {product.couponCode ? (
                 <span className="bg-accent text-accent-foreground rounded-sm px-1.5 py-0.5 font-mono text-xs font-bold">

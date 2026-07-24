@@ -13,6 +13,9 @@ const schema = z.object({
   WEB_ORIGIN: z.string().url().default("http://localhost:7077"),
   // Where operator set-password links land (this app).
   ADMIN_ORIGIN: z.string().url().default("http://localhost:7078"),
+  // Real mail transport (ADR-0015) — console fallback when absent.
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
 });
 
 const parsed = schema.safeParse(process.env);

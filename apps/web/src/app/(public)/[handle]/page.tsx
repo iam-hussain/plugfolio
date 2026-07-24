@@ -13,6 +13,8 @@ import { Button } from "@plugfolio/ui";
 import { CategoryChips, CreatorHeader, PostGrid, ShareButton } from "@/features/creator-page";
 import { RequestCollabForm } from "@/features/business-collab";
 import { CommentClaim, CommentForm, CommentList, FollowButton } from "@/features/shopper-account";
+import { ReportButton } from "@/features/reporting";
+import { isFeatureEnabled } from "@plugfolio/core";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -76,6 +78,11 @@ export default async function CreatorPage({
   };
 
   const session = await auth();
+  const commentsEnabled = await isFeatureEnabled(
+    { settings: repositories.settings },
+    "comments",
+    true,
+  );
   const [following, comments, business, ownHandle, memberships, links] = await Promise.all([
     session?.user
       ? isFollowingProfile({ follows: repositories.follows }, session.user.id, page.id)
@@ -104,12 +111,14 @@ export default async function CreatorPage({
         : link.platform.charAt(0).toUpperCase() + link.platform.slice(1),
   }));
 
-  // Category chips filter the grid (ADR-0010); "All" holds everything.
+  // Hidden posts (brief 07) never reach visitors — only the dashboard shows
+  // them. Category chips filter the rest (ADR-0010); "All" holds everything.
+  const visiblePosts = page.posts.filter((post) => post.hiddenAt === null);
   const { category } = await searchParams;
   const activeCategory = page.categories.find((c) => c.id === category) ?? null;
   const posts = activeCategory
-    ? page.posts.filter((post) => post.categoryId === activeCategory.id)
-    : page.posts;
+    ? visiblePosts.filter((post) => post.categoryId === activeCategory.id)
+    : visiblePosts;
 
   // One page, four viewers (design-out): the owner (Admin or Manager) gets
   // owner tools where visitors get Follow — the buy path never changes.
@@ -202,15 +211,22 @@ export default async function CreatorPage({
         <div className="mb-3 flex items-baseline gap-2">
           <h2 className="font-display text-lg font-bold">Comments</h2>
           <span className="text-muted-foreground font-mono text-[11px]">{comments.length}</span>
+          <span className="ml-auto">
+            <ReportButton targetType="profile" targetId={page.id} targetLabel="this page" />
+          </span>
         </div>
         <CommentList
           comments={comments}
           replyContext={
-            session?.user ? { profileId: page.id, ownHandle, identities, defaultAsProfileId } : null
+            session?.user && commentsEnabled
+              ? { profileId: page.id, ownHandle, identities, defaultAsProfileId }
+              : null
           }
         />
         <div className="pt-4">
-          {session?.user ? (
+          {!commentsEnabled ? (
+            <p className="text-muted-foreground text-sm">Comments are switched off right now.</p>
+          ) : session?.user ? (
             <CommentForm
               profileId={page.id}
               ownHandle={ownHandle}
