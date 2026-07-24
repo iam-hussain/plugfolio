@@ -145,6 +145,23 @@ export {
   type UpdateMemberHandleInput,
 } from "./schemas/member-handle";
 export {
+  socialPlatform,
+  type SocialPlatform,
+  SOCIAL_PLATFORM_ORDER,
+  setProfileLinksInput,
+  type SetProfileLinksInput,
+} from "./schemas/profile-links";
+export {
+  type ProfileLinkRepository,
+  type ProfileLinkView,
+} from "./ports/profile-link-repository";
+export {
+  getProfileLinks,
+  listMyProfileLinks,
+  setProfileLinks,
+  type ProfileLinkDeps,
+} from "./services/profile-links";
+export {
   registerInput,
   type RegisterInput,
   credentialsInput,

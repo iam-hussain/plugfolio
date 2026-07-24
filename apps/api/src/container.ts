@@ -14,6 +14,7 @@ import {
   createProductRepository,
   createPostWriteRepository,
   createProductWriteRepository,
+  createProfileLinkRepository,
   createProfileRepository,
   createRequirementRepository,
   createSessionRepository,
@@ -36,6 +37,7 @@ export const repositories = {
   follows: createFollowRepository(),
   comments: createCommentRepository(),
   categories: createCategoryRepository(),
+  profileLinks: createProfileLinkRepository(),
   businesses: createBusinessRepository(),
   requirements: createRequirementRepository(),
   collabs: createCollabRepository(),
@@ -79,6 +81,11 @@ export const profileManagerDeps = {
   profiles: repositories.profiles,
   managers: repositories.managers,
   users: repositories.users,
+};
+
+export const profileLinkDeps = {
+  profiles: repositories.profiles,
+  profileLinks: repositories.profileLinks,
 };
 
 // ponytail: no mail transport yet — links go to the server console; a real

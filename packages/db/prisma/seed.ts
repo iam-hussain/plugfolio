@@ -48,6 +48,19 @@ async function main() {
     create: { id: PROFILE_ID, username: "lena", userId: ACCOUNT_ID },
   });
 
+  // "Your links" so the dev creator page shows the socials row.
+  for (const [platform, url] of [
+    ["instagram", "https://instagram.com/lena"],
+    ["youtube", "https://youtube.com/@lena"],
+    ["website", "https://lena.example.com"],
+  ] as const) {
+    await prisma.profileLink.upsert({
+      where: { profileId_platform: { profileId: PROFILE_ID, platform } },
+      update: {},
+      create: { profileId: PROFILE_ID, platform, url },
+    });
+  }
+
   // One shelf (ADR-0010) so the public page shows a chips row in dev.
   await prisma.category.upsert({
     where: { id: CATEGORY_ID },

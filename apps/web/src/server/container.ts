@@ -2,6 +2,7 @@ import {
   createBusinessRepository,
   createCategoryRepository,
   createConnectionRepository,
+  createProfileLinkRepository,
   createManagerRepository,
   createCollabRepository,
   createCommentRepository,
@@ -29,6 +30,7 @@ export const repositories = {
   follows: createFollowRepository(),
   comments: createCommentRepository(),
   categories: createCategoryRepository(),
+  profileLinks: createProfileLinkRepository(),
   businesses: createBusinessRepository(),
   requirements: createRequirementRepository(),
   collabs: createCollabRepository(),
@@ -47,6 +49,11 @@ export const businessCollabDeps = {
   collabs: repositories.collabs,
   profiles: repositories.profiles,
   now: clock.now,
+};
+
+export const profileLinkDeps = {
+  profiles: repositories.profiles,
+  profileLinks: repositories.profileLinks,
 };
 
 export const youtubeDeps = {

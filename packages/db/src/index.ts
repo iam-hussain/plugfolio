@@ -10,6 +10,7 @@ export { createProfileRepository } from "./repositories/profile-repository";
 export { createFollowRepository } from "./repositories/follow-repository";
 export { createCommentRepository } from "./repositories/comment-repository";
 export { createCategoryRepository } from "./repositories/category-repository";
+export { createProfileLinkRepository } from "./repositories/profile-link-repository";
 export {
   createBusinessRepository,
   createRequirementRepository,

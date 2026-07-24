@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getMyProfiles, listManagers, listYouTubeChannels, MAX_MANAGERS_PER_PROFILE } from "@plugfolio/core";
+import {
+  getMyProfiles,
+  listManagers,
+  listMyProfileLinks,
+  listYouTubeChannels,
+  MAX_MANAGERS_PER_PROFILE,
+} from "@plugfolio/core";
 import {
   Avatar,
   AvatarFallback,
@@ -15,10 +21,15 @@ import {
 import { ExternalLink } from "lucide-react";
 import { env } from "@/env";
 import { SocialConnections } from "@/features/account-auth";
-import { DashboardPageHeader, DashboardShell, ManagerControls } from "@/features/product-tagging";
+import {
+  DashboardPageHeader,
+  DashboardShell,
+  ManagerControls,
+  ProfileLinksForm,
+} from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
-import { profileManagerDeps, repositories, youtubeDeps } from "@/server/container";
+import { profileLinkDeps, profileManagerDeps, repositories, youtubeDeps } from "@/server/container";
 
 // Profile settings (brief 10): public identity, connections, and the people
 // who help run the profile. Admin-only surface (ADR-0004): Managers see every
@@ -41,9 +52,10 @@ export default async function SettingsPage({
   if (!active || active.role !== "admin") redirect("/dashboard");
 
   const googleConfigured = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);
-  const [managers, youtube] = await Promise.all([
+  const [managers, youtube, links] = await Promise.all([
     listManagers(profileManagerDeps, session.user.id, active.id),
     googleConfigured ? listYouTubeChannels(youtubeDeps, session.user.id) : null,
+    listMyProfileLinks(profileLinkDeps, session.user.id, active.id),
   ]);
 
   return (
@@ -74,6 +86,19 @@ export default async function SettingsPage({
                 View page
               </Link>
             </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Your links</CardTitle>
+            <CardDescription>
+              The socials row on your public page — Instagram, YouTube, TikTok, Facebook, and
+              your site. Paste the URLs; connected socials will auto-fill later.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ProfileLinksForm profileId={active.id} links={links} />
           </CardContent>
         </Card>
 

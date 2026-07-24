@@ -3,6 +3,7 @@ import type {
   CreatePostInput,
   SetPostCategoryInput,
   SetProductCategoryInput,
+  SetProfileLinksInput,
   SetProductCouponInput,
   TagProductInput,
   UpdateProductInput,
@@ -48,3 +49,9 @@ export const setPostCategory = (postId: string, input: SetPostCategoryInput) =>
   send(`/api/posts/${postId}/category`, "PATCH", input);
 export const setProductCategory = (productId: string, input: SetProductCategoryInput) =>
   send(`/api/products/${productId}/category`, "PATCH", input);
+
+// "Your links" (design-out socials row) — replace-all save.
+export const saveProfileLinks = (
+  profileId: string,
+  body: Omit<SetProfileLinksInput, "profileId">,
+) => send(`/api/profiles/${profileId}/links`, "PUT", body);

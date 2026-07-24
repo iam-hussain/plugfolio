@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { getComments, getCreatorPage, getMemberHandle, isFollowingProfile } from "@plugfolio/core";
+import {
+  getComments,
+  getCreatorPage,
+  getMemberHandle,
+  getProfileLinks,
+  isFollowingProfile,
+} from "@plugfolio/core";
 import { CategoryChips, CreatorHeader, PostGrid } from "@/features/creator-page";
 import { RequestCollabForm } from "@/features/business-collab";
 import { CommentForm, CommentList, FollowButton } from "@/features/shopper-account";
@@ -69,7 +75,7 @@ export default async function CreatorPage({
   };
 
   const session = await auth();
-  const [following, comments, business, ownHandle, memberships] = await Promise.all([
+  const [following, comments, business, ownHandle, memberships, links] = await Promise.all([
     session?.user
       ? isFollowingProfile({ follows: repositories.follows }, session.user.id, page.id)
       : Promise.resolve(false),
@@ -83,7 +89,19 @@ export default async function CreatorPage({
     session?.user
       ? repositories.profiles.listAccessibleByUser(session.user.id)
       : Promise.resolve([]),
+    getProfileLinks({ profileLinks: repositories.profileLinks }, page.id),
   ]);
+
+  // "Your links" → the socials row (design-out: required on every creator
+  // header). Label = the platform; the website reads as its hostname.
+  const socials = links.map((link) => ({
+    platform: link.platform,
+    href: link.url,
+    label:
+      link.platform === "website"
+        ? new URL(link.url).hostname.replace(/^www\./, "")
+        : link.platform.charAt(0).toUpperCase() + link.platform.slice(1),
+  }));
 
   // Category chips filter the grid (ADR-0010); "All" holds everything.
   const { category } = await searchParams;
@@ -108,6 +126,7 @@ export default async function CreatorPage({
       <CreatorHeader
         handle={page.username}
         followerCount={page.followerCount}
+        socials={socials}
         action={
           <FollowButton
             profileId={page.id}

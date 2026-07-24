@@ -104,9 +104,24 @@ model Profile {
   categories Category[]
   collabs    Collab[]
   managers   ProfileManager[]
+  links      ProfileLink[]
   createdAt  DateTime   @default(now())
 
   @@index([userId])
+}
+
+/// A creator-page social link (design-out: the socials row under the header,
+/// authored in dashboard Settings → "Your links"). One per platform per
+/// profile; the row renders in a fixed canonical order, so no position column.
+model ProfileLink {
+  profileId String   @db.Uuid
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  /// Zod enum at the boundary: instagram | youtube | tiktok | facebook | website.
+  platform  String
+  url       String
+  createdAt DateTime @default(now())
+
+  @@id([profileId, platform])
 }
 
 /// A Manager invited to help run ONE profile (ADR-0004: one Admin — the

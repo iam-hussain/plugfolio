@@ -31,6 +31,8 @@ import {
   followProfileInput,
   postRequirement,
   postRequirementInput,
+  setProfileLinks,
+  setProfileLinksInput,
   recordCodeCopy,
   recordCodeCopyInput,
   recordOutboundTap,
@@ -63,6 +65,7 @@ import {
   businessCollabDeps,
   clock,
   creatorContentDeps,
+  profileLinkDeps,
   profileManagerDeps,
   repositories,
   shopperSocialDeps,
@@ -353,4 +356,15 @@ app.delete("/profiles/:profileId/managers/:managerUserId", async (c) => {
   const managerUserId = uuidParam.parse(c.req.param("managerUserId"));
   await removeManager(profileManagerDeps, userId, profileId, managerUserId);
   return c.json({ removed: true });
+});
+
+// "Your links" (design-out socials row) — Admin-only, replace-all semantics.
+app.put("/profiles/:profileId/links", async (c) => {
+  const userId = await requireUserId(c);
+  const input = setProfileLinksInput.parse({
+    ...(await c.req.json()),
+    profileId: c.req.param("profileId"),
+  });
+  await setProfileLinks(profileLinkDeps, userId, input);
+  return c.json({ saved: true });
 });

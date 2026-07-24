@@ -13,3 +13,4 @@ export {
   type DashboardShellProps,
 } from "./components/dashboard-shell";
 export { ProfileSwitcher, type ProfileSwitcherProps } from "./components/profile-switcher";
+export { ProfileLinksForm, type ProfileLinksFormProps } from "./components/profile-links-form";
