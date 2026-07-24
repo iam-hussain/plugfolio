@@ -77,11 +77,10 @@ export default async function ProductsPage({
 
       <BulkBar
         verb="Remove"
-        title={(n) => `Remove ${n} products?`}
+        pastVerb="Removed"
+        noun="products"
         body="The action applies to every selected row. This cannot be undone. Recorded in the audit log."
-        confirmLabel={(n) => `Remove ${n}`}
         action={bulkDeleteProductsAction}
-        successToast={(n) => `Removed ${n} products`}
       />
 
       <Panel className="overflow-hidden">

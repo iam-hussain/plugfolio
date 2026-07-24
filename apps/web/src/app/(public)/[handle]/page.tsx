@@ -12,7 +12,7 @@ import {
 import { Button } from "@plugfolio/ui";
 import { CategoryChips, CreatorHeader, PostGrid, ShareButton } from "@/features/creator-page";
 import { RequestCollabForm } from "@/features/business-collab";
-import { CommentForm, CommentList, FollowButton } from "@/features/shopper-account";
+import { CommentClaim, CommentForm, CommentList, FollowButton } from "@/features/shopper-account";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -215,12 +215,7 @@ export default async function CreatorPage({
               defaultAsProfileId={defaultAsProfileId}
             />
           ) : (
-            <p className="border-border text-muted-foreground rounded-xl border border-dashed p-4 text-center text-[13.5px]">
-              <Link href="/signin" className="text-primary font-semibold">
-                Sign in
-              </Link>{" "}
-              to comment — shopping never needs an account.
-            </p>
+            <CommentClaim />
           )}
         </div>
       </section>

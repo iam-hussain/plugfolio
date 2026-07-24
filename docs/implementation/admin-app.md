@@ -12,7 +12,7 @@ directly via core services + db repositories — no admin endpoints in
 
 | Screen | What's there |
 |---|---|
-| **Sign in** (`/signin`) | Email + password against `AdminUser`. No sign-up, no reset — operators are seeded by CLI. |
+| **Sign in** (`/signin`) | Email + password against `AdminUser`. No self-service sign-up; operators are invited from the Admins screen (or seeded by CLI) and set passwords via `/set-password` links. |
 | **Dashboard** (`/`) | Count tiles: members, profiles, businesses, posts, products, and 7-day taps / code copies / comments. |
 | **Members** (`/members`) | Search by email/@handle/name; role + status badges; **Suspend / Unsuspend** per member. |
 | **Profiles** (`/profiles`) | Search by username/owner email; content counts; **Suspend / Unsuspend** one page (owner still signs in) and **Release username** — a `PromptDialog` showing current → suggested random `creator-…` name, editable so the admin can accept or type a replacement (validated: slug shape, not reserved, not taken; conflicts surface as a page alert). Settles ADR-0004's "first verified owner keeps it" disputes; the freed name is instantly claimable. |
@@ -24,7 +24,24 @@ directly via core services + db repositories — no admin endpoints in
 | **Collabs** (`/collabs`) | Read-only thread oversight: business ↔ creator, source (board vs direct), message count, agreement state. |
 | **Analytics** (`/analytics`) | Projections over the append-only `Tap`/`CodeCopy` events: 7/30-day totals, tap-source split, top profiles + products. Tables only — charts wait for demand. |
 | **Settings** (`/settings`) | **Reserved usernames** (admin-managed additions on top of a code baseline) and **feature flags** (add / toggle / remove). |
-| **Audit log** (`/audit`) | The append-only `AdminAction` trail, newest first. |
+| **Reports** (`/reports`) | The triage queue (M2): user flags with target snippet, category + note, reporter, age; Resolve / Dismiss; open queue is oldest-first. |
+| **Admins** (`/admins`) | Operator management (M2): invite by email (link sets the password), reset links, remove (never yourself / never the last operator), change-your-own-password card, last sign-in column. |
+| **Member detail** (`/members/[id]`) | Header card with resend-verification, send-password-reset, reset-@handle (PromptDialog), suspend-with-reason, and type-to-confirm **Delete account**; profiles w/ roles, connected socials, recent comments, meta. |
+| **Profile detail** (`/profiles/[id]`) | Stat band (followers, taps · 30d, copies · 30d), 12-newest post grid with per-post Remove, products table with taps, managers, categories, View public page. |
+| **Collab thread** (`/collabs/[id]`) | The reader (M2): full transcript with role-attributed bubbles and per-message delete; admins never write into threads. |
+| **Audit log** (`/audit`) | The append-only `AdminAction` trail with admin / action-prefix / date-range filters. |
+
+Every list is server-paginated (25/page, numbered `Pager`; Comments uses
+Load-more), carries status filters where the design names them, a CSV export
+route, and — on Members/Posts/Products/Comments — bulk selection with a
+sticky action bar. Suspensions require a reason recorded in the audit
+detail. The chrome is the designed sidebar (icon-collapsible, cookie-persisted)
+with a top bar carrying the page title and a cookie-persisted theme toggle;
+mutation feedback is toasts (sonner).
+
+**Design source:** `docs/design-out/Plugfolio Admin.dc.html` — implemented
+pixel-per-spec on the shared kit (PageHeader, SearchField, Pager, dense Table,
+ConfirmDialog, PromptDialog, StatTile, square Badges, xs Buttons).
 
 Destructive actions confirm first (`ConfirmButton`) and audit what was
 removed — comment/product deletions record a snippet of the deleted body/title
@@ -38,120 +55,14 @@ the shadcn kit); the admin keeps only composition (`SearchHeader`,
 That completes the planned v1 admin surface — the sidebar only links screens
 that exist.
 
-## Milestone 2 — backlog (unrefined)
+## Milestone 2 — shipped (July 2026)
 
-The agreed gap list, July 2026. **Not yet refined** — before building, this
-section gets turned into a scoped plan (what's in, what stays deferred, order);
-items may be cut or reshaped in that discussion. Tiered by how soon each bites
-in real operations.
-
-### Tier 1 — felt in the first week of real operations
-
-1. **Detail pages** — everything is list-only today. A member detail (their
-   profiles, comments, follows, connected socials), a profile detail (inspect
-   posts before suspending), and most consequentially a **collab thread
-   reader**: Collabs shows message *counts* but a reported harassment thread
-   cannot be read at all.
-2. **Pagination** — lists cap at the newest 50. The design brief
-   (`docs/design/admin-console.md` §3.3) already fixes the pattern: numbered
-   pages (25/row) everywhere, load-more only for the Comments stream.
-3. **Member actions beyond suspend** — resend verification, force a
-   password-reset email, admin reset of a member `@handle` (the reserved list
-   can't retroactively free a name someone already holds), and **account
-   deletion** (today a GDPR/erasure request has no path).
-4. **Suspension reason** — `suspendedAt` is a bare timestamp; suspensions need
-   a required note that lands in the audit detail.
-5. **Admins screen** — operators are CLI-seeded only; no UI to list/add/remove
-   admins, no self-service password change.
-
-### Tier 2 — structural, deliberately deferred
-
-6. **Reports / moderation queue** — nothing lets users flag content, so
-   moderation is proactive-only. Needs a product-side "report" affordance
-   first; the admin side is the triage queue.
-7. **Admin auth hardening** — rate-limited login, audited admin sign-ins
-   (only mutations are audited today), revocable sessions (a lost laptop's
-   12h JWT can't be killed).
-8. **Message-level moderation** — delete one abusive collab message without
-   suspending the whole member.
-9. **Business text takedowns** — logo can be cleared, an offensive
-   name/description cannot.
-10. **Feature-flag call sites** — Settings writes flags and `isFeatureEnabled`
-    exists, but product code doesn't read any flag yet; the switchboard is
-    wired to nothing.
-
-### Tier 3 — polish
-
-11. Replace remaining native `confirm()` takedowns with `AlertDialog`
-    (release-username already has its `PromptDialog`; the design brief §3.5
-    specifies the rest).
-12. List filters (status / date / action type — audit log especially) and CSV
-    export.
-13. Success toasts (today the changed row is the only feedback).
-14. Analytics time-series/trends; the dashboard "recent activity" feed slot.
-15. Bulk actions (select-many → suspend/remove).
-
-Dependencies to note during refinement: reports (6) needs product-side UI;
-member email actions (3) need the real mail transport (still console-logged);
-several Tier-1 items (1, 2, 11) are already specified in the design brief and
-should land together with the designer's pass.
-
-## Data model
-
-- `AdminUser` — operator identity (email, scrypt `passwordHash`, name).
-  Separate from product `User` by design (ADR-0014).
-- `AdminAction` — append-only audit: `adminId`, dot-namespaced `action`
-  (`member.suspend`, `settings.featureFlag`), optional `targetType`/`targetId`
-  /`detail`.
-- `AppSetting` — `key` → JSON `value`; keys owned by core services with Zod
-  validation and safe fallbacks (`reservedUsernames: string[]`,
-  `featureFlags: Record<string, boolean>`).
-- `User.suspendedAt`, `Profile.suspendedAt` — the suspension flags admins flip.
-
-## Services (in `@plugfolio/core`)
-
-- `verifyAdminCredentials` — admin login check.
-- `searchMembers`, `suspendMember`, `unsuspendMember` — member moderation
-  (audited; typed `NotFoundError` on unknown ids).
-- `searchProfiles`, `suspendProfile`, `unsuspendProfile`,
-  `releaseProfileUsername` — profile moderation; release reuses
-  `generateProfileUsername()` from creator-content.
-- `searchComments/Posts/Products`, `deleteComment`, `deletePost`,
-  `deleteProduct`, `clearProductCoupon` — content takedowns.
-- `searchBusinesses`, `searchRequirements`, `listCollabs`,
-  `clearBusinessLogo`, `removeRequirement` — marketplace oversight.
-- `getReservedUsernames`, `setReservedUsernames`, `isUsernameReserved` — the
-  admin list *extends* `BASELINE_RESERVED_USERNAMES` (product routes + brand
-  terms, e.g. `dashboard`, `explore`, `homepage`); it can never unblock the
-  baseline. Checked case-insensitively.
-- `getFeatureFlags`, `setFeatureFlag`, `removeFeatureFlag`,
-  `isFeatureEnabled(deps, name, fallback)` — the product read path defaults to
-  `fallback` for unknown flags, so a missing row never breaks a feature.
-
-## Enforcement in the product
-
-- **Login**: `verifyCredentials` returns `reason: "suspended"` (checked only
-  *after* the password, so suspension is never an email oracle); web sign-in
-  shows "This account is suspended."
-- **Public reads**: creator page, its post/product views, and Explore filter
-  `suspendedAt: null` on the profile **and** its owning user — a suspended
-  page is a plain 404 to shoppers.
-- **Member handles**: `updateMemberHandle` rejects reserved names (baseline ∪
-  admin list). Profile-username claiming reuses `isUsernameReserved` when that
-  flow lands.
-
-## Edge cases
-
-- Suspension never deletes data; lifting it restores everything as-was.
-- A corrupt `AppSetting` row degrades to the default (Zod `.catch`) instead of
-  crashing a read path.
-- Admin sessions are 12-hour JWTs under an `admin.`-prefixed cookie so local
-  dev never clobbers a web session; `robots` is noindex on every page.
-
-## Ops
-
-```bash
-pnpm --filter @plugfolio/db db:migrate            # apply the admin_app migration
-pnpm --filter @plugfolio/admin create-admin you@plugfolio.com <password> "Your Name"
-pnpm --filter @plugfolio/admin dev                # http://localhost:7078
-```
+The backlog that lived here was implemented wholesale with the designer's
+`Plugfolio Admin.dc.html` (see the screens table above): detail pages incl.
+the collab thread reader, pagination + filters + CSV, member actions
+(resend/reset/handle/delete), suspension reasons, the Admins screen with
+invites, the Reports queue (admin side; the product-side "Report" affordance
+is still to come and gets its own product brief), message-level moderation,
+bulk actions, toasts, and the theme toggle. Remaining deliberate gaps:
+login rate-limiting / revocable admin sessions, and product-side feature-flag
+call sites (`isFeatureEnabled` has no readers yet).

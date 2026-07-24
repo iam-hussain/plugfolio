@@ -6,3 +6,4 @@ export { ResetScreen, type ResetScreenProps } from "./components/reset-screen";
 export { VerifyScreen, type VerifyScreenProps } from "./components/verify-screen";
 export { isAuthRole, type AuthRole } from "./components/auth-copy";
 export { SocialConnections } from "./components/social-connections";
+export { ClaimSheet, type ClaimSheetProps } from "./components/claim-sheet";

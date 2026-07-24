@@ -11,3 +11,4 @@ export {
   type CommentReplyContext,
 } from "./components/comment-list";
 export { HandleForm, type HandleFormProps } from "./components/handle-form";
+export { CommentClaim } from "./components/comment-claim";

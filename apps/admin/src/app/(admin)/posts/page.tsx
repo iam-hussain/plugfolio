@@ -51,11 +51,10 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
 
       <BulkBar
         verb="Remove"
-        title={(n) => `Remove ${n} posts?`}
+        pastVerb="Removed"
+        noun="posts"
         body="The action applies to every selected row. This cannot be undone. Recorded in the audit log."
-        confirmLabel={(n) => `Remove ${n}`}
         action={bulkDeletePostsAction}
-        successToast={(n) => `Removed ${n} posts`}
       />
 
       <Panel className="overflow-hidden">

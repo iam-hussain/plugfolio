@@ -20,6 +20,7 @@ export default async function CollabThreadPage({
 }) {
   await requireAdmin();
   const { id } = await params;
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) notFound();
   let thread;
   try {
     thread = await getAdminCollabThread({ collabs: repositories.collabs }, id);

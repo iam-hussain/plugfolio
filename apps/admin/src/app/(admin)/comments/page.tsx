@@ -65,11 +65,10 @@ export default async function CommentsPage({
 
       <BulkBar
         verb="Delete"
-        title={(n) => `Delete ${n} comments?`}
+        pastVerb="Deleted"
+        noun="comments"
         body="The action applies to every selected row, replies included. This cannot be undone. Recorded in the audit log."
-        confirmLabel={(n) => `Delete ${n}`}
         action={bulkDeleteCommentsAction}
-        successToast={(n) => `Deleted ${n} comments`}
       />
 
       <Panel className="overflow-hidden">

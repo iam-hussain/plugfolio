@@ -3,11 +3,14 @@
 import { Button } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ClaimSheet } from "@/features/account-auth";
 import { followProfile, unfollowProfile } from "../api";
 
 /**
- * Follow toggle on the creator page. Anonymous shoppers see it as a door to
- * sign-in — never a wall on the page itself (§2.2); signed-in shoppers toggle.
+ * Follow toggle on the creator page. Anonymous shoppers get the inline claim
+ * sheet over the page they're on (brief 04) — never a wall on the page
+ * itself (§2.2); signed-in shoppers toggle.
  */
 export type FollowButtonProps = {
   profileId: string;
@@ -17,6 +20,7 @@ export type FollowButtonProps = {
 
 export function FollowButton({ profileId, isAuthenticated, initiallyFollowing }: FollowButtonProps) {
   const router = useRouter();
+  const [claiming, setClaiming] = useState(false);
 
   const toggle = useMutation({
     mutationFn: () =>
@@ -27,9 +31,17 @@ export function FollowButton({ profileId, isAuthenticated, initiallyFollowing }:
 
   if (!isAuthenticated) {
     return (
-      <Button variant="outline" size="sm" className="rounded-pill px-5" onClick={() => router.push("/signin")}>
-        Follow
-      </Button>
+      <>
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-pill px-5"
+          onClick={() => setClaiming(true)}
+        >
+          Follow
+        </Button>
+        <ClaimSheet open={claiming} onOpenChange={setClaiming} action="follow" />
+      </>
     );
   }
 

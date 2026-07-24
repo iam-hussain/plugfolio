@@ -82,12 +82,11 @@ export default async function MembersPage({
 
       <BulkBar
         verb="Suspend"
-        title={(n) => `Suspend ${n} members?`}
+        pastVerb="Suspended"
+        noun="members"
         body="The action applies to every selected row. Reversible — nothing is deleted. Recorded in the audit log."
-        confirmLabel={(n) => `Suspend ${n}`}
         action={bulkSuspendMembersAction}
         requireReason
-        successToast={(n) => `Suspended ${n} members`}
       />
 
       <Panel className="overflow-hidden">

@@ -9,7 +9,7 @@ import {
   getShopperProduct,
 } from "@plugfolio/core";
 import { CouponBlock, CreatorHeader, ProductTapButton } from "@/features/creator-page";
-import { CommentForm, CommentList } from "@/features/shopper-account";
+import { CommentClaim, CommentForm, CommentList } from "@/features/shopper-account";
 import { formatPrice } from "@/lib/format-price";
 import { retailerName } from "@/lib/retailer-name";
 import { auth } from "@/server/auth";
@@ -187,12 +187,7 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
               defaultAsProfileId={defaultAsProfileId}
             />
           ) : (
-            <p className="border-border text-muted-foreground rounded-xl border border-dashed p-4 text-center text-[13.5px]">
-              <Link href="/signin" className="text-primary font-semibold">
-                Sign in
-              </Link>{" "}
-              to comment — shopping never needs an account.
-            </p>
+            <CommentClaim />
           )}
         </div>
       </section>

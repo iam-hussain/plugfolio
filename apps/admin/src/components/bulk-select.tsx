@@ -85,21 +85,21 @@ export function BulkAllCheckbox({ ids }: { ids: readonly string[] }) {
 
 export function BulkBar({
   verb,
-  title,
+  pastVerb,
+  noun,
   body,
-  confirmLabel,
   action,
   requireReason,
-  successToast,
 }: {
+  /** Imperative verb ("Suspend", "Remove", "Delete"). */
   verb: string;
-  /** Receives the live count, e.g. (n) => `Delete ${n} comments?` */
-  title: (count: number) => string;
+  /** Past tense for the success toast ("Suspended", …). */
+  pastVerb: string;
+  /** Plural noun ("members", "posts", …). */
+  noun: string;
   body: string;
-  confirmLabel: (count: number) => string;
   action: (formData: FormData) => Promise<ActionResult>;
   requireReason?: boolean;
-  successToast: (count: number) => string;
 }) {
   const { selected, clear } = useBulk();
   const count = selected.size;
@@ -125,13 +125,13 @@ export function BulkBar({
             {verb} {count}
           </Button>
         }
-        title={title(count)}
+        title={`${verb} ${count} ${noun}?`}
         body={body}
-        confirmLabel={confirmLabel(count)}
+        confirmLabel={`${verb} ${count}`}
         action={action}
         hiddenFields={{ ids: [...selected].join(",") }}
         requireReason={requireReason ? {} : undefined}
-        successToast={successToast(count)}
+        successToast={`${pastVerb} ${count} ${noun}`}
         onDone={(ok) => {
           if (ok) clear();
         }}

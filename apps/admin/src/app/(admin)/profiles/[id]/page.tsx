@@ -39,6 +39,7 @@ export default async function ProfileDetailPage({
 }) {
   await requireAdmin();
   const { id } = await params;
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) notFound();
   let profile;
   try {
     profile = await getProfileDetail(
