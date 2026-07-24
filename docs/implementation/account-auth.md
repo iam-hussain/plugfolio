@@ -63,6 +63,13 @@ unverified state with resend; `callbackUrl` honored), `ForgotForm` (always "chec
 email"), `ResetForm`, `VerifyEmail` (auto-consumes on load), `PasswordInput` (labeled
 show/hide). All former `/api/auth/signin` links/redirects now point at `/signin`.
 
+**Inline shopper claim (brief 04):** `ClaimSheet` — the register form (email + password →
+"check your email" with resend) in a bottom sheet OVER the page the shopper is on. Follow
+(anonymous) and the "Sign in to comment" band (`CommentClaim`, creator + product pages) open
+it instead of navigating to `/signin`; a Sign-in link inside covers existing accounts. The
+pending follow/comment completes after verify + sign-in by tapping again — auto-resuming
+the action is deferred (needs a pending-action store).
+
 ## Edge cases
 
 - Verification link opened on another device: works — it verifies the account; the user
