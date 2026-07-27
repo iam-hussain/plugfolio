@@ -1,115 +1,150 @@
 /**
- * Plugfolio design tokens — "Charged Violet", Brand Guidelines v1.1 (CLAUDE.md §7).
+ * Plugfolio design tokens — "The Tagged Feed" (DESIGN.md).
  *
- * The ONLY source of color / radius / type. Components reference these through the
- * Tailwind preset (@plugfolio/config/tailwind) as semantic utility classes
- * (bg-primary, text-foreground, …) — NEVER a raw hex, NEVER an inline style.
+ * The ONLY source of color / radius / type. Components reference these through
+ * the Tailwind preset (@plugfolio/config/tailwind) as semantic utility classes
+ * (bg-background, text-foreground, bg-tile-butter, …) — NEVER a raw hex, NEVER
+ * an inline style.
  *
  * Colors are stored as HSL channels (no `hsl()` wrapper) so Tailwind's
  * `<alpha-value>` opacity modifier works: `hsl(var(--color-primary) / 0.5)`.
  *
- * Two token families:
- *   1. Semantic tokens (--color-primary, --surface, --text, …) — what components
- *      consume. They flip between light and dark below.
- *   2. Raw brand tokens (--brand-*) — the fixed palette values behind the
- *      semantics, exposed for the few spots that need a specific brand color
- *      (e.g. the lime coupon chip, the coral warm alt). Same in both themes.
+ * The world is LIGHT-committed: a cool violet-tinted near-white Canvas
+ * (#FCFBFE) is the page, and white is a *lift* reserved for raised objects.
+ * Dark is fully supported through the same tokens (the second block below).
  *
- * Dark-first surfaces (the brand is violet-tinted dark); the light overrides keep
- * WCAG AA. Electric Lime is a FILL ONLY with dark text on top — it fails AA as a
- * text color on light, so it is never used as `--color-accent` type.
+ * Two token families:
+ *   1. Semantic tokens (--color-primary, --surface, --text, --tile-*, …) —
+ *      what components consume. They flip between light and dark.
+ *   2. Raw brand tokens (--brand-*) — fixed palette values behind the
+ *      semantics, for the few spots needing a specific brand color (the lime
+ *      coupon chip, the ink shadow, the coral warm alt). Same in both themes.
+ *
+ * Electric Lime is a FILL ONLY with ink text on top — never a text color.
+ * The six tile hues carry content colour; they are never text, border, or a
+ * page-bleed wash (the Tile-Carries-Colour rule).
  */
 
 :root,
-:root[data-theme="dark"] {
-  /* Raw brand palette (fixed in both themes) — Brand Guidelines v1.1 §05. */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* Raw brand palette — fixed in both themes. */
   --brand-violet: 262 83% 58%; /* #7C3AED Brand Violet */
-  --brand-violet-deep: 262 70% 42%; /* #5B21B6 hover / dark */
-  --brand-violet-tint: 255 92% 76%; /* #A78BFA accents / bg */
-  --brand-ink: 258 26% 9%; /* #12101C text / prongs / dark UI */
-  --brand-lime: 76 100% 62%; /* #C6FF3D fill only, dark text */
-  --brand-coral: 6 100% 68%; /* #FF6B5C warm alt */
-  --brand-violet-wash: 255 60% 95%; /* #EFEAFB tint field */
-  --brand-canvas: 252 33% 97%; /* #F5F4F8 page bg */
+  --brand-violet-deep: 263 69% 42%; /* #5B21B6 hover / pressed */
+  --brand-violet-tint: 255 92% 76%; /* #A78BFA accents / focus */
+  --brand-ink: 250 27% 9%; /* #12101C text / shadow colour */
+  --brand-lime: 78 100% 62%; /* #C6FF3D fill only, ink text */
+  --brand-coral: 10 100% 73%; /* #FF8A73 warm alt (DESIGN departure) */
+  --brand-violet-wash: 258 68% 95%; /* #EFEAFB tint field */
+  --brand-canvas: 260 60% 99%; /* #FCFBFE page ground */
 
-  /* Semantic — DARK (default surface). */
-  --color-primary: 258 90% 66%; /* #8B5CF6 lifted violet for dark */
+  /* Semantic — the identity + action colour. */
+  --color-primary: 262 83% 58%; /* #7C3AED */
   --color-primary-foreground: 0 0% 100%;
-  --color-accent: 76 100% 62%; /* Electric Lime — a spark, fill only */
-  --color-accent-foreground: 258 26% 9%; /* Ink text on lime, always */
+  /* Electric Lime — flags a live offer, fill only; ink text on top, always. */
+  --color-accent: 78 100% 62%; /* #C6FF3D */
+  --color-accent-foreground: 250 27% 9%; /* Ink */
 
-  /* This codebase's functional roles: `--surface` is the PAGE (bg-background);
-     `--surface-muted` is the RAISED card/input fill (bg-muted, bg-card). Values
-     follow the design table (dark: page #12101C, cards #1A1726). */
-  --surface: 258 26% 9%; /* #12101C page bg */
-  --surface-muted: 256 24% 12%; /* #1A1726 cards, sheets, inputs */
-  --surface-active: 257 26% 16%; /* #241E33 selected fills (active nav, chosen row) */
-  --text: 260 40% 96%; /* #F4F2FA */
-  --text-muted: 257 12% 63%; /* #9A94AC captions, @handle, price */
-  --text-faint: 258 9% 56%; /* #8C8798 third tier — timestamps, table eyebrows */
+  /* Functional surface roles: `--surface` is the PAGE (bg-background, Canvas);
+     `--surface-muted` is the RAISED card/input fill (bg-card, White — a lift);
+     `--surface-active` is the selected fill (Violet Wash). */
+  --surface: 260 60% 99%; /* #FCFBFE Canvas — the page */
+  --surface-muted: 0 0% 100%; /* #FFFFFF White — raised cards, sheets, inputs */
+  --surface-active: 258 68% 95%; /* #EFEAFB Violet Wash — selected fills */
 
-  --border: 256 24% 21%; /* #2C2740 hairlines, dividers, inputs */
-  --border-strong: 254 14% 24%; /* #393546 input & secondary-button borders */
-  --ring: 258 90% 66%; /* keyboard focus ring */
+  --text: 250 27% 9%; /* #12101C Ink — headlines & body */
+  --text-muted: 254 14% 36%; /* #56506A Ink 2 — supporting copy, subheads */
+  --text-faint: 260 9% 56%; /* #8B8499 Ink 3 — captions, handles, metadata */
+
+  --border: 265 29% 92%; /* #E9E4F0 Line — hairlines, card borders */
+  --border-strong: 258 29% 86%; /* #D8D2E6 input & secondary-button borders */
+  --ring: 262 83% 58%; /* #7C3AED — 3px Brand Violet focus ring */
 
   /* Destructive actions (delete/remove) — shadcn components expect it. */
-  --destructive: 0 72% 51%;
+  --destructive: 0 72% 45%;
   --destructive-foreground: 0 0% 100%;
 
-  /* Native controls (checkboxes, selects, scrollbars) follow the theme. */
-  color-scheme: dark;
+  /* The six content-tile hues + the text that rides on them (all AA on light). */
+  --tile-butter: 47 100% 65%; /* #FFD84D */
+  --tile-mint: 149 62% 75%; /* #96E6BC */
+  --tile-sky: 207 100% 83%; /* #A9D8FF */
+  --tile-lavender: 256 100% 86%; /* #C9B6FF */
+  --tile-coral: 10 100% 73%; /* #FF8A73 */
+  --tile-blush: 337 100% 89%; /* #FFC9DE */
+  --tile-foreground: 250 27% 9%; /* Ink on a light tile */
 
   /* Shape & type. */
-  --radius: 1rem; /* radius-lg (16px); md/sm derive in the preset */
+  --radius: 1rem; /* radius-lg / image (16px); other steps derive in the preset */
   --font-display: var(--font-sora, "Sora"), system-ui, sans-serif;
-  --font-sans: var(--font-inter, "Inter"), system-ui, sans-serif;
+  --font-sans: var(--font-manrope, "Manrope"), system-ui, sans-serif;
   --font-mono: var(--font-space-mono, "Space Mono"), ui-monospace, monospace;
 }
 
-:root[data-theme="light"] {
-  color-scheme: light;
-  --color-primary: 262 83% 58%; /* #7C3AED */
+/* Dark — a deep violet-tinted canvas; tag pills stay white, tiles go deep. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-primary: 258 90% 66%; /* #8B5CF6 lifted violet for dark */
   --color-primary-foreground: 0 0% 100%;
-  --color-accent: 76 100% 62%; /* lime stays lime — fill only, never text */
-  --color-accent-foreground: 258 26% 9%;
+  --color-accent: 78 100% 62%; /* lime stays lime — fill only */
+  --color-accent-foreground: 250 27% 9%;
 
-  /* Dev Spec token table: light pages are WHITE; raised fills carry the faint
-     violet tint (#FBFAFE surface2) — borders do the delineation. */
-  --surface: 0 0% 100%; /* #FFFFFF page bg */
-  --surface-muted: 255 67% 99%; /* #FBFAFE cards, sheets, inputs */
-  --surface-active: 255 60% 95%; /* #EFEAFB Violet Wash — selected fills */
-  --text: 258 26% 9%; /* #12101C Ink */
-  --text-muted: 257 9% 34%; /* #54505F */
-  --text-faint: 258 9% 56%; /* #8C8798 third tier — timestamps, table eyebrows */
+  --surface: 252 22% 9%; /* #14121C page */
+  --surface-muted: 252 24% 16%; /* #231F33 raised cards, sheets, inputs */
+  --surface-active: 253 28% 20%; /* #2A2440 selected fills */
 
-  --border: 258 26% 92%; /* #E7E4EF */
-  --border-strong: 258 29% 86%; /* #D8D2E6 input & secondary-button borders */
-  --ring: 255 92% 76%; /* #A78BFA Violet Tint */
+  --text: 257 41% 97%; /* #F5F3FA */
+  --text-muted: 259 19% 78%; /* #C2BBD1 */
+  --text-faint: 259 11% 62%; /* #9A93A9 */
 
-  --destructive: 0 72% 45%;
+  --border: 253 21% 25%; /* #39334E */
+  --border-strong: 253 19% 33%; /* #4A4363 */
+  --ring: 258 90% 66%;
+
+  --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
+
+  --tile-butter: 41 54% 27%; /* #6B5320 */
+  --tile-mint: 157 54% 23%; /* #1B5A42 */
+  --tile-sky: 211 57% 25%; /* #1B3E63 */
+  --tile-lavender: 259 41% 33%; /* #463175 */
+  --tile-coral: 30 71% 21%; /* #5A340F */
+  --tile-blush: 329 37% 26%; /* #5C2A44 */
+  --tile-foreground: 257 41% 97%; /* light text on a deep tile */
 }
 
-@media (prefers-color-scheme: light) {
+/* OS-dark visitors with no explicit theme get the dark canvas. */
+@media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    color-scheme: light;
-    --color-primary: 262 83% 58%;
+    color-scheme: dark;
+
+    --color-primary: 258 90% 66%;
     --color-primary-foreground: 0 0% 100%;
-    --color-accent: 76 100% 62%;
-    --color-accent-foreground: 258 26% 9%;
+    --color-accent: 78 100% 62%;
+    --color-accent-foreground: 250 27% 9%;
 
-    --surface: 0 0% 100%;
-    --surface-muted: 255 67% 99%;
-    --surface-active: 255 60% 95%;
-    --text: 258 26% 9%;
-    --text-muted: 257 9% 34%;
-    --text-faint: 258 9% 56%;
+    --surface: 252 22% 9%;
+    --surface-muted: 252 24% 16%;
+    --surface-active: 253 28% 20%;
 
-    --border: 258 26% 92%;
-    --border-strong: 258 29% 86%;
-    --ring: 255 92% 76%;
+    --text: 257 41% 97%;
+    --text-muted: 259 19% 78%;
+    --text-faint: 259 11% 62%;
 
-    --destructive: 0 72% 45%;
+    --border: 253 21% 25%;
+    --border-strong: 253 19% 33%;
+    --ring: 258 90% 66%;
+
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
+
+    --tile-butter: 41 54% 27%;
+    --tile-mint: 157 54% 23%;
+    --tile-sky: 211 57% 25%;
+    --tile-lavender: 259 41% 33%;
+    --tile-coral: 30 71% 21%;
+    --tile-blush: 329 37% 26%;
+    --tile-foreground: 257 41% 97%;
   }
 }

@@ -1,6 +1,5 @@
 import { LandingPage } from "@/features/landing";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
-import { auth } from "@/server/auth";
 
 // Server Component (§5 server-first). The landing composes the landing feature;
 // no business logic lives here (app/ stays thin, §5).
@@ -57,22 +56,17 @@ const structuredData = {
   ],
 };
 
-export default async function HomePage() {
-  const session = await auth();
-  const user = session?.user
-    ? {
-        name: session.user.name ?? null,
-        email: session.user.email ?? null,
-        image: session.user.image ?? null,
-      }
-    : null;
+// The landing is session-agnostic marketing (DESIGN: the Persuade surface) —
+// its own header carries only Log in / Explore, so `/` renders without a DB
+// round-trip.
+export default function HomePage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <LandingPage user={user} />
+      <LandingPage />
     </>
   );
 }

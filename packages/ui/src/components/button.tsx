@@ -4,33 +4,37 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../lib/cn";
 
 /**
- * shadcn/ui Button, themed through our semantic tokens (§7/§8) — no raw hex.
- * `accent` is the disciplined Electric Lime spark: use for one primary CTA,
- * not everywhere.
+ * Button, themed through semantic tokens (DESIGN §Components) — no raw hex.
+ * Everything interactive is a pill. The committed primary is an INK fill that
+ * arrives at Brand Violet on hover — the colour lands on interaction, not at
+ * rest. `accent` is the disciplined Electric Lime spark: one CTA that flags an
+ * offer, never everywhere.
  */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-pill text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       // Superset: our names (primary/accent, sm|md|lg) plus the stock shadcn
       // names (default/secondary/…, default|icon sizes) that the generated
       // registry components reference.
       variant: {
-        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        // Ink pill → Brand Violet on hover (the committed primary action).
+        primary: "bg-foreground text-background hover:bg-primary hover:text-primary-foreground",
+        default: "bg-foreground text-background hover:bg-primary hover:text-primary-foreground",
         accent: "bg-accent text-accent-foreground hover:bg-accent/90",
-        secondary: "bg-muted text-foreground hover:bg-muted/80",
+        // White pill with a hairline — the second action in a pair.
+        secondary: "border border-border bg-card text-foreground hover:bg-active",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        // Admin design: quiet outline danger for row-level takedown triggers.
+        // Quiet outline danger for row-level takedown triggers.
         "destructive-outline":
           "border border-destructive/30 bg-transparent text-destructive hover:bg-destructive/10",
-        outline: "border border-border bg-transparent text-foreground hover:bg-muted",
-        // Admin design secondary: page-surface fill with the strong hairline.
+        outline: "border border-border bg-transparent text-foreground hover:bg-active",
+        // Secondary: raised white fill with the strong hairline.
         "outline-strong":
-          "border border-border-strong bg-background text-foreground hover:bg-muted",
-        ghost: "text-foreground hover:bg-muted",
-        // Admin design ghost: muted at rest, full text on hover.
-        "ghost-muted": "text-muted-foreground hover:bg-muted hover:text-foreground",
+          "border border-border-strong bg-card text-foreground hover:bg-active",
+        ghost: "text-foreground hover:bg-active",
+        // Ghost: muted at rest, full text on hover.
+        "ghost-muted": "text-muted-foreground hover:bg-active hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

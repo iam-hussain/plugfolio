@@ -1,9 +1,9 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Shared Tailwind preset for Plugfolio (§7 "Charged Violet").
+ * Shared Tailwind preset for Plugfolio ("The Tagged Feed", DESIGN.md).
  *
- * Colors map to CSS variables defined in `@plugfolio/tokens` (styles/tokens.css),
+ * Colors map to CSS variables defined in `@plugfolio/tokens` (tokens.css),
  * so components reference semantic tokens — never raw hex. Both the web app and
  * the UI package extend this preset and point `content` at their own sources.
  */
@@ -72,6 +72,17 @@ const preset = {
           coral: "hsl(var(--brand-coral) / <alpha-value>)",
           canvas: "hsl(var(--brand-canvas) / <alpha-value>)",
         },
+        // The six content-tile hues (DESIGN: colour lives in tiles, never in
+        // chrome). `tile-foreground` is the ink/light text that rides on them.
+        tile: {
+          butter: "hsl(var(--tile-butter) / <alpha-value>)",
+          mint: "hsl(var(--tile-mint) / <alpha-value>)",
+          sky: "hsl(var(--tile-sky) / <alpha-value>)",
+          lavender: "hsl(var(--tile-lavender) / <alpha-value>)",
+          coral: "hsl(var(--tile-coral) / <alpha-value>)",
+          blush: "hsl(var(--tile-blush) / <alpha-value>)",
+          foreground: "hsl(var(--tile-foreground) / <alpha-value>)",
+        },
         sidebar: {
           // Admin design: the rail sits on the page surface (white / #161320-ish).
           DEFAULT: "hsl(var(--surface) / <alpha-value>)",
@@ -91,8 +102,9 @@ const preset = {
       borderColor: {
         DEFAULT: "hsl(var(--border) / <alpha-value>)",
       },
-      // Radius scale — Brand/Dev-spec §02: sm 8 · md 12 · lg 16 · pill 999.
-      // `panel` (14px) is the Admin design's card radius.
+      // Radius scale. Base steps (sm/md/lg/xl/panel/pill) serve app UI; the
+      // named object steps (DESIGN §Shapes) climb with the object: paper 3 ·
+      // image 16 · tile 20 · card 26 · bay 34. Anything interactive is a pill.
       borderRadius: {
         sm: "0.5rem",
         md: "0.75rem",
@@ -100,16 +112,26 @@ const preset = {
         xl: "1.25rem",
         panel: "0.875rem",
         pill: "9999px",
+        paper: "3px",
+        image: "1rem", // 16px
+        tile: "1.25rem", // 20px
+        card: "1.625rem", // 26px
+        bay: "2.125rem", // 34px
       },
       boxShadow: {
-        // Admin design elevations: hovered tiles, menus/dialogs, toasts.
+        // The soft, diffuse elevation vocabulary (DESIGN §Elevation): every
+        // shadow carries an offset and a wide low-opacity blur in ink.
+        rest: "0 12px 30px -12px hsl(var(--brand-ink) / 0.16)", // cards & panels at rest
+        tag: "0 4px 12px -2px hsl(var(--brand-ink) / 0.22)", // tag pills on busy imagery
+        lift: "0 22px 44px -16px hsl(var(--brand-ink) / 0.24)", // hover: lift + de-rotate
+        // App elevations retained for menus, dialogs, toasts.
         raise: "0 10px 26px 0 hsl(var(--brand-ink) / 0.08)",
-        menu: "0 12px 30px 0 hsl(258 33% 5% / 0.18)",
-        overlay: "0 14px 40px 0 hsl(258 33% 5% / 0.22)",
+        menu: "0 12px 30px 0 hsl(var(--brand-ink) / 0.18)",
+        overlay: "0 14px 40px 0 hsl(var(--brand-ink) / 0.22)",
       },
       fontFamily: {
-        // Sora = display / wordmark / headlines; Inter = UI & body;
-        // Space Mono = micro labels, eyebrows, captions.
+        // Sora = display / wordmark / headlines; Manrope = UI & body (with
+        // tabular figures for prices); Space Mono = code / data where needed.
         display: ["var(--font-display)", "system-ui", "sans-serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
