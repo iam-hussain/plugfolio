@@ -66,7 +66,7 @@ This is the committed baseline. It fits the product (SEO-able creator pages, mob
 | Testing | **Vitest** (unit) + **Playwright** (e2e journeys) | Test the journeys from the docs, not just functions. |
 | Hosting | **Vercel** | First-class Next.js; edge-fast public pages. |
 
-Foundational decisions already recorded: [ADR-0001 (stack)](./docs/adr/0001-tech-stack.md) · [ADR-0002 (no-login shopper identity)](./docs/adr/0002-no-login-shopper-identity.md) · [ADR-0004 (creator account, profiles & social-connected identity)](./docs/adr/0004-creator-account-profiles-identity.md) *(supersedes ADR-0003)* · [ADR-0005 (monorepo structure)](./docs/adr/0005-monorepo-structure.md) *(amends ADR-0001)* · [ADR-0006 (REST API + mobile clients)](./docs/adr/0006-rest-api-and-mobile-clients.md) *(amends ADR-0001)* · [ADR-0007 (Auth.js identity tables)](./docs/adr/0007-authjs-identity-tables.md) *(amends ADR-0004)* · [ADR-0008 (standalone API service)](./docs/adr/0008-standalone-api-service.md) *(amends ADR-0005/0006)* · [ADR-0009 (member handles & comment identity)](./docs/adr/0009-member-handles-and-comment-identity.md) *(amends ADR-0004/0007)* · [ADR-0010 (per-profile categories)](./docs/adr/0010-per-profile-categories.md) · [ADR-0011 (product kinds & coupon offers)](./docs/adr/0011-product-kinds-and-coupon-offers.md) · [ADR-0012 (password login, registration verification)](./docs/adr/0012-password-login-with-registration-verification.md) *(amends ADR-0007)* · [ADR-0013 (comment targets & replies)](./docs/adr/0013-comment-targets-and-replies.md) · [ADR-0014 (internal admin app)](./docs/adr/0014-admin-app.md).
+Foundational decisions already recorded: [ADR-0001 (stack)](./docs/adr/0001-tech-stack.md) · [ADR-0002 (no-login shopper identity)](./docs/adr/0002-no-login-shopper-identity.md) · [ADR-0004 (creator account, profiles & social-connected identity)](./docs/adr/0004-creator-account-profiles-identity.md) *(supersedes ADR-0003)* · [ADR-0005 (monorepo structure)](./docs/adr/0005-monorepo-structure.md) *(amends ADR-0001)* · [ADR-0006 (REST API + mobile clients)](./docs/adr/0006-rest-api-and-mobile-clients.md) *(amends ADR-0001)* · [ADR-0007 (Auth.js identity tables)](./docs/adr/0007-authjs-identity-tables.md) *(amends ADR-0004)* · [ADR-0008 (standalone API service)](./docs/adr/0008-standalone-api-service.md) *(amends ADR-0005/0006)* · [ADR-0009 (member handles & comment identity)](./docs/adr/0009-member-handles-and-comment-identity.md) *(amends ADR-0004/0007)* · [ADR-0010 (per-profile categories)](./docs/adr/0010-per-profile-categories.md) · [ADR-0011 (product kinds & coupon offers)](./docs/adr/0011-product-kinds-and-coupon-offers.md) · [ADR-0012 (password login, registration verification)](./docs/adr/0012-password-login-with-registration-verification.md) *(amends ADR-0007)* · [ADR-0013 (comment targets & replies)](./docs/adr/0013-comment-targets-and-replies.md) · [ADR-0014 (internal admin app)](./docs/adr/0014-admin-app.md) · [ADR-0015 (mail transport)](./docs/adr/0015-mail-transport.md) · [ADR-0016 ("The Tagged Feed" theme)](./docs/adr/0016-tagged-feed-theme.md) *(supersedes the "Charged Violet" theme)*.
 
 ---
 
@@ -158,35 +158,41 @@ apps/web/src/server/    # http: request→service mapping, error → HTTP shape;
 
 ---
 
-## 7. Design system & theme — "Charged Violet"
+## 7. Design system & theme — "The Tagged Feed"
 
-The design source of truth is **Brand Guidelines v1.1** and the **Engineering Spec** in [`docs/design-out/`](./docs/design-out/) (rendered `Plugfolio Brand.html`, `Plugfolio Dev Spec.dc.html`, `PlugMark.dc.html`). Centralize the theme; **components never hardcode hex, spacing, or fonts, and never use inline `style` attributes** — every visual value comes from a token utility class.
+The design source of truth is **`DESIGN.md`** in the design workspace (`../plugfolio-design/`), recorded for the codebase in [ADR-0016](./docs/adr/0016-tagged-feed-theme.md) *(supersedes the earlier "Charged Violet" system)*. Centralize the theme; **components never hardcode hex, spacing, or fonts, and never use inline `style` attributes** — every visual value comes from a token utility class or a CVA variant.
 
-**Palette (Brand Guidelines v1.1 §05).** Raw values live in `@plugfolio/tokens` (`tokens.css`) as `--brand-*`; components consume the *semantic* tokens, not these.
+**The world.** Plugfolio is the daylight side of the creator economy: a cool violet-tinted near-white **Canvas** ground, oversized Sora headlines, and real photography living inside saturated colour tiles. The signature move is the **product tag** — a white pill carrying a price, pinned straight onto a photograph. **Light is committed** (the `:root` default); dark is fully supported through the same tokens.
+
+**Palette.** Raw values live in `@plugfolio/tokens` (`tokens.css`) as `--brand-*` / `--tile-*`; components consume the *semantic* tokens, never these.
 
 | Role | Hex | Notes |
 |---|---|---|
-| Brand Violet | `#7C3AED` | primary |
-| Violet Deep | `#5B21B6` | hover / dark |
-| Violet Tint | `#A78BFA` | accents / focus ring |
-| Ink | `#12101C` | text / prongs / dark UI |
-| Electric Lime | `#C6FF3D` | **fill only, always dark text on top** |
-| Coral | `#FF6B5C` | warm alt |
-| Violet Wash | `#EFEAFB` | tint field |
-| Canvas | `#F5F4F8` | light page bg |
+| Brand Violet | `#7C3AED` | identity + action colour; the hover of every primary button |
+| Violet Deep | `#5B21B6` | text on violet-wash; pressed |
+| Ink | `#12101C` | text; the primary-button fill; shadow colour |
+| Electric Lime | `#C6FF3D` | **fill only, ink text on top** — flags a live offer, nothing else |
+| Coral | `#FF8A73` | warm alt |
+| Violet Wash | `#EFEAFB` | eyebrow chip / selected fill (`bg-active`) |
+| Canvas | `#FCFBFE` | the page ground (`bg-background`) — never pure white |
+| White | `#FFFFFF` | a *lift* — raised cards, tag pills (`bg-card`) |
+| Tiles | butter `#FFD84D` · mint `#96E6BC` · sky `#A9D8FF` · lavender `#C9B6FF` · coral `#FF8A73` · blush `#FFC9DE` | content colour: `bg-tile-*` + `text-tile-foreground` |
 
-- **Lime rule (enforce in review):** Electric Lime is a **fill only, with dark (`--color-accent-foreground` = Ink) text on top**. Never lime type on white, never lime as a text color — it fails AA. Use it for the Buy CTA, the coupon code chip, and dark-surface PlugMark prongs.
-- **Tokens are the only source of color/space/type.** Semantic tokens (`--color-primary`, `--color-accent`, `--surface`, `--surface-muted`, `--text`, `--text-muted`, `--border`, `--ring`) are defined once in `tokens.css` (light **and** dark) and exposed through the Tailwind preset in `@plugfolio/config`. In this codebase `--surface` is the **page** (`bg-background`) and `--surface-muted` is the **raised** card/input fill (`bg-card` / `bg-muted`). **Reference tokens via classes, never raw hex.**
-- **Radius:** `sm 8px · md 12px · lg 16px · pill 9999px` (`rounded-sm|md|lg|pill`). **Spacing:** 4-based (4 / 8 / 12 / 16 / 24 / 32 / 48).
-- **Type (Brand Guidelines v1.1 §06), loaded via `next/font` in `apps/web` layout:**
-  - **Sora** — display / wordmark / headlines (500–800), tracking -2% to -5% (`font-display`, `tracking-display`).
-  - **Inter** — UI & body (400–700), 16px / 1.6, tabular nums for data (`font-sans`).
-  - **Space Mono** — micro labels, eyebrows, uppercase captions, tracking 0.12–0.18em (`font-mono`, `tracking-eyebrow`).
-- **Brand mark — PlugMark.** The two-prong "plug that grows" symbol + `plugfolio` wordmark (lowercase, Sora 700, square spark dot). Live in `@plugfolio/ui` as `PlugMark`, `Wordmark`, `Logo` (horizontal / stacked / symbol / reversed lockups; `apps/web/src/components/brand/` re-exports them), shared by every app. **Never redraw the mark** — reuse the component (geometry is copied from `PlugMark.dc.html`). Color follows the locked rule: **on light** = violet body + ink prongs (spark violet/ink, never lime); **on dark/violet** = white/violet body + lime prongs & spark; under 24px collapse to a single flat color.
-- **Persistent shopper chrome.** Every public shopper screen carries the app top bar (PlugMark + wordmark, search, role-signaling account slot) and the bottom tab bar (HOME / SHOP / FOLLOWING / ACCOUNT). Both live in `apps/web/src/components/chrome/`; wrap surfaces via `ShopperShell` — screens never invent their own header/footer.
-- **Storybook.** `pnpm --filter @plugfolio/web storybook` renders the design-system gallery — foundations (color, type), the brand mark, the chrome, and the themed UI kit. Stories live in `apps/web/stories/`; config (Vite framework + `next/*` stubs) in `apps/web/.storybook/`. Add a `.stories.tsx` when you add a shared component.
-- **Mobile-first & accessible:** design at 360px first; hit WCAG AA contrast in **both** themes (mind lime-on-light — it's fill-only for this reason); ≥44px hit targets; body never below 14px; every control keyboard- and screen-reader-usable; respect `prefers-reduced-motion`.
-- **Light is the shipped default** (`data-theme="light"`, per the design-out prototype default — light pages are white, raised fills carry the faint violet tint); dark stays fully supported through the same tokens.
+- **White-is-a-lift rule.** The page is Canvas; white belongs only to things sitting *on* it (`--surface` = page, `--surface-muted` = raised card/input). A white section background flattens the system and is never correct.
+- **Lime-means-offer rule (enforce in review):** Electric Lime appears only where there is a real coupon/deal, always as a fill under ink text (`--color-accent-foreground` = Ink), never as type. If nothing is on offer, there is no lime on the screen.
+- **Tile-carries-colour rule.** Saturated colour arrives as a `Tile` behind content — never a text colour, a border, a gradient, or a full-bleed page wash. Assign hues by position in a sequence, never by category meaning. Never nest a tile in a tile.
+- **Tokens are the only source of color/space/type.** Semantic tokens (`--color-primary`, `--color-accent`, `--surface`, `--surface-muted`, `--surface-active`, `--text`, `--text-muted`, `--text-faint`, `--border`, `--ring`, `--tile-*`) are defined once in `tokens.css` (light **and** dark) and exposed through the Tailwind preset in `@plugfolio/config`. **Reference tokens via classes, never raw hex.**
+- **Radius:** climbs with the object — `paper 3px · image 16px · tile 20px · card 26px · bay 34px · pill 9999px` (`rounded-paper|image|tile|card|bay|pill`; app UI also has `sm|md|lg`). **Anything interactive is a pill.** **Spacing:** 4-based (4 / 8 / 14 / 24 / 40 / 96).
+- **Elevation:** soft and diffuse — `shadow-rest` (cards at rest), `shadow-tag` (tag pills on imagery), `shadow-lift` (hover). No glass, no blur, no inner glow. Depth = shadow + rounded corner + a slight rotation; **cards tilt 1–2° at rest and straighten (`rotate-0`) on hover**.
+- **Type, loaded via `next/font` in each app layout:**
+  - **Sora** — display / wordmark / headlines (600–800), tracking to -0.045em; two-line headlines max (`font-display`).
+  - **Manrope** — UI & body (400–800), tabular nums for prices/counts (`font-sans`). Micro labels are Manrope 600 uppercase (0.06em), set in `text-muted-foreground` (Ink 2) — never the faint tier at that size.
+  - **Space Mono** — code / data where a mono is genuinely wanted (`font-mono`).
+- **Signature components (`@plugfolio/ui`):** `ProductTag` (the white pill pinned on a photo — name + tabular price + dot: violet affiliate / lime offer / violet-deep own; a real link, 44px tap target) and `Tile` (the six-hue colour panel). `Button` is a pill that fills Ink and arrives at Brand Violet on hover.
+- **Brand mark — PlugMark.** The two-prong "plug that grows" symbol + `plugfolio` wordmark (lowercase, Sora 700, square spark dot). Live in `@plugfolio/ui` as `PlugMark`, `Wordmark`, `Logo`; `apps/web/src/components/brand/` re-exports them, shared by every app. **Never redraw the mark** — reuse the component. Color rule: **on light** = violet body + ink prongs; **on dark/violet** = white/violet body + lime prongs & spark; under 24px collapse to a single flat color.
+- **Persistent shopper chrome.** Every public shopper screen carries the app top bar + bottom tab bar (HOME / SHOP / FOLLOWING / ACCOUNT); both live in `apps/web/src/components/chrome/`, wrapped via `ShopperShell`. The marketing landing (`/`) is the exception — a Persuade surface with its own header/footer.
+- **Storybook.** `pnpm --filter @plugfolio/web storybook` renders the design-system gallery. Stories live in `apps/web/stories/`; add a `.stories.tsx` when you add a shared component.
+- **Mobile-first & accessible:** design at 360px first (most visitors arrive in Instagram's in-app browser); hit WCAG AA in **both** themes (lime is fill-only for this reason); ≥44px hit targets; body never below 14px; no interaction depends on hover; respect `prefers-reduced-motion`. The fan of tilted cards becomes a horizontal snap rail on phones.
 
 ---
 

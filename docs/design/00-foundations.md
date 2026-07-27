@@ -7,31 +7,38 @@ Source of truth for tokens and rules: `CLAUDE.md` §7 (theme) and the lean journ
 
 ## Brand in one line
 
-**Charged Violet** — confident, modern, creator-native. A violet-tinted dark world with
-one disciplined electric-lime spark. Fast and legible on a phone, inside an in-app browser.
+**The Tagged Feed** ([ADR-0016](../adr/0016-tagged-feed-theme.md)) — the daylight side of
+the creator economy: a cool violet-tinted near-white canvas, oversized Sora headlines, and
+real photography inside saturated colour tiles, with the product tag pinned straight onto the
+post. Bright, generous, confident. Fast and legible on a phone, inside an in-app browser.
 
 ## Palette (semantic tokens — never hardcode hex in components)
 
 | Token | Value | Use |
 |---|---|---|
-| `--color-primary` | Charged Violet `#7C3AED` | Primary brand, buttons, links, active states |
-| `--color-accent` | Electric Lime `#C6FF3D` | **Sparingly** — the single CTA highlight, key emphasis. Never a background. |
-| `--surface` | violet-tinted dark (e.g. `#151221`) | App background (dark-first) |
-| `--surface-raised` | one step lighter | Cards, sheets, inputs |
-| `--text` / `--text-muted` | near-white / muted violet-grey | Body / secondary text |
-| `--border` | low-contrast violet-grey | Dividers, input borders |
-| `--danger` / `--success` | red / green (AA on surface) | Errors, confirmations |
+| `--color-primary` | Brand Violet `#7C3AED` | identity + action; links, active states, the hover of every primary button |
+| `--color-accent` | Electric Lime `#C6FF3D` | **fill only, ink text** — flags a live offer, nothing else. Never a text colour. |
+| `--surface` | Canvas `#FCFBFE` | the page ground (`bg-background`) — a cool near-white, never pure white |
+| `--surface-muted` | White `#FFFFFF` | a *lift* — raised cards, sheets, inputs (`bg-card`) |
+| `--surface-active` | Violet Wash `#EFEAFB` | eyebrow chip / selected fill |
+| `--text` / `--text-muted` / `--text-faint` | Ink / Ink 2 / Ink 3 | body / supporting / captions |
+| `--border` | Line `#E9E4F0` | hairlines, card borders |
+| `--tile-*` | butter / mint / sky / lavender / coral / blush | content colour — the tiles photos sit in |
 
-- **Dark-first**, but tokens must resolve cleanly in **light mode** too. Design both.
-- **Lime is a spark, not a field.** One lime element per view at most. **AA warning:**
-  lime-on-white fails contrast — never put lime text on light; use lime as a fill behind
-  dark text, or as an accent on dark surfaces.
+- **Light-committed**, dark fully supported through the same tokens (a deep violet-tinted
+  canvas). The page is Canvas; **white is a lift**, reserved for objects sitting on it.
+- **Lime means offer.** Electric Lime appears only where there is a real coupon/deal, always
+  as a fill under ink text — never lime type on light (it fails AA). No offer, no lime.
+- **Colour lives in tiles.** Saturated colour arrives as a `Tile` behind content, never as a
+  text colour, a border, a gradient, or a full-bleed page wash.
 
 ## Type
 
-- **Display / headings:** a geometric display face (e.g. a Space Grotesk / similar). Confident, tight.
-- **Body / UI:** a clean sans (e.g. Inter). Highly legible at small sizes.
-- **One scale, defined once:** e.g. 12 / 14 / 16 (body) / 20 / 24 / 32 / 40. Mobile uses the lower end.
+- **Display / headings:** **Sora** (600–800), tracking to -0.045em. The page's one headline
+  breaks to two lines, never three.
+- **Body / UI:** **Manrope** (400–800), tabular figures for prices and counts. Micro labels
+  are Manrope 600 uppercase.
+- **One scale, defined once:** 12 / 14 / 16 (body) / 20 / 24 / 32 / 40+. Mobile uses the lower end.
 
 ## Spacing, radius, elevation
 
