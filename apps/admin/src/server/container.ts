@@ -10,6 +10,7 @@ import {
   createAdminProfileRepository,
   createAdminReportRepository,
   createAdminRequirementRepository,
+  createAdminSupportRepository,
   createAdminUserRepository,
   createAppSettingsRepository,
   createAuthAccountRepository,
@@ -34,6 +35,7 @@ export const repositories = {
   requirements: createAdminRequirementRepository(),
   collabs: createAdminCollabRepository(),
   reports: createAdminReportRepository(),
+  support: createAdminSupportRepository(),
   analytics: createAdminAnalyticsRepository(),
   overview: createAdminOverviewRepository(),
   // Product-side seams the member email actions ride on (ADR-0012 machinery).
@@ -120,6 +122,13 @@ export const adminCollabsDeps = {
 /** The reports triage queue. */
 export const adminReportsDeps = {
   reports: repositories.reports,
+  audit: repositories.audit,
+  now: clock.now,
+};
+
+/** The support-tickets queue. */
+export const adminSupportDeps = {
+  support: repositories.support,
   audit: repositories.audit,
   now: clock.now,
 };

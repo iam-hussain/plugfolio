@@ -22,6 +22,7 @@ import {
   Handshake,
   Image as ImageIcon,
   LayoutDashboard,
+  LifeBuoy,
   LogOut,
   MessageSquare,
   ScrollText,
@@ -58,6 +59,7 @@ export const NAV: readonly { label: string | null; items: readonly NavItem[] }[]
       { title: "Products", href: "/products", icon: ShoppingBag },
       { title: "Comments", href: "/comments", icon: MessageSquare },
       { title: "Reports", href: "/reports", icon: Flag },
+      { title: "Support", href: "/support", icon: LifeBuoy },
     ],
   },
   {

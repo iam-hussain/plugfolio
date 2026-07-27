@@ -25,6 +25,7 @@ directly via core services + db repositories — no admin endpoints in
 | **Analytics** (`/analytics`) | Projections over the append-only `Tap`/`CodeCopy` events: 7/30-day totals, tap-source split, top profiles + products. Tables only — charts wait for demand. |
 | **Settings** (`/settings`) | **Reserved usernames** (admin-managed additions on top of a code baseline) and **feature flags** (add / toggle / remove). |
 | **Reports** (`/reports`) | The triage queue (M2): user flags with target snippet, category + note, reporter, age; Resolve / Dismiss; open queue is oldest-first. |
+| **Support** (`/support`) | User↔operator contact queue ([support.md](./support.md)): category + message, `mailto:` contact link, requester, age; Resolve / Dismiss; reply by email. |
 | **Admins** (`/admins`) | Operator management (M2): invite by email (link sets the password), reset links, remove (never yourself / never the last operator), change-your-own-password card, last sign-in column. |
 | **Member detail** (`/members/[id]`) | Header card with resend-verification, send-password-reset, reset-@handle (PromptDialog), suspend-with-reason, and type-to-confirm **Delete account**; profiles w/ roles, connected socials, recent comments, meta. |
 | **Profile detail** (`/profiles/[id]`) | Stat band (followers, taps · 30d, copies · 30d), 12-newest post grid with per-post Remove, products table with taps, managers, categories, View public page. |

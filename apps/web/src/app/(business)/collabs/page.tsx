@@ -19,7 +19,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@plugfolio/ui";
-import { ArrowRight, LogOut } from "lucide-react";
+import { ArrowRight, LifeBuoy, LogOut } from "lucide-react";
 import { Logo } from "@/components/brand";
 import {
   BusinessForm,
@@ -202,12 +202,20 @@ function BusinessChrome({ children }: { children: React.ReactNode }) {
           <Link href="/" aria-label="Plugfolio home" className="flex items-center">
             <Logo layout="horizontal" tone="auto" />
           </Link>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/api/auth/signout">
-              <LogOut className="size-4" />
-              Sign out
-            </Link>
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/support">
+                <LifeBuoy className="size-4" />
+                Support
+              </Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/api/auth/signout">
+                <LogOut className="size-4" />
+                Sign out
+              </Link>
+            </Button>
+          </div>
         </div>
       </header>
       <main className="mx-auto w-full max-w-2xl px-4 pb-16">{children}</main>

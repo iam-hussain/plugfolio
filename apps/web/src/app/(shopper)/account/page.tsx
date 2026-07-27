@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@plugfolio/ui";
-import { ArrowRight, LogOut } from "lucide-react";
+import { ArrowRight, LifeBuoy, LogOut } from "lucide-react";
 import { HandleForm } from "@/features/shopper-account";
 import { auth } from "@/server/auth";
 import { businessCollabDeps, repositories } from "@/server/container";
@@ -86,11 +86,17 @@ export default async function AccountPage() {
           </Card>
         ) : null}
 
-        <div>
+        <div className="flex items-center gap-2">
           <Button variant="ghost" asChild>
             <Link href="/api/auth/signout">
               <LogOut className="size-4" />
               Sign out
+            </Link>
+          </Button>
+          <Button variant="ghost" asChild>
+            <Link href="/support">
+              <LifeBuoy className="size-4" />
+              Contact support
             </Link>
           </Button>
         </div>

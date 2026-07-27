@@ -84,6 +84,12 @@ export function ForgotScreen() {
           Sign in
         </Link>
       </p>
+      <p className="text-muted-foreground/70 mt-2.5 text-center text-[11.5px]">
+        Lost the inbox itself?{" "}
+        <Link href="/support?category=lost_email_access" className="hover:text-foreground">
+          Contact support
+        </Link>
+      </p>
     </AuthShell>
   );
 }

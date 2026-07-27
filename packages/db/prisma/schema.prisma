@@ -449,6 +449,44 @@ enum ReportStatus {
   dismissed
 }
 
+/// A support request (docs/implementation/support.md): anyone — signed in or
+/// not — asks the operators for help. Known issues are the enum; `other`
+/// carries the unknown ones. Email is the reply channel (no in-app threads).
+model SupportTicket {
+  id            String                @id @default(uuid()) @db.Uuid
+  category      SupportTicketCategory
+  message       String
+  /// The REPLY address, asked explicitly — "lost email access" means the
+  /// account email is exactly the one that doesn't work.
+  contactEmail  String
+  /// "@handle" when signed in, "Anonymous visitor" otherwise — denormalized
+  /// like Report so the queue never joins a deletable account.
+  requesterLabel String               @default("Anonymous visitor")
+  status        SupportTicketStatus   @default(open)
+  createdAt     DateTime              @default(now())
+  resolvedAt    DateTime?
+
+  @@index([status, createdAt])
+}
+
+enum SupportTicketCategory {
+  lost_email_access
+  change_email
+  merge_accounts
+  password_trouble
+  username_conflict
+  connection_trouble
+  collab_dispute
+  delete_account
+  other
+}
+
+enum SupportTicketStatus {
+  open
+  resolved
+  dismissed
+}
+
 enum TapSource {
   profile
   post

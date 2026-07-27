@@ -40,6 +40,10 @@ export {
 } from "./repositories/admin-moderation-repository";
 export { createReportWriteRepository } from "./repositories/report-repository";
 export {
+  createSupportTicketWriteRepository,
+  createAdminSupportRepository,
+} from "./repositories/support-repository";
+export {
   createAdminBusinessRepository,
   createAdminRequirementRepository,
   createAdminCollabRepository,

@@ -2,6 +2,7 @@ import { createResendMailer, type AuthMailer } from "@plugfolio/core";
 import {
   createAppSettingsRepository,
   createReportWriteRepository,
+  createSupportTicketWriteRepository,
   createAuthAccountRepository,
   createAuthTokenRepository,
   createBusinessRepository,
@@ -50,6 +51,7 @@ export const repositories = {
   users: createUserRepository(),
   settings: createAppSettingsRepository(),
   reportWrites: createReportWriteRepository(),
+  supportWrites: createSupportTicketWriteRepository(),
   postWrites: createPostWriteRepository(),
   productWrites: createProductWriteRepository(),
 };

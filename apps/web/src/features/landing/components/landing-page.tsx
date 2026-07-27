@@ -235,9 +235,17 @@ export function LandingPage({ user = null }: { user?: LandingUser | null }) {
           <Link href="/" aria-label="Plugfolio home">
             <Logo layout="reversed" />
           </Link>
-          <span className="font-mono text-[11px] text-white/55">
-            One link, everything shoppable · 2026
-          </span>
+          <div className="flex items-center gap-5">
+            <Link
+              href="/support"
+              className="font-mono text-[11px] text-white/55 hover:text-white"
+            >
+              Support
+            </Link>
+            <span className="font-mono text-[11px] text-white/55">
+              One link, everything shoppable · 2026
+            </span>
+          </div>
         </div>
       </footer>
     </main>

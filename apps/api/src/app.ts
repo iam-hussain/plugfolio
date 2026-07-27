@@ -66,6 +66,8 @@ import {
   updateMemberHandleInput,
   createReport,
   createReportInput,
+  createSupportTicket,
+  createSupportTicketInput,
   isFeatureEnabled,
   ForbiddenError,
   updateProductAffiliateUrl,
@@ -227,6 +229,20 @@ app.post("/reports", async (c) => {
     });
   }
   return c.json({ reported: true }, 201);
+});
+
+// Support inflow (docs/implementation/support.md): account-free on purpose —
+// the top category is "I lost access to my email", which means no sign-in.
+// A session only enriches the ticket with the member's @handle.
+app.post("/support", async (c) => {
+  if (!(await isFeatureEnabled({ settings: repositories.settings }, "support", true))) {
+    throw new ForbiddenError("Support requests are switched off right now");
+  }
+  const input = createSupportTicketInput.parse(await c.req.json());
+  const userId = await sessionUserId(c);
+  const handle = userId ? await repositories.users.getHandle(userId) : null;
+  await createSupportTicket({ support: repositories.supportWrites }, input, { handle });
+  return c.json({ received: true }, 201);
 });
 
 // The member handle (ADR-0009): public identity, never a login.

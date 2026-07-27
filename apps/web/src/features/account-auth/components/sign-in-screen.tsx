@@ -123,6 +123,12 @@ export function SignInScreen({ callbackUrl = "/", initialRole = "creator" }: Sig
         <Link href="/forgot" className="hover:text-foreground">
           Forgot password?
         </Link>
+        <span aria-hidden> · </span>
+        {/* The lost-email door (brief 04 edge): a reset link is no use when the
+            inbox itself is gone — support can move the account email. */}
+        <Link href="/support?category=lost_email_access" className="hover:text-foreground">
+          Can&apos;t access your email?
+        </Link>
       </p>
       <p className="text-muted-foreground mt-2.5 text-center text-[13px]">
         New to Plugfolio?{" "}

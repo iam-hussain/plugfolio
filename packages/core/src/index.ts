@@ -326,6 +326,27 @@ export {
   type NewReport,
   type ReportWriteRepository,
 } from "./services/reports";
+export {
+  supportCategory,
+  type SupportCategory,
+  createSupportTicketInput,
+  type CreateSupportTicketInput,
+} from "./schemas/support";
+export type {
+  SupportTicketStatus,
+  NewSupportTicket,
+  SupportTicketWriteRepository,
+  AdminSupportTicketRow,
+  AdminSupportRepository,
+} from "./ports/support-repository";
+export {
+  createSupportTicket,
+  listSupportTickets,
+  resolveSupportTicket,
+  dismissSupportTicket,
+  type CreateSupportTicketDeps,
+  type AdminSupportDeps,
+} from "./services/support";
 export { createResendMailer, type ResendMailerConfig } from "./adapters/resend-mailer";
 export {
   listOperators,
