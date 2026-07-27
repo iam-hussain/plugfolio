@@ -269,7 +269,7 @@ function TrailStep({
     <li className="group list-none">
       <Tile
         tone={tone}
-        className={`shadow-rest min-h-[186px] rounded-card p-3 transition-transform duration-300 ease-out group-hover:[transform:rotate(0deg)] ${tilt}`}
+        className={`shadow-rest flex min-h-[220px] flex-col justify-center gap-2 rounded-card p-5 transition-transform duration-300 ease-out group-hover:[transform:rotate(0deg)] ${tilt}`}
       >
         {children}
       </Tile>
@@ -294,7 +294,7 @@ function MockCreator({
   dim?: boolean;
 }) {
   return (
-    <div className={`bg-card rounded-image mt-2 flex items-center gap-2.5 p-2.5 ${dim ? "opacity-60" : ""}`}>
+    <div className={`bg-card rounded-image flex items-center gap-2.5 p-2.5 ${dim ? "opacity-60" : ""}`}>
       <Image src={`/landing/avatars/${avatar}.jpg`} alt="" width={26} height={26} className="rounded-pill object-cover" />
       <span>
         <b className="text-foreground block text-[13px] font-semibold">@{handle}</b>
