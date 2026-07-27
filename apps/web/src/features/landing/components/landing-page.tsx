@@ -155,11 +155,11 @@ export function LandingPage() {
         {/* ── Section 2 — three taps ── */}
         <section id="how" aria-labelledby="how-h" className="px-5 pt-[clamp(56px,9vw,96px)] lg:px-10">
           <div className="mx-auto max-w-[1200px]">
-            <div className="max-w-[46ch]">
+            <div className="mx-auto max-w-[42ch] text-center">
               <h2 id="how-h" className="font-display text-[clamp(1.875rem,3.6vw,3rem)] font-bold leading-[1.08] tracking-[-0.035em] text-balance">
                 Three taps from a post to the shop.
               </h2>
-              <p className="text-muted-foreground mt-3 text-[1.0625rem] leading-relaxed">
+              <p className="text-muted-foreground mt-4 text-[1.0625rem] leading-relaxed">
                 Nothing in between asks who you are.
               </p>
             </div>
@@ -205,7 +205,7 @@ export function LandingPage() {
         {/* ── Section 3 — pick your side ── */}
         <section aria-labelledby="doors-h" className="px-5 pt-[clamp(56px,9vw,96px)] pb-[clamp(56px,9vw,96px)] lg:px-10">
           <div className="mx-auto max-w-[1200px]">
-            <h2 id="doors-h" className="font-display text-[clamp(1.875rem,3.6vw,3rem)] font-bold leading-[1.08] tracking-[-0.035em]">
+            <h2 id="doors-h" className="font-display mx-auto max-w-[42ch] text-center text-[clamp(1.875rem,3.6vw,3rem)] font-bold leading-[1.08] tracking-[-0.035em]">
               Pick your side.
             </h2>
             <div className="mt-[clamp(30px,4vw,46px)] grid gap-4 md:grid-cols-2">
