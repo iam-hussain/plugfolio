@@ -12,7 +12,9 @@ Auth.js Prisma-adapter tables (migration `20260718170000_authjs_identity`, hand-
 
 ## Auth surface
 
-- `POST/GET /api/auth/*` — Auth.js handlers; email magic-link provider; the default Auth.js sign-in page for now (the branded page of design brief 04 replaces it later).
+- `POST/GET /api/auth/*` — Auth.js handlers; email magic-link provider.
+- **Branded auth pages (design brief 04, "The Tagged Feed"):** `/join`, `/signin`, `/forgot`, `/reset`, `/verify` under `(auth)/`, built from the `account-auth` feature. One two-pane shell (`AuthShell`): the role-gradient *artefact* pane (the thing you're about to make — a tagged post, a fan of people, a paper brief) beside the light form; a 5px top rail in the role's solid tint. `/join` shows the role as a dealt deck (the only interactive artefact; kept on mobile); the other screens share the same pane/eyebrow/note but hide the non-interactive card on mobile. Sign-in/forgot/reset/verify declare no role, so they wear the **generic** brand-violet field, not a role colour.
+- **Role resolution for the auth pane:** an explicit `?as=<role>` wins; otherwise the last-used role from the browser cache (`pf.auth-role` in `localStorage`, written on register/login success, read after mount to keep SSR stable); otherwise **shopper** (the common case). Register keeps the deck to change it.
 - **No mail transport yet**: `sendVerificationRequest` logs the link to the server console; dev signs in by pasting it. A real provider (SMTP/Resend) plugs into that one function at deployment.
 - `auth()` exposes `session.user.id` (session callback) so server components can scope reads.
 - New env: `AUTH_SECRET` (required, ≥32 chars), `EMAIL_FROM` (defaulted). Declared in `turbo.json` build env + CI placeholders.

@@ -1,114 +1,94 @@
 /**
- * Copy for the auth screens — role tabs + left-panel content, lifted from the
- * design-out prototype (Plugfolio UI.dc.html, auth config) and reconciled with
- * brief 04 / ADR-0012: password sign-in, so no magic-link or OAuth lines.
+ * Copy for the auth screens (DESIGN auth.html). The role a visitor declares on
+ * /join IS the surface — it colours the artefact pane's gradient, its deck
+ * card, and the one-line promise, and it decides where verification lands. The
+ * form itself is role-agnostic and identical for all three.
  */
 export type AuthRole = "creator" | "shopper" | "business";
 
-export type PanelCopy = {
-  h1: string;
-  /** Second headline line — rendered in lime on the violet panel. */
-  h2: string;
-  desc: string;
-  bullets: [string, string, string];
-  foot: string;
+export type RoleCopy = {
+  /** Deck card face (Sora title + a one-line em under it). */
+  deckLabel: string;
+  deckBlurb: string;
+  /** The card's artefact photo + the pin it carries. */
+  deckPhoto: string;
+  deckPin: string;
+  deckPinTone: "affiliate" | "offer" | "own";
+  /** The role note below the deck. */
+  noteTitle: string;
+  noteBody: string;
+  noteFoot: string;
+  /** The one white line on the pane (role screens). */
+  artLine: string;
+  /** /join form. */
+  joinHeadline: string;
+  joinCopy: string;
+  joinPrimary: string;
+  /** /verify next step, by role. */
+  verifyCopy: string;
+  verifyCta: string;
+  verifyHref: string;
 };
 
-export const ROLE_COPY: Record<
-  AuthRole,
-  {
-    regTitle: string;
-    regPrimary: string;
-    subSignin: string;
-    subRegister: string;
-    reassure: string;
-    /** Mobile-only role blurb (the desktop panel's desc). */
-    desc: string;
-    panel: PanelCopy;
-  }
-> = {
+export const ROLE_COPY: Record<AuthRole, RoleCopy> = {
   creator: {
-    regTitle: "Create your account",
-    regPrimary: "Create account",
-    subSignin: "Sign in to manage your shoppable page.",
-    subRegister: "One link, everything shoppable.",
-    reassure: "One email link to verify — then you sign in with your password. Free to start.",
-    desc: "Creators turn their content into a shoppable page — tag the products in your posts and earn from what you already recommend.",
-    panel: {
-      h1: "Your content,",
-      h2: "now shoppable.",
-      desc: "Creators turn their content into a shoppable page — tag the products in your posts and earn from what you already recommend.",
-      bullets: [
-        "Set up in under two minutes",
-        "Claim your @handle before someone else",
-        "Free to start — no card needed",
-      ],
-      foot: "plugfolio.com · turn your content into commerce",
-    },
+    deckLabel: "Creator",
+    deckBlurb: "Make what you post shoppable",
+    deckPhoto: "skincare",
+    deckPin: "₹1,299",
+    deckPinTone: "offer",
+    noteTitle: "Your posts become a shop.",
+    noteBody:
+      "Tag the products in what you already post, pin your own links, and see which post drove the taps.",
+    noteFoot: "Free to start — no card needed",
+    artLine: "Tag it once. Sell it everywhere.",
+    joinHeadline: "Create your account",
+    joinCopy: "Then connect a social and claim your handle.",
+    joinPrimary: "Create account",
+    verifyCopy: "Next: connect a social so your handle can't be claimed by anyone else.",
+    verifyCta: "Connect a social",
+    verifyHref: "/dashboard/settings",
   },
   shopper: {
-    regTitle: "Follow your favorites",
-    regPrimary: "Create account",
-    subSignin: "Sign in to see who you follow.",
-    subRegister: "An account only to follow & comment — never to buy.",
-    reassure: "You never need an account to shop — this is only to follow & comment.",
-    desc: "Shoppers browse creator pages and buy in a tap. An account is optional — only for following creators and leaving comments, never to shop.",
-    panel: {
-      h1: "Shop everything",
-      h2: "your favorites post.",
-      desc: "Shoppers browse creator pages and buy in a tap. An account is optional — only for following creators and leaving comments, never to shop.",
-      bullets: [
-        "You never need an account to shop",
-        "Follow creators & catch their new drops",
-        "One tap to comment and ask questions",
-      ],
-      foot: "plugfolio.com · shopping never needs an account",
-    },
+    deckLabel: "Shopper",
+    deckBlurb: "Follow people — shopping needs no account",
+    deckPhoto: "gym",
+    deckPin: "Following",
+    deckPinTone: "affiliate",
+    noteTitle: "Follow the people you buy from.",
+    noteBody:
+      "An account is only for following creators and leaving comments. Buying never asks for one.",
+    noteFoot: "Shopping never needs an account",
+    artLine: "You never need an account to shop.",
+    joinHeadline: "Follow your favourites",
+    joinCopy: "An account only to follow and comment — never to buy.",
+    joinPrimary: "Create account",
+    verifyCopy: "Taking you back to what you were doing.",
+    verifyCta: "Keep shopping",
+    verifyHref: "/explore",
   },
   business: {
-    regTitle: "Create your business",
-    regPrimary: "Create business",
-    subSignin: "Sign in to your business account.",
-    subRegister: "A name and what you sell — that’s the whole sign-up.",
-    reassure: "v1 handles no money — agreed terms settle off-platform.",
-    desc: "Businesses post what they need and collaborate with creators in one thread. Plugfolio handles no money — agreed terms settle off-platform.",
-    panel: {
-      h1: "Find creators",
-      h2: "to work with.",
-      desc: "Businesses post what they need and collaborate with creators in one thread. Plugfolio handles no money — agreed terms settle off-platform.",
-      bullets: [
-        "Post a brief and hear from creators",
-        "Run the whole collab in one thread",
-        "Agreed terms settle off-platform",
-      ],
-      foot: "plugfolio.com · find creators to work with",
-    },
+    deckLabel: "Business",
+    deckBlurb: "Find creators to work with",
+    deckPhoto: "beauty",
+    deckPin: "Open brief",
+    deckPinTone: "own",
+    noteTitle: "Brief it once, hear from creators.",
+    noteBody:
+      "Post to the open board or approach a creator directly, then agree terms in one thread.",
+    noteFoot: "Payment settles off-platform",
+    artLine: "Post a brief. Hear from creators.",
+    joinHeadline: "Create your business",
+    joinCopy: "A name and what you sell — that's the whole sign-up.",
+    joinPrimary: "Create business",
+    verifyCopy: "Next: your business name and what you sell.",
+    verifyCta: "Set up your business",
+    verifyHref: "/collabs",
   },
 };
 
-export const CHECK_EMAIL_PANEL: PanelCopy = {
-  h1: "Check your",
-  h2: "inbox.",
-  desc: "We emailed you one secure link. Open it on any device to keep going — after that, your password is all you need.",
-  bullets: ["The link works for 24 hours", "Open it on any device", "Shopping never needs an account"],
-  foot: "plugfolio.com · one link, everything shoppable",
-};
-
-export const VERIFY_PANEL: PanelCopy = {
-  h1: "One last",
-  h2: "step.",
-  desc: "Open the link we emailed you to confirm it’s you — then every sign-in is just email + password.",
-  bullets: ["Links expire after 24 hours", "Works on any device", "Then your page is ready"],
-  foot: "plugfolio.com · one link, everything shoppable",
-};
-
-export const RESET_PANEL: PanelCopy = {
-  h1: "Reset your",
-  h2: "password.",
-  desc: "Tell us your email and we’ll send one secure reset link — the only other time email is ever involved.",
-  bullets: ["The link works for 24 hours", "Open it on any device", "Shopping never needs an account"],
-  foot: "plugfolio.com · one link, everything shoppable",
-};
+/** The line the mail screens (check/verify/sent/expired) show on the pane. */
+export const MAIL_ART_LINE = "One link, then your password is all you need.";
 
 export const AUTH_ROLES: { id: AuthRole; label: string }[] = [
   { id: "creator", label: "Creator" },

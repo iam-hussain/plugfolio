@@ -82,6 +82,39 @@
 }
 
 /* Dark — a deep violet-tinted canvas; tag pills stay white, tiles go deep. */
+/**
+ * Role-gradient tokens (auth artefact pane) — the one place a saturated field
+ * is committed, keyed by the role the visitor is declaring. Full colours (not
+ * HSL channels) because a gradient stop takes no alpha modifier. The pane's
+ * text is always white; the artefact cards on it are white "light objects".
+ * `--role-solid` is a lighter solid tint used for the 5px top rail (a signal,
+ * never a surface). Same values in both themes — the auth pane is a rich field
+ * regardless. `generic` is the field the account screens wear (sign-in, forgot,
+ * reset, verify): they declare no role, so they wear the *brand* itself —
+ * Brand Violet → Violet Deep, the canonical Plugfolio gradient (§7) — rather
+ * than borrowing a role's colour.
+ */
+[data-role="creator"] {
+  --role-grad-a: #8c6901;
+  --role-grad-b: #644a02;
+  --role-solid: #e5c787;
+}
+[data-role="shopper"] {
+  --role-grad-a: #7c3aed;
+  --role-grad-b: #5d01c0;
+  --role-solid: #c9b6ff;
+}
+[data-role="business"] {
+  --role-grad-a: #0375b6;
+  --role-grad-b: #015383;
+  --role-solid: #a9d8ff;
+}
+[data-role="generic"] {
+  --role-grad-a: #7c3aed;
+  --role-grad-b: #5b21b6;
+  --role-solid: #a78bfa;
+}
+
 :root[data-theme="dark"] {
   color-scheme: dark;
 

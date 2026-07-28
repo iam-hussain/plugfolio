@@ -2,18 +2,20 @@
 
 import { Button } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
+import { Check, Clock, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { verifyEmail } from "../api";
-import { VERIFY_PANEL } from "./auth-copy";
-import { AuthNotice } from "./auth-notice";
+import { RoleArtefact } from "./auth-artefact";
 import { AuthShell } from "./auth-shell";
+import { AuthStatus } from "./auth-status";
 
 /**
  * Landing of the one registration email link (brief 04, ADR-0012): consumes
  * the token on load, confirms, and forwards to sign-in. An expired/used link
- * points back to sign-in, where resend lives (the unverified login state).
+ * is never a dead end — it points back to sign-in, where the unverified state
+ * carries resend.
  */
 export type VerifyScreenProps = {
   token?: string;
@@ -34,45 +36,43 @@ export function VerifyScreen({ token }: VerifyScreenProps) {
     return () => clearTimeout(forward);
   }, [isSuccess, router]);
 
+  const artefact = <RoleArtefact role="creator" />;
+
   return (
-    <AuthShell panel={VERIFY_PANEL}>
-      <AuthNotice title="Verify your email">
-        {!token ? (
-          <p className="text-muted-foreground mt-2.5 text-sm leading-[1.55]">
-            This link is incomplete — use the one from your email.
+    <AuthShell role="generic" artefact={artefact}>
+      {!token ? (
+        <AuthStatus icon={<Mail aria-hidden />} title="Incomplete link">
+          <p className="text-muted-foreground max-w-[38ch] text-[0.9375rem] leading-[1.5]">
+            Use the verification link from your email.
           </p>
-        ) : verify.isSuccess ? (
-          <>
-            <p className="mt-2.5 text-sm leading-[1.55]">
-              <span className="font-semibold">Email verified ✓</span>{" "}
-              <span className="text-muted-foreground">Taking you to sign-in…</span>
-            </p>
-            <Button
-              asChild
-              className="font-display mt-[22px] h-auto w-full max-w-[300px] rounded-[9px] py-[13px] text-[15px] font-semibold"
-            >
-              <Link href="/signin">Continue to sign in →</Link>
-            </Button>
-          </>
-        ) : verify.isError ? (
-          <>
-            <p role="alert" className="text-muted-foreground mt-2.5 text-sm leading-[1.55]">
-              {verify.error.message}
-            </p>
-            <Button
-              asChild
-              className="font-display mt-[22px] h-auto w-full max-w-[300px] rounded-[9px] py-[13px] text-[15px] font-semibold"
-            >
-              <Link href="/signin">Go to sign-in →</Link>
-            </Button>
-            <p className="text-muted-foreground/70 mt-3.5 max-w-[320px] text-[11.5px] leading-[1.5]">
-              Signing in with an unverified email offers a fresh link.
-            </p>
-          </>
-        ) : (
-          <p className="text-muted-foreground mt-2.5 text-sm leading-[1.55]">Verifying…</p>
-        )}
-      </AuthNotice>
+          <Button asChild>
+            <Link href="/signin">Go to sign in →</Link>
+          </Button>
+        </AuthStatus>
+      ) : verify.isSuccess ? (
+        <AuthStatus icon={<Check aria-hidden />} title="Email verified">
+          <p className="text-muted-foreground text-[0.9375rem] leading-[1.5]">
+            Taking you to sign-in…
+          </p>
+          <Button asChild>
+            <Link href="/signin">Continue to sign in →</Link>
+          </Button>
+        </AuthStatus>
+      ) : verify.isError ? (
+        <AuthStatus icon={<Clock aria-hidden />} title="This link has expired">
+          <p className="text-muted-foreground max-w-[38ch] text-[0.9375rem] leading-[1.5]">
+            Links work once and last 24 hours. Sign in with your email — an unverified account
+            offers a fresh link.
+          </p>
+          <Button asChild>
+            <Link href="/signin">Go to sign in →</Link>
+          </Button>
+        </AuthStatus>
+      ) : (
+        <AuthStatus icon={<Mail aria-hidden />} title="Verifying…">
+          <p className="text-muted-foreground text-[0.9375rem] leading-[1.5]">One moment.</p>
+        </AuthStatus>
+      )}
     </AuthShell>
   );
 }

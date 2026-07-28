@@ -1,63 +1,67 @@
 import Link from "next/link";
 import { Logo, PlugMark } from "@/components/brand";
-import type { PanelCopy } from "./auth-copy";
+import type { AuthRole } from "./auth-copy";
 
 /**
- * Split auth shell from the design-out prototype: a violet-gradient brand panel
- * (desktop only — wordmark, two-line Sora headline with a lime second line,
- * lime check-bullets, mono footer, PlugMark watermark) beside a centered form
- * column. Mobile drops the panel and shows the logo above the card.
+ * Auth shell ("The Tagged Feed" auth, DESIGN auth.html): two panes on desktop
+ * — the role-gradient *artefact* pane (the thing you're about to make, on a
+ * committed saturated field) beside the light form pane — plus a 5px top rail
+ * in the role's solid tint. Auth is a dead end by design: no nav, no tab bar;
+ * the mark is the only way out.
+ *
+ * `role` scopes the gradient tokens (`bg-role-gradient` / `bg-role-solid`).
+ * `"generic"` is the neutral field the account screens (sign-in, forgot, reset,
+ * verify) wear — they declare no role, so they wear the brand itself.
+ *
+ * ONE layout for every screen, mobile and desktop, for consistency: the
+ * artefact pane up top (logo + artefact + line), the form riding up over it on
+ * a rounded sheet. Only /join's artefact (the role deck) is interactive on a
+ * phone; the other screens hide their non-interactive *card* on mobile (see
+ * RoleArtefact) but keep the same pane, logo and line.
  */
-export function AuthShell({ panel, children }: { panel: PanelCopy; children: React.ReactNode }) {
+export function AuthShell({
+  role,
+  artefact,
+  children,
+}: {
+  role: AuthRole | "generic";
+  /** Left-pane content — the role deck (/join) or a single artefact + line. */
+  artefact: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
-    <main className="bg-background text-foreground grid min-h-dvh lg:grid-cols-[1.05fr_0.95fr]">
-      {/* brand panel (desktop) */}
-      <div className="relative hidden min-h-dvh flex-col justify-between overflow-hidden bg-[linear-gradient(155deg,hsl(var(--brand-violet)),hsl(var(--brand-violet-deep)))] px-12 py-[52px] text-white lg:flex">
-        <div aria-hidden className="absolute -bottom-[14%] -left-[10%] w-[60%] opacity-[0.13]">
-          <PlugMark tone="flat" className="text-brand-lime h-auto w-full" />
-        </div>
-        <Link href="/" aria-label="Plugfolio home" className="relative">
+    <div
+      data-role={role}
+      className="relative min-h-dvh lg:grid lg:grid-cols-[46fr_54fr] lg:items-stretch"
+    >
+      {/* ── the top rail — a signal in the role's solid tint ── */}
+      <span aria-hidden className="bg-role-solid fixed inset-x-0 top-0 z-50 h-[5px]" />
+
+      {/* ── pane one — the artefact ── */}
+      <aside className="bg-role-gradient relative grid content-center justify-items-center gap-4 overflow-hidden px-5 pt-6 pb-16 text-white lg:min-h-dvh lg:gap-7 lg:px-9 lg:pt-10 lg:pb-24">
+        <PlugMark
+          tone="flat"
+          aria-hidden
+          className="pointer-events-none absolute -bottom-[30%] -left-[14%] w-[76%] text-white/10 lg:-bottom-[19%] lg:-left-[7%] lg:w-[62%]"
+        />
+        <Link
+          href="/"
+          aria-label="Plugfolio home"
+          className="relative z-10 justify-self-start lg:absolute lg:top-[30px] lg:left-[34px]"
+        >
           <Logo layout="reversed" />
         </Link>
-        <div className="relative">
-          <p className="font-display text-[38px] font-extrabold leading-[1.08] tracking-[-0.035em] text-white">
-            {panel.h1}
-            <br />
-            <span className="text-brand-lime">{panel.h2}</span>
-          </p>
-          <p className="mt-[18px] max-w-[360px] text-[14.5px] leading-[1.6] text-white/85">
-            {panel.desc}
-          </p>
-          <ul className="mt-[26px] flex flex-col gap-3.5">
-            {panel.bullets.map((bullet) => (
-              <li key={bullet} className="flex items-center gap-[11px]">
-                <span
-                  aria-hidden
-                  className="bg-brand-lime/15 text-brand-lime inline-flex size-[22px] shrink-0 items-center justify-center rounded-[6px] text-xs font-extrabold"
-                >
-                  ✓
-                </span>
-                <span className="text-[14.5px] text-white/90">{bullet}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <p className="relative font-mono text-[11px] tracking-[0.1em] text-white/55">{panel.foot}</p>
-      </div>
+        <div className="relative z-10 grid justify-items-center gap-4 lg:gap-6">{artefact}</div>
+      </aside>
 
-      {/* form column */}
-      <div className="flex flex-1 flex-col justify-center px-[22px] pb-10 pt-8 lg:px-[52px] lg:py-11">
-        <div className="mx-auto w-full max-w-[404px]">
-          <Link
-            href="/"
-            aria-label="Plugfolio home"
-            className="mb-[26px] inline-flex lg:hidden"
-          >
-            <Logo layout="horizontal" tone="auto" />
-          </Link>
-          {children}
-        </div>
-      </div>
-    </main>
+      {/* ── pane two — the form (rides up over the pane on a sheet) ── */}
+      <main className="bg-background relative z-[2] -mt-8 grid content-center rounded-t-bay px-5 pt-8 pb-14 shadow-[0_-22px_44px_-24px_hsl(var(--brand-ink)/0.3)] lg:mt-0 lg:rounded-none lg:p-10 lg:shadow-none">
+        <span
+          aria-hidden
+          className="bg-border mx-auto -mt-2 mb-8 h-1 w-10 rounded-pill lg:hidden"
+        />
+        <div className="mx-auto w-full max-w-[380px]">{children}</div>
+      </main>
+    </div>
   );
 }

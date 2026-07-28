@@ -83,6 +83,9 @@ const preset = {
           blush: "hsl(var(--tile-blush) / <alpha-value>)",
           foreground: "hsl(var(--tile-foreground) / <alpha-value>)",
         },
+        // The auth top rail — a lighter solid tint of the declared role (or the
+        // generic field). Raw var, no alpha channel: a role hue is a signal.
+        "role-solid": "var(--role-solid)",
         sidebar: {
           // Admin design: the rail sits on the page surface (white / #161320-ish).
           DEFAULT: "hsl(var(--surface) / <alpha-value>)",
@@ -128,6 +131,11 @@ const preset = {
         raise: "0 10px 26px 0 hsl(var(--brand-ink) / 0.08)",
         menu: "0 12px 30px 0 hsl(var(--brand-ink) / 0.18)",
         overlay: "0 14px 40px 0 hsl(var(--brand-ink) / 0.22)",
+      },
+      // The auth artefact pane's role gradient (stops in `--role-grad-*`,
+      // scoped by a `data-role` container).
+      backgroundImage: {
+        "role-gradient": "linear-gradient(155deg, var(--role-grad-a), var(--role-grad-b))",
       },
       fontFamily: {
         // Sora = display / wordmark / headlines; Manrope = UI & body (with

@@ -2,18 +2,20 @@
 
 import { Button } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
+import { Check, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { resetPassword } from "../api";
-import { RESET_PANEL } from "./auth-copy";
-import { AuthNotice } from "./auth-notice";
+import { RoleArtefact } from "./auth-artefact";
 import { AuthShell } from "./auth-shell";
+import { AuthStatus } from "./auth-status";
 import { FieldLabel } from "./auth-field";
 import { PasswordInput } from "./password-input";
 
 /**
  * Set a new password from an email link (brief 04). Doubles as the invited
- * Manager's FIRST password — the link proved the inbox, so it verifies too.
+ * Manager's FIRST password — the link proved the inbox, so saving verifies the
+ * email and signs them in. A confirm field guards a typo; the link owns identity.
  */
 export type ResetScreenProps = {
   token?: string;
@@ -21,75 +23,95 @@ export type ResetScreenProps = {
 
 export function ResetScreen({ token }: ResetScreenProps) {
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const mismatch = confirm.length > 0 && confirm !== password;
   const submit = useMutation({ mutationFn: () => resetPassword({ token: token ?? "", password }) });
+
+  const artefact = <RoleArtefact role="creator" />;
 
   if (submit.isSuccess) {
     return (
-      <AuthShell panel={RESET_PANEL}>
-        <AuthNotice title="Password set">
-          <p className="text-muted-foreground mt-2.5 text-sm leading-[1.55]">
+      <AuthShell role="generic" artefact={artefact}>
+        <AuthStatus icon={<Check aria-hidden />} title="Password set">
+          <p className="text-muted-foreground max-w-[38ch] text-[0.9375rem] leading-[1.5]">
             You&apos;re all set — sign in with your new password.
           </p>
-          <Button
-            asChild
-            className="font-display mt-[22px] h-auto w-full max-w-[300px] rounded-[9px] py-[13px] text-[15px] font-semibold"
-          >
+          <Button asChild>
             <Link href="/signin">Sign in →</Link>
           </Button>
-        </AuthNotice>
+        </AuthStatus>
       </AuthShell>
     );
   }
 
   return (
-    <AuthShell panel={RESET_PANEL}>
-      <h1 className="font-display text-[28px] font-extrabold tracking-[-0.03em]">
+    <AuthShell role="generic" artefact={artefact}>
+      <h1 className="font-display text-[clamp(2rem,4vw,2.75rem)] font-extrabold tracking-[-0.035em]">
         Set a new password
       </h1>
-      <p className="text-muted-foreground mt-2 text-[13.5px] leading-[1.5]">
-        {token
-          ? "Pick a new password for your account."
-          : "This link is incomplete — use the one from your email."}
-      </p>
+      {token ? (
+        <div className="bg-active rounded-image mt-5 flex items-start gap-3 p-4 text-[0.9375rem] leading-[1.5]">
+          <UserRound aria-hidden className="mt-0.5 size-[18px] shrink-0" />
+          <span>Setting a password verifies your email and signs you in.</span>
+        </div>
+      ) : (
+        <p className="text-muted-foreground mt-2.5 text-[0.9375rem] leading-[1.5]">
+          This link is incomplete — use the one from your email, or{" "}
+          <Link href="/forgot" className="text-brand-violet-deep font-bold">
+            request a fresh link
+          </Link>
+          .
+        </p>
+      )}
 
       {token ? (
         <form
           className="mt-[18px] flex flex-col"
           onSubmit={(event) => {
             event.preventDefault();
-            if (password) submit.mutate();
+            if (password && !mismatch) submit.mutate();
           }}
         >
-          <FieldLabel htmlFor="reset-password">New password · at least 8 characters</FieldLabel>
+          <FieldLabel htmlFor="reset-password">New password</FieldLabel>
           <PasswordInput
             id="reset-password"
             value={password}
             onChange={setPassword}
             autoComplete="new-password"
           />
+          <p className="text-muted-foreground mt-[7px] mb-3.5 text-xs">At least 8 characters.</p>
+          <FieldLabel htmlFor="reset-confirm">Confirm password</FieldLabel>
+          <PasswordInput
+            id="reset-confirm"
+            value={confirm}
+            onChange={setConfirm}
+            autoComplete="new-password"
+          />
+          {mismatch ? (
+            <p role="alert" className="text-brand-coral mt-2.5 text-[12.5px]">
+              Those don&apos;t match yet.
+            </p>
+          ) : null}
           {submit.isError ? (
             <p role="alert" className="text-brand-coral mt-2.5 text-[12.5px]">
               {submit.error.message} —{" "}
-              <Link href="/forgot" className="text-primary font-semibold">
+              <Link href="/forgot" className="text-brand-violet-deep font-bold">
                 request a new link
               </Link>
             </p>
           ) : null}
           <Button
             type="submit"
-            disabled={submit.isPending}
-            className="font-display mt-4 h-auto w-full rounded-[9px] py-[13px] text-[15px] font-semibold"
+            disabled={submit.isPending || mismatch || !password}
+            className="mt-[22px] w-full"
           >
-            {submit.isPending ? "Saving…" : "Set password"}
+            {submit.isPending ? "Saving…" : "Save password"}
           </Button>
+          <p className="text-muted-foreground mt-3 text-center text-xs">
+            You&apos;ll be signed in straight away.
+          </p>
         </form>
-      ) : (
-        <p className="text-muted-foreground mt-5 text-[13px]">
-          <Link href="/forgot" className="text-primary font-semibold">
-            Request a fresh link
-          </Link>
-        </p>
-      )}
+      ) : null}
     </AuthShell>
   );
 }

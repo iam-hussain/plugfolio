@@ -2,22 +2,25 @@
 
 import { Button } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
+import { CircleAlert, Mail } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { resendVerification } from "../api";
-import { ROLE_COPY, type AuthRole } from "./auth-copy";
+import { RoleArtefact } from "./auth-artefact";
+import { type AuthRole } from "./auth-copy";
 import { FieldLabel, TextField } from "./auth-field";
 import { AuthShell } from "./auth-shell";
 import { PasswordInput } from "./password-input";
-import { RoleTabs } from "./role-tabs";
+import { DEFAULT_ROLE, readStoredRole, writeStoredRole } from "./role-store";
 
 /**
  * Login (brief 04, ADR-0012): email + password, one step, no email round-trip.
- * One generic failure for wrong email OR password; a DISTINCT state for an
- * unverified email, with resend. The role tabs only recolor the copy — the
- * form itself is role-agnostic.
+ * ONE generic banner for wrong email OR password (never a ring on one field —
+ * that's an existence oracle); a distinct unverified state carrying resend.
+ * No role picker — the account already holds whatever roles it holds; the pane
+ * only reflects the role the visitor arrived as.
  */
 export type SignInScreenProps = {
   callbackUrl?: string;
@@ -26,41 +29,79 @@ export type SignInScreenProps = {
 
 type LoginState = "idle" | "invalid" | "unverified" | "suspended";
 
-export function SignInScreen({ callbackUrl = "/", initialRole = "creator" }: SignInScreenProps) {
+export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenProps) {
   const router = useRouter();
-  const [role, setRole] = useState<AuthRole>(initialRole);
+  // The pane's artefact reflects the arriving role: an explicit ?as= wins, else
+  // the last-used role from the cache, else shopper. No picker here — login is
+  // role-agnostic; this only decides which artefact the pane shows.
+  const [role, setRole] = useState<AuthRole>(initialRole ?? DEFAULT_ROLE);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [state, setState] = useState<LoginState>("idle");
-  const copy = ROLE_COPY[role];
+
+  useEffect(() => {
+    if (!initialRole) setRole(readStoredRole());
+  }, [initialRole]);
 
   const submit = useMutation({
     mutationFn: async () => {
       const result = await signIn("credentials", { email, password, redirect: false });
       if (result?.error) {
         setState(
-          result.code === "unverified" || result.code === "suspended"
-            ? result.code
-            : "invalid",
+          result.code === "unverified" || result.code === "suspended" ? result.code : "invalid",
         );
         return;
       }
       setState("idle");
+      writeStoredRole(role);
       router.push(callbackUrl as Parameters<typeof router.push>[0]);
       router.refresh();
     },
   });
-
   const resend = useMutation({ mutationFn: () => resendVerification({ email }) });
 
   return (
-    <AuthShell panel={copy.panel}>
-      <RoleTabs role={role} onChange={setRole} />
-      <p className="bg-muted border-border text-muted-foreground mb-[18px] rounded-[10px] border px-3.5 py-3 text-[13px] leading-[1.55] lg:hidden">
-        {copy.desc}
+    <AuthShell
+      role="generic"
+      artefact={<RoleArtefact role={role} />}
+    >
+      <h1 className="font-display text-[clamp(2rem,4vw,2.75rem)] font-extrabold tracking-[-0.035em]">
+        Welcome back
+      </h1>
+      <p className="text-muted-foreground mt-2.5 text-[0.9375rem] leading-[1.5]">
+        Email and password. That&apos;s the whole thing.
       </p>
-      <h1 className="font-display text-[28px] font-extrabold tracking-[-0.03em]">Welcome back</h1>
-      <p className="text-muted-foreground mt-2 text-[13.5px] leading-[1.5]">{copy.subSignin}</p>
+
+      {state === "invalid" ? (
+        <AuthBanner tone="bad">
+          <b className="block font-semibold">Email or password is incorrect.</b>
+          Check both and try again.
+        </AuthBanner>
+      ) : null}
+      {state === "suspended" ? (
+        <AuthBanner tone="bad">
+          <b className="block font-semibold">This account is suspended.</b>
+          <Link href="/support" className="underline underline-offset-2">
+            Contact support
+          </Link>{" "}
+          to sort it out.
+        </AuthBanner>
+      ) : null}
+      {state === "unverified" ? (
+        <AuthBanner tone="info">
+          <b className="block font-semibold">Verify your email to sign in.</b>
+          We sent a link when you registered.
+          <Button
+            variant="ghost"
+            size="sm"
+            className="mt-2"
+            onClick={() => resend.mutate()}
+            disabled={resend.isPending}
+          >
+            {resend.isSuccess ? "Link sent ✓" : "Resend verification email"}
+          </Button>
+        </AuthBanner>
+      ) : null}
 
       <form
         className="mt-[18px] flex flex-col"
@@ -87,58 +128,42 @@ export function SignInScreen({ callbackUrl = "/", initialRole = "creator" }: Sig
           onChange={setPassword}
           autoComplete="current-password"
         />
-        {state === "invalid" ? (
-          <p role="alert" className="text-brand-coral mt-2.5 text-[12.5px]">
-            Wrong email or password.
-          </p>
-        ) : null}
-        {state === "suspended" ? (
-          <p role="alert" className="text-brand-coral mt-2.5 text-[12.5px]">
-            This account is suspended. Contact support.
-          </p>
-        ) : null}
-        {state === "unverified" ? (
-          <p role="alert" className="text-muted-foreground mt-2.5 text-[12.5px]">
-            Verify your email first.{" "}
-            <button
-              type="button"
-              onClick={() => resend.mutate()}
-              disabled={resend.isPending}
-              className="text-primary font-semibold"
-            >
-              {resend.isSuccess ? "Link sent ✓" : "Resend link"}
-            </button>
-          </p>
-        ) : null}
-        <Button
-          type="submit"
-          disabled={submit.isPending}
-          className="font-display mt-4 h-auto w-full rounded-[9px] py-[13px] text-[15px] font-semibold"
-        >
+        <Button type="submit" disabled={submit.isPending} className="mt-[22px] w-full">
           {submit.isPending ? "Signing in…" : "Sign in"}
         </Button>
       </form>
 
-      <p className="text-muted-foreground mt-5 text-center text-[13px]">
-        <Link href="/forgot" className="hover:text-foreground">
+      <div className="border-border mt-[22px] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t pt-5 text-center text-[13px]">
+        <Link href="/forgot" className="text-muted-foreground hover:text-primary font-semibold">
           Forgot password?
         </Link>
-        <span aria-hidden> · </span>
         {/* The lost-email door (brief 04 edge): a reset link is no use when the
             inbox itself is gone — support can move the account email. */}
-        <Link href="/support?category=lost_email_access" className="hover:text-foreground">
+        <Link
+          href="/support?category=lost_email_access"
+          className="text-muted-foreground hover:text-primary font-semibold"
+        >
           Can&apos;t access your email?
         </Link>
-      </p>
-      <p className="text-muted-foreground mt-2.5 text-center text-[13px]">
-        New to Plugfolio?{" "}
-        <Link href={`/join?as=${role}`} className="text-primary font-semibold">
+        <Link href={`/join?as=${role}`} className="text-brand-violet-deep font-bold">
           Create an account
         </Link>
-      </p>
-      <p className="text-muted-foreground/70 mt-3.5 text-center text-[11.5px] leading-[1.55]">
-        {copy.reassure}
-      </p>
+      </div>
     </AuthShell>
+  );
+}
+
+function AuthBanner({ tone, children }: { tone: "bad" | "info"; children: React.ReactNode }) {
+  const Icon = tone === "bad" ? CircleAlert : Mail;
+  return (
+    <div
+      role="alert"
+      className={`rounded-image text-foreground mt-5 flex items-start gap-3 border p-4 text-[0.9375rem] leading-[1.5] ${
+        tone === "bad" ? "bg-brand-coral/15 border-brand-coral/50" : "bg-active border-transparent"
+      }`}
+    >
+      <Icon aria-hidden className="mt-0.5 size-[18px] shrink-0" />
+      <span>{children}</span>
+    </div>
   );
 }

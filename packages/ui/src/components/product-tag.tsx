@@ -49,7 +49,7 @@ export const ProductTag = React.forwardRef<HTMLElement, ProductTagProps>(
         {...props}
       >
         <span className={cn(dotVariants({ tone }))} aria-hidden />
-        <span className="truncate">{name}</span>
+        {name ? <span className="truncate">{name}</span> : null}
         <span className="text-muted-foreground tabular-nums">{price}</span>
       </Comp>
     );
