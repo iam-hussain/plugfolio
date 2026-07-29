@@ -1,23 +1,20 @@
 "use client";
 
 import type { SupportCategory } from "@plugfolio/core";
-import {
-  Button,
-  Input,
-  Label,
-  NativeSelect,
-  NativeSelectOption,
-  Textarea,
-} from "@plugfolio/ui";
+import { Button, Input, Textarea } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
+import { Check, CircleAlert, Info, UserRound } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { submitSupportTicket } from "../api";
 
 /**
- * The support form (docs/implementation/support.md): known issues as a
- * picker, "Something else" for the unknown ones. Works signed-out — the top
- * category is "I lost access to my email". Each category swaps in one hint
- * line so tickets arrive actionable; replies go to the contact email.
+ * The support form (docs/implementation/support.md, DESIGN support.html): known
+ * issues as radio CARDS — the whole set visible at once, one tap, no native
+ * picker wheel for someone reading unfamiliar labels while locked out. Each
+ * category swaps in one hint so tickets arrive answerable on the first reply.
+ * Works signed-out — the top category is "I can't access my account email" —
+ * and the reply address is always editable, since it may be exactly what broke.
  */
 const CATEGORIES: readonly { key: SupportCategory; label: string; hint: string }[] = [
   {
@@ -63,18 +60,39 @@ const CATEGORIES: readonly { key: SupportCategory; label: string; hint: string }
   { key: "other", label: "Something else", hint: "Describe it — a human reads every ticket." },
 ];
 
+const NEXT_STEPS: readonly { title: string; body: string }[] = [
+  { title: "A person reads it.", body: "Not a bot, and not a queue that closes itself." },
+  { title: "We reply to the inbox you gave.", body: "Usually within one working day." },
+  {
+    title: "That's the whole channel.",
+    body: "Plugfolio has no in-app support threads, so there's nothing here to come back to.",
+  },
+];
+
 export type SupportFormProps = {
+  /** Signs the "who" chip when present; the form still works fully signed-out. */
+  handle?: string | null;
   /** Preselect via /support?category=… (e.g. the sign-in page's lost-email door). */
   initialCategory?: string;
   /** Prefilled for signed-in members; editable — it may be exactly what's broken. */
   initialEmail?: string;
 };
 
-export function SupportForm({ initialCategory, initialEmail = "" }: SupportFormProps) {
+/** A field label + one-line sublabel (DESIGN: Sora title over a muted line). */
+function FieldHead({ title, sub }: { title: string; sub: string }) {
+  return (
+    <>
+      <span className="font-display block text-lg font-bold tracking-[-0.02em]">{title}</span>
+      <span className="text-muted-foreground mt-1 mb-3 block text-[0.9375rem]">{sub}</span>
+    </>
+  );
+}
+
+export function SupportForm({ handle, initialCategory, initialEmail = "" }: SupportFormProps) {
   // Validated against the local list — importing the Zod enum would pull the
   // whole core package (node:crypto and all) into the client bundle.
   const preselected = CATEGORIES.find((option) => option.key === initialCategory)?.key;
-  const [category, setCategory] = useState<SupportCategory>(preselected ?? "other");
+  const [category, setCategory] = useState<SupportCategory>(preselected ?? "lost_email_access");
   const [message, setMessage] = useState("");
   const [contactEmail, setContactEmail] = useState(initialEmail);
 
@@ -84,12 +102,20 @@ export function SupportForm({ initialCategory, initialEmail = "" }: SupportFormP
 
   if (submit.isSuccess) {
     return (
-      <div className="border-border rounded-lg border border-dashed p-6 text-center">
-        <p className="font-medium">Got it — we&apos;re on it.</p>
-        <p className="text-muted-foreground pt-1 text-sm">
-          We&apos;ll reply to <span className="text-foreground">{contactEmail}</span>. No ticket
-          numbers, no bots — a person reads it.
+      <div className="py-[clamp(24px,5vw,48px)] text-center">
+        <span className="bg-active text-brand-violet-deep mx-auto mb-5 grid size-16 place-items-center rounded-pill [&_svg]:size-7">
+          <Check aria-hidden />
+        </span>
+        <h2 className="font-display text-[clamp(1.75rem,4vw,2.5rem)] font-extrabold tracking-[-0.035em]">
+          Got it — we&apos;re on it.
+        </h2>
+        <p className="text-muted-foreground mx-auto mt-3 max-w-[42ch] text-[0.9375rem] leading-[1.5]">
+          We&apos;ll reply to <b className="text-foreground">{contactEmail}</b>. A person reads every
+          ticket, so it may take a working day. Nothing to wait on here.
         </p>
+        <Button variant="secondary" asChild className="mt-6">
+          <Link href="/explore">Back to shopping</Link>
+        </Button>
       </div>
     );
   }
@@ -97,62 +123,133 @@ export function SupportForm({ initialCategory, initialEmail = "" }: SupportFormP
   const hint = CATEGORIES.find((option) => option.key === category)?.hint;
 
   return (
-    <form
-      className="flex flex-col gap-4"
-      onSubmit={(event) => {
-        event.preventDefault();
-        if (message.trim() && contactEmail.trim()) submit.mutate();
-      }}
-    >
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="support-category">What&apos;s it about?</Label>
-        <NativeSelect
-          id="support-category"
-          value={category}
-          onChange={(event) => setCategory(event.target.value as SupportCategory)}
-          className="w-full"
-        >
-          {CATEGORIES.map((option) => (
-            <NativeSelectOption key={option.key} value={option.key}>
-              {option.label}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-        {hint ? <p className="text-muted-foreground text-xs">{hint}</p> : null}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="support-message">What happened?</Label>
-        <Textarea
-          id="support-message"
-          value={message}
-          onChange={(event) => setMessage(event.target.value)}
-          maxLength={2000}
-          rows={5}
-          required
-        />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="support-email">Where do we reply?</Label>
-        <Input
-          id="support-email"
-          type="email"
-          value={contactEmail}
-          onChange={(event) => setContactEmail(event.target.value)}
-          required
-          placeholder="an inbox you can open today"
-        />
-      </div>
+    <div>
+      {/* Who's asking — a reassurance, not a gate. Hidden once the ticket sends. */}
+      <p className="bg-active text-brand-violet-deep tracking-eyebrow mt-[18px] inline-flex items-center gap-2 rounded-pill px-4 py-2 font-mono text-[11px] font-bold uppercase [&_svg]:size-[15px]">
+        {handle ? (
+          <>
+            <UserRound aria-hidden /> Signed in as @{handle}
+          </>
+        ) : (
+          <>
+            <Check aria-hidden /> No account needed
+          </>
+        )}
+      </p>
 
       {submit.isError ? (
-        <p role="alert" className="text-destructive text-xs">
-          {submit.error.message}
-        </p>
+        <div
+          role="alert"
+          className="bg-brand-coral/15 border-brand-coral/50 rounded-image mt-[22px] flex items-start gap-3 border p-4 text-[0.9375rem] leading-[1.5] [&_svg]:mt-0.5 [&_svg]:size-[18px] [&_svg]:shrink-0"
+        >
+          <CircleAlert aria-hidden />
+          <span>
+            <b className="block font-semibold">That didn&apos;t send.</b>
+            {submit.error.message} — if it keeps failing, email help@plugfolio.com directly.
+          </span>
+        </div>
       ) : null}
-      <Button type="submit" disabled={submit.isPending || !message.trim() || !contactEmail.trim()}>
-        {submit.isPending ? "Sending…" : "Send to support"}
-      </Button>
-    </form>
+
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (message.trim() && contactEmail.trim()) submit.mutate();
+        }}
+      >
+        <fieldset className="mt-[clamp(26px,3.5vw,36px)] border-0 p-0">
+          <legend className="font-display p-0 text-lg font-bold tracking-[-0.02em]">
+            What&apos;s it about?
+          </legend>
+          <span className="text-muted-foreground mt-1 mb-3 block text-[0.9375rem]">
+            Closest is close enough — we&apos;ll work it out.
+          </span>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {CATEGORIES.map((option) => (
+              <label
+                key={option.key}
+                className="border-border bg-card rounded-image hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-active has-[:checked]:text-brand-violet-deep has-[:focus-visible]:outline-primary flex min-h-14 cursor-pointer items-center gap-2.5 border px-4 py-3 text-[0.9375rem] font-semibold leading-[1.35] transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-[3px] has-[:focus-visible]:outline-offset-2"
+              >
+                <input
+                  type="radio"
+                  name="category"
+                  value={option.key}
+                  checked={category === option.key}
+                  onChange={() => setCategory(option.key)}
+                  className="peer sr-only"
+                />
+                <span
+                  aria-hidden
+                  className="border-border peer-checked:border-primary size-4 shrink-0 rounded-pill border-2 transition-all peer-checked:border-[5px]"
+                />
+                {option.label}
+              </label>
+            ))}
+          </div>
+          {hint ? (
+            <p
+              aria-live="polite"
+              className="bg-active text-brand-violet-deep rounded-image mt-3.5 flex gap-2.5 p-4 text-[0.9375rem] leading-[1.5] [&_svg]:mt-0.5 [&_svg]:size-[17px] [&_svg]:shrink-0"
+            >
+              <Info aria-hidden />
+              <span>{hint}</span>
+            </p>
+          ) : null}
+        </fieldset>
+
+        <label className="mt-[clamp(26px,3.5vw,36px)] block">
+          <FieldHead title="What happened?" sub="What you tried, and what happened instead." />
+          <Textarea
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}
+            maxLength={2000}
+            rows={6}
+            required
+            className="min-h-[150px]"
+          />
+        </label>
+
+        <label className="mt-[clamp(26px,3.5vw,36px)] block">
+          <FieldHead
+            title="Where do we reply?"
+            sub="An inbox you can open today — it doesn't have to be your account email."
+          />
+          <Input
+            type="email"
+            value={contactEmail}
+            onChange={(event) => setContactEmail(event.target.value)}
+            required
+            autoComplete="email"
+            placeholder="you@email.com"
+          />
+        </label>
+
+        <Button
+          type="submit"
+          disabled={submit.isPending || !message.trim() || !contactEmail.trim()}
+          className="mt-[clamp(26px,3.5vw,34px)] w-full"
+        >
+          {submit.isPending ? "Sending…" : "Send to support"}
+        </Button>
+      </form>
+
+      <section className="border-border mt-[clamp(34px,5vw,52px)] border-t pt-6">
+        <p className="text-muted-foreground font-mono tracking-eyebrow text-[11px] font-semibold uppercase">
+          What happens next
+        </p>
+        <ol className="mt-4 grid gap-3.5">
+          {NEXT_STEPS.map((step, index) => (
+            <li key={step.title} className="text-muted-foreground flex items-start gap-3.5 text-[0.9375rem] leading-[1.5]">
+              <span className="bg-foreground text-background grid size-7 shrink-0 place-items-center rounded-pill font-mono text-[11px] font-bold">
+                {index + 1}
+              </span>
+              <span>
+                <b className="text-foreground block font-bold">{step.title}</b>
+                {step.body}
+              </span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </div>
   );
 }

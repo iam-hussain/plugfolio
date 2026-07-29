@@ -162,9 +162,10 @@ export function createAppSettingsRepository(db: PrismaClient = prisma): AppSetti
 function memberStatusWhere(status: MemberStatusFilter | undefined): Prisma.UserWhereInput {
   switch (status) {
     case "active":
-      return { emailVerified: { not: null }, suspendedAt: null };
+      // Mongo: never-suspended rows have no `suspendedAt` field — match unset.
+      return { emailVerified: { not: null }, suspendedAt: { isSet: false } };
     case "unverified":
-      return { emailVerified: null };
+      return { emailVerified: { isSet: false } };
     case "suspended":
       return { suspendedAt: { not: null } };
     default:

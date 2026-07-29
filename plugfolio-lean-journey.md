@@ -193,7 +193,7 @@ Cutting these is the point. Each is a real feature — just not part of the firs
 |---|---|
 | Referral / share-to-earn rewards | Powerful, but adds an economy to explain before the core loop is even proven. |
 | Anonymous wishlist + price alerts | Needs device identity and notification plumbing; not on the buy path. |
-| Aggregated "My Creators" feed + Instagram follow-list import | Following a creator is in v1 (see the shopper account); the *payoff* is a simple followed-creators list. The rich aggregated feed and the five-step JSON-import are the deferred part. |
+| Aggregated "My Creators" feed + Instagram follow-list import | Following a creator is in v1 (see the shopper account); the *payoff* is a followed-creators **list** — searchable, sortable, and marked with "N new since you last looked" per creator. That count is a fact about a row, not a feed: no post is ever merged into a stream you scroll and buy from, and every route out goes to that creator's own page. The rich aggregated feed and the five-step JSON-import stay deferred. |
 | Tracked in-store redemption (card-linked offers, verified redemptions) | The *untracked* in-store coupon channel is in v1 — show the code at the counter. *Measuring* redemption means card/bank integrations; wait for local density. |
 | Ratings + "actually uses this" badge | Commenting is in v1 (behind the shopper account); star ratings and the authenticity badge are the deferred trust layer. |
 | Media kit, brand discovery-by-performance, campaign & gifting suites | The heavy brand side. In v1 a business vets creators from their public page and meets them through the Collabs thread — the rest comes after density exists. |

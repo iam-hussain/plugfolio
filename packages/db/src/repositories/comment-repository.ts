@@ -73,7 +73,7 @@ export function createCommentRepository(db: PrismaClient = prisma): CommentRepos
 
     async listByProfile(profileId: string, limit: number): Promise<readonly CommentThread[]> {
       const rows = await db.comment.findMany({
-        where: { profileId, productId: null, parentId: null },
+        where: { profileId, productId: { isSet: false }, parentId: { isSet: false } },
         orderBy: { createdAt: "desc" },
         take: limit,
         select: threadSelect,
@@ -83,7 +83,7 @@ export function createCommentRepository(db: PrismaClient = prisma): CommentRepos
 
     async listByProduct(productId: string, limit: number): Promise<readonly CommentThread[]> {
       const rows = await db.comment.findMany({
-        where: { productId, parentId: null },
+        where: { productId, parentId: { isSet: false } },
         orderBy: { createdAt: "desc" },
         take: limit,
         select: threadSelect,

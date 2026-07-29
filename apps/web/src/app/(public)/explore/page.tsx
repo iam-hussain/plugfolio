@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { exploreCreators, exploreProducts } from "@plugfolio/core";
+import { exploreCreators, explorePosts, exploreProducts } from "@plugfolio/core";
 import { ExploreScreen, type ExploreTab } from "@/features/explore";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -21,13 +21,22 @@ export default async function ExplorePage({
   searchParams: Promise<SearchParams>;
 }) {
   const { q, tab: rawTab } = await searchParams;
-  const tab: ExploreTab = rawTab === "products" ? "products" : "creators";
+  // Scope by KIND (DESIGN explore.html): All is the default; things ≡ products.
+  const tab: ExploreTab =
+    rawTab === "creators"
+      ? "creators"
+      : rawTab === "posts"
+        ? "posts"
+        : rawTab === "products" || rawTab === "things"
+          ? "products"
+          : "all";
   const session = await auth();
 
   const deps = { discovery: repositories.discovery };
-  const [creators, products] = await Promise.all([
-    tab === "creators" ? exploreCreators(deps, q) : Promise.resolve([]),
-    tab === "products" ? exploreProducts(deps, q) : Promise.resolve([]),
+  const [creators, posts, products] = await Promise.all([
+    tab === "all" || tab === "creators" ? exploreCreators(deps, q) : Promise.resolve([]),
+    tab === "all" || tab === "posts" ? explorePosts(deps, q) : Promise.resolve([]),
+    tab === "all" || tab === "products" ? exploreProducts(deps, q) : Promise.resolve([]),
   ]);
 
   return (
@@ -35,6 +44,7 @@ export default async function ExplorePage({
       tab={tab}
       query={(q ?? "").trim()}
       creators={creators}
+      posts={posts}
       products={products}
       signedIn={!!session?.user}
     />

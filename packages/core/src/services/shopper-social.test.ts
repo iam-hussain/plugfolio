@@ -56,6 +56,14 @@ function makeFakeFollows(): FollowRepository & { rows: Set<string> } {
     async listProfilesByUser() {
       return [...rows].map((key) => ({ id: key.split(":")[1]!, username: "someone" }));
     },
+    // The /following read model is exercised in following-list.test.ts.
+    async listFollowedCreators() {
+      return [];
+    },
+    async getFollowingSeenAt() {
+      return null;
+    },
+    async markFollowingSeen() {},
   };
 }
 

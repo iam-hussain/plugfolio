@@ -23,7 +23,8 @@ function skipTake(page: PageQuery) {
 function profileStatusWhere(status: ProfileStatusFilter | undefined): Prisma.ProfileWhereInput {
   switch (status) {
     case "live":
-      return { suspendedAt: null, user: { suspendedAt: null } };
+      // Mongo: a never-suspended row has no `suspendedAt` field — match unset.
+      return { suspendedAt: { isSet: false }, user: { suspendedAt: { isSet: false } } };
     case "suspended":
       return { suspendedAt: { not: null } };
     case "owner-suspended":

@@ -8,6 +8,7 @@ import {
   getMemberHandle,
   getProfileLinks,
   isFollowingProfile,
+  listProfileProducts,
 } from "@plugfolio/core";
 import { Button } from "@plugfolio/ui";
 import { CategoryChips, CreatorHeader, PostGrid, ShareButton } from "@/features/creator-page";
@@ -83,22 +84,24 @@ export default async function CreatorPage({
     "comments",
     true,
   );
-  const [following, comments, business, ownHandle, memberships, links] = await Promise.all([
-    session?.user
-      ? isFollowingProfile({ follows: repositories.follows }, session.user.id, page.id)
-      : Promise.resolve(false),
-    getComments({ comments: repositories.comments }, page.id),
-    session?.user
-      ? repositories.businesses.findByUser(session.user.id)
-      : Promise.resolve(null),
-    session?.user
-      ? getMemberHandle({ users: repositories.users }, session.user.id)
-      : Promise.resolve(""),
-    session?.user
-      ? repositories.profiles.listAccessibleByUser(session.user.id)
-      : Promise.resolve([]),
-    getProfileLinks({ profileLinks: repositories.profileLinks }, page.id),
-  ]);
+  const [following, comments, business, ownHandle, memberships, links, allProducts] =
+    await Promise.all([
+      session?.user
+        ? isFollowingProfile({ follows: repositories.follows }, session.user.id, page.id)
+        : Promise.resolve(false),
+      getComments({ comments: repositories.comments }, page.id),
+      session?.user
+        ? repositories.businesses.findByUser(session.user.id)
+        : Promise.resolve(null),
+      session?.user
+        ? getMemberHandle({ users: repositories.users }, session.user.id)
+        : Promise.resolve(""),
+      session?.user
+        ? repositories.profiles.listAccessibleByUser(session.user.id)
+        : Promise.resolve([]),
+      getProfileLinks({ profileLinks: repositories.profileLinks }, page.id),
+      listProfileProducts({ creatorPages: repositories.creatorPages }, page.username),
+    ]);
 
   // "Your links" → the socials row (design-out: required on every creator
   // header). Label = the platform; the website reads as its hostname.
@@ -114,11 +117,19 @@ export default async function CreatorPage({
   // Hidden posts (brief 07) never reach visitors — only the dashboard shows
   // them. Category chips filter the rest (ADR-0010); "All" holds everything.
   const visiblePosts = page.posts.filter((post) => post.hiddenAt === null);
+  // A shelf can also hold products the creator sells or recommends directly,
+  // with no post behind them (design §"two kinds of thing, one wall"). Products
+  // already tagged inside a post are shown via that post — not twice.
+  const standaloneProducts = allProducts.filter((product) => product.postCount === 0);
   const { category } = await searchParams;
   const activeCategory = page.categories.find((c) => c.id === category) ?? null;
   const posts = activeCategory
     ? visiblePosts.filter((post) => post.categoryId === activeCategory.id)
     : visiblePosts;
+  const products = activeCategory
+    ? standaloneProducts.filter((product) => product.categoryId === activeCategory.id)
+    : standaloneProducts;
+  const shopCount = posts.length + products.length;
 
   // One page, four viewers (design-out): the owner (Admin or Manager) gets
   // owner tools where visitors get Follow — the buy path never changes.
@@ -144,18 +155,16 @@ export default async function CreatorPage({
         avatarUrl={page.avatarUrl ?? undefined}
         bio={page.bio ?? undefined}
         socials={socials}
+        share={<ShareButton path={`/${page.username}`} />}
         action={
           ownMembership ? (
-            <div className="flex items-center gap-2">
-              <ShareButton path={`/${page.username}`} />
-              {ownMembership.role === "admin" ? (
-                <Button variant="outline" size="sm" className="rounded-pill px-5" asChild>
-                  <Link href={{ pathname: "/dashboard/settings", query: { profile: page.id } }}>
-                    Edit profile
-                  </Link>
-                </Button>
-              ) : null}
-            </div>
+            ownMembership.role === "admin" ? (
+              <Button size="sm" className="rounded-pill px-6" asChild>
+                <Link href={{ pathname: "/dashboard/settings", query: { profile: page.id } }}>
+                  Customise
+                </Link>
+              </Button>
+            ) : null
           ) : (
             <FollowButton
               profileId={page.id}
@@ -191,12 +200,28 @@ export default async function CreatorPage({
           <RequestCollabForm profileId={page.id} />
         </div>
       ) : null}
-      <CategoryChips
-        handle={page.username}
-        categories={page.categories}
-        activeId={activeCategory?.id ?? null}
-      />
-      {activeCategory && posts.length === 0 ? (
+      {page.categories.length > 0 ? (
+        <div className="mt-8">
+          <span className="text-muted-foreground text-xs font-semibold uppercase tracking-[0.06em]">
+            Shelves
+          </span>
+          <CategoryChips
+            handle={page.username}
+            categories={page.categories}
+            activeId={activeCategory?.id ?? null}
+          />
+        </div>
+      ) : null}
+      <div className="mt-8 mb-3.5 flex items-baseline gap-3">
+        <h2 className="text-[1.375rem] font-extrabold tracking-[-0.02em]">Shop</h2>
+        <span className="text-muted-foreground ml-auto text-xs font-semibold uppercase tracking-[0.06em]">
+          {posts.length} post{posts.length === 1 ? "" : "s"}
+          {products.length > 0
+            ? ` · ${products.length} product${products.length === 1 ? "" : "s"}`
+            : ""}
+        </span>
+      </div>
+      {activeCategory && shopCount === 0 ? (
         <p className="text-muted-foreground py-12 text-center text-sm">
           Nothing here yet —{" "}
           <Link href={`/${page.username}`} className="underline">
@@ -205,12 +230,12 @@ export default async function CreatorPage({
           .
         </p>
       ) : (
-        <PostGrid handle={page.username} posts={posts} />
+        <PostGrid handle={page.username} posts={posts} products={products} />
       )}
-      <section aria-label="Comments" className="mt-[34px]">
+      <section aria-label="Comments" className="border-border mt-[34px] border-t pt-[34px]">
         <div className="mb-3 flex items-baseline gap-2">
-          <h2 className="font-display text-lg font-bold">Comments</h2>
-          <span className="text-muted-foreground font-mono text-[11px]">{comments.length}</span>
+          <h2 className="text-[1.375rem] font-extrabold tracking-[-0.02em]">Comments</h2>
+          <span className="text-muted-foreground text-xs font-bold tabular-nums">{comments.length}</span>
           <span className="ml-auto">
             <ReportButton targetType="profile" targetId={page.id} targetLabel="this page" />
           </span>

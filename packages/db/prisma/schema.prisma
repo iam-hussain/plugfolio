@@ -1,14 +1,16 @@
-// Plugfolio database schema (PostgreSQL + Prisma — ADR-0001).
-// This is a v1 starter: enough to exercise the layering (a creator account with
-// profiles, tagged products, and the append-only tap event). Expand per the
-// implementation notes in docs/implementation/ as features land.
+// Plugfolio database schema (MongoDB + Prisma). Migrated from PostgreSQL
+// (ADR-0001 — superseded) to MongoDB Atlas. IDs are app-generated UUID strings
+// mapped to `_id`, so the seed and fixtures keep their fixed IDs; the former
+// composite primary keys become a generated `_id` + `@@unique`, and the
+// Post<->Product link is Mongo's array-based many-to-many (id arrays on each
+// side). Referential actions run in Prisma's emulation (the Mongo default).
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -17,7 +19,7 @@ datasource db {
 /// owns the identity tables (ADR-0007); anonymous shoppers are NOT rows here
 /// (ADR-0002).
 model User {
-  id            String    @id @default(uuid()) @db.Uuid
+  id            String    @id @default(uuid()) @map("_id")
   email         String    @unique
   /// The member handle (ADR-0009): every account's public identity for
   /// follow/comment, shown as @handle. Auto-generated at first sign-in,
@@ -33,6 +35,10 @@ model User {
   /// Set by an admin (admin app): blocks login and darkens every profile the
   /// account owns. Null = active.
   suspendedAt   DateTime?
+  /// Last time this account opened /following. The denominator for the
+  /// "N new since you last looked" counts on that page — measured against
+  /// post timestamps, never modelled. Null = never opened it.
+  followingSeenAt DateTime?
   createdAt     DateTime  @default(now())
   profiles      Profile[]
   accounts      Account[]
@@ -48,7 +54,8 @@ model User {
 /// of ADR-0004 (at most one of each per account, enforced in the service layer
 /// when connects land).
 model Account {
-  userId            String  @db.Uuid
+  id                String  @id @default(uuid()) @map("_id")
+  userId            String
   type              String
   provider          String
   providerAccountId String
@@ -61,15 +68,15 @@ model Account {
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
   @@index([userId])
 }
 
 /// Auth.js database session (email magic-link sign-in, ADR-0007).
 model Session {
-  id           String   @id @default(uuid()) @db.Uuid
+  id           String   @id @default(uuid()) @map("_id")
   sessionToken String   @unique
-  userId       String   @db.Uuid
+  userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -78,16 +85,17 @@ model Session {
 
 /// Auth.js email verification token (magic links).
 model VerificationToken {
+  id         String   @id @default(uuid()) @map("_id")
   identifier String
   token      String
   expires    DateTime
 
-  @@id([identifier, token])
+  @@unique([identifier, token])
 }
 
 /// A creator PROFILE with a social-derived username (ADR-0004).
 model Profile {
-  id        String    @id @default(uuid()) @db.Uuid
+  id        String    @id @default(uuid()) @map("_id")
   username  String    @unique
   /// Public identity (brief 10): shown as the page's big name; null = @username.
   displayName String?
@@ -97,7 +105,7 @@ model Profile {
   /// Set by an admin: takes just this page off the public surface (owner can
   /// still sign in). Null = live.
   suspendedAt DateTime?
-  userId    String    @db.Uuid
+  userId    String
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   posts      Post[]
   products   Product[]
@@ -119,35 +127,37 @@ model Profile {
 /// authored in dashboard Settings → "Your links"). One per platform per
 /// profile; the row renders in a fixed canonical order, so no position column.
 model ProfileLink {
-  profileId String   @db.Uuid
+  id        String   @id @default(uuid()) @map("_id")
+  profileId String
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   /// Zod enum at the boundary: instagram | youtube | tiktok | facebook | website.
   platform  String
   url       String
   createdAt DateTime @default(now())
 
-  @@id([profileId, platform])
+  @@unique([profileId, platform])
 }
 
 /// A Manager invited to help run ONE profile (ADR-0004: one Admin — the
 /// profile's owning user — plus up to 3 Managers; the cap and the two-role
 /// permission split are enforced in the service layer).
 model ProfileManager {
-  profileId String   @db.Uuid
+  id        String   @id @default(uuid()) @map("_id")
+  profileId String
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  userId    String   @db.Uuid
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
-  @@id([profileId, userId])
+  @@unique([profileId, userId])
   @@index([userId])
 }
 
 /// A BUSINESS — a brand/store that hires creators (lean journey: name, what
 /// you sell, a logo, an email). One business per user in v1.
 model Business {
-  id           String        @id @default(uuid()) @db.Uuid
-  userId       String        @unique @db.Uuid
+  id           String        @id @default(uuid()) @map("_id")
+  userId       String        @unique
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   name         String
   description  String
@@ -160,8 +170,8 @@ model Business {
 /// A posted requirement (door one): the brief creators can approach on the
 /// open board. Budget is free text — v1 handles no money (§2.3).
 model Requirement {
-  id         String   @id @default(uuid()) @db.Uuid
-  businessId String   @db.Uuid
+  id         String   @id @default(uuid()) @map("_id")
+  businessId String
   business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
   title      String
   brief      String
@@ -180,12 +190,12 @@ model Requirement {
 /// out directly (requirementId null). Agreed when BOTH sides have accepted;
 /// money changes hands off-platform (§2.3).
 model Collab {
-  id               String          @id @default(uuid()) @db.Uuid
-  businessId       String          @db.Uuid
+  id               String          @id @default(uuid()) @map("_id")
+  businessId       String
   business         Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
-  profileId        String          @db.Uuid
+  profileId        String
   profile          Profile         @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  requirementId    String?         @db.Uuid
+  requirementId    String?
   requirement      Requirement?    @relation(fields: [requirementId], references: [id], onDelete: SetNull)
   /// The live proposal (brief 12): latest Propose-terms wins and resets both
   /// agreements — "Agreed" always means agreed to THESE terms.
@@ -203,10 +213,10 @@ model Collab {
 
 /// One message in a collab thread — the bargain happens here, not in DMs.
 model CollabMessage {
-  id           String   @id @default(uuid()) @db.Uuid
-  collabId     String   @db.Uuid
+  id           String   @id @default(uuid()) @map("_id")
+  collabId     String
   collab       Collab   @relation(fields: [collabId], references: [id], onDelete: Cascade)
-  senderUserId String   @db.Uuid
+  senderUserId String
   sender       User     @relation(fields: [senderUserId], references: [id], onDelete: Cascade)
   body         String
   createdAt    DateTime @default(now())
@@ -217,38 +227,41 @@ model CollabMessage {
 /// A shopper following a creator profile — the first of the two social actions
 /// behind the optional shopper account (§2.2: never required to shop).
 model Follow {
-  userId    String   @db.Uuid
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  profileId String   @db.Uuid
+  profileId String
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
-  @@id([userId, profileId])
+  @@unique([userId, profileId])
   @@index([profileId])
 }
 
 /// A comment on a creator's page — the second social action behind the
 /// shopper account. Reading comments stays account-free.
 model Comment {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        String   @id @default(uuid()) @map("_id")
   /// The owning creator page — always set, also for product comments.
-  profileId String   @db.Uuid
+  profileId String
   profile   Profile  @relation("PageComments", fields: [profileId], references: [id], onDelete: Cascade)
   /// ADR-0013: null = a page-level comment; set = a comment on this product.
   /// Post comments are deferred.
-  productId String?  @db.Uuid
+  productId String?
   product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
   /// ADR-0013: one-level threads — a reply's parent is always top-level
-  /// (enforced in the service). Replies go with their parent (Cascade).
-  parentId  String?  @db.Uuid
-  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  /// (enforced in the service). Mongo's emulated referential integrity forbids
+  /// a self-relation cascade, so deleting a parent's replies is the service's
+  /// job now (Postgres did it at the DB level via Cascade).
+  parentId  String?
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replies   Comment[] @relation("CommentReplies")
-  userId    String   @db.Uuid
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   /// The profile this comment speaks AS (ADR-0009) — validated against the
   /// author's memberships in the service. Null = the personal @handle.
   /// SetNull: a deleted profile's comments fall back to the person.
-  asProfileId String?  @db.Uuid
+  asProfileId String?
   asProfile   Profile? @relation("CommentsAsProfile", fields: [asProfileId], references: [id], onDelete: SetNull)
   body      String
   createdAt DateTime @default(now())
@@ -262,8 +275,8 @@ model Comment {
 /// taxonomy. Posts/products join via a single nullable FK — deleting a
 /// category never deletes content.
 model Category {
-  id          String    @id @default(uuid()) @db.Uuid
-  profileId   String    @db.Uuid
+  id          String    @id @default(uuid()) @map("_id")
+  profileId   String
   profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   title       String
   description String?
@@ -279,19 +292,20 @@ model Category {
 /// A creator's post — the shoppable unit of the page ("tap a post, see the
 /// product"). v1 has no social import yet, so rows come from seed/dashboard;
 /// every row is treated as published (the publish flag lands with the tagging
-/// dashboard).
+/// dashboard). Post<->Product is a Mongo array-based many-to-many.
 model Post {
-  id        String    @id @default(uuid()) @db.Uuid
-  profileId String    @db.Uuid
+  id        String    @id @default(uuid()) @map("_id")
+  profileId String
   profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   mediaUrl  String
   caption   String?
   /// Hidden by the creator (brief 07): off the public page, still in the
   /// dashboard. Null = visible.
   hiddenAt  DateTime?
-  categoryId String?   @db.Uuid
+  categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  products  Product[]
+  productIds String[]
+  products  Product[] @relation(fields: [productIds], references: [id])
   taps      Tap[]
   codeCopies CodeCopy[]
   createdAt DateTime  @default(now())
@@ -303,8 +317,8 @@ model Post {
 /// §2.3). `kind` says whose product it is; a coupon (code + channels) can ride
 /// on either. Price and image are display-only metadata grabbed at tag time.
 model Product {
-  id            String  @id @default(uuid()) @db.Uuid
-  profileId     String  @db.Uuid
+  id            String  @id @default(uuid()) @map("_id")
+  profileId     String
   profile       Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   kind          ProductKind @default(affiliate)
   title         String
@@ -320,9 +334,10 @@ model Product {
   imageUrl      String?
   priceCents    Int?
   currency      String   @default("usd")
-  categoryId    String?   @db.Uuid
+  categoryId    String?
   category      Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  posts         Post[]
+  postIds       String[]
+  posts         Post[]   @relation(fields: [postIds], references: [id])
   taps          Tap[]
   codeCopies    CodeCopy[]
   comments      Comment[]
@@ -339,21 +354,21 @@ enum ProductKind {
 /// An outbound tap — immutable attribution event (§6.6, append-only). Earnings
 /// are a rebuildable projection over these rows, never a mutated counter.
 model Tap {
-  id             String   @id @default(uuid()) @db.Uuid
-  productId      String   @db.Uuid
+  id             String   @id @default(uuid()) @map("_id")
+  productId      String
   product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  profileId      String   @db.Uuid
+  profileId      String
   profile        Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   /// The post that drove the tap ("this reel drove 312 taps"). Nullable —
   /// profile-/product-surface taps have no post. SetNull, not Cascade: taps
   /// are append-only earnings events and must survive a post's deletion.
-  postId         String?  @db.Uuid
+  postId         String?
   post           Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
   /// Verified anonymous device identity (from the signed cookie), NOT an
   /// account link (§6.7, ADR-0002).
-  deviceId       String   @db.Uuid
+  deviceId       String
   /// Idempotency key — in-app browsers double-fire taps (§6.8).
-  idempotencyKey String   @unique @db.Uuid
+  idempotencyKey String   @unique
   source         TapSource
   occurredAt     DateTime @default(now())
 
@@ -366,7 +381,7 @@ model Tap {
 /// Deliberately NOT a product User — a product-auth bug must never escalate
 /// to admin access. Rows are seeded by scripts/create-admin.ts, never sign-up.
 model AdminUser {
-  id           String        @id @default(uuid()) @db.Uuid
+  id           String        @id @default(uuid()) @map("_id")
   email        String        @unique
   /// scrypt `salt:hash`, same helper as product accounts (ADR-0012).
   /// Null = an invited operator who hasn't set a password yet.
@@ -382,8 +397,8 @@ model AdminUser {
 /// Append-only audit trail: every admin mutation records who did what to
 /// which entity. Never updated or deleted (same discipline as Tap).
 model AdminAction {
-  id         String    @id @default(uuid()) @db.Uuid
-  adminId    String    @db.Uuid
+  id         String    @id @default(uuid()) @map("_id")
+  adminId    String
   admin      AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
   /// Verb, dot-namespaced: "member.suspend", "settings.reservedUsernames".
   action     String
@@ -400,7 +415,7 @@ model AdminAction {
 /// feature flags, …). One row per key, JSON value validated by the owning
 /// service in @plugfolio/core.
 model AppSetting {
-  key       String   @id
+  key       String   @id @map("_id")
   value     Json
   updatedAt DateTime @updatedAt
 }
@@ -409,9 +424,9 @@ model AppSetting {
 /// (Milestone 2). The target is a loose (type, id) pair on purpose: reports
 /// must survive their target's deletion so the queue keeps its history.
 model Report {
-  id            String           @id @default(uuid()) @db.Uuid
+  id            String           @id @default(uuid()) @map("_id")
   targetType    ReportTargetType
-  targetId      String           @db.Uuid
+  targetId      String
   category      ReportCategory
   /// The reporter's free-text note.
   note          String?
@@ -453,7 +468,7 @@ enum ReportStatus {
 /// not — asks the operators for help. Known issues are the enum; `other`
 /// carries the unknown ones. Email is the reply channel (no in-app threads).
 model SupportTicket {
-  id            String                @id @default(uuid()) @db.Uuid
+  id            String                @id @default(uuid()) @map("_id")
   category      SupportTicketCategory
   message       String
   /// The REPLY address, asked explicitly — "lost email access" means the
@@ -497,15 +512,15 @@ enum TapSource {
 /// like Tap. In-store redemption happens beyond Plugfolio's sight, so copies
 /// are the only measured signal and are labeled "redemption not tracked".
 model CodeCopy {
-  id             String   @id @default(uuid()) @db.Uuid
-  productId      String   @db.Uuid
+  id             String   @id @default(uuid()) @map("_id")
+  productId      String
   product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  profileId      String   @db.Uuid
+  profileId      String
   profile        Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  postId         String?  @db.Uuid
+  postId         String?
   post           Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
-  deviceId       String   @db.Uuid
-  idempotencyKey String   @unique @db.Uuid
+  deviceId       String
+  idempotencyKey String   @unique
   occurredAt     DateTime @default(now())
 
   @@index([profileId, occurredAt])

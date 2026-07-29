@@ -27,6 +27,7 @@ import {
 import { ExternalLink, Tag } from "lucide-react";
 import { env } from "@/env";
 import { SocialConnections } from "@/features/account-auth";
+import { connectGoogle } from "@/features/account-auth/connect-social-action";
 import { EarningsSummaryView } from "@/features/earnings";
 import {
   DashboardPageHeader,
@@ -160,7 +161,7 @@ export default async function DashboardPage({
         </>
       )}
 
-      <SocialConnections youtube={youtube} />
+      <SocialConnections youtube={youtube} connectAction={connectGoogle} />
 
       {active && earnings ? (
         <section aria-label="Earnings">

@@ -26,6 +26,9 @@ const config: StorybookConfig = {
       // into esbuild and emits classic-runtime JSX. Force the automatic runtime
       // so stories don't need an explicit React import.
       esbuild: { jsx: "automatic", jsxImportSource: "react" },
+      // next-auth/react reads process.env at module scope; the browser has no
+      // `process`, so every story in the bundle died on the reference.
+      define: { "process.env": "{}" },
       resolve: {
         alias: {
           "next/link": stub("next-link.tsx"),

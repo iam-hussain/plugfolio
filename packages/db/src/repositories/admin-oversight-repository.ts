@@ -251,10 +251,22 @@ export function createAdminAnalyticsRepository(
             orderBy: { _count: { productId: "desc" } },
             take: topLimit,
           }),
-          db.$queryRaw<{ day: Date; taps: bigint }[]>`
-            SELECT date_trunc('day', "occurredAt") AS day, count(*) AS taps
-            FROM "Tap" WHERE "occurredAt" >= ${since30}
-            GROUP BY 1 ORDER BY 1`,
+          // Mongo has no SQL: a $dateToString group is the taps-per-day rollup,
+          // kept in the DB because Tap is the append-only high-volume table.
+          db.tap.aggregateRaw({
+            pipeline: [
+              { $match: { occurredAt: { $gte: { $date: since30.toISOString() } } } },
+              {
+                $group: {
+                  _id: {
+                    $dateToString: { format: "%Y-%m-%d", date: "$occurredAt", timezone: "UTC" },
+                  },
+                  taps: { $sum: 1 },
+                },
+              },
+              { $sort: { _id: 1 } },
+            ],
+          }),
         ]);
 
       // Resolve display names for the leaders (two small IN queries).
@@ -272,8 +284,9 @@ export function createAdminAnalyticsRepository(
       const productNames = new Map(products.map((p) => [p.id, p]));
 
       // Gap-fill the 30 days so the trend chart always renders full-width.
+      // aggregateRaw returns [{ _id: "YYYY-MM-DD", taps }] — cast the raw docs.
       const tapsByDay = new Map(
-        byDay.map((row) => [row.day.toISOString().slice(0, 10), Number(row.taps)]),
+        (byDay as unknown as { _id: string; taps: number }[]).map((row) => [row._id, row.taps]),
       );
       const DAY_MS = 24 * 60 * 60 * 1000;
       const tapsPerDay = Array.from({ length: 30 }, (_, i) => {

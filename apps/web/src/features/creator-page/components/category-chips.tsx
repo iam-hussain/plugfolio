@@ -20,10 +20,12 @@ function Chip({ href, active, children }: { href: Route; active: boolean; childr
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "rounded-pill shrink-0 border px-[13px] py-[7px] font-mono text-[11px] font-bold",
+        // Filters, not links out: square-shouldered (r-image) and text-led, so
+        // they never read as the circular icon-only socials above them.
+        "rounded-image inline-flex min-h-10 shrink-0 items-center border px-4 py-[9px] text-[13px] font-semibold transition-colors",
         active
           ? "border-primary bg-primary text-primary-foreground"
-          : "border-border text-muted-foreground",
+          : "border-border bg-card text-muted-foreground hover:border-primary hover:text-primary",
       )}
     >
       {children}
@@ -36,7 +38,7 @@ export function CategoryChips({ handle, categories, activeId }: CategoryChipsPro
   const active = categories.find((category) => category.id === activeId) ?? null;
 
   return (
-    <nav aria-label="Categories" className="pt-5">
+    <nav aria-label="Categories" className="pt-2">
       <div className="flex gap-2 overflow-x-auto pb-1">
         <Chip href={`/${handle}` as Route} active={!active}>
           All

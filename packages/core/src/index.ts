@@ -39,6 +39,8 @@ export type {
   DiscoveryReadRepository,
   DiscoveryCreator,
   DiscoveryProduct,
+  DiscoveryPost,
+  DiscoveryPostTag,
 } from "./ports/discovery-repository";
 export type {
   EarningsReadRepository,
@@ -67,7 +69,7 @@ export type {
   YouTubeChannel,
   YouTubeGateway,
 } from "./ports/social-connection-repository";
-export type { FollowRepository } from "./ports/follow-repository";
+export type { FollowRepository, FollowedCreator } from "./ports/follow-repository";
 export type {
   CommentRepository,
   CommentView,
@@ -109,6 +111,12 @@ export {
   addCommentInput,
   type AddCommentInput,
 } from "./schemas/shopper-social";
+export {
+  followSort,
+  type FollowSort,
+  followingQuery,
+  type FollowingQuery,
+} from "./schemas/following";
 export {
   createBusinessInput,
   type CreateBusinessInput,
@@ -203,7 +211,12 @@ export {
   listProfileProducts,
   type CreatorPageReadDeps,
 } from "./services/creator-page-reads";
-export { exploreCreators, exploreProducts, type ExploreDeps } from "./services/explore";
+export {
+  exploreCreators,
+  exploreProducts,
+  explorePosts,
+  type ExploreDeps,
+} from "./services/explore";
 export { getEarnings, type EarningsReadDeps } from "./services/get-earnings";
 export { getMyProfiles, type ProfileReadDeps } from "./services/get-my-profiles";
 export {
@@ -419,6 +432,13 @@ export {
   getProductComments,
   type ShopperSocialDeps,
 } from "./services/shopper-social";
+export {
+  getFollowingList,
+  markFollowingSeen,
+  FOLLOWING_PAGE_SIZE,
+  type FollowingList,
+  type FollowingListDeps,
+} from "./services/following-list";
 export {
   createBusiness,
   getMyBusiness,

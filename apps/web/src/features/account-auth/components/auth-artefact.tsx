@@ -275,7 +275,6 @@ export function RoleArtefact({ role }: { role: AuthRole }) {
   const Art = role === "shopper" ? ShopperFan : role === "business" ? BusinessBrief : CreatorCard;
   return (
     <div className="grid w-full justify-items-center gap-5">
-      <RoleEyebrow label="I'm back" />
       <div className="hidden lg:block lg:w-[min(80%,320px)]">
         <Art />
       </div>

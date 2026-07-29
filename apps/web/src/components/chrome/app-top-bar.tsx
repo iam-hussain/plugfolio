@@ -1,51 +1,101 @@
+import { getMemberHandle } from "@plugfolio/core";
+import { Button } from "@plugfolio/ui";
+import type { Route } from "next";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage, Button } from "@plugfolio/ui";
 import { auth } from "@/server/auth";
+import { repositories } from "@/server/container";
 import { Logo } from "@/components/brand";
+import { AccountMenu, type AccountMenuProfile } from "./account-menu";
 import { SearchIcon, UserIcon } from "./icons";
 
 /**
- * App top bar — carried by every public shopper screen (Dev Spec §03, design-
- * out discover/creator top bar). Left: PlugMark + wordmark → home, on the
- * 1180px inner. Right on mobile: search + the account slot (the app chrome);
- * right on desktop: Explore / Log in text nav + the "Create your page" CTA,
- * or the avatar when signed in. Server Component so the slot reflects the
- * session without a client round-trip; nothing here ever walls the buy path.
+ * App top bar — the one shared header on every page (Dev Spec §03; §7 unified
+ * chrome). Left: PlugMark + wordmark → home.
+ *
+ * Signed out (a prospect): the full marketing nav (Explore · How it works · For
+ * creators · For business) with Log in + the "Explore creators" CTA on desktop.
+ *
+ * Signed in: Explore · Following, and the account menu (DESIGN chrome.js) — the
+ * avatar + mode pill that opens the roles/profiles dropdown. Server Component so
+ * the session and the profile list resolve without a client round-trip; nothing
+ * here ever walls the buy path.
  */
+const MARKETING_NAV: readonly { label: string; href: Route }[] = [
+  { label: "Explore", href: "/explore" as Route },
+  { label: "How it works", href: "/how-it-works" as Route },
+  { label: "For creators", href: "/for-creators" as Route },
+  { label: "For business", href: "/for-business" as Route },
+];
+
+const SIGNED_IN_NAV: readonly { label: string; href: Route }[] = [
+  { label: "Explore", href: "/explore" as Route },
+  { label: "Following", href: "/following" as Route },
+];
+
 export async function AppTopBar() {
   const session = await auth();
   const user = session?.user;
-  const initial = (user?.name ?? user?.email ?? "?").trim().charAt(0).toUpperCase();
+
+  // Signed-in: gather the account menu's data (handle, roles, business).
+  const menu = user
+    ? await (async () => {
+        const [handle, accessible, business] = await Promise.all([
+          getMemberHandle({ users: repositories.users }, user.id),
+          repositories.profiles.listAccessibleByUser(user.id),
+          repositories.businesses.findByUser(user.id),
+        ]);
+        const profiles: AccountMenuProfile[] = accessible.map((profile) => ({
+          username: profile.username,
+          role: profile.role === "admin" ? "Dashboard" : "Manager",
+        }));
+        const resolvedHandle = handle ?? user.email?.split("@")[0] ?? "you";
+        return {
+          name: user.name ?? `@${resolvedHandle}`,
+          handle: resolvedHandle,
+          email: user.email ?? "",
+          avatarUrl: user.image ?? null,
+          profiles,
+          hasBusiness: business !== null,
+        };
+      })()
+    : null;
 
   return (
     <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
-      <div className="mx-auto flex h-14 w-full max-w-[1180px] items-center justify-between px-5 lg:h-[62px] lg:px-11">
+      <div className="mx-auto flex h-14 w-full max-w-[1180px] items-center justify-between gap-4 px-5 lg:h-[62px] lg:px-11">
         <Link href="/" aria-label="Plugfolio home" className="flex items-center">
           <Logo layout="horizontal" tone="auto" />
         </Link>
-        <div className="flex items-center gap-1 lg:gap-4">
-          <Link
-            href="/explore"
-            className="text-muted-foreground hover:text-foreground hidden text-sm font-semibold lg:inline"
-          >
-            Explore
-          </Link>
-          <Button variant="ghost" size="icon-sm" asChild className="lg:hidden">
-            <Link href="/explore" aria-label="Search creators">
-              <SearchIcon />
+
+        <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
+          {(user ? SIGNED_IN_NAV : MARKETING_NAV).map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-muted-foreground hover:text-foreground text-sm font-semibold"
+            >
+              {item.label}
             </Link>
-          </Button>
-          {user ? (
-            <Link href="/account" aria-label="Your account" className="ml-1">
-              <Avatar className="size-8">
-                {user.image ? <AvatarImage src={user.image} alt="" /> : null}
-                <AvatarFallback className="bg-muted text-foreground text-xs">
-                  {initial}
-                </AvatarFallback>
-              </Avatar>
-            </Link>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-1 lg:gap-3">
+          {menu ? (
+            <>
+              <Button variant="ghost" size="icon-sm" asChild className="lg:hidden">
+                <Link href="/explore" aria-label="Search creators">
+                  <SearchIcon />
+                </Link>
+              </Button>
+              <AccountMenu {...menu} />
+            </>
           ) : (
             <>
+              <Button variant="ghost" size="icon-sm" asChild className="lg:hidden">
+                <Link href="/explore" aria-label="Search creators">
+                  <SearchIcon />
+                </Link>
+              </Button>
               <Link
                 href="/signin"
                 className="text-foreground hidden text-sm font-semibold lg:inline"
@@ -53,10 +103,10 @@ export async function AppTopBar() {
                 Log in
               </Link>
               <Link
-                href="/join?as=creator"
+                href="/explore"
                 className="bg-primary text-primary-foreground rounded-pill hidden px-[18px] py-[9px] text-sm font-semibold lg:inline-flex"
               >
-                Create your page
+                Explore creators
               </Link>
               <Button variant="ghost" size="icon-sm" asChild className="lg:hidden">
                 <Link href="/signin" aria-label="Sign in">

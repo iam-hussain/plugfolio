@@ -95,7 +95,7 @@ export function createRequirementRepository(db: PrismaClient = prisma): Requirem
     },
     async listOpen(limit): Promise<readonly RequirementView[]> {
       const rows = await db.requirement.findMany({
-        where: { closedAt: null },
+        where: { closedAt: { isSet: false } },
         orderBy: { createdAt: "desc" },
         take: limit,
         select: requirementSelect,
@@ -121,7 +121,7 @@ export function createRequirementRepository(db: PrismaClient = prisma): Requirem
     async close(requirementId): Promise<void> {
       // Keeps the first close timestamp on retries.
       await db.requirement.updateMany({
-        where: { id: requirementId, closedAt: null },
+        where: { id: requirementId, closedAt: { isSet: false } },
         data: { closedAt: new Date() },
       });
     },
@@ -241,7 +241,7 @@ export function createCollabRepository(db: PrismaClient = prisma): CollabReposit
       // Keep the first timestamp on retries: only fill if still null.
       const field = side === "business" ? "businessAgreedAt" : "creatorAgreedAt";
       await db.collab.updateMany({
-        where: { id: collabId, [field]: null },
+        where: { id: collabId, [field]: { isSet: false } },
         data: { [field]: at },
       });
     },

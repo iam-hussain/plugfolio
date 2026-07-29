@@ -1,5 +1,6 @@
 import type {
   DiscoveryCreator,
+  DiscoveryPost,
   DiscoveryProduct,
   DiscoveryReadRepository,
 } from "../ports/discovery-repository";
@@ -31,4 +32,11 @@ export async function exploreProducts(
   query?: string,
 ): Promise<readonly DiscoveryProduct[]> {
   return deps.discovery.listProducts(cleanQuery(query), PAGE_SIZE);
+}
+
+export async function explorePosts(
+  deps: ExploreDeps,
+  query?: string,
+): Promise<readonly DiscoveryPost[]> {
+  return deps.discovery.listPosts(cleanQuery(query), PAGE_SIZE);
 }

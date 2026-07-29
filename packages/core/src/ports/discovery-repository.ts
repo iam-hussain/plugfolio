@@ -20,9 +20,31 @@ export type DiscoveryProduct = ShopperProduct & {
   readonly username: string;
 };
 
+/** One tagged product pinned on a wall post — name, price and the anchor tone. */
+export type DiscoveryPostTag = {
+  readonly productId: string;
+  readonly name: string;
+  readonly priceCents: number | null;
+  readonly currency: string;
+  /** offer = live coupon, own = creator's product, affiliate = plain (§Tags). */
+  readonly tone: "affiliate" | "offer" | "own";
+};
+
+/** A post on the explore wall — the shoppable tile ("tap a post, see the thing"). */
+export type DiscoveryPost = {
+  readonly id: string;
+  readonly username: string;
+  readonly mediaUrl: string;
+  /** Up to 3 tags shown on the tile; the rest collapse into a "+N" pill. */
+  readonly tags: readonly DiscoveryPostTag[];
+  readonly productCount: number;
+};
+
 export type DiscoveryReadRepository = {
   /** Creators matching `query` (username contains, case-insensitive; "" = all). */
   listCreators(query: string, limit: number): Promise<readonly DiscoveryCreator[]>;
   /** Products matching `query` (title contains, case-insensitive; "" = all). */
   listProducts(query: string, limit: number): Promise<readonly DiscoveryProduct[]>;
+  /** Visible posts matching `query` (caption or handle; "" = all), newest first. */
+  listPosts(query: string, limit: number): Promise<readonly DiscoveryPost[]>;
 };

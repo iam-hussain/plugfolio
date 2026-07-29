@@ -95,19 +95,19 @@
  * than borrowing a role's colour.
  */
 [data-role="creator"] {
-  --role-grad-a: #8c6901;
-  --role-grad-b: #644a02;
-  --role-solid: #e5c787;
-}
-[data-role="shopper"] {
-  --role-grad-a: #7c3aed;
-  --role-grad-b: #5d01c0;
-  --role-solid: #c9b6ff;
-}
-[data-role="business"] {
   --role-grad-a: #0375b6;
   --role-grad-b: #015383;
   --role-solid: #a9d8ff;
+}
+[data-role="shopper"] {
+  --role-grad-a: #0b845e;
+  --role-grad-b: #05543d;
+  --role-solid: #8fe9c4;
+}
+[data-role="business"] {
+  --role-grad-a: #c81e1e;
+  --role-grad-b: #7f1d1d;
+  --role-solid: #fca5a5;
 }
 [data-role="generic"] {
   --role-grad-a: #7c3aed;

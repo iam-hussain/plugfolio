@@ -33,9 +33,12 @@ go direct via `@plugfolio/core` (ADR-0014), no admin endpoints.
 ## Surfaces
 
 - **`/support`** (web, public — a static segment under `(public)`, and `support` is in
-  `BASELINE_RESERVED_USERNAMES` so no creator handle shadows it): category picker with a
-  per-category hint line, message box, and an always-asked contact-email field (prefilled from
-  the session but editable). Success state confirms which address we'll reply to.
+  `BASELINE_RESERVED_USERNAMES` so no creator handle shadows it): follows DESIGN `support.html` —
+  a "Help" header, a "who's asking" chip (anon "No account needed" / signed-in "@handle"), the
+  category as **radio cards** (the whole set visible at once, not a `<select>` — the reader is
+  often locked out and shouldn't fight a native picker) with a per-category hint line, a message
+  box, and an always-asked contact-email field (prefilled from the session but editable), then a
+  "What happens next" trio. Success state confirms which address we'll reply to.
 - **Entry points:** the sign-in page ("Can't access your email?" → `?category=lost_email_access`),
   the forgot-password page ("Lost the inbox itself?"), the shopper Account page, the business
   home chrome, and the landing footer.

@@ -1,21 +1,27 @@
 import type { YouTubeConnectionView } from "@plugfolio/core";
 import { Button } from "@plugfolio/ui";
 import { SocialGlyph } from "@/features/creator-page";
-import { connectGoogle } from "../connect-social-action";
 
 /**
  * Account-level social connections (ADR-0004): connect Google, then show the
  * YouTube channels it exposes — the pool profile usernames are picked from.
  * Server component; `youtube` is null when the OAuth app isn't configured.
+ *
+ * The connect action arrives as a prop: importing it here would pull
+ * `@/server/auth` into every barrel that re-exports this file, and from there
+ * into anything that renders outside a Next server (Storybook, tests).
  */
 
 const subscriberFormat = new Intl.NumberFormat("en", { notation: "compact" });
 
 export function SocialConnections({
   youtube,
+  connectAction,
   bare = false,
 }: {
   youtube: YouTubeConnectionView | null;
+  /** Starts the Google OAuth connect — a connection, never a login. */
+  connectAction: () => void | Promise<void>;
   /** Skip the section heading — for callers that supply their own (a Card). */
   bare?: boolean;
 }) {
@@ -25,9 +31,9 @@ export function SocialConnections({
         Google connect isn&apos;t configured on this server yet. Meta (Instagram) is coming next.
       </p>
     ) : youtube.connected ? (
-      <YouTubeChannelList channels={youtube.channels} />
+      <YouTubeChannelList channels={youtube.channels} connectAction={connectAction} />
     ) : (
-      <form action={connectGoogle}>
+      <form action={connectAction}>
         <Button type="submit" variant="outline" size="sm">
           <SocialGlyph platform="youtube" />
           Connect Google (YouTube)
@@ -50,8 +56,10 @@ export function SocialConnections({
 
 function YouTubeChannelList({
   channels,
+  connectAction,
 }: {
   channels: Extract<YouTubeConnectionView, { connected: true }>["channels"];
+  connectAction: () => void | Promise<void>;
 }) {
   if (channels.length === 0) {
     return (
@@ -59,7 +67,7 @@ function YouTubeChannelList({
         <p className="text-muted-foreground text-sm">
           Google is connected, but no channels are readable — reconnect to refresh access.
         </p>
-        <form action={connectGoogle}>
+        <form action={connectAction}>
           <Button type="submit" variant="outline" size="sm">
             Reconnect
           </Button>

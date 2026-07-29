@@ -108,6 +108,27 @@ async function main() {
     },
   });
 
+  // A product shelved directly with no post behind it (design §"two kinds of
+  // thing, one wall") so the creator page renders a product tile — price chip
+  // plus the live-offer flag — beside the post tiles.
+  const STANDALONE_PRODUCT_ID = "00000000-0000-0000-0000-0000000000c3";
+  await prisma.product.upsert({
+    where: { id: STANDALONE_PRODUCT_ID },
+    update: { imageUrl: "/images/products-sample/product-00003.jpg" },
+    create: {
+      id: STANDALONE_PRODUCT_ID,
+      profileId: PROFILE_ID,
+      categoryId: CATEGORY_ID,
+      title: "Travel Flask",
+      affiliateUrl: "https://example.com/affiliate/travel-flask",
+      imageUrl: "/images/products-sample/product-00003.jpg",
+      couponCode: "SPRING20",
+      offerEndsAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+      priceCents: 1890,
+      currency: "usd",
+    },
+  });
+
   // One post with the product tagged (the shoppable path) and one without
   // (grid must render untagged posts too).
   await prisma.post.upsert({

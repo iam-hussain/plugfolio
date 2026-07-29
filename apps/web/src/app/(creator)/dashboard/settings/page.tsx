@@ -13,6 +13,7 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } fro
 import { ExternalLink } from "lucide-react";
 import { env } from "@/env";
 import { SocialConnections } from "@/features/account-auth";
+import { connectGoogle } from "@/features/account-auth/connect-social-action";
 import {
   DashboardPageHeader,
   DashboardShell,
@@ -117,7 +118,7 @@ export default async function SettingsPage({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <SocialConnections youtube={youtube} bare />
+                <SocialConnections youtube={youtube} connectAction={connectGoogle} bare />
               </CardContent>
             </Card>
 

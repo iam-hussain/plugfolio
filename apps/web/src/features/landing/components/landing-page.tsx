@@ -2,7 +2,7 @@ import { Button, ProductTag, Tile } from "@plugfolio/ui";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Logo } from "@/components/brand";
+import { AppTopBar, SiteFooter } from "@/components/chrome";
 
 /**
  * Landing (/) — the "Tagged Feed" world (DESIGN.md), a Persuade surface.
@@ -43,42 +43,13 @@ const FAN = [
   { rest: "md:[transform:translate(calc(-50%_+_300px),54px)_rotate(15deg)]", hover: "md:hover:[transform:translate(calc(-50%_+_300px),28px)_rotate(15deg)]", z: "md:z-10" },
 ] as const;
 
-const NAV = [
-  { label: "Explore", href: "/explore" },
-  { label: "How it works", href: "#how" },
-  { label: "For creators", href: "/signin" },
-  { label: "For business", href: "/collabs" },
-] as const;
-
 const eyebrow = "font-sans text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground";
 
 export function LandingPage() {
   return (
     <div className="bg-background text-foreground min-h-dvh">
-      <header className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-4 px-5 py-5 lg:px-10">
-        <Link href="/" aria-label="Plugfolio home" className="flex items-center">
-          <Logo layout="horizontal" tone="auto" />
-        </Link>
-        <nav aria-label="Primary" className="hidden items-center gap-7 md:flex">
-          {NAV.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href as Route}
-              className="text-muted-foreground hover:text-foreground text-[13px] font-semibold"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
-            <Link href="/signin">Log in</Link>
-          </Button>
-          <Button variant="primary" size="sm" asChild>
-            <Link href="/explore">Explore creators</Link>
-          </Button>
-        </div>
-      </header>
+      {/* The one shared top bar (components/chrome) — identical on every page. */}
+      <AppTopBar />
 
       <main id="main">
         {/* ── Section 1 — the deck hero ── */}
@@ -211,6 +182,7 @@ export function LandingPage() {
             <div className="mt-[clamp(30px,4vw,46px)] grid gap-4 md:grid-cols-2">
               <DoorCard
                 href="/explore"
+                role="shopper"
                 micro="You came to buy"
                 title="Shop"
                 copy="Find the creators you already follow and buy what they post, at the retailer."
@@ -218,33 +190,14 @@ export function LandingPage() {
                 wide
                 list={["No account, ever", "Coupon codes, one tap to copy", "Follow only if you want to", "Every tap opens the real retailer"]}
               />
-              <DoorCard href="/signin" micro="You make the posts" title="Create" copy="Up to five shoppable pages, every tap measured per post." go="Set up your page" />
-              <DoorCard href="/collabs" micro="You run a brand" title="Brands" copy="Post a brief, or approach a creator from their page." go="Find creators" />
+              <DoorCard href="/join?as=creator" role="creator" micro="You make the posts" title="Create" copy="Up to five shoppable pages, every tap measured per post." go="Set up your page" />
+              <DoorCard href="/join?as=business" role="business" micro="You run a brand" title="Brands" copy="Post a brief, or approach a creator from their page." go="Find creators" />
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-border border-t px-5 py-8 lg:px-10">
-        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4">
-          <Link href="/" aria-label="Plugfolio home" className="flex items-center">
-            <Logo layout="horizontal" tone="auto" />
-          </Link>
-          <div className="flex flex-wrap items-center gap-5">
-            {[
-              { label: "Explore", href: "/explore" },
-              { label: "For creators", href: "/signin" },
-              { label: "For business", href: "/collabs" },
-              { label: "Support", href: "/support" },
-            ].map((item) => (
-              <Link key={item.label} href={item.href as Route} className="text-muted-foreground hover:text-foreground text-[13px] font-semibold">
-                {item.label}
-              </Link>
-            ))}
-            <span className={eyebrow}>One link, everything shoppable · 2026</span>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter note="One link, everything shoppable · 2026" />
     </div>
   );
 }
@@ -306,6 +259,7 @@ function MockCreator({
 
 function DoorCard({
   href,
+  role,
   micro,
   title,
   copy,
@@ -314,6 +268,8 @@ function DoorCard({
   wide,
 }: {
   href: string;
+  /** Scopes the role colour scheme (same tokens as the register pane). */
+  role: "shopper" | "creator" | "business";
   micro: string;
   title: string;
   copy: string;
@@ -323,19 +279,33 @@ function DoorCard({
 }) {
   return (
     <Link
+      data-role={role}
       href={href as Route}
-      className={`bg-card border-border shadow-rest hover:shadow-lift group/db flex flex-col rounded-card border p-7 no-underline transition-shadow duration-200 ${wide ? "md:row-span-2" : ""}`}
+      className={`bg-card border-border shadow-rest hover:shadow-lift hover:border-role-deep/40 group/db relative flex flex-col overflow-hidden rounded-card border p-7 no-underline transition-[box-shadow,border-color] duration-200 ${wide ? "md:row-span-2" : ""}`}
     >
-      <span className="text-muted-foreground flex items-center gap-2 text-[0.9375rem]">
-        <span className="bg-primary size-[5px] rounded-pill" aria-hidden />
+      {/* The register colour scheme, brought onto the landing: a one-sided top
+          accent in the role's deep hue, and a soft wash of its light tint that
+          warms on hover — each side owns a colour without leaving the canvas. */}
+      <span
+        aria-hidden
+        className="bg-role-deep pointer-events-none absolute inset-x-0 top-0 h-[3px]"
+      />
+      <span
+        aria-hidden
+        className="from-role-solid/35 pointer-events-none absolute inset-0 bg-gradient-to-br via-transparent to-transparent opacity-70 transition-opacity duration-200 group-hover/db:opacity-100"
+      />
+      <span className="text-muted-foreground relative flex items-center gap-2 text-[0.9375rem]">
+        <span className="bg-role-deep size-[6px] rounded-pill" aria-hidden />
         {micro}
       </span>
-      <h3 className="font-display mt-3.5 mb-2.5 text-[clamp(1.875rem,3.6vw,3rem)] font-extrabold leading-none tracking-[-0.035em]">
+      <h3 className="font-display relative mt-3.5 mb-2.5 text-[clamp(1.875rem,3.6vw,3rem)] font-extrabold leading-none tracking-[-0.035em]">
         {title}
       </h3>
-      <p className="text-muted-foreground max-w-[44ch] text-[0.9375rem] leading-[1.55]">{copy}</p>
+      <p className="text-muted-foreground relative max-w-[44ch] text-[0.9375rem] leading-[1.55]">
+        {copy}
+      </p>
       {list ? (
-        <ul className="border-border mt-[22px] border-t">
+        <ul className="border-border relative mt-[22px] border-t">
           {list.map((item) => (
             <li key={item} className="border-border text-muted-foreground border-b py-2.5 text-[0.9375rem]">
               {item}
@@ -343,9 +313,14 @@ function DoorCard({
           ))}
         </ul>
       ) : null}
-      <span className="text-foreground mt-auto flex items-center justify-between pt-6 text-[13px] font-bold">
+      <span className="text-foreground relative mt-auto flex items-center justify-between pt-6 text-[13px] font-bold">
         {go}
-        <span aria-hidden className="transition-transform duration-200 group-hover/db:translate-x-1.5">→</span>
+        <span
+          aria-hidden
+          className="text-role-deep transition-transform duration-200 group-hover/db:translate-x-1.5"
+        >
+          →
+        </span>
       </span>
     </Link>
   );

@@ -3,7 +3,6 @@ import type {
   CreatorPageReadRepository,
   CreatorProductRow,
   ShopperPost,
-  ShopperProduct,
   ShopperProductView,
 } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
@@ -24,7 +23,12 @@ const productSelect = {
 
 /** Admin suspension (docs/implementation/admin-app.md): a suspended profile —
  * or any profile of a suspended account — is off every public read (404). */
-const liveProfile = { suspendedAt: null, user: { suspendedAt: null } } as const;
+// Mongo (Prisma): `{ field: null }` does NOT match an absent optional — a
+// never-suspended profile has no `suspendedAt` at all — so match on unset.
+const liveProfile = {
+  suspendedAt: { isSet: false },
+  user: { suspendedAt: { isSet: false } },
+} as const;
 
 /**
  * Prisma implementation of the `CreatorPageReadRepository` port — the read

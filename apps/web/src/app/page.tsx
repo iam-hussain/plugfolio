@@ -56,9 +56,9 @@ const structuredData = {
   ],
 };
 
-// The landing is session-agnostic marketing (DESIGN: the Persuade surface) —
-// its own header carries only Log in / Explore, so `/` renders without a DB
-// round-trip.
+// The landing is a Persuade surface (DESIGN) that now carries the one shared
+// top bar (components/chrome) like every other page — so its account slot
+// reflects the session, same as /explore and the creator pages.
 export default function HomePage() {
   return (
     <>

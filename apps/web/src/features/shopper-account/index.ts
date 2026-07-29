@@ -11,4 +11,7 @@ export {
   type CommentReplyContext,
 } from "./components/comment-list";
 export { HandleForm, type HandleFormProps } from "./components/handle-form";
+export { AccountPage, type AccountPageProps } from "./components/account-page";
+export { FollowingPage, type FollowingPageProps } from "./components/following-page";
+export { FollowRow, type FollowRowProps } from "./components/follow-row";
 export { CommentClaim } from "./components/comment-claim";

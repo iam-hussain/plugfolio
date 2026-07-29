@@ -83,9 +83,11 @@ const preset = {
           blush: "hsl(var(--tile-blush) / <alpha-value>)",
           foreground: "hsl(var(--tile-foreground) / <alpha-value>)",
         },
-        // The auth top rail — a lighter solid tint of the declared role (or the
-        // generic field). Raw var, no alpha channel: a role hue is a signal.
+        // Role signals — scoped by a `data-role` ancestor. `role-solid` is the
+        // lighter tint (the auth top rail, soft washes); `role-deep` is the
+        // saturated hue (accents, dots). Raw vars, no alpha channel.
         "role-solid": "var(--role-solid)",
+        "role-deep": "var(--role-grad-a)",
         sidebar: {
           // Admin design: the rail sits on the page surface (white / #161320-ish).
           DEFAULT: "hsl(var(--surface) / <alpha-value>)",
