@@ -42,10 +42,14 @@ function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 
+/** Present = a Manager invite: same reset token, distinct email wrapper. */
+export type ManagerInviteContext = { inviterName: string; profileHandle: string };
+
 async function sendLink(
   deps: AccountAuthDeps,
   intent: "verify" | "reset",
   email: string,
+  invite?: ManagerInviteContext,
 ): Promise<void> {
   const { token, tokenHash } = mintToken();
   await deps.tokens.create(
@@ -55,6 +59,9 @@ async function sendLink(
   );
   if (intent === "verify") {
     await deps.mailer.sendVerification(email, `${deps.webOrigin}/verify?token=${token}`);
+  } else if (invite) {
+    // The reset token is unchanged — only the email wrapper differs (ADR-0012).
+    await deps.mailer.sendManagerInvite(email, `${deps.webOrigin}/reset?token=${token}`, invite);
   } else {
     await deps.mailer.sendPasswordReset(email, `${deps.webOrigin}/reset?token=${token}`);
   }
@@ -96,9 +103,16 @@ export async function verifyEmail(deps: AccountAuthDeps, input: VerifyEmailInput
 
 /** The invited-Manager first-password path (brief 04): mail a set-password
  * link straight from the invite — the /reset screen doubles as set-password,
- * and consuming the link marks the email verified. */
-export async function sendSetPasswordLink(deps: AccountAuthDeps, email: string): Promise<void> {
-  await sendLink(deps, "reset", email);
+ * and consuming the link marks the email verified. When `invite` context is
+ * given the invitee gets the distinct Manager-invite email (who + which
+ * profile); without it, the plain reset email. Token machinery is identical
+ * either way. */
+export async function sendSetPasswordLink(
+  deps: AccountAuthDeps,
+  email: string,
+  invite?: ManagerInviteContext,
+): Promise<void> {
+  await sendLink(deps, "reset", email, invite);
 }
 
 export async function requestPasswordReset(

@@ -1,16 +1,116 @@
+import type { Route } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@plugfolio/ui";
+import { Button, SystemMark, SystemScreen } from "@plugfolio/ui";
+import { exploreCreators } from "@plugfolio/core";
+import { Logo } from "@/components/brand";
+import { SiteFooter } from "@/components/chrome";
+import { repositories } from "@/server/container";
 
-// Rendered for unmatched routes and explicit notFound() calls.
-export default function NotFound() {
+/**
+ * 404 (DESIGN 404.html, design-handoff §5.25). A real route — the server
+ * actually serves it — and it carries a SECURITY job: unknown, deleted, hidden
+ * and foreign things (an unknown handle, a hidden post, someone else's collab
+ * thread) all land here with identical words. "You don't have permission" would
+ * confirm the thing exists, which is exactly what a stranger probing for a
+ * private thread wants to learn, so this page never tries to say which happened.
+ *
+ * It is also the one moment to hand a lost visitor back to the product: shopping
+ * never needs an account, so a mistyped handle becomes a wrong turn, not a dead
+ * end — four real creators they can shop from right now.
+ */
+async function suggestedCreators() {
+  // A 404 must render even when discovery can't — the suggestions are a bonus,
+  // never a dependency. If the read fails, the page is still a good 404.
+  try {
+    const creators = await exploreCreators({ discovery: repositories.discovery });
+    return creators.slice(0, 4);
+  } catch {
+    return [];
+  }
+}
+
+export default async function NotFound() {
+  const creators = await suggestedCreators();
+
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-4 px-6 text-center">
-      <p className="text-accent text-sm font-medium uppercase tracking-widest">404</p>
-      <h1 className="font-display text-2xl font-bold">This page isn&apos;t here</h1>
-      <p className="text-muted-foreground">The link may be broken or the page may have moved.</p>
-      <Button asChild variant="outline">
-        <Link href="/">Go home</Link>
-      </Button>
-    </main>
+    <div className="bg-background text-foreground flex min-h-dvh flex-col">
+      <header className="mx-auto flex w-full max-w-[1180px] items-center px-5 py-4 lg:px-11">
+        <Link href="/" aria-label="Plugfolio home" className="flex items-center">
+          <Logo layout="horizontal" tone="auto" />
+        </Link>
+      </header>
+
+      <main className="flex-1">
+        <div className="mx-auto w-full max-w-[1180px] px-5 lg:px-11">
+          <SystemScreen
+            mark={<SystemMark state="unplugged" title="An unplugged plug" />}
+            title="This page doesn’t exist."
+            lede="It may have been removed, or the link might be wrong. Nothing you did caused this."
+            actions={
+              <>
+                <Button asChild variant="primary">
+                  <Link href="/explore">Browse creators</Link>
+                </Button>
+                <Button asChild variant="ghost">
+                  <Link href="/">Go home</Link>
+                </Button>
+              </>
+            }
+          />
+
+          {creators.length > 0 ? (
+            <section className="border-border border-t py-[clamp(32px,5vw,52px)]">
+              <div className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-2">
+                <h2 className="text-title font-extrabold tracking-[-0.02em]">While you’re here</h2>
+                <Link
+                  href="/explore"
+                  className="text-muted-foreground hover:text-primary ml-auto text-label font-semibold"
+                >
+                  See all creators
+                </Link>
+              </div>
+              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-3.5">
+                {creators.map((creator) => (
+                  <li key={creator.id}>
+                    <Link
+                      href={`/${creator.username}` as Route}
+                      className="bg-card shadow-rest hover:shadow-lift rounded-tile block p-2.5 no-underline transition-[transform,box-shadow] duration-200 hover:-translate-y-[3px]"
+                    >
+                      <span className="bg-active rounded-image relative block aspect-square overflow-hidden">
+                        {creator.latestMediaUrl ? (
+                          /* ponytail: unoptimized until the import pipeline pins image domains */
+                          <Image
+                            src={creator.latestMediaUrl}
+                            alt=""
+                            fill
+                            unoptimized
+                            className="object-cover"
+                          />
+                        ) : null}
+                      </span>
+                      <span className="mt-2.5 flex items-center gap-2">
+                        <span className="bg-active text-brand-violet-deep grid size-6 shrink-0 place-items-center rounded-pill text-micro font-extrabold">
+                          {creator.username.charAt(0).toUpperCase()}
+                        </span>
+                        <b className="truncate text-label font-bold">@{creator.username}</b>
+                      </span>
+                      <span className="text-faint mt-[5px] block text-micro">
+                        {creator.postCount} posts · {creator.productCount} things
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-muted-foreground mt-[18px] text-copy">
+                Shopping never needs an account — tap anything.
+              </p>
+            </section>
+          ) : null}
+        </div>
+      </main>
+
+      <SiteFooter />
+    </div>
   );
 }

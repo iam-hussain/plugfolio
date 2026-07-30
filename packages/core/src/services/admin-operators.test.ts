@@ -81,6 +81,9 @@ function makeDeps() {
     async sendPasswordReset(_email, url) {
       sentLinks.push(url);
     },
+    async sendManagerInvite(_email, url) {
+      sentLinks.push(url);
+    },
   };
   return {
     deps: {

@@ -1,7 +1,5 @@
 /** Public surface of the creator-page feature (§5: import from here only). */
 export { PostGrid, type PostGridProps } from "./components/post-grid";
-export { ShareButton } from "./components/share-button";
-export { QrButton } from "./components/qr-button";
 export { SharePanel, type SharePanelProps } from "./components/share-panel";
 export { PageShare, type PageShareProps } from "./components/page-share";
 export { CategoryChips, type CategoryChipsProps } from "./components/category-chips";

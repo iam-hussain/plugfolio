@@ -71,6 +71,7 @@ export type {
   YouTubeGateway,
 } from "./ports/social-connection-repository";
 export type { FollowRepository, FollowedCreator } from "./ports/follow-repository";
+export type { AdPlacement, AdPlacementRepository } from "./ports/ad-placement-repository";
 export type {
   CommentRepository,
   CommentView,
@@ -132,6 +133,18 @@ export {
   commentSort,
   type CommentSort,
 } from "./schemas/comment-reaction";
+export {
+  createAdPlacementInput,
+  type CreateAdPlacementInput,
+} from "./schemas/ad-placement";
+export {
+  getLiveAdPlacement,
+  listAdPlacements,
+  createAdPlacement,
+  removeAdPlacement,
+  ADS_FLAG,
+  type AdPlacementDeps,
+} from "./services/ad-placements";
 export {
   followSort,
   type FollowSort,
@@ -384,6 +397,13 @@ export {
   type AdminSupportDeps,
 } from "./services/support";
 export { createResendMailer, type ResendMailerConfig } from "./adapters/resend-mailer";
+export {
+  verificationEmail,
+  passwordResetEmail,
+  managerInviteEmail,
+  type EmailContent,
+  type ManagerInviteContext,
+} from "./adapters/email-templates";
 export {
   listOperators,
   inviteOperator,

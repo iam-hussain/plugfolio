@@ -24,6 +24,7 @@ import {
   LayoutDashboard,
   LifeBuoy,
   LogOut,
+  Megaphone,
   MessageSquare,
   ScrollText,
   Shield,
@@ -72,7 +73,10 @@ export const NAV: readonly { label: string | null; items: readonly NavItem[] }[]
   },
   {
     label: "Insight",
-    items: [{ title: "Analytics", href: "/analytics", icon: BarChart3 }],
+    items: [
+      { title: "Analytics", href: "/analytics", icon: BarChart3 },
+      { title: "Sponsored", href: "/sponsored", icon: Megaphone },
+    ],
   },
   {
     label: "System",

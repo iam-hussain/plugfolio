@@ -24,15 +24,25 @@ export const inviteManagerInput = z.object({
 
 export type InviteManagerInput = z.infer<typeof inviteManagerInput>;
 
+/** Asserts the caller Admins the profile and returns it (so the invite email
+ * can name the profile the invitee is being handed). */
+async function requireOwnedProfile(
+  deps: Pick<ProfileManagerDeps, "profiles">,
+  userId: string,
+  profileId: string,
+) {
+  const owned = await deps.profiles.listByUser(userId);
+  const profile = owned.find((p) => p.id === profileId);
+  if (!profile) throw new ForbiddenError("Only the profile Admin can manage access");
+  return profile;
+}
+
 async function requireAdmin(
   deps: Pick<ProfileManagerDeps, "profiles">,
   userId: string,
   profileId: string,
 ): Promise<void> {
-  const owned = await deps.profiles.listByUser(userId);
-  if (!owned.some((profile) => profile.id === profileId)) {
-    throw new ForbiddenError("Only the profile Admin can manage access");
-  }
+  await requireOwnedProfile(deps, userId, profileId);
 }
 
 export async function inviteManager(
@@ -40,7 +50,7 @@ export async function inviteManager(
   userId: string,
   input: InviteManagerInput,
 ): Promise<void> {
-  await requireAdmin(deps, userId, input.profileId);
+  const profile = await requireOwnedProfile(deps, userId, input.profileId);
   if ((await deps.managers.count(input.profileId)) >= MAX_MANAGERS_PER_PROFILE) {
     throw new ConflictError(`A profile has at most ${MAX_MANAGERS_PER_PROFILE} Managers`);
   }
@@ -51,8 +61,15 @@ export async function inviteManager(
   await deps.managers.add(input.profileId, invitee.id);
   // Brief 04 edge: an invitee with no password yet gets a set-password link —
   // the /reset screen doubles as their first-password screen, and consuming
-  // it marks the email verified (ADR-0012).
-  if (invitee.passwordless) await sendSetPasswordLink(deps.auth, input.email);
+  // it marks the email verified (ADR-0012). It rides the distinct
+  // Manager-invite email, which leads with WHO invited them and WHICH profile.
+  if (invitee.passwordless) {
+    const inviterHandle = await deps.users.getHandle(userId);
+    await sendSetPasswordLink(deps.auth, input.email, {
+      inviterName: inviterHandle ?? "A Plugfolio creator",
+      profileHandle: profile.username,
+    });
+  }
 }
 
 export async function removeManager(

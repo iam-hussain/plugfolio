@@ -12,6 +12,7 @@ import {
   createAdminRequirementRepository,
   createAdminSupportRepository,
   createAdminUserRepository,
+  createAdPlacementRepository,
   createAppSettingsRepository,
   createAuthAccountRepository,
   createAuthTokenRepository,
@@ -28,6 +29,7 @@ export const repositories = {
   admins: createAdminUserRepository(),
   audit: createAdminAuditRepository(),
   settings: createAppSettingsRepository(),
+  ads: createAdPlacementRepository(),
   members: createAdminMemberRepository(),
   profiles: createAdminProfileRepository(),
   content: createAdminContentRepository(),
@@ -53,6 +55,11 @@ const consoleMailer: AuthMailer = {
   async sendPasswordReset(email, url) {
     console.log(`[admin mailer] password link for ${email}: ${url}`);
   },
+  async sendManagerInvite(email, url, context) {
+    console.log(
+      `[admin mailer] manager invite for ${email} (from ${context.inviterName} on @${context.profileHandle}): ${url}`,
+    );
+  },
 };
 
 /** Real transport when configured (ADR-0015); console fallback in dev. */
@@ -73,6 +80,13 @@ export const adminResetHandleDeps = {
   ...adminMembersDeps,
   users: repositories.users,
   settings: repositories.settings,
+};
+
+/** Sponsored placements (ADR-0020) — operator-placed, gated on the `ads` flag. */
+export const adPlacementDeps = {
+  ads: repositories.ads,
+  settings: repositories.settings,
+  now: () => new Date(),
 };
 
 /** Member email sends (resend verification / password reset) — product-auth

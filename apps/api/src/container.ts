@@ -106,6 +106,11 @@ const consoleMailer: AuthMailer = {
   async sendPasswordReset(email, url) {
     console.log(`[auth] password-reset link for ${email}: ${url}`);
   },
+  async sendManagerInvite(email, url, context) {
+    console.log(
+      `[auth] manager invite for ${email} (from ${context.inviterName} on @${context.profileHandle}): ${url}`,
+    );
+  },
 };
 
 // Real transport when configured (ADR-0015); links log to the console in dev.

@@ -234,11 +234,9 @@ export default async function CreatorPage({
           <RequestCollabForm profileId={page.id} />
         </div>
       ) : null}
+      {/* The "Shelves" label belongs to ShelfChips now; the page had one too. */}
       {page.categories.length > 0 ? (
         <div className="mt-8">
-          <span className="text-muted-foreground text-xs font-semibold uppercase tracking-[0.06em]">
-            Shelves
-          </span>
           <CategoryChips
             handle={page.username}
             categories={page.categories}

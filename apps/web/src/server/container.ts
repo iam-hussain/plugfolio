@@ -11,6 +11,7 @@ import {
   createCreatorPageRepository,
   createDiscoveryRepository,
   createEarningsRepository,
+  createAdPlacementRepository,
   createFollowRepository,
   createProfileRepository,
   createRequirementRepository,
@@ -30,6 +31,7 @@ export const repositories = {
   earnings: createEarningsRepository(),
   profiles: createProfileRepository(),
   follows: createFollowRepository(),
+  ads: createAdPlacementRepository(),
   comments: createCommentRepository(),
   categories: createCategoryRepository(),
   profileLinks: createProfileLinkRepository(),
@@ -45,6 +47,13 @@ export const repositories = {
 };
 
 export const clock = { now: () => new Date() };
+
+/** Sponsored placements (ADR-0020) — admin-placed, gated on the `ads` flag. */
+export const adPlacementDeps = {
+  ads: repositories.ads,
+  settings: repositories.settings,
+  now: clock.now,
+};
 
 /** The business-collab service dependency bundle, wired once. */
 export const businessCollabDeps = {

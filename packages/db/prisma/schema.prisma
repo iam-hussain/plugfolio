@@ -119,6 +119,7 @@ model Profile {
   posts      Post[]
   products   Product[]
   taps       Tap[]
+  views      View[]
   codeCopies CodeCopy[]
   followers  Follow[]
   comments   Comment[]  @relation("PageComments")
@@ -349,6 +350,7 @@ model Post {
   productIds String[]
   products  Product[] @relation(fields: [productIds], references: [id])
   taps      Tap[]
+  views     View[]
   codeCopies CodeCopy[]
   createdAt DateTime  @default(now())
 
@@ -381,6 +383,7 @@ model Product {
   postIds       String[]
   posts         Post[]   @relation(fields: [postIds], references: [id])
   taps          Tap[]
+  views         View[]
   codeCopies    CodeCopy[]
   comments      Comment[]
   createdAt     DateTime @default(now())
@@ -550,6 +553,45 @@ enum TapSource {
   product
 }
 
+/// A shoppable surface opening — the denominator taps were always missing.
+/// 1,284 taps reads as enormous until you see 20,410 views, so the dashboard
+/// never shows one without the other (docs/implementation/dashboard.md).
+///
+/// Append-only like Tap and CodeCopy (§6.6): the Traffic card is a rebuildable
+/// projection over these rows, never a mutated counter. Nothing here is a
+/// person — the device id is the same signed anonymous token taps use
+/// (ADR-0002), and no view is ever attributed to an account.
+model View {
+  id             String     @id @default(uuid()) @map("_id")
+  profileId      String
+  profile        Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  /// Set on a post view; SetNull so the event survives the post's deletion.
+  postId         String?
+  post           Post?      @relation(fields: [postId], references: [id], onDelete: SetNull)
+  /// Set on a product view. SetNull for the same reason.
+  productId      String?
+  product        Product?   @relation(fields: [productId], references: [id], onDelete: SetNull)
+  deviceId       String
+  /// Idempotency key — in-app browsers double-fire, and React strict mode
+  /// mounts the beacon twice in development (§6.8).
+  idempotencyKey String     @unique
+  surface        ViewSurface
+  occurredAt     DateTime   @default(now())
+
+  @@index([profileId, occurredAt])
+  @@index([postId, occurredAt])
+  @@index([productId, occurredAt])
+}
+
+/// Which surface opened. Mirrors TapSource so the two projections line up row
+/// for row — "views · taps" on one line only reads if they count the same
+/// three places.
+enum ViewSurface {
+  profile
+  post
+  product
+}
+
 /// A coupon-code copy — the second attribution event (ADR-0011), append-only
 /// like Tap. In-store redemption happens beyond Plugfolio's sight, so copies
 /// are the only measured signal and are labeled "redemption not tracked".
@@ -567,4 +609,24 @@ model CodeCopy {
 
   @@index([profileId, occurredAt])
   @@index([productId, occurredAt])
+}
+
+/// A sponsored placement on Explore (ADR-0020). Created by an operator in the
+/// admin app and shown only while the `ads` flag is on — there is no plan, no
+/// self-serve purchase and no billing; deals are agreed off-platform like
+/// everything else in v1 (§2.3). No targeting: it is shown to everyone or to
+/// nobody, because the shopper surface has no account to target against.
+model AdPlacement {
+  id          String    @id @default(uuid()) @map("_id")
+  title       String
+  description String?
+  imageUrl    String?
+  /// Where the slot goes. Outbound, like every other tap on the surface.
+  url         String
+  /// The window. Unset `activeUntil` = runs until an operator stops it.
+  activeFrom  DateTime  @default(now())
+  activeUntil DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([activeFrom])
 }

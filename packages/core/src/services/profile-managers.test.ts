@@ -18,6 +18,7 @@ function makeDeps(existingManagers = 0, options: { inviteePasswordless?: boolean
   const added: string[] = [];
   const removed: string[] = [];
   const setPasswordMails: string[] = [];
+  const inviteMails: { email: string; inviterName: string; profileHandle: string }[] = [];
 
   const profiles: ProfileRepository = {
     async listByUser(userId) {
@@ -75,12 +76,21 @@ function makeDeps(existingManagers = 0, options: { inviteePasswordless?: boolean
       sendPasswordReset: async (email: string) => {
         setPasswordMails.push(email);
       },
+      // A passwordless Manager invite rides the distinct invite email now.
+      sendManagerInvite: async (
+        email: string,
+        _url: string,
+        context: { inviterName: string; profileHandle: string },
+      ) => {
+        setPasswordMails.push(email);
+        inviteMails.push({ email, ...context });
+      },
     },
     webOrigin: "http://localhost",
     now: () => new Date("2026-07-24"),
   } as unknown as AccountAuthDeps;
 
-  return { deps: { profiles, managers, users, auth }, added, removed, setPasswordMails };
+  return { deps: { profiles, managers, users, auth }, added, removed, setPasswordMails, inviteMails };
 }
 
 describe("inviteManager", () => {
@@ -92,11 +102,17 @@ describe("inviteManager", () => {
     expect(setPasswordMails).toEqual([]);
   });
 
-  it("a passwordless invitee gets the set-password link (brief 04)", async () => {
-    const { deps, added, setPasswordMails } = makeDeps(0, { inviteePasswordless: true });
+  it("a passwordless invitee gets the distinct Manager-invite email (brief 04)", async () => {
+    const { deps, added, setPasswordMails, inviteMails } = makeDeps(0, {
+      inviteePasswordless: true,
+    });
     await inviteManager(deps, ADMIN, { profileId: PROFILE_ID, email: "new@example.com" });
     expect(added).toEqual([MANAGER_USER]);
     expect(setPasswordMails).toEqual(["new@example.com"]);
+    // The invite email is named: it leads with WHO invited them and WHICH profile.
+    expect(inviteMails).toEqual([
+      { email: "new@example.com", inviterName: "user-abc12345", profileHandle: "lena" },
+    ]);
   });
 
   it("only the Admin can invite — a Manager cannot", async () => {

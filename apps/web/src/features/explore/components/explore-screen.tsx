@@ -1,6 +1,16 @@
-import type { DiscoveryCreator, DiscoveryPost, DiscoveryProduct } from "@plugfolio/core";
+import type { AdPlacement, DiscoveryCreator, DiscoveryPost, DiscoveryProduct } from "@plugfolio/core";
 import { EXPLORE_PAGE_SIZE } from "@plugfolio/core";
-import { Button, CreatorFan, PostWall, ThingsGrid, WallEnd, WallEndNote } from "@plugfolio/ui";
+import {
+  AdSlot,
+  AdSlotWhy,
+  Button,
+  CreatorFan,
+  PostWall,
+  ThingsGrid,
+  WallEnd,
+  WallEndNote,
+} from "@plugfolio/ui";
+import Image from "next/image";
 import type { Route } from "next";
 import { Search } from "lucide-react";
 import Link from "next/link";
@@ -27,6 +37,8 @@ export type ExploreScreenProps = {
   creators: readonly DiscoveryCreator[];
   posts: readonly DiscoveryPost[];
   products: readonly DiscoveryProduct[];
+  /** The live sponsored placement (ADR-0020); null when ads are off. */
+  ad?: AdPlacement | null;
   signedIn: boolean;
 };
 
@@ -69,7 +81,7 @@ function Empty({
   );
 }
 
-export function ExploreScreen({ tab, query, creators, posts, products }: ExploreScreenProps) {
+export function ExploreScreen({ tab, query, creators, posts, products, ad }: ExploreScreenProps) {
   // What the wall actually rendered, and whether the read hit its cap.
   const shown = creators.length + posts.length + products.length;
   const atCap = [creators.length, posts.length, products.length].some((n) => n >= EXPLORE_PAGE_SIZE);
@@ -220,6 +232,33 @@ export function ExploreScreen({ tab, query, creators, posts, products }: Explore
                       </Link>
                     ) : null}
                   </div>
+                  {ad ? (
+                    <AdSlot
+                      href={ad.url}
+                      target="_blank"
+                      rel="noopener noreferrer sponsored"
+                      title={ad.title}
+                      description={ad.description}
+                      image={
+                        ad.imageUrl ? (
+                          /* ponytail: unoptimized until image domains are pinned */
+                          <Image
+                            src={ad.imageUrl}
+                            alt=""
+                            width={208}
+                            height={208}
+                            unoptimized
+                            className="size-full object-cover"
+                          />
+                        ) : null
+                      }
+                      why={
+                        <AdSlotWhy title="Placed by Plugfolio. Not a creator's pick, and not chosen from anything you did — this surface has no account to target against.">
+                          Why this?
+                        </AdSlotWhy>
+                      }
+                    />
+                  ) : null}
                   <PostWall>
                     {posts.map((post, index) => (
                       <PostWallCard key={post.id} post={post} index={index} />

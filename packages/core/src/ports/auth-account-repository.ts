@@ -36,4 +36,12 @@ export type AuthTokenRepository = {
 export type AuthMailer = {
   sendVerification(email: string, url: string): Promise<void>;
   sendPasswordReset(email: string, url: string): Promise<void>;
+  /** A Manager invite leads with WHO invited them and WHICH profile — a
+   * distinct email from the bare reset, though the link is the same
+   * set-password token (ADR-0012). */
+  sendManagerInvite(
+    email: string,
+    url: string,
+    context: { inviterName: string; profileHandle: string },
+  ): Promise<void>;
 };

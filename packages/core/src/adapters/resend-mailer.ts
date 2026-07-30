@@ -1,9 +1,16 @@
+import {
+  managerInviteEmail,
+  passwordResetEmail,
+  verificationEmail,
+  type EmailContent,
+} from "./email-templates";
 import type { AuthMailer } from "../ports/auth-account-repository";
 
 /**
  * Real mail transport (ADR-0015): Resend's HTTP API via plain fetch — no SDK
  * dependency. Wired env-gated in each app's composition root; the console
- * mailer stays the fallback when no key is configured.
+ * mailer stays the fallback when no key is configured. The body copy/markup
+ * lives in email-templates.ts — this file is only the transport.
  */
 
 export type ResendMailerConfig = {
@@ -12,19 +19,22 @@ export type ResendMailerConfig = {
   from: string;
 };
 
-async function send(
-  config: ResendMailerConfig,
-  to: string,
-  subject: string,
-  text: string,
-): Promise<void> {
+async function send(config: ResendMailerConfig, to: string, email: EmailContent): Promise<void> {
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${config.apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ from: config.from, to: [to], subject, text }),
+    // Both html and text: the multipart alternative lets a text-only client
+    // still render the link, and improves deliverability on security mail.
+    body: JSON.stringify({
+      from: config.from,
+      to: [to],
+      subject: email.subject,
+      html: email.html,
+      text: email.text,
+    }),
   });
   if (!response.ok) {
     // Auth links are the account lifeline — surface delivery failures loudly.
@@ -35,20 +45,13 @@ async function send(
 export function createResendMailer(config: ResendMailerConfig): AuthMailer {
   return {
     async sendVerification(email, url) {
-      await send(
-        config,
-        email,
-        "Verify your Plugfolio email",
-        `One click and your account is live:\n\n${url}\n\nThe link is valid for 24 hours. If you didn't sign up, ignore this email.`,
-      );
+      await send(config, email, verificationEmail(url));
     },
     async sendPasswordReset(email, url) {
-      await send(
-        config,
-        email,
-        "Set your Plugfolio password",
-        `Use this link to set a new password:\n\n${url}\n\nThe link is valid for 24 hours and works once. If you didn't request it, ignore this email.`,
-      );
+      await send(config, email, passwordResetEmail(url));
+    },
+    async sendManagerInvite(email, url, context) {
+      await send(config, email, managerInviteEmail({ url, ...context }));
     },
   };
 }

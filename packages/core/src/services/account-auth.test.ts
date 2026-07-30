@@ -60,6 +60,9 @@ function makeDeps(now = () => new Date("2026-07-22T00:00:00.000Z")) {
     async sendPasswordReset(_email, url) {
       sentLinks.push(url);
     },
+    async sendManagerInvite(_email, url) {
+      sentLinks.push(url);
+    },
   };
 
   const deps = { accounts, tokens: tokenRepo, mailer, webOrigin: "https://p.test", now };

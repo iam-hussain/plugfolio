@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { exploreCreators, explorePosts, exploreProducts } from "@plugfolio/core";
+import {
+  exploreCreators,
+  explorePosts,
+  exploreProducts,
+  getLiveAdPlacement,
+} from "@plugfolio/core";
 import { ExploreScreen, type ExploreTab } from "@/features/explore";
 import { auth } from "@/server/auth";
-import { repositories } from "@/server/container";
+import { adPlacementDeps, repositories } from "@/server/container";
 
 // The no-login discovery surface (design-out discover, Dev Spec §06). A static
 // `explore` segment takes precedence over the `[handle]` route. RSC calls the
@@ -33,10 +38,13 @@ export default async function ExplorePage({
   const session = await auth();
 
   const deps = { discovery: repositories.discovery };
-  const [creators, posts, products] = await Promise.all([
+  const [creators, posts, products, ad] = await Promise.all([
     tab === "all" || tab === "creators" ? exploreCreators(deps, q) : Promise.resolve([]),
     tab === "all" || tab === "posts" ? explorePosts(deps, q) : Promise.resolve([]),
     tab === "all" || tab === "products" ? exploreProducts(deps, q) : Promise.resolve([]),
+    // Null whenever an admin hasn't switched ads on, which is the default
+    // (ADR-0020). Nothing renders, and the wall doesn't know it exists.
+    getLiveAdPlacement(adPlacementDeps),
   ]);
 
   return (
@@ -46,6 +54,7 @@ export default async function ExplorePage({
       creators={creators}
       posts={posts}
       products={products}
+      ad={ad}
       signedIn={!!session?.user}
     />
   );
