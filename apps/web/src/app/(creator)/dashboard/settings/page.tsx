@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
+  PAGE_APPEARANCE_DEFAULTS,
   getMyProfileIdentity,
   getMyProfiles,
   listManagers,
@@ -19,6 +20,7 @@ import {
   DashboardShell,
   DeleteProfileButton,
   ManagerControls,
+  PageAppearanceForm,
   ProfileIdentityForm,
   ProfileLinksForm,
 } from "@/features/product-tagging";
@@ -91,6 +93,28 @@ export default async function SettingsPage({
               username={active.username}
               identity={identity}
               role={active.role}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>How it looks</CardTitle>
+            <CardDescription>
+              A small, closed set on purpose (ADR-0017) — accent, header, post layout and the
+              greeting line. No setting here can make your Buy button hard to read.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <PageAppearanceForm
+              profileId={active.id}
+              role={active.role}
+              appearance={{
+                accent: identity.accent ?? PAGE_APPEARANCE_DEFAULTS.accent,
+                headerStyle: identity.headerStyle ?? PAGE_APPEARANCE_DEFAULTS.headerStyle,
+                gridStyle: identity.gridStyle ?? PAGE_APPEARANCE_DEFAULTS.gridStyle,
+                greeting: identity.greeting,
+              }}
             />
           </CardContent>
         </Card>

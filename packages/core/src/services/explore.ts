@@ -14,7 +14,10 @@ export type ExploreDeps = {
 };
 
 const MAX_QUERY_LENGTH = 80;
-const PAGE_SIZE = 24;
+/** What one Explore read returns. Exported so the wall can say honestly
+ *  whether it reached the end or just the cap. */
+export const EXPLORE_PAGE_SIZE = 24;
+const PAGE_SIZE = EXPLORE_PAGE_SIZE;
 
 function cleanQuery(query: string | undefined): string {
   return (query ?? "").trim().slice(0, MAX_QUERY_LENGTH);

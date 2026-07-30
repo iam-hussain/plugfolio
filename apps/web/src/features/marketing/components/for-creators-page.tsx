@@ -1,4 +1,4 @@
-import { Button } from "@plugfolio/ui";
+import { Button, HandleClaim, ProofRow } from "@plugfolio/ui";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -91,15 +91,14 @@ export function ForCreatorsPage() {
             </>
           }
         >
-          <div className="border-border bg-card shadow-rest rounded-pill flex w-full items-center gap-1 border py-2 pr-2 pl-5">
-            <span className="text-muted-foreground text-[0.9375rem] whitespace-nowrap">
-              plugfolio.com/
-            </span>
-            <span className="text-foreground text-[0.9375rem] font-bold">yourhandle</span>
-            <Button asChild className="ml-auto whitespace-nowrap">
-              <Link href={"/join?as=creator" as Route}>Claim it</Link>
-            </Button>
-          </div>
+          <HandleClaim
+            handle="yourhandle"
+            action={
+              <Button asChild>
+                <Link href={"/join?as=creator" as Route}>Claim it</Link>
+              </Button>
+            }
+          />
         </SplitBand>
 
         {/* ── attribution proof ── */}
@@ -119,25 +118,21 @@ export function ForCreatorsPage() {
             </>
           }
         >
-          <div className="border-border bg-card shadow-rest rounded-tile flex w-full items-center gap-4 border p-4">
-            <Image
-              src="/landing/posts/gym.jpg"
-              alt=""
-              width={300}
-              height={300}
-              sizes="64px"
-              className="rounded-image size-16 shrink-0 object-cover"
-            />
-            <span>
-              <b className="font-display block text-2xl font-bold tabular-nums tracking-[-0.02em]">
-                128
-              </b>
-              <span className="text-muted-foreground text-[0.9375rem]">taps from this post</span>
-            </span>
-            <span className="bg-active text-brand-violet-deep rounded-pill ml-auto px-3 py-1 font-mono text-[11px] font-semibold tracking-[0.04em] uppercase">
-              Tracked
-            </span>
-          </div>
+          <ProofRow
+            flag="Tracked"
+            figure="128"
+            caption="taps from this post"
+            thumb={
+              <Image
+                src="/landing/posts/gym.jpg"
+                alt=""
+                width={200}
+                height={200}
+                sizes="64px"
+                className="size-full object-cover"
+              />
+            }
+          />
         </SplitBand>
 
         {/* ── caps ── */}

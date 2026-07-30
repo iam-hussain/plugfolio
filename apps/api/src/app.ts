@@ -5,6 +5,8 @@ import {
   DEVICE_COOKIE,
   addComment,
   addCommentInput,
+  reactToComment,
+  reactToCommentInput,
   agreeCollab,
   approachRequirement,
   approachRequirementInput,
@@ -207,6 +209,22 @@ app.post("/comments", async (c) => {
   const input = addCommentInput.parse(await c.req.json());
   const comment = await addComment(shopperSocialDeps, userId, input);
   return c.json({ comment }, 201);
+});
+
+// Helpful / not helpful on a comment. Needs an account like follow and comment
+// do — reading the counts never does. Same kill switch: with comments off, the
+// thread is read-only, and that includes agreeing with one.
+app.post("/comments/:commentId/reaction", async (c) => {
+  const userId = await requireUserId(c);
+  if (!(await isFeatureEnabled({ settings: repositories.settings }, "comments", true))) {
+    throw new ForbiddenError("Comments are switched off right now");
+  }
+  const input = reactToCommentInput.parse({
+    commentId: c.req.param("commentId"),
+    ...((await c.req.json()) as object),
+  });
+  await reactToComment(shopperSocialDeps, userId, input);
+  return c.json({ ok: true });
 });
 
 // Reporting (admin queue inflow): account-free like shopping — the signed

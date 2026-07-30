@@ -115,6 +115,30 @@
   --role-solid: #a78bfa;
 }
 
+/**
+ * Creator page accent (ADR-0017) — the one colour a creator chooses, scoped by
+ * a `data-accent` ancestor exactly like `data-role` above. Five options, and
+ * the list is closed *because* it is closed: each is measured against white
+ * label text (violet 5.70 · indigo 7.90 · coral 5.09 · forest 6.50 ·
+ * magenta 6.28), so no choice a creator can express makes their own Buy button
+ * fail AA. Only `--color-primary` moves; every component keeps reading the
+ * token, so nothing downstream knows a creator picked coral.
+ *
+ * `violet` is the default and needs no block — it IS `--color-primary`.
+ */
+[data-accent="indigo"] {
+  --color-primary: 245 57% 51%; /* #4338CA */
+}
+[data-accent="coral"] {
+  --color-primary: 6 69% 47%; /* #CC3626 */
+}
+[data-accent="forest"] {
+  --color-primary: 157 69% 25%; /* #146B4A */
+}
+[data-accent="magenta"] {
+  --color-primary: 325 72% 41%; /* #B31D74 */
+}
+
 :root[data-theme="dark"] {
   color-scheme: dark;
 

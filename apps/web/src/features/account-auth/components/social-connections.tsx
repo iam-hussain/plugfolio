@@ -1,6 +1,6 @@
 import type { YouTubeConnectionView } from "@plugfolio/core";
-import { Button } from "@plugfolio/ui";
-import { SocialGlyph } from "@/features/creator-page";
+import { Button, SocialGlyph } from "@plugfolio/ui";
+
 
 /**
  * Account-level social connections (ADR-0004): connect Google, then show the

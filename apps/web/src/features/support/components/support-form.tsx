@@ -1,9 +1,18 @@
 "use client";
 
 import type { SupportCategory } from "@plugfolio/core";
-import { Button, Input, Textarea } from "@plugfolio/ui";
+import {
+  Button,
+  Input,
+  SupportCategory as CategoryCard,
+  SupportCategories,
+  SupportHint,
+  SupportNext,
+  SupportStep,
+  Textarea,
+} from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
-import { Check, CircleAlert, Info, UserRound } from "lucide-react";
+import { Check, CircleAlert, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { submitSupportTicket } from "../api";
@@ -163,36 +172,23 @@ export function SupportForm({ handle, initialCategory, initialEmail = "" }: Supp
           <span className="text-muted-foreground mt-1 mb-3 block text-[0.9375rem]">
             Closest is close enough — we&apos;ll work it out.
           </span>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <SupportCategories>
             {CATEGORIES.map((option) => (
-              <label
+              <CategoryCard
                 key={option.key}
-                className="border-border bg-card rounded-image hover:border-primary has-[:checked]:border-primary has-[:checked]:bg-active has-[:checked]:text-brand-violet-deep has-[:focus-visible]:outline-primary flex min-h-14 cursor-pointer items-center gap-2.5 border px-4 py-3 text-[0.9375rem] font-semibold leading-[1.35] transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-[3px] has-[:focus-visible]:outline-offset-2"
+                name="category"
+                value={option.key}
+                checked={category === option.key}
+                onChange={() => setCategory(option.key)}
               >
-                <input
-                  type="radio"
-                  name="category"
-                  value={option.key}
-                  checked={category === option.key}
-                  onChange={() => setCategory(option.key)}
-                  className="peer sr-only"
-                />
-                <span
-                  aria-hidden
-                  className="border-border peer-checked:border-primary size-4 shrink-0 rounded-pill border-2 transition-all peer-checked:border-[5px]"
-                />
                 {option.label}
-              </label>
+              </CategoryCard>
             ))}
-          </div>
+          </SupportCategories>
           {hint ? (
-            <p
-              aria-live="polite"
-              className="bg-active text-brand-violet-deep rounded-image mt-3.5 flex gap-2.5 p-4 text-[0.9375rem] leading-[1.5] [&_svg]:mt-0.5 [&_svg]:size-[17px] [&_svg]:shrink-0"
-            >
-              <Info aria-hidden />
-              <span>{hint}</span>
-            </p>
+            <div aria-live="polite">
+              <SupportHint>{hint}</SupportHint>
+            </div>
           ) : null}
         </fieldset>
 
@@ -232,24 +228,14 @@ export function SupportForm({ handle, initialCategory, initialEmail = "" }: Supp
         </Button>
       </form>
 
-      <section className="border-border mt-[clamp(34px,5vw,52px)] border-t pt-6">
-        <p className="text-muted-foreground font-mono tracking-eyebrow text-[11px] font-semibold uppercase">
-          What happens next
-        </p>
-        <ol className="mt-4 grid gap-3.5">
-          {NEXT_STEPS.map((step, index) => (
-            <li key={step.title} className="text-muted-foreground flex items-start gap-3.5 text-[0.9375rem] leading-[1.5]">
-              <span className="bg-foreground text-background grid size-7 shrink-0 place-items-center rounded-pill font-mono text-[11px] font-bold">
-                {index + 1}
-              </span>
-              <span>
-                <b className="text-foreground block font-bold">{step.title}</b>
-                {step.body}
-              </span>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <SupportNext>
+        {NEXT_STEPS.map((step, index) => (
+          <SupportStep key={step.title} n={index + 1}>
+            <b className="text-foreground block font-bold">{step.title}</b>
+            {step.body}
+          </SupportStep>
+        ))}
+      </SupportNext>
     </div>
   );
 }

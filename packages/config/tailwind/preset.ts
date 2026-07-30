@@ -110,6 +110,27 @@ const preset = {
       // Radius scale. Base steps (sm/md/lg/xl/panel/pill) serve app UI; the
       // named object steps (DESIGN §Shapes) climb with the object: paper 3 ·
       // image 16 · tile 20 · card 26 · bay 34. Anything interactive is a pill.
+      // The design's container measure (--inner) — pages are 1200 wide with a
+      // 20/40px gutter, not an ad-hoc max-w per page.
+      maxWidth: {
+        inner: "1200px",
+      },
+      transitionTimingFunction: {
+        // The one easing the design uses everywhere (--ease).
+        design: "cubic-bezier(.2,.8,.3,1)",
+      },
+      // The design's fixed type steps (--t-*). Named, because "13px" appearing
+      // in forty class strings is exactly the magic value §8 forbids — and
+      // because the design changes them in one place, so we should too.
+      fontSize: {
+        micro: ["0.75rem", { lineHeight: "1.4" }],
+        label: ["0.8125rem", { lineHeight: "1.45" }],
+        copy: ["0.9375rem", { lineHeight: "1.55" }],
+        body: ["1.0625rem", { lineHeight: "1.5" }],
+        title: ["1.375rem", { lineHeight: "1.2" }],
+        name: ["1.5rem", { lineHeight: "1.05" }],
+        "name-lg": ["2rem", { lineHeight: "1.05" }],
+      },
       borderRadius: {
         sm: "0.5rem",
         md: "0.75rem",
@@ -122,6 +143,9 @@ const preset = {
         tile: "1.25rem", // 20px
         card: "1.625rem", // 26px
         bay: "2.125rem", // 34px
+        // A shape nested inside an image-radius box sits 3px tighter, so the
+        // gap between the two curves stays even (--r-nest).
+        nest: "0.8125rem", // 13px
       },
       boxShadow: {
         // The soft, diffuse elevation vocabulary (DESIGN §Elevation): every

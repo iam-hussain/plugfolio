@@ -87,3 +87,14 @@ the action is deferred (needs a pending-action store).
 - e2e URL expectations updated to `/signin`. No live DB here — the credentials-session
   recipe needs a real end-to-end pass (register → console link → verify → sign in →
   dashboard) on the first credentialed environment.
+
+## Design system (ADR-0018)
+
+The account screens' form vocabulary lives in `@plugfolio/ui` (DESIGN `auth.html`): `AuthForm`, `AuthField`, `AuthInput`, `AuthReveal`, `AuthConsequence`, `AuthAlternatives`, `AuthNotice`, `AuthStatus`.
+
+- One column of at most 380px. The narrowness is the point — a sign-in that spans the measure reads as a form to fill in rather than a door to walk through.
+- The password rule sits **under the box, always visible**: telling someone it's too short only after they submit is the same information delivered at the worst moment.
+- The confirmation screens (check your email · verified · expired) are one `AuthStatus` each: a stamp, a sentence, and the one thing to do next.
+- `AuthAlternatives` uses `items-center` deliberately — the links carry a 44px tap target and the text beside them doesn't, so under the default stretch they'd sit ~20px apart on a row that should share a baseline.
+
+Stories: `Auth & Support/Forms`.

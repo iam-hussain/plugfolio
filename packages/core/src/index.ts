@@ -32,6 +32,7 @@ export type {
   CreatorProductRow,
   PageCategory,
   ShopperPost,
+  MediaKind,
   ShopperProduct,
   ShopperProductView,
 } from "./ports/creator-page-repository";
@@ -75,6 +76,8 @@ export type {
   CommentView,
   CommentThread,
   CommentTarget,
+  CommentQuery,
+  CommentPage,
   NewComment,
 } from "./ports/comment-repository";
 export type {
@@ -111,6 +114,24 @@ export {
   addCommentInput,
   type AddCommentInput,
 } from "./schemas/shopper-social";
+export {
+  pageAccent,
+  type PageAccent,
+  pageHeaderStyle,
+  type PageHeaderStyle,
+  pageGridStyle,
+  type PageGridStyle,
+  pageGreeting,
+  PAGE_APPEARANCE_DEFAULTS,
+} from "./schemas/page-appearance";
+export {
+  reactionValue,
+  type ReactionValue,
+  reactToCommentInput,
+  type ReactToCommentInput,
+  commentSort,
+  type CommentSort,
+} from "./schemas/comment-reaction";
 export {
   followSort,
   type FollowSort,
@@ -180,6 +201,7 @@ export {
 } from "./schemas/profile-identity";
 export {
   type ProfileIdentity,
+  type PageAppearance,
   type ProfileIdentityRepository,
 } from "./ports/profile-identity-repository";
 export {
@@ -212,6 +234,7 @@ export {
   type CreatorPageReadDeps,
 } from "./services/creator-page-reads";
 export {
+  EXPLORE_PAGE_SIZE,
   exploreCreators,
   exploreProducts,
   explorePosts,
@@ -430,6 +453,9 @@ export {
   addComment,
   getComments,
   getProductComments,
+  reactToComment,
+  COMMENTS_PAGE_SIZE,
+  type CommentReadOptions,
   type ShopperSocialDeps,
 } from "./services/shopper-social";
 export {

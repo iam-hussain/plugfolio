@@ -197,7 +197,7 @@ export function LandingPage() {
         </section>
       </main>
 
-      <SiteFooter note="One link, everything shoppable · 2026" />
+      <SiteFooter />
     </div>
   );
 }

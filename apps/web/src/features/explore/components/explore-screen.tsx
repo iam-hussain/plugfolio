@@ -1,5 +1,6 @@
 import type { DiscoveryCreator, DiscoveryPost, DiscoveryProduct } from "@plugfolio/core";
-import { Button } from "@plugfolio/ui";
+import { EXPLORE_PAGE_SIZE } from "@plugfolio/core";
+import { Button, CreatorFan, PostWall, ThingsGrid, WallEnd, WallEndNote } from "@plugfolio/ui";
 import type { Route } from "next";
 import { Search } from "lucide-react";
 import Link from "next/link";
@@ -69,6 +70,9 @@ function Empty({
 }
 
 export function ExploreScreen({ tab, query, creators, posts, products }: ExploreScreenProps) {
+  // What the wall actually rendered, and whether the read hit its cap.
+  const shown = creators.length + posts.length + products.length;
+  const atCap = [creators.length, posts.length, products.length].some((n) => n >= EXPLORE_PAGE_SIZE);
   const showCreators = tab === "all" || tab === "creators";
   const showPosts = tab === "all" || tab === "posts";
   const showProducts = tab === "all" || tab === "products";
@@ -180,22 +184,15 @@ export function ExploreScreen({ tab, query, creators, posts, products }: Explore
                       </Link>
                     ) : null}
                   </div>
-                  <div
-                    className={
-                      tab === "creators"
-                        ? "mt-[18px] grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4"
-                        : "mt-5 flex snap-x overflow-x-auto pt-2 pb-6 [scrollbar-width:none]"
-                    }
-                  >
-                    {creators.map((creator, index) => (
+                  <CreatorFan layout={tab === "creators" ? "grid" : "rail"}>
+                    {creators.map((creator) => (
                       <CreatorCard
                         key={creator.id}
                         creator={creator}
-                        index={index}
                         layout={tab === "creators" ? "grid" : "fan"}
                       />
                     ))}
-                  </div>
+                  </CreatorFan>
                 </section>
               ) : null}
 
@@ -223,11 +220,11 @@ export function ExploreScreen({ tab, query, creators, posts, products }: Explore
                       </Link>
                     ) : null}
                   </div>
-                  <div className="mt-5 grid grid-cols-1 gap-5 pb-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  <PostWall>
                     {posts.map((post, index) => (
                       <PostWallCard key={post.id} post={post} index={index} />
                     ))}
-                  </div>
+                  </PostWall>
                 </section>
               ) : null}
 
@@ -261,12 +258,27 @@ export function ExploreScreen({ tab, query, creators, posts, products }: Explore
                       </Link>
                     ) : null}
                   </div>
-                  <div className="mt-5 grid grid-cols-2 gap-4 pb-2 sm:grid-cols-3 lg:grid-cols-4">
+                  <ThingsGrid>
                     {products.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}
-                  </div>
+                  </ThingsGrid>
                 </section>
+              ) : null}
+              {/* A list that simply stops reads as a list that broke, so the
+                  wall always says which end it reached. The read is capped at
+                  PAGE_SIZE with no paging yet — saying "that's everything"
+                  there would be a lie, so it says what it actually is.
+                  ponytail: real ?page= paging when the discovery reads take a
+                  skip; the design's "Load more" is a plain link, by design. */}
+              {shown > 0 ? (
+                <WallEnd>
+                  <WallEndNote>
+                    {atCap
+                      ? `Showing the first ${shown} — search to narrow it down.`
+                      : "That's everything for now. More lands as creators tag their posts."}
+                  </WallEndNote>
+                </WallEnd>
               ) : null}
             </>
           )}

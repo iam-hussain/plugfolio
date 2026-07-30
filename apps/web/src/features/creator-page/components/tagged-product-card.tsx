@@ -1,4 +1,5 @@
 import type { ShopperProduct } from "@plugfolio/core";
+import { OffPlatformNote, OwnBadge, ProductCard } from "@plugfolio/ui";
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "@/lib/format-price";
@@ -7,11 +8,13 @@ import { CouponBlock } from "./coupon-block";
 import { ProductTapButton } from "./product-tap-button";
 
 /**
- * A tagged product on the post view (design-out post detail): 56px thumb,
- * title, mono "price · opens retailer" meta with the quiet THEIR OWN PRODUCT
- * tag, the pill action, and the code chip riding below (ADR-0011's three
- * faces). An in-store-only coupon has no outbound button — the code IS the
- * buy path.
+ * A tagged product on the post view (DESIGN post.html §.pcard). The card shape
+ * is the design system's; this decides what the card says — which of ADR-0011's
+ * three faces the product wears, and where the tap actually goes.
+ *
+ * The whole card is deliberately not a link: it holds two competing actions
+ * (copy a code, leave for the retailer), and nesting them inside one link is
+ * how a shopper copies a code by accident.
  */
 export type TaggedProductCardProps = {
   handle: string;
@@ -21,57 +24,39 @@ export type TaggedProductCardProps = {
 
 export function TaggedProductCard({ handle, postId, product }: TaggedProductCardProps) {
   const price = formatPrice(product.priceCents, product.currency);
-  const meta = [price, product.affiliateUrl ? `opens ${retailerName(product.affiliateUrl)}` : null]
-    .filter(Boolean)
-    .join(" · ");
+  const own = product.kind === "own";
+  const where = product.affiliateUrl
+    ? `${own ? "their own product" : "affiliate pick"} · opens ${retailerName(product.affiliateUrl)}`
+    : "in-store offer · no link to open";
 
   return (
-    <div className="border-border bg-background rounded-xl border p-3">
-      <div className="flex items-center gap-[13px]">
+    <ProductCard
+      image={
+        product.imageUrl ? (
+          /* ponytail: unoptimized until the social-import pipeline pins image domains */
+          <Image
+            src={product.imageUrl}
+            alt={product.title}
+            width={240}
+            height={240}
+            unoptimized
+            className="size-full object-cover"
+          />
+        ) : null
+      }
+      badge={own ? <OwnBadge /> : null}
+      title={
         <Link
           href={`/${handle}/product/${product.id}`}
-          className="bg-muted relative block size-14 shrink-0 overflow-hidden rounded-[10px]"
+          className="hover:text-primary text-foreground no-underline hover:underline hover:underline-offset-[3px]"
         >
-          {product.imageUrl ? (
-            /* ponytail: unoptimized until the social-import pipeline pins image domains */
-            <Image
-              src={product.imageUrl}
-              alt={product.title}
-              fill
-              unoptimized
-              className="object-cover"
-            />
-          ) : null}
+          {product.title}
         </Link>
-        <div className="min-w-0 flex-1">
-          <Link
-            href={`/${handle}/product/${product.id}`}
-            className="block truncate text-sm font-semibold"
-          >
-            {product.title}
-          </Link>
-          <div className="mt-[3px] flex flex-wrap items-center gap-[7px]">
-            {meta ? <span className="text-muted-foreground font-mono text-[11px]">{meta}</span> : null}
-            {product.kind === "own" ? (
-              <span className="text-muted-foreground border-border rounded-pill border px-[7px] py-px font-mono text-[8.5px] font-bold tracking-[0.04em]">
-                THEIR OWN PRODUCT
-              </span>
-            ) : null}
-          </div>
-        </div>
-        {product.affiliateUrl ? (
-          <ProductTapButton
-            productId={product.id}
-            postId={postId}
-            affiliateUrl={product.affiliateUrl}
-            source="post"
-            label={product.kind === "own" ? "Shop their store" : "Buy"}
-            className="whitespace-nowrap"
-          />
-        ) : null}
-      </div>
-      {product.couponCode ? (
-        <div className="mt-2.5">
+      }
+      price={price}
+      where={where}
+      coupon={
+        product.couponCode ? (
           <CouponBlock
             productId={product.id}
             postId={postId}
@@ -79,10 +64,29 @@ export function TaggedProductCard({ handle, postId, product }: TaggedProductCard
             offerEndsAt={product.offerEndsAt}
             inStoreNote={product.inStoreNote}
             hasLink={!!product.affiliateUrl}
-            variant="chip"
           />
-        </div>
-      ) : null}
-    </div>
+        ) : null
+      }
+      action={
+        // An in-store code has no link to open, so there is no button: the code
+        // IS the action, and a Buy here would promise a shop it can't reach.
+        product.affiliateUrl ? (
+          <ProductTapButton
+            productId={product.id}
+            postId={postId}
+            affiliateUrl={product.affiliateUrl}
+            source="post"
+            label={own ? "Shop their store" : "Buy"}
+          />
+        ) : null
+      }
+      note={
+        <OffPlatformNote>
+          {product.affiliateUrl
+            ? `Payment settles off-platform · opens ${own ? "their store" : "the retailer"}`
+            : "Payment settles off-platform · show the code in store"}
+        </OffPlatformNote>
+      }
+    />
   );
 }

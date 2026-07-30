@@ -5,6 +5,8 @@
  * in `@plugfolio/db` (§6.2).
  */
 
+import type { PageAccent, PageGridStyle, PageHeaderStyle } from "../schemas/page-appearance";
+
 export type ShopperProduct = {
   readonly id: string;
   readonly title: string;
@@ -24,9 +26,18 @@ export type ShopperProduct = {
   readonly categoryId: string | null;
 };
 
+export type MediaKind = "still" | "youtube" | "instagram" | "tiktok";
+
 export type ShopperPost = {
   readonly id: string;
+  /** The still, or the poster frame for a video (ADR-0019). Always present. */
   readonly mediaUrl: string;
+  /** What the post IS; resolved past the default, so `still` is explicit. */
+  readonly mediaKind: MediaKind;
+  /** The provider's embed URL — never rendered until the shopper presses play. */
+  readonly embedUrl: string | null;
+  /** Where the video lives publicly; the always-present way out. */
+  readonly sourceUrl: string | null;
   readonly caption: string | null;
   readonly categoryId: string | null;
   /** Hidden by the creator (brief 07): public surfaces filter these out;
@@ -49,6 +60,13 @@ export type CreatorPage = {
   readonly displayName: string | null;
   readonly avatarUrl: string | null;
   readonly bio: string | null;
+  /** One line above the name (ADR-0017); null = none. */
+  readonly greeting: string | null;
+  /** How the page looks (ADR-0017) — already resolved past the defaults, so
+   *  no component has to know what a default is. */
+  readonly accent: PageAccent;
+  readonly headerStyle: PageHeaderStyle;
+  readonly gridStyle: PageGridStyle;
   readonly followerCount: number;
   readonly categories: readonly PageCategory[];
   readonly posts: readonly ShopperPost[];

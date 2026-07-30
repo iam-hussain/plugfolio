@@ -45,6 +45,7 @@ model User {
   sessions      Session[]
   follows       Follow[]
   comments      Comment[]
+  commentReactions CommentReaction[]
   business      Business?
   collabMessages CollabMessage[]
   managedProfiles ProfileManager[]
@@ -102,6 +103,14 @@ model Profile {
   /// Pasted image URL (no upload infra in v1). Null = initial-letter tile.
   avatarUrl   String?
   bio         String?
+  /// Page appearance (ADR-0017) — a closed set, never a theme editor. Unset =
+  /// the default (violet · balanced · grid). Values are validated by the Zod
+  /// enums at the boundary; stored as strings because Mongo enums buy nothing.
+  accent      String?
+  headerStyle String?
+  gridStyle   String?
+  /// The one line above the name ("Hey — glad you found me."). Unset = none.
+  greeting    String?
   /// Set by an admin: takes just this page off the public surface (owner can
   /// still sign in). Null = live.
   suspendedAt DateTime?
@@ -266,9 +275,30 @@ model Comment {
   body      String
   createdAt DateTime @default(now())
 
+  reactions CommentReaction[]
+
   @@index([profileId, createdAt])
   @@index([productId, createdAt])
   @@index([parentId])
+}
+
+/// Helpful / not helpful on a COMMENT (lean journey: "a comment can be agreed
+/// with"). Deliberately not a rating: it scores an answer, never a product or
+/// a creator. One row per account per comment — the @@unique makes a
+/// double-fired tap idempotent the way Follow does, and changing your mind is
+/// an update, not a second row.
+model CommentReaction {
+  id        String   @id @default(uuid()) @map("_id")
+  commentId String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// "helpful" | "unhelpful" — the Zod enum at the boundary is the contract.
+  value     String
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@index([commentId])
 }
 
 /// A creator's shelf (ADR-0010): per-profile curation, never a site-wide
@@ -297,7 +327,19 @@ model Post {
   id        String    @id @default(uuid()) @map("_id")
   profileId String
   profile   Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  /// The still: the photo for a photo post, the poster frame for a video.
+  /// Always present, because the video slot loads as a facade (ADR-0019) and
+  /// the poster is what a shopper sees until they press play.
   mediaUrl  String
+  /// What the post IS (ADR-0019): "still" | "youtube" | "instagram" | "tiktok".
+  /// Unset = a still, so every existing row keeps working untouched.
+  mediaKind String?
+  /// The provider's embed URL, only for a video post. Never rendered until
+  /// the shopper presses play — mounting it is what sets third-party cookies.
+  embedUrl  String?
+  /// Where the video lives publicly ("Watch on YouTube instead"). Always
+  /// offered: in-app browsers regularly refuse to play an embed at all.
+  sourceUrl String?
   caption   String?
   /// Hidden by the creator (brief 07): off the public page, still in the
   /// dashboard. Null = visible.

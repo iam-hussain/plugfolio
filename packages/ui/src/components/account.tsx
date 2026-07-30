@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Badge, cn } from "@plugfolio/ui";
-import type { Route } from "next";
-import Link from "next/link";
+import { Slot, Slottable } from "@radix-ui/react-slot";
+import { Badge } from "./badge";
+import { cn } from "../lib/cn";
 
 /**
  * The vocabulary of /account (DESIGN account.html) — a settings page every
@@ -27,7 +27,7 @@ export function AccountNav({
         <a
           key={section.id}
           href={`#${section.id}`}
-          className="border-border bg-card text-muted-foreground rounded-pill hover:border-primary hover:text-primary inline-flex min-h-11 flex-none snap-start items-center whitespace-nowrap border px-4 py-2.5 text-[13px] font-semibold no-underline transition-colors min-[900px]:rounded-image min-[900px]:hover:bg-active min-[900px]:w-full min-[900px]:border-0 min-[900px]:bg-transparent min-[900px]:px-3.5 min-[900px]:py-2.5 min-[900px]:hover:border-0"
+          className="border-border bg-card text-muted-foreground rounded-pill hover:border-primary hover:text-primary inline-flex min-h-11 flex-none snap-start items-center whitespace-nowrap border px-4 py-2.5 text-label font-semibold no-underline transition-colors min-[900px]:rounded-image min-[900px]:hover:bg-active min-[900px]:w-full min-[900px]:border-0 min-[900px]:bg-transparent min-[900px]:px-3.5 min-[900px]:py-2.5 min-[900px]:hover:border-0"
         >
           {section.label}
         </a>
@@ -54,7 +54,7 @@ export function AccountSection({
         {title}
       </h2>
       {lead ? (
-        <p className="text-muted-foreground mt-1 max-w-[58ch] text-[0.9375rem] leading-[1.55]">
+        <p className="text-muted-foreground mt-1 max-w-[58ch] text-copy leading-[1.55]">
           {lead}
         </p>
       ) : null}
@@ -93,10 +93,10 @@ export function SettingRow({
   return (
     <div className="px-5 py-4">
       <div className="flex flex-wrap items-center gap-4">
-        <dt className="min-w-[148px] text-[13px] font-bold">{label}</dt>
-        <dd className="text-muted-foreground m-0 min-w-0 text-[0.9375rem] [overflow-wrap:anywhere]">
+        <dt className="min-w-[148px] text-label font-bold">{label}</dt>
+        <dd className="text-muted-foreground m-0 min-w-0 text-copy [overflow-wrap:anywhere]">
           {value}
-          {hint ? <span className="text-faint mt-0.5 block text-[13px]">{hint}</span> : null}
+          {hint ? <span className="text-faint mt-0.5 block text-label">{hint}</span> : null}
         </dd>
         {action ? <div className="ml-auto">{action}</div> : null}
       </div>
@@ -147,7 +147,7 @@ export function RoleBlock({
 /** A role block's body copy — the paragraph under the heading row. */
 export function RoleCopy({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-muted-foreground mt-2 max-w-[60ch] text-[0.9375rem] leading-[1.55]">
+    <p className="text-muted-foreground mt-2 max-w-[60ch] text-copy leading-[1.55]">
       {children}
     </p>
   );
@@ -165,7 +165,7 @@ export function Prerequisite({
   children: React.ReactNode;
 }) {
   return (
-    <p className="bg-active text-primary rounded-image mt-3.5 flex gap-3 px-4 py-3 text-[0.9375rem] leading-[1.5]">
+    <p className="bg-active text-primary rounded-image mt-3.5 flex gap-3 px-4 py-3 text-copy leading-[1.5]">
       <span aria-hidden className="mt-0.5 flex-none">
         {icon}
       </span>
@@ -176,44 +176,66 @@ export function Prerequisite({
 
 /** A profile inside the creator block — a door into that profile's dashboard. */
 export function ProfileRow({
-  href,
   username,
   meta,
   badge,
-}: {
-  href: Route;
+  asChild,
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"a"> & {
   username: string;
   meta: string;
   badge: string;
+  asChild?: boolean;
 }) {
+  const Comp = asChild ? Slot : "a";
   return (
-    <Link
-      href={href}
-      className="border-border rounded-image hover:border-primary flex items-center gap-3 border px-3.5 py-2.5 no-underline transition-colors"
+    <Comp
+      className={cn(
+        "border-border rounded-image hover:border-primary flex items-center gap-3 border px-3.5 py-2.5 no-underline transition-colors",
+        className,
+      )}
+      {...props}
     >
-      <span className="bg-active text-primary grid size-8 flex-none place-items-center rounded-pill text-[13px] font-bold">
+      {/* Slot clones ONE child; Slottable marks it, and the rest become
+          that element's children — which is what lets the app pass its router
+          Link while the design system supplies the contents. */}
+      <Slottable>{children}</Slottable>
+      <span className="bg-active text-primary grid size-8 flex-none place-items-center rounded-pill text-label font-bold">
         {username.charAt(0).toUpperCase()}
       </span>
       <span className="min-w-0">
-        <b className="block truncate text-[13px] font-bold">@{username}</b>
+        <b className="block truncate text-label font-bold">@{username}</b>
         <span className="text-faint block truncate text-xs">{meta}</span>
       </span>
       <span className="text-muted-foreground ml-auto whitespace-nowrap text-xs font-bold">
         {badge}
       </span>
-    </Link>
+    </Comp>
   );
 }
 
 /** The dashed "one more" row — the cap is a fact, so it says the number. */
-export function ProfileNewRow({ href, label }: { href: Route; label: string }) {
+export function ProfileNewRow({
+  label,
+  asChild,
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"a"> & { label: string; asChild?: boolean }) {
+  const Comp = asChild ? Slot : "a";
   return (
-    <Link
-      href={href}
-      className="border-border text-muted-foreground rounded-image hover:border-primary hover:text-primary flex items-center gap-3 border border-dashed px-3.5 py-3 text-[13px] font-semibold no-underline transition-colors"
+    <Comp
+      className={cn(
+        "border-border text-muted-foreground rounded-image hover:border-primary hover:text-primary flex items-center gap-3 border border-dashed px-3.5 py-3 text-label font-semibold no-underline transition-colors",
+        className,
+      )}
+      {...props}
     >
+      <Slottable>{children}</Slottable>
       {label}
-    </Link>
+    </Comp>
   );
 }
 
@@ -255,8 +277,8 @@ export function ConnectionRow({
         {glyph}
       </span>
       <span className="min-w-0">
-        <b className="block text-[13px] font-bold">{title}</b>
-        <span className="text-faint block text-[13px]">{detail}</span>
+        <b className="block text-label font-bold">{title}</b>
+        <span className="text-faint block text-label">{detail}</span>
       </span>
       <Badge variant={badge.variant}>{badge.label}</Badge>
       {action ? <div className="ml-auto">{action}</div> : null}

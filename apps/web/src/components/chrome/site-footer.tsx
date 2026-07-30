@@ -23,11 +23,14 @@ const LINKS: readonly { label: string; href: Route }[] = [
 ];
 
 export type SiteFooterProps = {
-  /** A trailing line beside the links (the landing page's sign-off). */
-  note?: string;
+  /** Overrides the brand sign-off; pass `null` to drop it. */
+  note?: string | null;
 };
 
-export function SiteFooter({ note }: SiteFooterProps) {
+export function SiteFooter({ note }: SiteFooterProps = {}) {
+  // The sign-off the design carries on every shopper surface. Year is read,
+  // not written — a stale one is the kind of thing nobody notices in January.
+  const line = note === undefined ? `One link, everything shoppable · ${new Date().getFullYear()}` : note;
   return (
     <footer className="border-border border-t">
       <div className="mx-auto flex w-full max-w-[1180px] flex-wrap items-center justify-between gap-x-6 gap-y-1.5 px-5 pb-[clamp(14px,2vw,22px)] pt-[clamp(22px,3vw,32px)] lg:px-11">
@@ -44,9 +47,9 @@ export function SiteFooter({ note }: SiteFooterProps) {
               {item.label}
             </Link>
           ))}
-          {note ? (
+          {line ? (
             <span className="text-faint font-sans text-xs font-semibold uppercase tracking-[0.06em]">
-              {note}
+              {line}
             </span>
           ) : null}
         </div>

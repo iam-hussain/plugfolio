@@ -1,6 +1,7 @@
 import type {
   AddCommentInput,
   FollowProfileInput,
+  ReactToCommentInput,
   UpdateMemberHandleInput,
 } from "@plugfolio/core";
 
@@ -50,6 +51,16 @@ export async function updateMemberHandle(input: UpdateMemberHandleInput): Promis
     method: "PATCH",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input),
+    credentials: "same-origin",
+  });
+  if (!response.ok) throw await parseError(response);
+}
+
+export async function reactToComment(input: ReactToCommentInput): Promise<void> {
+  const response = await fetch(`/api/comments/${input.commentId}/reaction`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ value: input.value }),
     credentials: "same-origin",
   });
   if (!response.ok) throw await parseError(response);

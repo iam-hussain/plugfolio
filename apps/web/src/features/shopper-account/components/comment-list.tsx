@@ -1,5 +1,6 @@
 import type { CommentThread, CommentView } from "@plugfolio/core";
 import type { CommentIdentityOption } from "./comment-form";
+import { CommentReactions } from "./comment-reactions";
 import { ReplyToggle } from "./reply-toggle";
 import { ReportButton } from "@/features/reporting";
 
@@ -19,6 +20,8 @@ export type CommentListProps = {
   comments: readonly CommentThread[];
   /** Present only for signed-in viewers — enables the Reply affordance. */
   replyContext?: CommentReplyContext | null;
+  /** Reacting needs an account; reading the counts never does (§2.2). */
+  signedIn?: boolean;
 };
 
 /** ADR-0009: a comment speaks as a profile (brand + Creator badge) or as the
@@ -58,7 +61,7 @@ function CommentBody({ comment }: { comment: CommentView }) {
   );
 }
 
-export function CommentList({ comments, replyContext }: CommentListProps) {
+export function CommentList({ comments, replyContext, signedIn = false }: CommentListProps) {
   if (comments.length === 0) {
     return <p className="text-muted-foreground text-sm">No comments yet.</p>;
   }
@@ -68,11 +71,25 @@ export function CommentList({ comments, replyContext }: CommentListProps) {
       {comments.map((comment) => (
         <li key={comment.id} className="flex flex-col gap-1">
           <CommentBody comment={comment} />
+          <CommentReactions
+            commentId={comment.id}
+            helpfulCount={comment.helpfulCount}
+            unhelpfulCount={comment.unhelpfulCount}
+            mine={comment.myReaction}
+            signedIn={signedIn}
+          />
           {comment.replies.length > 0 ? (
             <ul className="border-border flex flex-col gap-2 border-l pl-3 pt-1">
               {comment.replies.map((reply) => (
                 <li key={reply.id}>
                   <CommentBody comment={reply} />
+                  <CommentReactions
+                    commentId={reply.id}
+                    helpfulCount={reply.helpfulCount}
+                    unhelpfulCount={reply.unhelpfulCount}
+                    mine={reply.myReaction}
+                    signedIn={signedIn}
+                  />
                 </li>
               ))}
             </ul>

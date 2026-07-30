@@ -18,5 +18,9 @@ export {
   ProfileIdentityForm,
   type ProfileIdentityFormProps,
 } from "./components/profile-identity-form";
+export {
+  PageAppearanceForm,
+  type PageAppearanceFormProps,
+} from "./components/page-appearance-form";
 export { DeleteProfileButton } from "./components/delete-profile-button";
 export { HidePostButton } from "./components/hide-post-button";

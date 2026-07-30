@@ -42,7 +42,7 @@ export function ProductTapButton({
 
   return (
     <Button
-      variant="accent"
+      variant="action"
       onClick={handleTap}
       disabled={recordTap.isPending}
       className={cn("rounded-pill", className)}

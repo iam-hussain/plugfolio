@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import {
+  COMMENTS_PAGE_SIZE,
+  commentSort,
   getComments,
   getCreatorPage,
   getMemberHandle,
@@ -10,10 +12,17 @@ import {
   isFollowingProfile,
   listProfileProducts,
 } from "@plugfolio/core";
-import { Button } from "@plugfolio/ui";
-import { CategoryChips, CreatorHeader, PostGrid, ShareButton } from "@/features/creator-page";
+import { Button, CreatorHeader, EmptyState, SocialsRow } from "@plugfolio/ui";
+import { formatCount } from "@/lib/format-count";
+import { CategoryChips, CustomiseDrawer, PageShare, PostGrid } from "@/features/creator-page";
 import { RequestCollabForm } from "@/features/business-collab";
-import { CommentClaim, CommentForm, CommentList, FollowButton } from "@/features/shopper-account";
+import {
+  CommentClaim,
+  CommentForm,
+  CommentList,
+  CommentSortChips,
+  FollowButton,
+} from "@/features/shopper-account";
 import { ReportButton } from "@/features/reporting";
 import { isFeatureEnabled } from "@plugfolio/core";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
@@ -25,7 +34,7 @@ import { repositories } from "@/server/container";
 // services directly — no HTTP hop (§6.11). A session, if present, only enriches
 // (follow state, comment box) — nothing here ever requires one (§2.2).
 type Params = { handle: string };
-type SearchParams = { category?: string };
+type SearchParams = { category?: string; sort?: string; cpage?: string };
 
 // One fetch per request, shared by generateMetadata and the page.
 const loadCreatorPage = cache((handle: string) =>
@@ -78,6 +87,9 @@ export default async function CreatorPage({
     },
   };
 
+  const { category, sort, cpage } = await searchParams;
+  const activeSort = commentSort.catch("recent").parse(sort);
+  const commentPage = Math.max(1, Number(cpage) || 1);
   const session = await auth();
   const commentsEnabled = await isFeatureEnabled(
     { settings: repositories.settings },
@@ -89,7 +101,11 @@ export default async function CreatorPage({
       session?.user
         ? isFollowingProfile({ follows: repositories.follows }, session.user.id, page.id)
         : Promise.resolve(false),
-      getComments({ comments: repositories.comments }, page.id),
+      getComments({ comments: repositories.comments }, page.id, {
+        sort: activeSort,
+        page: commentPage,
+        viewerId: session?.user?.id ?? null,
+      }),
       session?.user
         ? repositories.businesses.findByUser(session.user.id)
         : Promise.resolve(null),
@@ -121,7 +137,6 @@ export default async function CreatorPage({
   // with no post behind them (design §"two kinds of thing, one wall"). Products
   // already tagged inside a post are shown via that post — not twice.
   const standaloneProducts = allProducts.filter((product) => product.postCount === 0);
-  const { category } = await searchParams;
   const activeCategory = page.categories.find((c) => c.id === category) ?? null;
   const posts = activeCategory
     ? visiblePosts.filter((post) => post.categoryId === activeCategory.id)
@@ -130,6 +145,9 @@ export default async function CreatorPage({
     ? standaloneProducts.filter((product) => product.categoryId === activeCategory.id)
     : standaloneProducts;
   const shopCount = posts.length + products.length;
+  // "41 things tagged" — tag instances inside posts, which is what the phrase
+  // means; the standalone products are already counted on their own.
+  const thingsTagged = posts.reduce((total, post) => total + post.products.length, 0);
 
   // One page, four viewers (design-out): the owner (Admin or Manager) gets
   // owner tools where visitors get Follow — the buy path never changes.
@@ -143,27 +161,43 @@ export default async function CreatorPage({
     : null;
 
   return (
-    <main className="mx-auto w-full max-w-[1180px] px-5 pb-14 lg:px-11">
+    <main data-accent={page.accent} className="mx-auto w-full max-w-[1180px] px-5 pb-14 lg:px-11">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <CreatorHeader
         handle={page.username}
-        followerCount={page.followerCount}
-        displayName={page.displayName ?? undefined}
-        avatarUrl={page.avatarUrl ?? undefined}
-        bio={page.bio ?? undefined}
-        socials={socials}
-        share={<ShareButton path={`/${page.username}`} />}
+        displayName={page.displayName}
+        avatarUrl={page.avatarUrl}
+        bio={page.bio}
+        greeting={page.greeting}
+        followers={formatCount(page.followerCount)}
+        style={page.headerStyle}
+        socials={<SocialsRow links={socials} />}
+        share={
+          <PageShare
+            handle={page.username}
+            displayName={page.displayName}
+            avatarUrl={page.avatarUrl}
+            meta={`${posts.length} posts · ${thingsTagged} things`}
+          />
+        }
         action={
           ownMembership ? (
             ownMembership.role === "admin" ? (
-              <Button size="sm" className="rounded-pill px-6" asChild>
-                <Link href={{ pathname: "/dashboard/settings", query: { profile: page.id } }}>
-                  Customise
-                </Link>
-              </Button>
+              // The page's own live editor (ADR-0017): the drawer opens over the
+              // page, so the creator edits against the real thing.
+              <CustomiseDrawer
+                profileId={page.id}
+                role={ownMembership.role}
+                appearance={{
+                  accent: page.accent,
+                  headerStyle: page.headerStyle,
+                  gridStyle: page.gridStyle,
+                  greeting: page.greeting,
+                }}
+              />
             ) : null
           ) : (
             <FollowButton
@@ -219,36 +253,43 @@ export default async function CreatorPage({
           {products.length > 0
             ? ` · ${products.length} product${products.length === 1 ? "" : "s"}`
             : ""}
+          {thingsTagged > 0 ? ` · ${thingsTagged} thing${thingsTagged === 1 ? "" : "s"} tagged` : ""}
         </span>
       </div>
       {activeCategory && shopCount === 0 ? (
-        <p className="text-muted-foreground py-12 text-center text-sm">
-          Nothing here yet —{" "}
-          <Link href={`/${page.username}`} className="underline">
-            see All
-          </Link>
-          .
-        </p>
+        <EmptyState
+          title="Nothing on this shelf yet"
+          action={
+            <Button variant="secondary" asChild>
+              <Link href={`/${page.username}`}>See everything</Link>
+            </Button>
+          }
+        >
+          This shelf is empty — the rest of the page still has everything on it.
+        </EmptyState>
       ) : (
-        <PostGrid handle={page.username} posts={posts} products={products} />
+        <PostGrid handle={page.username} posts={posts} products={products} layout={page.gridStyle} />
       )}
-      <section aria-label="Comments" className="border-border mt-[34px] border-t pt-[34px]">
+      <section
+        id="comments"
+        aria-label="Comments"
+        className="border-border mt-[34px] scroll-mt-20 border-t pt-[34px]"
+      >
         <div className="mb-3 flex items-baseline gap-2">
           <h2 className="text-[1.375rem] font-extrabold tracking-[-0.02em]">Comments</h2>
-          <span className="text-muted-foreground text-xs font-bold tabular-nums">{comments.length}</span>
+          <span className="text-muted-foreground text-xs font-bold tabular-nums">
+            {comments.total}
+          </span>
           <span className="ml-auto">
             <ReportButton targetType="profile" targetId={page.id} targetLabel="this page" />
           </span>
         </div>
-        <CommentList
-          comments={comments}
-          replyContext={
-            session?.user && commentsEnabled
-              ? { profileId: page.id, ownHandle, identities, defaultAsProfileId }
-              : null
-          }
-        />
-        <div className="pt-4">
+        {comments.total > 1 ? (
+          <div className="mb-4">
+            <CommentSortChips sort={activeSort} />
+          </div>
+        ) : null}
+        <div className="pb-5">
           {!commentsEnabled ? (
             <p className="text-muted-foreground text-sm">Comments are switched off right now.</p>
           ) : session?.user ? (
@@ -262,6 +303,34 @@ export default async function CreatorPage({
             <CommentClaim />
           )}
         </div>
+        <CommentList
+          comments={comments.threads}
+          signedIn={!!session?.user}
+          replyContext={
+            session?.user && commentsEnabled
+              ? { profileId: page.id, ownHandle, identities, defaultAsProfileId }
+              : null
+          }
+        />
+        {comments.total > commentPage * COMMENTS_PAGE_SIZE ? (
+          <div className="pt-5">
+            <Button variant="secondary" asChild>
+              <Link
+                href={{
+                  pathname: `/${page.username}`,
+                  query: {
+                    ...(category ? { category } : {}),
+                    ...(activeSort === "recent" ? {} : { sort: activeSort }),
+                    cpage: commentPage + 1,
+                  },
+                  hash: "comments",
+                }}
+              >
+                Load more comments
+              </Link>
+            </Button>
+          </div>
+        ) : null}
       </section>
     </main>
   );

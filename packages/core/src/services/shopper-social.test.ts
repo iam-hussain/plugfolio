@@ -8,7 +8,13 @@ import type {
 import type { FollowRepository } from "../ports/follow-repository";
 import type { ProductReadRepository } from "../ports/product-repository";
 import type { ProfileRepository } from "../ports/profile-repository";
-import { addComment, followProfile, getFollowedProfiles, unfollowProfile } from "./shopper-social";
+import {
+  addComment,
+  followProfile,
+  getFollowedProfiles,
+  reactToComment,
+  unfollowProfile,
+} from "./shopper-social";
 
 const PROFILE_ID = "11111111-1111-1111-1111-111111111111";
 const USER_ID = "22222222-2222-2222-2222-222222222222";
@@ -16,6 +22,7 @@ const USER_ID = "22222222-2222-2222-2222-222222222222";
 const CREATOR_ID = "33333333-3333-3333-3333-333333333333";
 /** A product belonging to PROFILE_ID (for ADR-0013 target tests). */
 const PRODUCT_ID = "44444444-4444-4444-4444-444444444444";
+const QUERY = { sort: "recent" as const, limit: 50, skip: 0, viewerId: null };
 
 /** In-memory fakes — services stay testable without Prisma. */
 function makeFakeProfiles(): ProfileRepository {
@@ -84,6 +91,9 @@ function makeFakeComments(): CommentRepository & { rows: StoredComment[] } {
         author: { name: null, handle: "user-abc12345" },
         asProfile: comment.asProfileId ? { username: "lena" } : null,
         createdAt: new Date("2026-07-20T00:00:00.000Z"),
+        helpfulCount: 0,
+        unhelpfulCount: 0,
+        myReaction: null,
         replies: [],
         profileId: comment.profileId,
         productId: comment.productId,
@@ -99,10 +109,21 @@ function makeFakeComments(): CommentRepository & { rows: StoredComment[] } {
         : null;
     },
     async listByProfile(profileId: string) {
-      return rows.filter((r) => r.profileId === profileId && !r.productId && !r.parentId);
+      const threads = rows.filter((r) => r.profileId === profileId && !r.productId && !r.parentId);
+      return { threads, total: threads.length };
     },
     async listByProduct(productId: string) {
-      return rows.filter((r) => r.productId === productId && !r.parentId);
+      const threads = rows.filter((r) => r.productId === productId && !r.parentId);
+      return { threads, total: threads.length };
+    },
+    async exists(commentId: string) {
+      return rows.some((r) => r.id === commentId);
+    },
+    async setReaction(commentId: string, _userId: string, value) {
+      const row = rows.find((r) => r.id === commentId);
+      if (!row) return;
+      const next = { ...row, myReaction: value, helpfulCount: value === "helpful" ? 1 : 0 };
+      rows[rows.indexOf(row)] = next;
     },
   };
 }
@@ -204,7 +225,7 @@ describe("comment targets & replies (ADR-0013)", () => {
       productId: PRODUCT_ID,
       body: "Does it fit a 16-inch laptop?",
     });
-    expect(await deps.comments.listByProduct(PRODUCT_ID, 50)).toHaveLength(1);
+    expect((await deps.comments.listByProduct(PRODUCT_ID, QUERY)).threads).toHaveLength(1);
   });
 
   it("rejects a comment on a product that isn't this profile's", async () => {
@@ -256,6 +277,30 @@ describe("comment targets & replies (ADR-0013)", () => {
         profileId: PROFILE_ID,
         parentId: productComment.id,
         body: "page-level reply",
+      }),
+    ).rejects.toBeInstanceOf(NotFoundError);
+  });
+});
+
+describe("reactToComment", () => {
+  it("records a reaction, and null clears it", async () => {
+    const deps = makeDeps();
+    const comment = await addComment(deps, USER_ID, { profileId: PROFILE_ID, body: "Ships to Pune?" });
+
+    await reactToComment(deps, USER_ID, { commentId: comment.id, value: "helpful" });
+    expect(deps.comments.rows[0]?.myReaction).toBe("helpful");
+
+    // Tapping the same one again is a clear — the client sends null.
+    await reactToComment(deps, USER_ID, { commentId: comment.id, value: null });
+    expect(deps.comments.rows[0]?.myReaction).toBeNull();
+  });
+
+  it("rejects reacting to a comment that isn't there", async () => {
+    const deps = makeDeps();
+    await expect(
+      reactToComment(deps, USER_ID, {
+        commentId: "99999999-9999-9999-9999-999999999999",
+        value: "helpful",
       }),
     ).rejects.toBeInstanceOf(NotFoundError);
   });

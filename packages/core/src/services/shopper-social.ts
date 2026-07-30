@@ -1,5 +1,11 @@
 import { AppError, ForbiddenError, NotFoundError } from "../errors";
-import type { CommentRepository, CommentThread, CommentView } from "../ports/comment-repository";
+import type {
+  CommentPage,
+  CommentQuery,
+  CommentRepository,
+  CommentView,
+} from "../ports/comment-repository";
+import type { CommentSort, ReactToCommentInput } from "../schemas/comment-reaction";
 import type { FollowRepository } from "../ports/follow-repository";
 import type { ProductReadRepository } from "../ports/product-repository";
 import type { ProfileRepository, ProfileSummary } from "../ports/profile-repository";
@@ -18,7 +24,7 @@ export type ShopperSocialDeps = {
   products: ProductReadRepository;
 };
 
-const COMMENTS_PAGE_SIZE = 50;
+export const COMMENTS_PAGE_SIZE = 50;
 
 export async function followProfile(
   deps: ShopperSocialDeps,
@@ -101,16 +107,51 @@ export async function addComment(
   });
 }
 
+/** Reading is account-free (§2.2); `viewerId` only decides `myReaction`. */
+export type CommentReadOptions = {
+  sort?: CommentSort;
+  page?: number;
+  viewerId?: string | null;
+};
+
+function toQuery(options: CommentReadOptions): CommentQuery {
+  const page = Math.max(1, options.page ?? 1);
+  return {
+    sort: options.sort ?? "recent",
+    limit: COMMENTS_PAGE_SIZE,
+    skip: (page - 1) * COMMENTS_PAGE_SIZE,
+    viewerId: options.viewerId ?? null,
+  };
+}
+
 export async function getComments(
   deps: Pick<ShopperSocialDeps, "comments">,
   profileId: string,
-): Promise<readonly CommentThread[]> {
-  return deps.comments.listByProfile(profileId, COMMENTS_PAGE_SIZE);
+  options: CommentReadOptions = {},
+): Promise<CommentPage> {
+  return deps.comments.listByProfile(profileId, toQuery(options));
 }
 
 export async function getProductComments(
   deps: Pick<ShopperSocialDeps, "comments">,
   productId: string,
-): Promise<readonly CommentThread[]> {
-  return deps.comments.listByProduct(productId, COMMENTS_PAGE_SIZE);
+  options: CommentReadOptions = {},
+): Promise<CommentPage> {
+  return deps.comments.listByProduct(productId, toQuery(options));
+}
+
+/**
+ * Helpful / not helpful on a comment. Needs an account (it is an "act as
+ * yourself" action, like follow and comment); the same value twice clears it,
+ * which the client sends as `null` so the toggle stays the server's contract.
+ */
+export async function reactToComment(
+  deps: Pick<ShopperSocialDeps, "comments">,
+  userId: string,
+  input: ReactToCommentInput,
+): Promise<void> {
+  if (!(await deps.comments.exists(input.commentId))) {
+    throw new NotFoundError("Comment not found");
+  }
+  await deps.comments.setReaction(input.commentId, userId, input.value);
 }

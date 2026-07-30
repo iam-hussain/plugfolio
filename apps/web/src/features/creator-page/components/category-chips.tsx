@@ -1,12 +1,15 @@
 import type { PageCategory } from "@plugfolio/core";
-import { cn } from "@plugfolio/ui";
+import { ShelfChip, ShelfChips, ShelfDescription } from "@plugfolio/ui";
 import type { Route } from "next";
 import Link from "next/link";
 
 /**
- * Category chips row (ADR-0010): "All" + one chip per shelf, filtering the
- * grid via ?category=. Renders nothing for a profile with no categories —
- * the page must look exactly as before.
+ * The shelf rail on a creator page (ADR-0010, DESIGN creator.html §.chips):
+ * "All" plus one chip per shelf, filtering the grid via `?category=`.
+ *
+ * The chips themselves are the design system's (`ShelfChip`); this is the
+ * feature's job — turning categories into routes and knowing which is active.
+ * Renders nothing for a profile with no shelves.
  */
 export type CategoryChipsProps = {
   handle: string;
@@ -14,48 +17,23 @@ export type CategoryChipsProps = {
   activeId: string | null;
 };
 
-function Chip({ href, active, children }: { href: Route; active: boolean; children: string }) {
-  return (
-    <Link
-      href={href}
-      aria-current={active ? "page" : undefined}
-      className={cn(
-        // Filters, not links out: square-shouldered (r-image) and text-led, so
-        // they never read as the circular icon-only socials above them.
-        "rounded-image inline-flex min-h-10 shrink-0 items-center border px-4 py-[9px] text-[13px] font-semibold transition-colors",
-        active
-          ? "border-primary bg-primary text-primary-foreground"
-          : "border-border bg-card text-muted-foreground hover:border-primary hover:text-primary",
-      )}
-    >
-      {children}
-    </Link>
-  );
-}
-
 export function CategoryChips({ handle, categories, activeId }: CategoryChipsProps) {
   if (categories.length === 0) return null;
   const active = categories.find((category) => category.id === activeId) ?? null;
 
   return (
-    <nav aria-label="Categories" className="pt-2">
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        <Chip href={`/${handle}` as Route} active={!active}>
-          All
-        </Chip>
+    <>
+      <ShelfChips>
+        <ShelfChip asChild selected={!active}>
+          <Link href={`/${handle}` as Route}>All</Link>
+        </ShelfChip>
         {categories.map((category) => (
-          <Chip
-            key={category.id}
-            href={`/${handle}?category=${category.id}` as Route}
-            active={category.id === active?.id}
-          >
-            {category.title}
-          </Chip>
+          <ShelfChip key={category.id} asChild selected={category.id === active?.id}>
+            <Link href={`/${handle}?category=${category.id}` as Route}>{category.title}</Link>
+          </ShelfChip>
         ))}
-      </div>
-      {active?.description ? (
-        <p className="text-muted-foreground truncate pt-1 text-sm">{active.description}</p>
-      ) : null}
-    </nav>
+      </ShelfChips>
+      {active?.description ? <ShelfDescription>{active.description}</ShelfDescription> : null}
+    </>
   );
 }

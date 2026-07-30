@@ -76,3 +76,38 @@ export * from "./components/textarea";
 export * from "./components/toggle-group";
 export * from "./components/toggle";
 export * from "./components/tooltip";
+
+// ── The design system (ADR-0018) ───────────────────────────────────────────
+// Shared visual components lifted out of the design workspace, page by page.
+// They know shapes, never sources: data arrives as props, interactivity as
+// slots, so a Server Component can render them.
+export * from "./components/creator-header";
+export * from "./components/socials-row";
+export * from "./components/share-ways";
+export * from "./components/shelf-chips";
+export * from "./components/page-band";
+export * from "./components/empty-state";
+export * from "./components/comment";
+// Post + product views (DESIGN post.html / product.html) — the five components
+// the two detail pages share, plus the media slot and the product card.
+export * from "./components/media-slot";
+export * from "./components/detail-page";
+export * from "./components/coupon";
+export * from "./components/product-card";
+export * from "./components/product-detail";
+// Explore (DESIGN explore.html) — the fan, the wall, the things grid.
+export * from "./components/explore";
+export * from "./components/ad-slot";
+// Account settings (DESIGN account.html) — the one page every role shares.
+export * from "./components/account";
+// Following (DESIGN following.html) — the list, never a feed.
+export * from "./components/following";
+// Auth (DESIGN auth.html) — one narrow column, one action, one consequence.
+export * from "./components/auth-form";
+// Support (DESIGN support.html) — make the wait legible.
+export * from "./components/support-form";
+// Marketing (DESIGN how-it-works / for-creators / for-business).
+export * from "./components/marketing";
+// Panels + share (DESIGN creator.html §.pn / §.sh) — what goes inside a Sheet.
+export * from "./components/panel";
+export * from "./components/share-panel";

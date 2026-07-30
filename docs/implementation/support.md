@@ -58,3 +58,13 @@ until then).
   unknown-ticket 404.
 - Driven in dev: submit from `/support` signed-out and signed-in → ticket lands in admin
   `/support`; resolve moves it out of the open queue and writes the audit entry.
+
+## Design system (ADR-0018)
+
+The form's vocabulary lives in `@plugfolio/ui` (DESIGN `support.html`): `SupportField`, `SupportCategories`/`SupportCategory`, `SupportHint`, `SupportWho`, `SupportNext`/`SupportStep`.
+
+- The picker is radio **cards, not a `<select>`**. Nine options behind a dropdown means someone who is already stuck has to open a menu and read nine lines to find out whether their problem is even listed; laid out flat the whole set is visible and the answer is one tap.
+- The per-category hint sits **in the flow, not a tooltip** — it's the single fact that makes a ticket answerable on the first reply instead of the third.
+- "What happens next" states three things plainly, including the one nobody else states: there is no phone line.
+
+Stories: `Auth & Support/Forms`.

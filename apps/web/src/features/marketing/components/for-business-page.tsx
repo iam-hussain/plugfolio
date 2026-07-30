@@ -1,4 +1,4 @@
-import { Button } from "@plugfolio/ui";
+import { Button, CollabBubble, CollabThread, Exclusions } from "@plugfolio/ui";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -122,20 +122,12 @@ export function ForBusinessPage() {
             </p>
           }
         >
-          <div className="grid w-full gap-2.5">
-            <span className="bg-card border-border text-muted-foreground rounded-tile max-w-[82%] justify-self-start border px-4 py-3 text-[0.9375rem] leading-[1.5]">
-              Two posts and a story — is that within range?
-            </span>
-            <span className="bg-foreground text-background rounded-tile max-w-[82%] justify-self-end px-4 py-3 text-[0.9375rem] leading-[1.5]">
-              It is. Can you cover the launch week?
-            </span>
-            <span className="bg-card border-border text-muted-foreground rounded-tile max-w-[82%] justify-self-start border px-4 py-3 text-[0.9375rem] leading-[1.5]">
-              Yes. Sending dates now.
-            </span>
-            <span className="bg-primary text-primary-foreground rounded-pill justify-self-center px-5 py-2.5 text-center text-[0.9375rem] font-bold">
-              Terms agreed
-            </span>
-          </div>
+          <CollabThread>
+            <CollabBubble>Two posts and a story — is that within range?</CollabBubble>
+            <CollabBubble from="you">It is. Can you cover the launch week?</CollabBubble>
+            <CollabBubble>Yes. Sending dates now.</CollabBubble>
+            <CollabBubble from="deal">Terms agreed</CollabBubble>
+          </CollabThread>
         </SplitBand>
 
         {/* ── up front ── */}
@@ -152,19 +144,12 @@ export function ForBusinessPage() {
             </Fact>
           </div>
 
-          <div className="border-border rounded-tile mt-6 border border-dashed p-6">
-            <b className="font-display block text-lg font-bold tracking-[-0.01em]">
-              What Plugfolio deliberately isn&apos;t
-            </b>
-            <ul className="text-muted-foreground mt-3 list-disc pl-5 text-[0.9375rem] leading-[1.6]">
-              <li>No media kits or campaign suites — briefs and threads, nothing heavier.</li>
-              <li>No on-platform payments, escrow or invoicing.</li>
-              <li>No creator-to-creator collabs.</li>
-            </ul>
-            <p className="text-muted-foreground mt-3 text-[0.9375rem] leading-[1.6]">
-              If your team needs those, better to find out here than after signing up.
-            </p>
-          </div>
+          <Exclusions title="What Plugfolio deliberately isn't">
+            <li>No media kits or campaign suites — briefs and threads, nothing heavier.</li>
+            <li>No on-platform payments, escrow or invoicing.</li>
+            <li>No creator-to-creator collabs.</li>
+            <li>If your team needs those, better to find out here than after signing up.</li>
+          </Exclusions>
         </section>
 
         <MarketingDoors

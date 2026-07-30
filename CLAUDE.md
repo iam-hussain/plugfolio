@@ -82,7 +82,8 @@ apps/
 packages/
   core/           # framework-free domain: entities, rules, services, Zod schemas, repository INTERFACES (§6). No Prisma/Next.
   db/             # Prisma schema + client + repository IMPLEMENTATIONS — the ONLY place Prisma is imported.
-  ui/             # shadcn/ui primitives, themed via tokens (@plugfolio/ui).
+  ui/             # THE design system (ADR-0018): shadcn primitives + every shared
+                  # visual component, themed via tokens. Knows shapes, not sources.
   tokens/         # "Charged Violet" design tokens (§7) — CSS + TS, single source of color/space/type.
   config/         # shared tsconfig / tailwind / eslint / prettier presets.
 ```
@@ -123,7 +124,7 @@ apps/web/src/
 - **A feature owns its slice.** UI, hooks, types, and client API for one capability stay in `features/<name>/`.
 - **Cross-feature imports go through `index.ts`.** Never reach into another feature's internals; import from its public surface.
 - **`app/` is thin.** Routes wire features together and handle layout/loading/error boundaries — no business logic.
-- **`components/` is generic only.** If a component knows about "creators" or "collabs," it belongs in a feature, not here.
+- **`components/` is app chrome and composition only** ([ADR-0018](./docs/adr/0018-design-system-in-ui-package.md)). The shared visual vocabulary — including product-aware components like `ProductCard`, `CouponBlock`, `CommentThread`, `CreatorHeader` — lives in **`@plugfolio/ui`**, themed and storybook'd, taking data as props. A UI component knows *shapes*, never *sources*: type-only imports from `@plugfolio/core` are fine, value imports are not (they drag `node:crypto` into the client bundle). Features own behaviour — fetching, server actions, interactive wrappers; the UI package owns appearance.
 - **Server-first.** Default to Server Components; add `"use client"` only for genuine interactivity (tagging editor, share sheet, forms).
 
 ---

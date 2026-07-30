@@ -37,3 +37,15 @@ Region / following-size / verified filters, niche chips, and trending sort from 
 prototype — profiles carry none of those fields in v1. Add them when the data lands;
 the filter row slots under the search bar per the design. Pagination is a single
 24-item page ("load more" comes with real volume).
+
+## Design system (ADR-0018)
+
+Explore's vocabulary now lives in `@plugfolio/ui` (DESIGN `explore.html`):
+
+- `CreatorFan` / `CreatorCard` — the rail of tilted, overlapping cards. Scoped to Creators it switches to `layout="grid"`: a rail says "there is more sideways", a result set has to say "this is the set".
+- `PostWall` / `WallPost` — a **grid, not CSS columns**. Columns balance their heights, so an odd count (5 cards across 3) puts one in the first column and leaves a card-sized hole under it; a grid places row-wise, and the reading order finally matches the DOM order. One column below 560px, because at two columns the photo lands at ~135px and a tag pill needs 90–140px — every tag would overflow its own photograph.
+- `ThingsGrid` / `ThingCard` — Things is its own view, not the posts wall relabelled. A scope control that doesn't scope is worse than no control.
+- `AdSlot` / `AdSlotWhy` — deliberately **not** a wall tile: full-width, no tilt, no tag pill, no tabular price, no Buy label. Every one of those belongs to a creator's recommendation, and an ad wearing them is claiming to be one. Square-shouldered against 26px cards so the difference reads before the label does.
+- `WallEnd` / `WallEndNote` — a list that simply stops reads as a list that broke, so the wall always says which end it reached. The reads are capped at `EXPLORE_PAGE_SIZE` (24) with **no paging yet**, so at the cap it says "showing the first 24" rather than claiming that's everything. `ponytail:` real `?page=` paging when the discovery reads take a skip — the design's "Load more" is a plain link by design, so it works with scripting off and keeps the footer reachable.
+
+Stories: `Explore/Wall` — creator rail, creator results, wall, things, sponsored, both ends.

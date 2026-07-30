@@ -6,10 +6,34 @@ import {
   getCreatorPage,
   getMemberHandle,
   getProductComments,
+  COMMENTS_PAGE_SIZE,
+  commentSort,
   getShopperProduct,
 } from "@plugfolio/core";
-import { CouponBlock, CreatorHeader, ProductTapButton } from "@/features/creator-page";
-import { CommentClaim, CommentForm, CommentList } from "@/features/shopper-account";
+import {
+  BackLink,
+  BackLinkIcon,
+  BylineAvatar,
+  Button,
+  CreatorByline,
+  OffPlatformNote,
+  OwnBadge,
+  ProductBuy,
+  ProductDetail,
+  ProductInStoreNote,
+  ProductMedia,
+  ProductPrice,
+  ProductSource,
+  ProductTitle,
+  ProductWhere,
+} from "@plugfolio/ui";
+import { CouponBlock, ProductTapButton } from "@/features/creator-page";
+import {
+  CommentClaim,
+  CommentForm,
+  CommentList,
+  CommentSortChips,
+} from "@/features/shopper-account";
 import { ReportButton } from "@/features/reporting";
 import { isFeatureEnabled } from "@plugfolio/core";
 import { formatPrice } from "@/lib/format-price";
@@ -23,6 +47,7 @@ import { repositories } from "@/server/container";
 // plus its own comment thread (ADR-0013). The buy path stays account-free
 // (ADR-0002, §2.2); a session only enriches.
 type Params = { handle: string; productId: string };
+type SearchParams = { sort?: string; cpage?: string };
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { handle, productId } = await params;
@@ -34,8 +59,17 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   return { title: product ? `${product.title} · @${handle}` : `@${handle}` };
 }
 
-export default async function ProductPage({ params }: { params: Promise<Params> }) {
+export default async function ProductPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<Params>;
+  searchParams: Promise<SearchParams>;
+}) {
   const { handle, productId } = await params;
+  const { sort, cpage } = await searchParams;
+  const activeSort = commentSort.catch("recent").parse(sort);
+  const commentPage = Math.max(1, Number(cpage) || 1);
   const deps = { creatorPages: repositories.creatorPages };
   const [page, product] = await Promise.all([
     getCreatorPage(deps, handle),
@@ -50,7 +84,11 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
     true,
   );
   const [comments, ownHandle, memberships] = await Promise.all([
-    getProductComments({ comments: repositories.comments }, product.id),
+    getProductComments({ comments: repositories.comments }, product.id, {
+      sort: activeSort,
+      page: commentPage,
+      viewerId: session?.user?.id ?? null,
+    }),
     session?.user
       ? getMemberHandle({ users: repositories.users }, session.user.id)
       : Promise.resolve(""),
@@ -65,129 +103,128 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
     : null;
 
   const price = formatPrice(product.priceCents, product.currency);
-  const kindLine = product.affiliateUrl
-    ? `${product.kind === "own" ? "their own product" : "affiliate pick"} · opens ${retailerName(product.affiliateUrl)}`
-    : "in-store offer";
+  const own = product.kind === "own";
+  // No link means no button (ADR-0011): the code IS the action, and a Buy
+  // here would promise a shop it can't reach.
+  const inStoreOnly = product.affiliateUrl === null;
 
   return (
-    <main className="mx-auto w-full max-w-[1180px] px-5 pb-14 lg:px-11">
-      <CreatorHeader handle={page.username} followerCount={page.followerCount} />
-      <nav className="mt-4 pb-3.5">
-        <Link
-          href={`/${handle}`}
-          className="text-muted-foreground hover:text-foreground font-mono text-xs"
-        >
-          ← Back to @{handle}
+    <main data-accent={page.accent} className="mx-auto w-full max-w-[1180px] px-5 pb-14 lg:px-11">
+      <BackLink asChild>
+        <Link href={`/${page.username}`}>
+          <BackLinkIcon />
+          All of @{page.username}
         </Link>
-      </nav>
-      <div className="flex flex-col gap-[18px] lg:grid lg:grid-cols-[1.15fr_0.85fr] lg:items-start lg:gap-5">
-        <div className="border-border bg-muted relative aspect-square overflow-hidden rounded-2xl border">
+      </BackLink>
+      <CreatorByline
+        avatar={<BylineAvatar initial={page.username.charAt(0).toUpperCase()} src={page.avatarUrl} />}
+        name={page.displayName ?? `@${page.username}`}
+        handle={page.displayName ? `@${page.username}` : undefined}
+      />
+      <ProductDetail>
+        <ProductMedia>
           {product.imageUrl ? (
             /* ponytail: unoptimized until the social-import pipeline pins image domains */
             <Image
               src={product.imageUrl}
               alt={product.title}
-              fill
+              width={900}
+              height={900}
               unoptimized
-              className="object-cover"
               priority
+              className="block aspect-square w-full object-cover"
             />
           ) : null}
-        </div>
+        </ProductMedia>
+
         <div>
-          {product.kind === "own" ? (
-            <p className="text-muted-foreground border-border rounded-pill mb-2.5 inline-block border px-2.5 py-[3px] font-mono text-[9px] font-bold tracking-[0.06em]">
-              THEIR OWN PRODUCT
-            </p>
-          ) : null}
-          <h1 className="font-display text-2xl font-extrabold leading-[1.1] tracking-[-0.02em]">
-            {product.title}
-          </h1>
-          <div className="mt-2 flex flex-wrap items-baseline gap-2.5">
-            {price ? (
-              <span className="font-display text-primary text-[22px] font-extrabold">{price}</span>
-            ) : null}
-            <span className="text-muted-foreground font-mono text-[11px]">{kindLine}</span>
-          </div>
+          {own ? <OwnBadge>Their own product</OwnBadge> : null}
+          <ProductTitle>{product.title}</ProductTitle>
+          <ProductPrice>{price}</ProductPrice>
+          <ProductWhere>
+            {inStoreOnly ? (
+              <>
+                <b>In-store offer</b> · no link, use the code
+              </>
+            ) : (
+              <>
+                <b>{own ? "Their own product" : "Affiliate pick"}</b> · opens{" "}
+                {retailerName(product.affiliateUrl!)}
+              </>
+            )}
+          </ProductWhere>
 
+          {/* Copy, then go — the coupon is always above the action (ADR-0011). */}
           {product.couponCode ? (
-            <div className="mt-4">
-              <CouponBlock
-                productId={product.id}
-                postId={product.fromPost?.id}
-                couponCode={product.couponCode}
-                offerEndsAt={product.offerEndsAt}
-                inStoreNote={product.inStoreNote}
-                hasLink={!!product.affiliateUrl}
-              />
-            </div>
+            <CouponBlock
+              productId={product.id}
+              postId={product.fromPost?.id}
+              couponCode={product.couponCode}
+              offerEndsAt={product.offerEndsAt}
+              inStoreNote={product.inStoreNote}
+              hasLink={!!product.affiliateUrl}
+            />
           ) : null}
 
-          {product.affiliateUrl ? (
-            <div className="mt-4">
+          {inStoreOnly ? (
+            <ProductInStoreNote>
+              {product.inStoreNote ??
+                "Show the code at the counter. We can't track in-store redemption, so this one is on trust."}
+            </ProductInStoreNote>
+          ) : (
+            <ProductBuy>
               <ProductTapButton
                 productId={product.id}
                 postId={product.fromPost?.id}
-                affiliateUrl={product.affiliateUrl}
+                affiliateUrl={product.affiliateUrl!}
                 source="product"
-                label={product.kind === "own" ? "Shop their store →" : "Buy →"}
-                className="font-display h-auto w-full max-w-[320px] py-3.5 text-[15px] font-bold"
+                label={own ? "Shop their store" : "Buy"}
               />
-            </div>
-          ) : null}
-          <p className="text-muted-foreground/70 mt-2.5 font-mono text-[10.5px]">
-            Payment settles off-platform · opens the retailer
-          </p>
+            </ProductBuy>
+          )}
+
+          <OffPlatformNote>
+            {inStoreOnly
+              ? "Payment settles off-platform · show the code in store"
+              : `Payment settles off-platform · opens ${own ? "their store" : "the retailer"}`}
+          </OffPlatformNote>
 
           {product.fromPost ? (
-            <div className="border-border mt-5 border-t pt-3.5">
-              <p className="text-muted-foreground mb-2 font-mono text-[10px] uppercase tracking-[0.08em]">
-                From this post
-              </p>
-              <Link
-                href={`/${handle}/post/${product.fromPost.id}`}
-                className="inline-flex items-center gap-3"
-              >
-                <span className="bg-muted relative block size-12 overflow-hidden rounded-[10px]">
-                  {/* ponytail: unoptimized until the social-import pipeline pins image domains */}
-                  <Image
-                    src={product.fromPost.mediaUrl}
-                    alt=""
-                    fill
-                    unoptimized
-                    className="object-cover"
-                  />
-                </span>
-                <span className="text-primary text-sm font-semibold">Open the post →</span>
-              </Link>
-            </div>
+            <ProductSource
+              asChild
+              title="Open the post"
+              thumb={
+                /* ponytail: unoptimized until the social-import pipeline pins image domains */
+                <Image
+                  src={product.fromPost.mediaUrl}
+                  alt=""
+                  width={116}
+                  height={116}
+                  unoptimized
+                  className="size-full object-cover"
+                />
+              }
+            >
+              <Link href={`/${handle}/post/${product.fromPost.id}`} />
+            </ProductSource>
           ) : null}
         </div>
-      </div>
+      </ProductDetail>
 
-      <section aria-label="Comments" className="mt-[34px]">
+      <section id="comments" aria-label="Comments" className="mt-[34px] scroll-mt-20">
         <div className="mb-3 flex items-baseline gap-2">
           <h2 className="font-display text-lg font-bold">Comments</h2>
-          <span className="text-muted-foreground font-mono text-[11px]">{comments.length}</span>
+          <span className="text-muted-foreground font-mono text-[11px]">{comments.total}</span>
           <span className="ml-auto">
             <ReportButton targetType="product" targetId={product.id} targetLabel="this product" />
           </span>
         </div>
-        <CommentList
-          comments={comments}
-          replyContext={
-            session?.user && commentsEnabled
-              ? {
-                  profileId: product.profileId,
-                  productId: product.id,
-                  ownHandle,
-                  identities,
-                  defaultAsProfileId,
-                }
-              : null
-          }
-        />
-        <div className="pt-4">
+        {comments.total > 1 ? (
+          <div className="mb-4">
+            <CommentSortChips sort={activeSort} />
+          </div>
+        ) : null}
+        <div className="pb-5">
           {!commentsEnabled ? (
             <p className="text-muted-foreground text-sm">Comments are switched off right now.</p>
           ) : session?.user ? (
@@ -202,6 +239,39 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
             <CommentClaim />
           )}
         </div>
+        <CommentList
+          comments={comments.threads}
+          signedIn={!!session?.user}
+          replyContext={
+            session?.user && commentsEnabled
+              ? {
+                  profileId: product.profileId,
+                  productId: product.id,
+                  ownHandle,
+                  identities,
+                  defaultAsProfileId,
+                }
+              : null
+          }
+        />
+        {comments.total > commentPage * COMMENTS_PAGE_SIZE ? (
+          <div className="pt-5">
+            <Button variant="secondary" asChild>
+              <Link
+                href={{
+                  pathname: `/${handle}/product/${product.id}`,
+                  query: {
+                    ...(activeSort === "recent" ? {} : { sort: activeSort }),
+                    cpage: commentPage + 1,
+                  },
+                  hash: "comments",
+                }}
+              >
+                Load more comments
+              </Link>
+            </Button>
+          </div>
+        ) : null}
       </section>
     </main>
   );

@@ -1,11 +1,11 @@
 import type { AccessibleProfile, YouTubeConnectionView } from "@plugfolio/core";
-import { Avatar, AvatarFallback, AvatarImage, Button } from "@plugfolio/ui";
-import { Info } from "lucide-react";
-import Link from "next/link";
-import { SocialGlyph } from "@/features/creator-page";
 import {
   AccountNav,
   AccountSection,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
   ConnectionRow,
   Prerequisite,
   ProfileNewRow,
@@ -14,7 +14,12 @@ import {
   RoleCopy,
   SettingRow,
   SettingRows,
-} from "./account-shared";
+  SocialGlyph,
+} from "@plugfolio/ui";
+import { Info } from "lucide-react";
+import Link from "next/link";
+
+
 import { HandleForm } from "./handle-form";
 
 /**
@@ -211,14 +216,18 @@ export function AccountPage({
                 {profiles.map((profile) => (
                   <ProfileRow
                     key={profile.id}
-                    href={`/dashboard?profile=${profile.id}`}
+                    asChild
                     username={profile.username}
                     meta={`plugfolio.com/${profile.username}`}
                     badge={profile.role === "admin" ? "Admin" : "Manager"}
-                  />
+                  >
+                    <Link href={`/dashboard?profile=${profile.id}`} />
+                  </ProfileRow>
                 ))}
                 {remaining > 0 ? (
-                  <ProfileNewRow href="/dashboard" label={`+ New profile · ${remaining} left`} />
+                  <ProfileNewRow asChild label={`+ New profile · ${remaining} left`}>
+                    <Link href="/dashboard" />
+                  </ProfileNewRow>
                 ) : null}
               </div>
             </RoleBlock>

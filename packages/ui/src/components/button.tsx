@@ -22,6 +22,13 @@ const buttonVariants = cva(
         primary: "bg-foreground text-background hover:bg-primary hover:text-primary-foreground",
         default: "bg-foreground text-background hover:bg-primary hover:text-primary-foreground",
         accent: "bg-accent text-accent-foreground hover:bg-accent/90",
+        // The outbound buy action (DESIGN .btn--accent): the page accent as a
+        // fill under white, arriving at Ink on hover. It follows the creator's
+        // chosen accent (ADR-0017) — which is what those contrast numbers were
+        // measured for. NOT `accent`: that's Electric Lime, and lime means a
+        // real offer (§7), not "this is the button".
+        action:
+          "bg-primary text-primary-foreground hover:bg-foreground hover:text-background",
         // White pill with a hairline — the second action in a pair.
         secondary: "border border-border bg-card text-foreground hover:bg-active",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",

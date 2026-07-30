@@ -1,7 +1,15 @@
 "use client";
 
 import type { FollowedCreator } from "@plugfolio/core";
-import { Avatar, AvatarFallback, AvatarImage, Badge, Button } from "@plugfolio/ui";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  FollowBadge,
+  FollowIdentity,
+  FollowRowShell,
+} from "@plugfolio/ui";
 import Link from "next/link";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -45,32 +53,28 @@ export function FollowRow({ creator, meta, badge }: FollowRowProps) {
   });
 
   return (
-    <div
-      data-gone={gone ? "yes" : "no"}
-      className="border-border bg-card rounded-tile hover:border-primary data-[gone=yes]:bg-background flex flex-wrap items-center gap-4 border px-[18px] py-3.5 transition-colors data-[gone=yes]:border-dashed"
-    >
-      <Link
-        href={`/${creator.username}`}
-        className="flex min-w-0 flex-[1_1_260px] items-center gap-3.5 no-underline"
+    <FollowRowShell gone={gone}>
+      <FollowIdentity
+        asChild
+        dimmed={gone}
+        avatar={
+          <Avatar className="size-[52px]">
+            {creator.avatarUrl ? <AvatarImage src={creator.avatarUrl} alt="" /> : null}
+            <AvatarFallback className="bg-active text-primary font-display text-lg font-bold">
+              {creator.username.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        }
+        name={name}
+        handle={`@${creator.username}`}
+        meta={meta}
       >
-        <Avatar className={`size-[52px] ${gone ? "opacity-50" : ""}`}>
-          {creator.avatarUrl ? <AvatarImage src={creator.avatarUrl} alt="" /> : null}
-          <AvatarFallback className="bg-active text-primary font-display text-lg font-bold">
-            {creator.username.charAt(0).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <span className={`min-w-0 ${gone ? "opacity-50" : ""}`}>
-          <b className="block truncate text-[13px] font-bold">{name}</b>
-          <span className="text-muted-foreground mt-0.5 block truncate text-[0.9375rem]">
-            @{creator.username}
-          </span>
-          <span className="text-faint mt-0.5 block truncate text-xs">{meta}</span>
-        </span>
-      </Link>
+        <Link href={`/${creator.username}`} />
+      </FollowIdentity>
 
       {gone ? (
         <div className="ml-auto flex items-center gap-3">
-          <span role="status" className="text-muted-foreground text-xs font-bold">
+          <span role="status" className="text-muted-foreground text-micro font-bold">
             Unfollowed
           </span>
           <Button size="sm" onClick={() => toggle.mutate(false)} disabled={toggle.isPending}>
@@ -79,12 +83,10 @@ export function FollowRow({ creator, meta, badge }: FollowRowProps) {
         </div>
       ) : (
         <>
-          <Badge variant={badge.isNew ? "default" : "outline-muted"} className="tabular-nums">
-            {badge.label}
-          </Badge>
+          <FollowBadge tone={badge.isNew ? "new" : "quiet"}>{badge.label}</FollowBadge>
           <div className="ml-auto flex items-center gap-3">
             {failed ? (
-              <span role="alert" className="text-destructive text-xs font-semibold">
+              <span role="alert" className="text-destructive text-micro font-semibold">
                 Didn&apos;t save
               </span>
             ) : null}
@@ -99,6 +101,6 @@ export function FollowRow({ creator, meta, badge }: FollowRowProps) {
           </div>
         </>
       )}
-    </div>
+    </FollowRowShell>
   );
 }

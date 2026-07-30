@@ -6,6 +6,7 @@ import type {
   ProfileSummary,
 } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
+import { readAppearance } from "../page-appearance";
 
 /** Prisma implementation of the `ProfileRepository` port. */
 export function createProfileRepository(db: PrismaClient = prisma): ProfileRepository {
@@ -61,10 +62,22 @@ export function createProfileIdentityRepository(
 ): ProfileIdentityRepository {
   return {
     async get(profileId: string): Promise<ProfileIdentity | null> {
-      return db.profile.findUnique({
+      const row = await db.profile.findUnique({
         where: { id: profileId },
-        select: { displayName: true, avatarUrl: true, bio: true },
+        select: {
+          displayName: true,
+          avatarUrl: true,
+          bio: true,
+          accent: true,
+          headerStyle: true,
+          gridStyle: true,
+          greeting: true,
+        },
       });
+      // The columns are strings (Mongo enums buy nothing); the Zod enums at the
+      // boundary are what keeps them to the ADR-0017 set, so a hand-edited row
+      // reads back as "unset" rather than as a value no component handles.
+      return row === null ? null : { ...row, ...readAppearance(row) };
     },
 
     async update(profileId: string, patch: Partial<ProfileIdentity>): Promise<void> {

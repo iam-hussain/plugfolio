@@ -5,7 +5,9 @@ import type {
   ShopperPost,
   ShopperProductView,
 } from "@plugfolio/core";
+import { PAGE_APPEARANCE_DEFAULTS } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
+import { readAppearance, readMediaKind } from "../page-appearance";
 
 const productSelect = {
   id: true,
@@ -46,6 +48,10 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
           displayName: true,
           avatarUrl: true,
           bio: true,
+          accent: true,
+          headerStyle: true,
+          gridStyle: true,
+          greeting: true,
           _count: { select: { followers: true } },
           categories: {
             orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
@@ -56,6 +62,9 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
             select: {
               id: true,
               mediaUrl: true,
+              mediaKind: true,
+              embedUrl: true,
+              sourceUrl: true,
               caption: true,
               categoryId: true,
               hiddenAt: true,
@@ -65,8 +74,19 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
         },
       });
       if (!row) return null;
-      const { _count, ...page } = row;
-      return { ...page, followerCount: _count.followers };
+      const { _count, accent, headerStyle, gridStyle, greeting, ...page } = row;
+      // Resolve the defaults once here (ADR-0017) so no component downstream
+      // has to know what a default is.
+      const look = readAppearance({ accent, headerStyle, gridStyle, greeting });
+      return {
+        ...page,
+        posts: page.posts.map((post) => ({ ...post, mediaKind: readMediaKind(post.mediaKind) })),
+        greeting: look.greeting,
+        accent: look.accent ?? PAGE_APPEARANCE_DEFAULTS.accent,
+        headerStyle: look.headerStyle ?? PAGE_APPEARANCE_DEFAULTS.headerStyle,
+        gridStyle: look.gridStyle ?? PAGE_APPEARANCE_DEFAULTS.gridStyle,
+        followerCount: _count.followers,
+      };
     },
 
     async listProducts(username: string): Promise<readonly CreatorProductRow[]> {
@@ -80,17 +100,21 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
 
     async findPost(username: string, postId: string): Promise<ShopperPost | null> {
       // Scoped to the handle so /a/post/<id-of-b's-post> is a 404, not a leak.
-      return db.post.findFirst({
+      const post = await db.post.findFirst({
         where: { id: postId, profile: { username, ...liveProfile } },
         select: {
           id: true,
           mediaUrl: true,
+          mediaKind: true,
+          embedUrl: true,
+          sourceUrl: true,
           caption: true,
           categoryId: true,
           hiddenAt: true,
           products: { select: productSelect },
         },
       });
+      return post === null ? null : { ...post, mediaKind: readMediaKind(post.mediaKind) };
     },
 
     async findProduct(username: string, productId: string): Promise<ShopperProductView | null> {

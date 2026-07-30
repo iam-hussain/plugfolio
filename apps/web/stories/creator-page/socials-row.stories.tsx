@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { SocialsRow } from "@/features/creator-page";
+import { SocialsRow } from "@plugfolio/ui";
 
 /**
  * Creator page · Socials row (Dev Spec §06, required): Instagram · YouTube ·

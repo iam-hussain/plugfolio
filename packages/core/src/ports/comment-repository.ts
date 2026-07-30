@@ -4,6 +4,8 @@
  * is part of the no-login public surface (§2.2). Identity per ADR-0009.
  */
 
+import type { CommentSort, ReactionValue } from "../schemas/comment-reaction";
+
 export type CommentView = {
   readonly id: string;
   readonly body: string;
@@ -12,6 +14,11 @@ export type CommentView = {
   /** When set, the comment speaks AS this profile — render brand + Creator badge. */
   readonly asProfile: { readonly username: string } | null;
   readonly createdAt: Date;
+  /** Counts are public — reading them never needs an account (§2.2). */
+  readonly helpfulCount: number;
+  readonly unhelpfulCount: number;
+  /** What the *viewing* account picked; null when signed out or unreacted. */
+  readonly myReaction: ReactionValue | null;
 };
 
 /** A top-level comment with its replies (one level — ADR-0013). */
@@ -35,11 +42,32 @@ export type NewComment = {
   readonly body: string;
 };
 
+/**
+ * How a thread is read. `viewerId` only decides `myReaction` — the comments and
+ * their counts are identical signed out, because reading is account-free.
+ */
+export type CommentQuery = {
+  readonly sort: CommentSort;
+  readonly limit: number;
+  readonly skip: number;
+  readonly viewerId: string | null;
+};
+
+export type CommentPage = {
+  readonly threads: readonly CommentThread[];
+  /** Top-level comments in total — the "Load more" denominator. */
+  readonly total: number;
+};
+
 export type CommentRepository = {
   add(comment: NewComment): Promise<CommentView>;
   findTarget(commentId: string): Promise<CommentTarget | null>;
-  /** Page-level threads (productId null), newest first; replies oldest first. */
-  listByProfile(profileId: string, limit: number): Promise<readonly CommentThread[]>;
-  /** One product's threads, newest first; replies oldest first. */
-  listByProduct(productId: string, limit: number): Promise<readonly CommentThread[]>;
+  /** Page-level threads (productId null); replies always oldest first. */
+  listByProfile(profileId: string, query: CommentQuery): Promise<CommentPage>;
+  /** One product's threads; replies always oldest first. */
+  listByProduct(productId: string, query: CommentQuery): Promise<CommentPage>;
+  /** Upsert or clear the viewer's reaction — idempotent on the (comment, user) pair. */
+  setReaction(commentId: string, userId: string, value: ReactionValue | null): Promise<void>;
+  /** Exists check for the reaction write — an unknown comment is a 404. */
+  exists(commentId: string): Promise<boolean>;
 };

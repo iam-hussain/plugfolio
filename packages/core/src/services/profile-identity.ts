@@ -48,10 +48,15 @@ export async function updateProfileIdentity(
   if (input.displayName !== undefined) patch.displayName = input.displayName;
   if (input.avatarUrl !== undefined) patch.avatarUrl = input.avatarUrl;
   if (input.bio !== undefined) patch.bio = input.bio;
+  // How the page looks (ADR-0017) — Admin-only, like the rest of identity.
+  if (input.accent !== undefined) patch.accent = input.accent;
+  if (input.headerStyle !== undefined) patch.headerStyle = input.headerStyle;
+  if (input.gridStyle !== undefined) patch.gridStyle = input.gridStyle;
+  if (input.greeting !== undefined) patch.greeting = input.greeting;
   // Brief 10: the picture is the ONE control a Manager gets.
-  const touchesMoreThanPicture = patch.displayName !== undefined || patch.bio !== undefined;
+  const touchesMoreThanPicture = Object.keys(patch).some((key) => key !== "avatarUrl");
   if (role !== "admin" && touchesMoreThanPicture) {
-    throw new ForbiddenError("Only the profile's Admin can edit its name or bio");
+    throw new ForbiddenError("Only the profile's Admin can edit anything but the picture");
   }
   if (Object.keys(patch).length === 0) return;
   await deps.identity.update(input.profileId, patch);

@@ -1,6 +1,5 @@
 import type { FollowSort, FollowedCreator } from "@plugfolio/core";
-import { Button } from "@plugfolio/ui";
-import { Clock } from "lucide-react";
+import { Button, EmptyState, FollowGroup, LastLooked } from "@plugfolio/ui";
 import Link from "next/link";
 import { FollowRow } from "./follow-row";
 import { FollowingControls } from "./following-controls";
@@ -107,33 +106,45 @@ export function FollowingPage({
           Following
         </h1>
         {followedTotal > 0 && since ? (
-          <p className="bg-active text-primary rounded-pill inline-flex items-center gap-2.5 px-3.5 py-2 font-sans text-xs font-bold uppercase tracking-[0.04em]">
-            <Clock aria-hidden className="size-[15px] flex-none" />
-            {sinceLabel(since, now)}
-          </p>
+          <LastLooked>{sinceLabel(since, now)}</LastLooked>
         ) : null}
       </div>
 
       {followedTotal === 0 ? (
-        <EmptyState
-          title="You aren't following anyone yet."
-          copy="Following saves a creator here so you can find them again. It's the only thing an account is for — buying never needs one."
-          action={{ label: "Find creators", href: "/explore", primary: true }}
-        />
+        <div className="mt-[26px]">
+          <EmptyState
+            title="You aren't following anyone yet."
+            action={
+              <Button asChild>
+                <Link href="/explore">Find creators</Link>
+              </Button>
+            }
+          >
+            Following saves a creator here so you can find them again. It&apos;s the only thing an
+            account is for — buying never needs one.
+          </EmptyState>
+        </div>
       ) : (
         <>
           <FollowingControls search={search} sort={sort} />
 
           {total === 0 ? (
-            <EmptyState
-              title="Nobody you follow matches that."
-              copy="This searches only the people you already follow — not everyone on Plugfolio."
-              action={{ label: "Search everyone instead", href: "/explore" }}
-            />
+            <div className="mt-[26px]">
+              <EmptyState
+                title="Nobody you follow matches that."
+                action={
+                  <Button variant="secondary" asChild>
+                    <Link href="/explore">Search everyone instead</Link>
+                  </Button>
+                }
+              >
+                This searches only the people you already follow — not everyone on Plugfolio.
+              </EmptyState>
+            </div>
           ) : (
             <div id="list">
               {fresh.length > 0 ? (
-                <Group title="New since you last looked" count={fresh.length}>
+                <FollowGroup title="New since you last looked" count={plural(fresh.length, "creator")}>
                   {fresh.map((creator) => (
                     <FollowRow
                       key={creator.id}
@@ -142,18 +153,25 @@ export function FollowingPage({
                       badge={badgeFor(creator, now)}
                     />
                   ))}
-                </Group>
+                </FollowGroup>
               ) : (
                 // An "all caught up" line is worth more than an empty header.
-                <EmptyState
-                  title="Nothing new since you last looked."
-                  copy="Everyone you follow has been quiet. Their pages are all still here."
-                  action={{ label: "Find someone new", href: "/explore" }}
-                />
+                <div className="mt-[26px]">
+                  <EmptyState
+                    title="Nothing new since you last looked."
+                    action={
+                      <Button variant="secondary" asChild>
+                        <Link href="/explore">Find someone new</Link>
+                      </Button>
+                    }
+                  >
+                    Everyone you follow has been quiet. Their pages are all still here.
+                  </EmptyState>
+                </div>
               )}
 
               {rest.length > 0 ? (
-                <Group title={fresh.length > 0 ? "Everyone else" : "Everyone you follow"} count={rest.length}>
+                <FollowGroup title={fresh.length > 0 ? "Everyone else" : "Everyone you follow"} count={plural(rest.length, "creator")}>
                   {rest.map((creator) => (
                     <FollowRow
                       key={creator.id}
@@ -162,7 +180,7 @@ export function FollowingPage({
                       badge={badgeFor(creator, now)}
                     />
                   ))}
-                </Group>
+                </FollowGroup>
               ) : null}
 
               {hasMore ? (
@@ -191,51 +209,3 @@ export function FollowingPage({
   );
 }
 
-/** A list group — the heading does a feed's job without being one. */
-function Group({
-  title,
-  count,
-  children,
-}: {
-  title: string;
-  count: number;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="pt-[clamp(26px,3.5vw,38px)]">
-      <div className="flex items-baseline justify-between gap-4 pb-3">
-        <h2 className="font-display text-[1.375rem] font-bold leading-[1.2] tracking-[-0.02em]">
-          {title}
-        </h2>
-        <p className="text-faint whitespace-nowrap font-sans text-xs font-semibold uppercase tracking-[0.06em]">
-          {plural(count, "creator")}
-        </p>
-      </div>
-      <div className="flex flex-col gap-2">{children}</div>
-    </section>
-  );
-}
-
-function EmptyState({
-  title,
-  copy,
-  action,
-}: {
-  title: string;
-  copy: string;
-  action: { label: string; href: "/explore"; primary?: boolean };
-}) {
-  return (
-    <div className="border-border bg-card rounded-bay mt-[26px] border px-7 py-[clamp(34px,6vw,64px)] text-center">
-      <h2 className="font-display mx-auto max-w-[26ch] text-[1.375rem] font-bold leading-[1.2] tracking-[-0.02em]">
-        {title}
-      </h2>
-      <p className="text-muted-foreground mx-auto mt-3 max-w-[46ch] text-[0.9375rem] leading-[1.55]">
-        {copy}
-      </p>
-      <Button variant={action.primary ? "primary" : "secondary"} asChild className="mt-6">
-        <Link href={action.href}>{action.label}</Link>
-      </Button>
-    </div>
-  );
-}
