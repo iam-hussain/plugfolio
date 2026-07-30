@@ -1,4 +1,8 @@
-import type { RecordCodeCopyInput, RecordOutboundTapInput } from "@plugfolio/core";
+import type {
+  RecordCodeCopyInput,
+  RecordOutboundTapInput,
+  RecordViewInput,
+} from "@plugfolio/core";
 
 /**
  * Client-side calls into the backend for this feature (§5: components don't
@@ -47,4 +51,19 @@ export async function recordCodeCopy(input: RecordCodeCopyInput): Promise<void> 
     credentials: "same-origin",
   });
   if (!response.ok) throw new Error("Failed to record code copy");
+}
+
+/**
+ * The third attribution event: a surface opening. Genuinely fire-and-forget —
+ * a failed view is one missing row, and nothing on the page waits on it or
+ * shows an error for it.
+ */
+export async function recordView(input: RecordViewInput): Promise<void> {
+  await fetch("/api/views", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+    credentials: "same-origin",
+    keepalive: true,
+  }).catch(() => {});
 }
