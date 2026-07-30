@@ -10,8 +10,15 @@ import {
   listYouTubeChannels,
   MAX_MANAGERS_PER_PROFILE,
 } from "@plugfolio/core";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@plugfolio/ui";
-import { ExternalLink } from "lucide-react";
+import {
+  Button,
+  DashBody,
+  DashCard,
+  DashCardHead,
+  DashCardNote,
+  DashCardTitle,
+  Hint,
+} from "@plugfolio/ui";
 import { env } from "@/env";
 import { SocialConnections } from "@/features/account-auth";
 import { connectGoogle } from "@/features/account-auth/connect-social-action";
@@ -34,11 +41,13 @@ import {
   youtubeDeps,
 } from "@/server/container";
 
-// Profile settings (brief 10): public identity, links, connections, Managers,
-// and the one destructive action. A Manager gets ONLY the picture control —
-// everything else is Admin-only (ADR-0004) and visibly labeled so, never
-// silently hidden. Username picking from connected handles lands with the
-// social APIs.
+// Profile settings (DESIGN dashboard.html §5.23): public identity, how the
+// page looks, links, connections, Managers, and the one destructive action.
+//
+// A Manager gets ONLY the picture control. Everything else is Admin-only
+// (ADR-0004) and the boundary is SHOWN, never silently hidden — a Manager sees
+// the field, sees the label saying it is Admin-only, and sees it disabled.
+// Hiding it would leave them wondering what they are missing.
 export const metadata: Metadata = { title: "Settings" };
 
 type SearchParams = { profile?: string };
@@ -70,117 +79,111 @@ export default async function SettingsPage({
         title="Settings"
         eyebrow={`@${active.username}`}
         action={
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`/${active.username}`}>
-              <ExternalLink className="size-4" />
-              View page
-            </Link>
+          <Button variant="outline" asChild>
+            <Link href={`/${active.username}`}>View page</Link>
           </Button>
         }
       />
-      <div className="flex flex-col gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Public profile</CardTitle>
-            <CardDescription>
-              Your page lives at plugfolio.com/{active.username}. Usernames come from the handles
-              you own on connected socials — picking yours lands with social import.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ProfileIdentityForm
-              profileId={active.id}
-              username={active.username}
-              identity={identity}
-              role={active.role}
-            />
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>How it looks</CardTitle>
-            <CardDescription>
-              A small, closed set on purpose (ADR-0017) — accent, header, post layout and the
-              greeting line. No setting here can make your Buy button hard to read.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <PageAppearanceForm
-              profileId={active.id}
-              role={active.role}
-              appearance={{
-                accent: identity.accent ?? PAGE_APPEARANCE_DEFAULTS.accent,
-                headerStyle: identity.headerStyle ?? PAGE_APPEARANCE_DEFAULTS.headerStyle,
-                gridStyle: identity.gridStyle ?? PAGE_APPEARANCE_DEFAULTS.gridStyle,
-                greeting: identity.greeting,
-              }}
-            />
-          </CardContent>
-        </Card>
+      <DashBody>
+        {/* Both roles see this card. Only the picture is a Manager's to change. */}
+        <DashCard>
+          <DashCardHead>
+            <DashCardTitle>Public profile</DashCardTitle>
+          </DashCardHead>
+          <Hint>
+            Your page lives at <b>plugfolio.com/{active.username}</b>. The username is fixed for
+            now — choosing and renaming it lands with the social APIs, because a username is only
+            yours if you can prove you own the handle.
+          </Hint>
+          <ProfileIdentityForm
+            profileId={active.id}
+            username={active.username}
+            identity={identity}
+            role={active.role}
+          />
+        </DashCard>
+
+        <DashCard>
+          <DashCardHead>
+            <DashCardTitle>How it looks</DashCardTitle>
+          </DashCardHead>
+          <Hint>
+            A small, closed set on purpose (ADR-0017) — accent, header, post layout and the
+            greeting line. No setting here can make your Buy button hard to read.
+          </Hint>
+          <PageAppearanceForm
+            profileId={active.id}
+            role={active.role}
+            appearance={{
+              accent: identity.accent ?? PAGE_APPEARANCE_DEFAULTS.accent,
+              headerStyle: identity.headerStyle ?? PAGE_APPEARANCE_DEFAULTS.headerStyle,
+              gridStyle: identity.gridStyle ?? PAGE_APPEARANCE_DEFAULTS.gridStyle,
+              greeting: identity.greeting,
+            }}
+          />
+        </DashCard>
 
         {isAdmin ? (
           <>
-            <Card>
-              <CardHeader>
-                <CardTitle>Your links</CardTitle>
-                <CardDescription>
-                  The socials row on your public page — Instagram, YouTube, TikTok, Facebook, and
-                  your site. Paste the URLs; connected socials will auto-fill later.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ProfileLinksForm profileId={active.id} links={links} />
-              </CardContent>
-            </Card>
+            <DashCard>
+              <DashCardHead>
+                <DashCardTitle>Your links</DashCardTitle>
+              </DashCardHead>
+              <Hint>
+                These become the row of icons on your page. Saving replaces all five — an empty
+                field removes that link.
+              </Hint>
+              <ProfileLinksForm profileId={active.id} links={links} />
+            </DashCard>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Connections</CardTitle>
-                <CardDescription>
-                  The socials this account owns — profile usernames come from their handles.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <SocialConnections youtube={youtube} connectAction={connectGoogle} bare />
-              </CardContent>
-            </Card>
+            <DashCard>
+              <DashCardHead>
+                <DashCardTitle>Connections</DashCardTitle>
+              </DashCardHead>
+              <Hint>
+                The socials this account owns — profile usernames come from their handles.
+              </Hint>
+              <SocialConnections youtube={youtube} connectAction={connectGoogle} bare />
+            </DashCard>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  Managers · {managers.length} of {MAX_MANAGERS_PER_PROFILE}
-                </CardTitle>
-                <CardDescription>
-                  Up to {MAX_MANAGERS_PER_PROFILE} people who can post and tag on this profile.
-                  Settings and connections stay yours.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ManagerControls
-                  profileId={active.id}
-                  managers={managers}
-                  maxManagers={MAX_MANAGERS_PER_PROFILE}
-                />
-              </CardContent>
-            </Card>
+            <DashCard>
+              <DashCardHead>
+                <DashCardTitle>Managers</DashCardTitle>
+                <DashCardNote>
+                  {managers.length} of {MAX_MANAGERS_PER_PROFILE}
+                </DashCardNote>
+              </DashCardHead>
+              <Hint>
+                Up to {MAX_MANAGERS_PER_PROFILE} people who can post and tag on this profile.
+                Settings and connections stay yours.
+              </Hint>
+              <ManagerControls
+                profileId={active.id}
+                managers={managers}
+                maxManagers={MAX_MANAGERS_PER_PROFILE}
+              />
+            </DashCard>
 
-            <Card className="border-destructive/40">
-              <CardHeader>
-                <CardTitle>Danger zone</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <DeleteProfileButton profileId={active.id} username={active.username} />
-              </CardContent>
-            </Card>
+            <DashCard>
+              <DeleteProfileButton profileId={active.id} username={active.username} />
+            </DashCard>
           </>
         ) : (
-          <p className="text-muted-foreground text-sm">
-            Links, connections and Managers are Admin-only — you manage this profile&apos;s
-            content, and can change its picture above.
-          </p>
+          /* A Manager is told what they cannot do and why, rather than finding
+             a shorter page and guessing. */
+          <DashCard>
+            <DashCardHead>
+              <DashCardTitle>Admin-only</DashCardTitle>
+            </DashCardHead>
+            <Hint className="mb-0">
+              Links, connections and Managers are the Admin&rsquo;s. You manage this
+              profile&rsquo;s content — posts, products and shelves — and you can change its
+              picture above.
+            </Hint>
+          </DashCard>
         )}
-      </div>
+      </DashBody>
     </DashboardShell>
   );
 }

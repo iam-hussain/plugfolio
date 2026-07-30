@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -154,7 +154,7 @@ export default async function DashboardProductsPage({
                   }
                   action={
                     <IconAction label={`Edit ${product.title}`} asChild>
-                      <Link href={`/dashboard/products/${product.id}?profile=${active.id}`}>
+                      <Link href={`/dashboard/products/${product.id}?profile=${active.id}` as Route}>
                         <Pencil aria-hidden />
                       </Link>
                     </IconAction>

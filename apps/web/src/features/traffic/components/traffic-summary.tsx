@@ -14,6 +14,7 @@ import {
   StatUnit,
   TrafficColumns,
 } from "@plugfolio/ui";
+import type { Route } from "next";
 import Link from "next/link";
 
 /**
@@ -31,7 +32,7 @@ import Link from "next/link";
 export type TrafficSummaryViewProps = {
   summary: TrafficSummary;
   /** Where to send a creator whose numbers are all zero. */
-  pageHref: string;
+  pageHref: Route;
 };
 
 const number = new Intl.NumberFormat("en");

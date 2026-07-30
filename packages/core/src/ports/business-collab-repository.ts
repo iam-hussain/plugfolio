@@ -59,6 +59,12 @@ export type CollabSummary = {
   readonly username: string;
   readonly requirementTitle: string | null;
   readonly agreed: boolean;
+  /**
+   * Who spoke last. The dashboard's "Needs a reply" filter is this compared
+   * against the viewer — the only honest way to say a thread is waiting on
+   * you without inventing a status the thread doesn't have.
+   */
+  readonly lastMessageFromUserId: string | null;
   readonly createdAt: Date;
 };
 

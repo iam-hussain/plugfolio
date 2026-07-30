@@ -3,8 +3,6 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { NotFoundError, getCollabThread } from "@plugfolio/core";
 import {
-  AcceptRow,
-  AcceptStatus,
   AgreedBanner,
   Avatar,
   AvatarFallback,

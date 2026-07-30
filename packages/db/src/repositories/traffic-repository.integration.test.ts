@@ -1,19 +1,19 @@
 import { randomUUID } from "node:crypto";
 import { PrismaClient } from "@prisma/client";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createEarningsRepository } from "./earnings-repository";
+import { createTrafficRepository } from "./traffic-repository";
 
 /**
- * Integration test for the Earnings projection (§6.6) against real Postgres —
+ * Integration test for the Traffic projection (§6.6) against a real database —
  * the aggregation lives in groupBy queries, so only a real database exercises
  * it. Runs when TEST_DATABASE_URL is set (CI's db-integration job); skips
  * locally so `pnpm test` stays DB-free.
  */
 const url = process.env.TEST_DATABASE_URL;
 
-describe.skipIf(!url)("EarningsRepository (integration)", () => {
+describe.skipIf(!url)("TrafficRepository (integration)", () => {
   let db: PrismaClient;
-  let earnings: ReturnType<typeof createEarningsRepository>;
+  let traffic: ReturnType<typeof createTrafficRepository>;
 
   const accountId = randomUUID();
   const profileId = randomUUID();
@@ -32,10 +32,31 @@ describe.skipIf(!url)("EarningsRepository (integration)", () => {
     };
   }
 
+  function viewRow(target: { postId?: string; productId?: string }) {
+    return {
+      profileId,
+      postId: target.postId ?? null,
+      productId: target.productId ?? null,
+      deviceId: randomUUID(),
+      idempotencyKey: randomUUID(),
+      surface: target.postId
+        ? ("post" as const)
+        : target.productId
+          ? ("product" as const)
+          : ("profile" as const),
+    };
+  }
+
   beforeAll(async () => {
     db = new PrismaClient({ datasources: { db: { url } } });
-    earnings = createEarningsRepository(db);
-    await db.user.create({ data: { id: accountId, email: `${accountId}@example.com`, username: `user-${accountId.slice(0, 8)}` } });
+    traffic = createTrafficRepository(db);
+    await db.user.create({
+      data: {
+        id: accountId,
+        email: `${accountId}@example.com`,
+        username: `user-${accountId.slice(0, 8)}`,
+      },
+    });
     await db.profile.create({
       data: { id: profileId, username: accountId.slice(0, 8), userId: accountId },
     });
@@ -52,6 +73,17 @@ describe.skipIf(!url)("EarningsRepository (integration)", () => {
     await db.tap.createMany({
       data: [tapRow(hotPostId), tapRow(hotPostId), tapRow(quietPostId), tapRow(null)],
     });
+    // Views are the denominator: 3 on the hot post, 1 on the product, 1 on the
+    // page itself — which belongs to the total only.
+    await db.view.createMany({
+      data: [
+        viewRow({ postId: hotPostId }),
+        viewRow({ postId: hotPostId }),
+        viewRow({ postId: hotPostId }),
+        viewRow({ productId }),
+        viewRow({}),
+      ],
+    });
   });
 
   afterAll(async () => {
@@ -59,20 +91,42 @@ describe.skipIf(!url)("EarningsRepository (integration)", () => {
     await db.$disconnect();
   });
 
-  it("projects per-post and per-product tap counts from the event table", async () => {
-    const summary = await earnings.summarize(profileId);
+  it("projects per-post and per-product counts from the event tables", async () => {
+    const summary = await traffic.summarize(profileId);
 
     expect(summary.totalTaps).toBe(4);
-    // Most-tapped first; the post-less tap appears in totals only.
+    expect(summary.totalViews).toBe(5);
+    // Most-tapped first; the page view and the post-less tap appear in totals only.
     expect(summary.byPost).toEqual([
-      { postId: hotPostId, mediaUrl: "https://example.com/hot.jpg", caption: "Hot", taps: 2 },
-      { postId: quietPostId, mediaUrl: "https://example.com/quiet.jpg", caption: null, taps: 1 },
+      {
+        postId: hotPostId,
+        mediaUrl: "https://example.com/hot.jpg",
+        caption: "Hot",
+        views: 3,
+        taps: 2,
+      },
+      {
+        postId: quietPostId,
+        mediaUrl: "https://example.com/quiet.jpg",
+        caption: null,
+        views: 0,
+        taps: 1,
+      },
     ]);
-    expect(summary.byProduct).toEqual([{ productId, title: "Tote", taps: 4, codeCopies: 0 }]);
+    expect(summary.byProduct).toEqual([
+      { productId, title: "Tote", views: 1, taps: 4, codeCopies: 0 },
+    ]);
   });
 
   it("is rebuildable: another profile's events never leak in", async () => {
-    const summary = await earnings.summarize(randomUUID());
-    expect(summary).toEqual({ totalTaps: 0, totalCodeCopies: 0, byPost: [], byProduct: [] });
+    const summary = await traffic.summarize(randomUUID());
+    expect(summary).toEqual({
+      totalViews: 0,
+      totalTaps: 0,
+      totalCodeCopies: 0,
+      byPost: [],
+      byProduct: [],
+      byCode: [],
+    });
   });
 });

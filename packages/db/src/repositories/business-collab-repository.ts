@@ -46,6 +46,8 @@ const summarySelect = {
   business: { select: { name: true } },
   profile: { select: { username: true } },
   requirement: { select: { title: true } },
+  // Just the latest, to answer "is this waiting on me".
+  messages: { orderBy: { createdAt: "desc" }, take: 1, select: { senderUserId: true } },
 } as const;
 
 type SummaryRow = {
@@ -56,6 +58,7 @@ type SummaryRow = {
   business: { name: string };
   profile: { username: string };
   requirement: { title: string } | null;
+  messages: { senderUserId: string }[];
 };
 
 function toSummary(row: SummaryRow): CollabSummary {
@@ -65,6 +68,7 @@ function toSummary(row: SummaryRow): CollabSummary {
     username: row.profile.username,
     requirementTitle: row.requirement?.title ?? null,
     agreed: row.businessAgreedAt !== null && row.creatorAgreedAt !== null,
+    lastMessageFromUserId: row.messages[0]?.senderUserId ?? null,
     createdAt: row.createdAt,
   };
 }

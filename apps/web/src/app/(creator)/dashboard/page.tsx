@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
@@ -177,7 +177,7 @@ export default async function DashboardPage({
               <DashCardTitle>Traffic · @{active.username}</DashCardTitle>
               <DashCardNote>All time</DashCardNote>
             </DashCardHead>
-            <TrafficSummaryView summary={traffic} pageHref={`/${active.username}`} />
+            <TrafficSummaryView summary={traffic} pageHref={`/${active.username}` as Route} />
           </DashCard>
         ) : null}
       </DashBody>

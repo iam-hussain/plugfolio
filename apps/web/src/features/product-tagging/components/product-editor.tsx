@@ -12,6 +12,7 @@ import {
   Hint,
   Input,
 } from "@plugfolio/ui";
+import type { Route } from "next";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,7 +32,7 @@ export type ProductEditorProps = {
   product: ShopperProduct;
   categories: readonly CategoryView[];
   /** Where to land after the product is deleted. */
-  onRemovedHref: string;
+  onRemovedHref: Route;
 };
 
 export function ProductEditor({ product, categories, onRemovedHref }: ProductEditorProps) {
