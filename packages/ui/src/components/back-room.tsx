@@ -252,11 +252,11 @@ export function ProfileChip({
       )}
       {...props}
     >
-      <Slottable>
-        {avatar}
-        {children}
-        {role ? <em className="text-faint text-micro not-italic font-bold">{role}</em> : null}
-      </Slottable>
+      {/* Slot clones ONE child; Slottable marks it, and the siblings become
+          that child's children — so the avatar and the role stay in place. */}
+      {avatar}
+      <Slottable>{children}</Slottable>
+      {role ? <em className="text-faint text-micro font-bold not-italic">{role}</em> : null}
     </Comp>
   );
 }
@@ -351,10 +351,8 @@ export function FilterButton({
       )}
       {...props}
     >
-      <Slottable>
-        {children}
-        {count !== undefined ? <b className="ml-1.5 font-extrabold">{count}</b> : null}
-      </Slottable>
+      <Slottable>{children}</Slottable>
+      {count !== undefined ? <b className="ml-1.5 font-extrabold">{count}</b> : null}
     </Comp>
   );
 }

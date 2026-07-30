@@ -3,15 +3,34 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCreatorPage, getMyProfiles } from "@plugfolio/core";
-import { cn, Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@plugfolio/ui";
-import { EyeOff, ShoppingBag } from "lucide-react";
-import { AddPostDialog, DashboardPageHeader, DashboardShell } from "@/features/product-tagging";
+import {
+  DashBody,
+  EmptyState,
+  FilterButton,
+  Filters,
+  IconAction,
+  Pill,
+  PostRow,
+  PostRowActions,
+  PostRowCount,
+  PostRowLink,
+  PostRows,
+} from "@plugfolio/ui";
+import { Pencil, ShoppingBag } from "lucide-react";
+import {
+  AddPostDialog,
+  DashboardPageHeader,
+  DashboardShell,
+  PostVisibilitySwitch,
+} from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
 
-// Posts tab (brief 07): every post as a thumbnail grid with a tagged /
-// untagged indicator; tap one to open the tagging editor.
+// Posts tab (DESIGN dashboard.html §5.19). A list, not a grid: the grid showed
+// the photograph, which the creator already recognises. What they open this tab
+// to check is in words — is it on the page, which shelf, how many products —
+// and words want rows.
 export const metadata: Metadata = { title: "Posts" };
 
 type SearchParams = { profile?: string; filter?: string };
@@ -37,6 +56,7 @@ export default async function DashboardPostsPage({
 
   const page = await getCreatorPage({ creatorPages: repositories.creatorPages }, active.username);
   const posts = page?.posts ?? [];
+  const categoryById = new Map((page?.categories ?? []).map((c) => [c.id, c.title]));
   const filter = FILTERS.some((option) => option.key === params.filter) ? params.filter : "all";
   const filtered = posts.filter((post) =>
     filter === "tagged"
@@ -54,72 +74,84 @@ export default async function DashboardPostsPage({
         action={<AddPostDialog profileId={active.id} />}
       />
 
-      <nav aria-label="Filter posts" className="flex gap-2 pb-4">
-        {FILTERS.map(({ key, label }) => (
-          <Link
-            key={key}
-            href={{ pathname: "/dashboard/posts", query: { profile: active.id, filter: key } }}
-            aria-current={filter === key ? "page" : undefined}
-            className={cn(
-              "rounded-pill inline-flex h-8 items-center border px-3 text-sm",
-              filter === key
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {label}
-          </Link>
-        ))}
-      </nav>
-
-      {filtered.length === 0 ? (
-        <Empty className="border">
-          <EmptyHeader>
-            <EmptyTitle>{posts.length === 0 ? "No posts yet" : "Nothing here"}</EmptyTitle>
-            <EmptyDescription>
-              {posts.length === 0
-                ? "Add your first post — then tag products onto it to make it shoppable."
-                : "No posts match this filter."}
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      ) : (
-        <ul className="grid grid-cols-3 gap-1.5 sm:gap-2">
-          {filtered.map((post) => (
-            <li key={post.id}>
+      <DashBody>
+        <Filters>
+          {FILTERS.map(({ key, label }) => (
+            <FilterButton key={key} current={filter === key} asChild>
               <Link
-                href={`/dashboard/posts/${post.id}?profile=${active.id}`}
-                className="bg-muted relative block aspect-square overflow-hidden rounded-md"
+                href={{ pathname: "/dashboard/posts", query: { profile: active.id, filter: key } }}
               >
-                <Image
-                  src={post.mediaUrl}
-                  alt={post.caption ?? "Post"}
-                  fill
-                  unoptimized
-                  className="object-cover"
-                />
-                {post.hiddenAt ? (
-                  <span className="bg-background/90 text-muted-foreground rounded-pill absolute top-1.5 left-1.5 inline-flex items-center gap-1 px-2 py-0.5 text-[11px]">
-                    <EyeOff className="size-3" aria-hidden />
-                    hidden
-                  </span>
-                ) : null}
-                {post.products.length > 0 ? (
-                  <span className="bg-background/90 text-foreground rounded-pill absolute right-1.5 bottom-1.5 inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium">
-                    <ShoppingBag className="size-3" aria-hidden />
-                    {post.products.length}
-                    <span className="sr-only">products tagged</span>
-                  </span>
-                ) : (
-                  <span className="bg-background/90 text-muted-foreground rounded-pill absolute right-1.5 bottom-1.5 inline-flex items-center px-2 py-0.5 text-[11px]">
-                    untagged
-                  </span>
-                )}
+                {label}
               </Link>
-            </li>
+            </FilterButton>
           ))}
-        </ul>
-      )}
+        </Filters>
+
+        {filtered.length === 0 ? (
+          <EmptyState title={posts.length === 0 ? "No posts yet" : "Nothing here"}>
+            {posts.length === 0
+              ? "Add your first post — then tag products onto it to make it shoppable."
+              : "No posts match this filter."}
+          </EmptyState>
+        ) : (
+          <PostRows>
+            {filtered.map((post) => {
+              const shelf = post.categoryId ? categoryById.get(post.categoryId) : null;
+              return (
+                <PostRow key={post.id} hidden={Boolean(post.hiddenAt)}>
+                  <PostRowLink
+                    asChild
+                    thumbnail={
+                      <span className="bg-active rounded-image relative size-[54px] flex-none overflow-hidden">
+                        <Image
+                          src={post.mediaUrl}
+                          alt=""
+                          fill
+                          unoptimized
+                          sizes="54px"
+                          className="object-cover"
+                        />
+                      </span>
+                    }
+                    title={post.caption ?? "Untitled post"}
+                    meta={
+                      <>
+                        {shelf ? <Pill tone="shelf">{shelf}</Pill> : null}
+                        {post.products.length > 0 ? (
+                          <PostRowCount>
+                            <ShoppingBag aria-hidden />
+                            {post.products.length}{" "}
+                            {post.products.length === 1 ? "product" : "products"}
+                          </PostRowCount>
+                        ) : (
+                          // Untagged is the state that needs the work, so it is
+                          // the one that carries colour.
+                          <Pill tone="untagged">Untagged</Pill>
+                        )}
+                      </>
+                    }
+                  >
+                    <Link href={`/dashboard/posts/${post.id}?profile=${active.id}`} />
+                  </PostRowLink>
+
+                  <PostRowActions>
+                    <PostVisibilitySwitch
+                      profileId={active.id}
+                      postId={post.id}
+                      hidden={Boolean(post.hiddenAt)}
+                    />
+                    <IconAction label="Edit this post" asChild>
+                      <Link href={`/dashboard/posts/${post.id}?profile=${active.id}`}>
+                        <Pencil aria-hidden />
+                      </Link>
+                    </IconAction>
+                  </PostRowActions>
+                </PostRow>
+              );
+            })}
+          </PostRows>
+        )}
+      </DashBody>
     </DashboardShell>
   );
 }

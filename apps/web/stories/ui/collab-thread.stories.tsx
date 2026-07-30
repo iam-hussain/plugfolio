@@ -1,6 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import {
   AcceptRow,
+  ApproachCount,
+  BoardCount,
+  BoardHeading,
+  BoardSection,
+  BoardTitle,
+  BusinessIdentity,
+  RequirementBrief,
+  RequirementCard,
+  RequirementHeader,
+  RequirementMeta,
+  RequirementTitle,
   AcceptStatus,
   AgreedBanner,
   Badge,
@@ -35,7 +46,7 @@ type Story = StoryObj<typeof TermsCard>;
 
 export const Negotiating: Story = {
   render: () => (
-    <div className="max-w-inner mx-auto max-w-[760px]">
+    <div className="max-w-reading mx-auto">
       <TermsCard status="negotiating">
         <TermsHeader>
           <div className="min-w-0 flex-1">
@@ -56,7 +67,7 @@ export const Negotiating: Story = {
 /** Both sides accepted. The banner states the money fact in the same breath. */
 export const Agreed: Story = {
   render: () => (
-    <div className="mx-auto max-w-[760px]">
+    <div className="max-w-reading mx-auto">
       <TermsCard status="agreed">
         <TermsHeader>
           <div className="min-w-0 flex-1">
@@ -84,7 +95,7 @@ export const Agreed: Story = {
  */
 export const NoTermsYet: Story = {
   render: () => (
-    <div className="mx-auto max-w-[760px]">
+    <div className="max-w-reading mx-auto">
       <TermsCard>
         <TermsHeader>
           <div className="min-w-0 flex-1">
@@ -104,7 +115,7 @@ export const NoTermsYet: Story = {
 /** Bubbles by side, and a proposal marker across the column. */
 export const Conversation: Story = {
   render: () => (
-    <ul className="mx-auto flex max-w-[760px] flex-col gap-3.5">
+    <ul className="max-w-reading mx-auto flex flex-col gap-3.5">
       <li>
         <MessageBubble tone="theirs">
           Hi Maya — we&rsquo;re launching a serum in the spring and your skin posts are exactly the
@@ -133,7 +144,7 @@ export const Conversation: Story = {
  */
 export const Accepting: Story = {
   render: () => (
-    <div className="mx-auto flex max-w-[760px] flex-col gap-3">
+    <div className="max-w-reading mx-auto flex flex-col gap-3">
       <AcceptRow>
         <AcceptStatus>The other side hasn&rsquo;t accepted yet.</AcceptStatus>
         <Button>Accept terms</Button>
@@ -146,6 +157,104 @@ export const Accepting: Story = {
         <AcceptStatus>The other side has accepted.</AcceptStatus>
         <Button disabled>You accepted</Button>
       </AcceptRow>
+    </div>
+  ),
+};
+
+/* ── The business home's board ─────────────────────────────── */
+
+/**
+ * A posted brief, open and closed. Closed is a state, not a deletion: it
+ * leaves the open board and can no longer be approached, but the threads
+ * it already produced carry on — so it goes quiet rather than vanishing,
+ * and the row says so.
+ *
+ * The approach count is the detail worth reviewing. A bare "0" beside a
+ * brief posted an hour ago reads as failure when it means "give it a day".
+ */
+export const Requirements: Story = {
+  render: () => (
+    <ul className="max-w-reading mx-auto flex flex-col gap-2.5">
+      <li>
+        <RequirementCard state="open">
+          <RequirementHeader>
+            <RequirementTitle>Skincare creators for a spring launch</RequirementTitle>
+            <Button variant="outline" size="sm">
+              Close
+            </Button>
+          </RequirementHeader>
+          <RequirementMeta>
+            <span>Budget discussed in the thread</span>
+            <span>By 30 Aug</span>
+            <ApproachCount tone="some">4 approached</ApproachCount>
+          </RequirementMeta>
+          <RequirementBrief>
+            Two posts and one story. We&rsquo;ll send product ahead of time.
+          </RequirementBrief>
+        </RequirementCard>
+      </li>
+
+      <li>
+        <RequirementCard state="open">
+          <RequirementHeader>
+            <RequirementTitle>Desk-setup creators, one reel</RequirementTitle>
+            <Button variant="outline" size="sm">
+              Close
+            </Button>
+          </RequirementHeader>
+          <RequirementMeta>
+            <span>Budget ₹20,000–30,000</span>
+            <ApproachCount tone="none">no approaches yet</ApproachCount>
+          </RequirementMeta>
+          <RequirementBrief>
+            One reel showing the desk mat in a real setup. No script, no approval round.
+          </RequirementBrief>
+        </RequirementCard>
+      </li>
+
+      <li>
+        <RequirementCard state="closed">
+          <RequirementHeader>
+            <RequirementTitle state="closed">Gym creators, winter campaign</RequirementTitle>
+            <Badge variant="secondary">Closed</Badge>
+          </RequirementHeader>
+          <RequirementMeta>
+            <ApproachCount tone="some">2 approached</ApproachCount>
+            <span>Existing threads continue</span>
+          </RequirementMeta>
+          <RequirementBrief state="closed">
+            Filled from the two who approached. Thanks, everyone.
+          </RequirementBrief>
+        </RequirementCard>
+      </li>
+    </ul>
+  ),
+};
+
+/** The section heading every board section opens with. */
+export const BoardSections: Story = {
+  render: () => (
+    <div className="max-w-reading mx-auto flex flex-col gap-7">
+      <BoardSection>
+        <BoardHeading>
+          <BoardTitle>Threads</BoardTitle>
+          <BoardCount>3 · 1 agreed</BoardCount>
+        </BoardHeading>
+        <BusinessIdentity>
+          <div className="min-w-0 flex-1">
+            <p className="font-display tracking-display text-title font-bold">Fold &amp; Co</p>
+            <p className="text-muted-foreground text-copy pt-0.5">
+              Small-batch homeware, mostly ceramics
+            </p>
+          </div>
+        </BusinessIdentity>
+      </BoardSection>
+      <BoardSection>
+        <BoardHeading>
+          <BoardTitle>Your requirements</BoardTitle>
+          <BoardCount>2 open · 1 closed</BoardCount>
+        </BoardHeading>
+      </BoardSection>
     </div>
   ),
 };

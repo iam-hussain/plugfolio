@@ -3,7 +3,7 @@ export { NewProfileButton } from "./components/new-profile-button";
 export { NewPostForm, type NewPostFormProps } from "./components/new-post-form";
 export { AddPostDialog } from "./components/add-post-dialog";
 export { TagProductForm, type TagProductFormProps } from "./components/tag-product-form";
-export { ProductRow, type ProductRowProps } from "./components/product-row";
+export { ProductEditor, type ProductEditorProps } from "./components/product-editor";
 export { ManagerControls, type ManagerControlsProps } from "./components/manager-controls";
 export { CategorySelect, type CategorySelectProps } from "./components/category-select";
 export { CategoryManager, type CategoryManagerProps } from "./components/category-manager";
@@ -23,4 +23,4 @@ export {
   type PageAppearanceFormProps,
 } from "./components/page-appearance-form";
 export { DeleteProfileButton } from "./components/delete-profile-button";
-export { HidePostButton } from "./components/hide-post-button";
+export { HidePostButton, PostVisibilitySwitch } from "./components/hide-post-button";

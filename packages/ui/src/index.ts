@@ -63,6 +63,7 @@ export * from "./components/select";
 export * from "./components/separator";
 export * from "./components/sheet";
 export * from "./components/sidebar";
+export * from "./components/collab-board";
 export * from "./components/collab-thread";
 export * from "./components/skeleton";
 export * from "./components/system-screen";

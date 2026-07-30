@@ -1,14 +1,35 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getMyProfiles, listMyCategories, listProfileProducts } from "@plugfolio/core";
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle, Input } from "@plugfolio/ui";
-import { DashboardPageHeader, DashboardShell, ProductRow } from "@/features/product-tagging";
+import { getCreatorPage, getMyProfiles, listProfileProducts } from "@plugfolio/core";
+import {
+  Button,
+  DashBody,
+  DashFieldRow,
+  EmptyState,
+  IconAction,
+  Input,
+  MetaDot,
+  MetaWarn,
+  Pill,
+  ProductRow,
+  ProductRows,
+} from "@plugfolio/ui";
+import { ImageOff, Pencil } from "lucide-react";
+import { DashboardPageHeader, DashboardShell } from "@/features/product-tagging";
+import { formatPrice } from "@/lib/format-price";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
 
-// Products tab (brief 08): the profile's product library — a list you scan.
-// Fix a link, edit the coupon, remove one; changes propagate to every post.
+// Products tab (DESIGN dashboard.html §5.21): the profile's library.
+//
+// The library LISTS; the product page edits. Inline link, coupon and shelf
+// editors lived here before the product page existed, and leaving them meant
+// two screens could each claim to be where a product is changed. A list you
+// scan is also what §5.21 asks for — a CRM is what it says this must not
+// become.
 export const metadata: Metadata = { title: "Products" };
 
 type SearchParams = { profile?: string; q?: string };
@@ -26,16 +47,13 @@ export default async function DashboardProductsPage({
   const active = pickActiveProfile(profiles, params.profile);
   if (!active) redirect("/dashboard");
 
-  const [allProducts, categories] = await Promise.all([
+  const [allProducts, page] = await Promise.all([
     listProfileProducts({ creatorPages: repositories.creatorPages }, active.username),
-    listMyCategories(
-      { profiles: repositories.profiles, categories: repositories.categories },
-      session.user.id,
-      active.id,
-    ),
+    getCreatorPage({ creatorPages: repositories.creatorPages }, active.username),
   ]);
-  // Search is a plain GET filter — the library is small in v1 (brief 08:
-  // a list you scan, not a CRM).
+  const categoryById = new Map((page?.categories ?? []).map((c) => [c.id, c.title]));
+
+  // Search is a plain GET filter — the library is small in v1.
   const query = (params.q ?? "").trim().toLowerCase();
   const products = query
     ? allProducts.filter((product) => product.title.toLowerCase().includes(query))
@@ -44,43 +62,118 @@ export default async function DashboardProductsPage({
   return (
     <DashboardShell profiles={profiles} active={active}>
       <DashboardPageHeader title="Products" eyebrow={`@${active.username}`} />
-      {allProducts.length > 0 ? (
-        <form method="GET" className="pb-4">
-          <input type="hidden" name="profile" value={active.id} />
-          <label className="block">
-            <span className="sr-only">Search products</span>
-            <Input
-              type="search"
-              name="q"
-              defaultValue={params.q ?? ""}
-              placeholder="Search your products…"
-            />
-          </label>
-        </form>
-      ) : null}
-      {products.length === 0 && query ? (
-        <p className="text-muted-foreground py-8 text-center text-sm">
-          Nothing matches &quot;{params.q}&quot;.
-        </p>
-      ) : products.length === 0 ? (
-        <Empty className="border">
-          <EmptyHeader>
-            <EmptyTitle>No products yet</EmptyTitle>
-            <EmptyDescription>
-              Tag a product on a post to see it here — open a post from the Posts tab and paste a
-              product URL.
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      ) : (
-        <ul className="flex flex-col gap-3">
-          {products.map((product) => (
-            <li key={product.id}>
-              <ProductRow product={product} categories={categories} postCount={product.postCount} />
-            </li>
-          ))}
-        </ul>
-      )}
+
+      <DashBody>
+        {allProducts.length > 0 ? (
+          <DashFieldRow method="GET" role="search" className="mt-0 mb-[18px]">
+            <input type="hidden" name="profile" value={active.id} />
+            <label className="min-w-0 flex-[1_1_220px]">
+              <span className="sr-only">Search products</span>
+              <Input
+                type="search"
+                name="q"
+                defaultValue={params.q ?? ""}
+                placeholder="Search your products…"
+              />
+            </label>
+            <Button type="submit" variant="outline">
+              Search
+            </Button>
+          </DashFieldRow>
+        ) : null}
+
+        {products.length === 0 && query ? (
+          <EmptyState title="Nothing matches">
+            No product is called &ldquo;{params.q}&rdquo;.
+          </EmptyState>
+        ) : products.length === 0 ? (
+          <EmptyState title="No products yet">
+            Add one while editing a post — paste a product URL and it lands in this list.
+          </EmptyState>
+        ) : (
+          <ProductRows>
+            {products.map((product) => {
+              const price = formatPrice(product.priceCents, product.currency);
+              const shelf = product.categoryId ? categoryById.get(product.categoryId) : null;
+              const destination = product.affiliateUrl
+                ? hostOf(product.affiliateUrl)
+                : null;
+              return (
+                <ProductRow
+                  key={product.id}
+                  image={
+                    <span className="bg-active rounded-image relative size-[52px] flex-none overflow-hidden">
+                      {product.imageUrl ? (
+                        <Image
+                          src={product.imageUrl}
+                          alt=""
+                          fill
+                          unoptimized
+                          sizes="52px"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <span className="text-faint grid size-full place-items-center">
+                          <ImageOff className="size-5" aria-hidden />
+                        </span>
+                      )}
+                    </span>
+                  }
+                  title={product.title}
+                  price={price}
+                  badges={
+                    <>
+                      {product.kind === "own" ? <Pill tone="own">Their own</Pill> : null}
+                      {product.couponCode ? (
+                        <Pill tone="code">
+                          {product.affiliateUrl ? "Code" : "In-store"} {product.couponCode}
+                        </Pill>
+                      ) : null}
+                      {price ? null : <Pill tone="none">No price</Pill>}
+                    </>
+                  }
+                  meta={
+                    <>
+                      <span>
+                        {product.kind === "own" ? "Own store" : "Affiliate"}
+                        {destination ? ` · opens ${destination}` : " · no link"}
+                      </span>
+                      <MetaDot />
+                      <span>{shelf ?? "No shelf"}</span>
+                      <MetaDot />
+                      {/* A product that outlived the post it was tagged on is
+                          still a product; it just has nothing pointing at it. */}
+                      {product.postCount === 0 ? (
+                        <MetaWarn>not on any post</MetaWarn>
+                      ) : (
+                        <span>
+                          on {product.postCount} {product.postCount === 1 ? "post" : "posts"}
+                        </span>
+                      )}
+                    </>
+                  }
+                  action={
+                    <IconAction label={`Edit ${product.title}`} asChild>
+                      <Link href={`/dashboard/products/${product.id}?profile=${active.id}`}>
+                        <Pencil aria-hidden />
+                      </Link>
+                    </IconAction>
+                  }
+                />
+              );
+            })}
+          </ProductRows>
+        )}
+      </DashBody>
     </DashboardShell>
   );
+}
+
+/** "opens Nykaa" — the retailer, not the URL. A raw URL in a dense row is noise. */
+function hostOf(url: string): string | null {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
 }

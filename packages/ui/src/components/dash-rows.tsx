@@ -51,11 +51,12 @@ export function PostRowLink({
   meta,
   className,
   asChild,
+  children,
   ...props
 }: React.ComponentProps<"a"> & {
   thumbnail: React.ReactNode;
   title: React.ReactNode;
-  /** The pill row under the title: shelf, tagged count, hidden. */
+  /** The pill row under the title: shelf, tagged count, untagged. */
   meta?: React.ReactNode;
   asChild?: boolean;
 }) {
@@ -69,15 +70,14 @@ export function PostRowLink({
       )}
       {...props}
     >
-      <Slottable>
-        {thumbnail}
-        <span className="min-w-0">
-          <b className="text-label block truncate font-bold">{title}</b>
-          {meta ? (
-            <span className="mt-[5px] flex flex-wrap items-center gap-1.5">{meta}</span>
-          ) : null}
-        </span>
-      </Slottable>
+      {/* Slot clones ONE child; Slottable marks it, and the siblings become
+          that child's children — so the anchor wraps the whole row. */}
+      <Slottable>{children}</Slottable>
+      {thumbnail}
+      <span className="min-w-0">
+        <b className="text-label block truncate font-bold">{title}</b>
+        {meta ? <span className="mt-[5px] flex flex-wrap items-center gap-1.5">{meta}</span> : null}
+      </span>
     </Comp>
   );
 }

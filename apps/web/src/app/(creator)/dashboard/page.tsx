@@ -3,42 +3,44 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   getCreatorPage,
-  getEarnings,
   getMyProfiles,
+  getTraffic,
   listYouTubeChannels,
+  MAX_PROFILES_PER_ACCOUNT,
 } from "@plugfolio/core";
 import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
+  ActiveProfile,
   Avatar,
   AvatarFallback,
-  Badge,
+  AvatarImage,
   Button,
-  Card,
-  CardContent,
-  cn,
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyTitle,
+  DashCard,
+  DashCardAction,
+  DashCardHead,
+  DashCardNote,
+  DashCardTitle,
+  DashBody,
+  EmptyState,
+  Nudge,
+  ProfileChip,
+  ProfileChips,
 } from "@plugfolio/ui";
-import { ExternalLink, Tag } from "lucide-react";
 import { env } from "@/env";
 import { SocialConnections } from "@/features/account-auth";
 import { connectGoogle } from "@/features/account-auth/connect-social-action";
-import { EarningsSummaryView } from "@/features/earnings";
 import {
   DashboardPageHeader,
   DashboardShell,
   NewProfileButton,
 } from "@/features/product-tagging";
+import { TrafficSummaryView } from "@/features/traffic";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { repositories, youtubeDeps } from "@/server/container";
 
-// The creator's back room home (lean journey: four tabs, not thirteen).
+// The creator's back room home (DESIGN dashboard.html §5.18): the profile you
+// are editing, what needs doing, the profiles you can switch to, what the
+// account is connected to, and the traffic all of it earned.
 // Gated by session — an "act as yourself" surface, never a shop path (§2.2).
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -59,9 +61,9 @@ export default async function DashboardPage({
     googleConfigured ? listYouTubeChannels(youtubeDeps, session.user.id) : null,
   ]);
   const active = pickActiveProfile(profiles, (await searchParams).profile);
-  const [earnings, page] = active
+  const [traffic, page] = active
     ? await Promise.all([
-        getEarnings({ earnings: repositories.earnings }, active.id),
+        getTraffic({ traffic: repositories.traffic }, active.id),
         getCreatorPage({ creatorPages: repositories.creatorPages }, active.username),
       ])
     : [null, null];
@@ -71,106 +73,114 @@ export default async function DashboardPage({
     <DashboardShell profiles={profiles} active={active}>
       <DashboardPageHeader title="Dashboard" eyebrow={session.user.email ?? undefined} />
 
-      {profiles.length === 0 ? (
-        <Empty className="mb-8 border">
-          <EmptyHeader>
-            <EmptyTitle>Create your first profile</EmptyTitle>
-            <EmptyDescription>
-              {connected
-                ? "Your account is connected — create a profile to get your shoppable page."
-                : "Connect a Google or Meta account below, then create a profile to get your shoppable page."}
-            </EmptyDescription>
-          </EmptyHeader>
-          {connected ? (
-            <EmptyContent>
-              <NewProfileButton />
-            </EmptyContent>
-          ) : null}
-        </Empty>
-      ) : (
-        <>
-          {active ? (
-            <Card className="mb-6">
-              <CardContent className="flex items-center gap-3">
-                <Avatar className="size-12">
-                  <AvatarFallback className="bg-muted text-foreground">
-                    {active.username.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">@{active.username}</p>
-                  <p className="text-muted-foreground truncate text-xs">
-                    plugfolio.com/{active.username}
-                    {active.role === "manager" ? " · you manage this profile" : ""}
-                  </p>
-                </div>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href={`/${active.username}`}>
-                    <ExternalLink className="size-4" />
-                    View page
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ) : null}
+      <DashBody>
+        {profiles.length === 0 ? (
+          <EmptyState
+            title="Create your first profile"
+            action={connected ? <NewProfileButton /> : null}
+          >
+            {connected
+              ? "Your account is connected — create a profile to get your shoppable page."
+              : "Connect a Google or Meta account below, then create a profile to get your shoppable page."}
+          </EmptyState>
+        ) : (
+          <>
+            {active ? (
+              <DashCard>
+                <ActiveProfile
+                  avatar={
+                    <Avatar className="size-[60px] flex-none">
+                      {page?.avatarUrl ? <AvatarImage src={page.avatarUrl} alt="" /> : null}
+                      <AvatarFallback className="bg-active text-primary font-display text-title font-extrabold">
+                        {active.username.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  }
+                  handle={`@${active.username}`}
+                  url={
+                    <>
+                      plugfolio.com/{active.username}
+                      {active.role === "manager" ? " · you manage this profile" : ""}
+                    </>
+                  }
+                  action={
+                    <Button variant="outline" asChild>
+                      <Link href={`/${active.username}`}>View page</Link>
+                    </Button>
+                  }
+                />
 
-          {active && untagged > 0 ? (
-            <Alert className="mb-6">
-              <Tag className="size-4" />
-              <AlertTitle>
-                {untagged} {untagged === 1 ? "post has" : "posts have"} no products tagged
-              </AlertTitle>
-              <AlertDescription>
-                <Link
-                  href={{
-                    pathname: "/dashboard/posts",
-                    query: { profile: active.id, filter: "untagged" },
-                  }}
-                  className="underline underline-offset-4"
-                >
-                  Tag them to make those posts shoppable →
-                </Link>
-              </AlertDescription>
-            </Alert>
-          ) : null}
-
-          <section aria-label="Profiles" className="pb-8">
-            <div className="flex items-center justify-between pb-3">
-              <h2 className="font-medium">Profiles</h2>
-              <NewProfileButton />
-            </div>
-            <ul className="flex flex-wrap gap-2">
-              {profiles.map((profile) => (
-                <li key={profile.id}>
-                  <Link
-                    href={`/dashboard?profile=${profile.id}`}
-                    className={cn(
-                      "rounded-pill inline-flex items-center gap-1.5 border px-3 py-1.5 text-sm",
-                      profile.id === active?.id
-                        ? "border-primary font-medium"
-                        : "border-border text-muted-foreground hover:text-foreground",
-                    )}
+                {/* Only when there is something to tag. A nudge that is always
+                    there is wallpaper; this one carries the count. */}
+                {untagged > 0 ? (
+                  <Nudge
+                    action={
+                      <Button asChild>
+                        <Link
+                          href={{
+                            pathname: "/dashboard/posts",
+                            query: { profile: active.id, filter: "untagged" },
+                          }}
+                        >
+                          Tag them
+                        </Link>
+                      </Button>
+                    }
                   >
-                    @{profile.username}
-                    {profile.role === "manager" ? <Badge variant="outline">manager</Badge> : null}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        </>
-      )}
+                    <b>
+                      {untagged} {untagged === 1 ? "post has" : "posts have"} no products tagged.
+                    </b>{" "}
+                    Tag them to make those posts shoppable.
+                  </Nudge>
+                ) : null}
+              </DashCard>
+            ) : null}
 
-      <SocialConnections youtube={youtube} connectAction={connectGoogle} />
+            <DashCard>
+              <DashCardHead>
+                <DashCardTitle>Profiles</DashCardTitle>
+                <DashCardNote>
+                  {profiles.length} of {MAX_PROFILES_PER_ACCOUNT}
+                </DashCardNote>
+                <DashCardAction>
+                  <NewProfileButton />
+                </DashCardAction>
+              </DashCardHead>
+              <ProfileChips>
+                {profiles.map((profile) => (
+                  <ProfileChip
+                    key={profile.id}
+                    current={profile.id === active?.id}
+                    role={profile.role === "manager" ? "manager" : undefined}
+                    avatar={
+                      <Avatar className="size-7">
+                        <AvatarFallback className="bg-active text-primary text-[10px] font-bold">
+                          {profile.username.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    }
+                    asChild
+                  >
+                    <Link href={`/dashboard?profile=${profile.id}`}>@{profile.username}</Link>
+                  </ProfileChip>
+                ))}
+              </ProfileChips>
+            </DashCard>
+          </>
+        )}
 
-      {active && earnings ? (
-        <section aria-label="Earnings">
-          <h2 className="pb-4 font-medium">
-            Earnings · <span className="text-muted-foreground">@{active.username}</span>
-          </h2>
-          <EarningsSummaryView summary={earnings} />
-        </section>
-      ) : null}
+        <SocialConnections youtube={youtube} connectAction={connectGoogle} />
+
+        {active && traffic ? (
+          <DashCard>
+            <DashCardHead>
+              <DashCardTitle>Traffic · @{active.username}</DashCardTitle>
+              <DashCardNote>All time</DashCardNote>
+            </DashCardHead>
+            <TrafficSummaryView summary={traffic} pageHref={`/${active.username}`} />
+          </DashCard>
+        ) : null}
+      </DashBody>
     </DashboardShell>
   );
 }

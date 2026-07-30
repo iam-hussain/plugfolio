@@ -1,11 +1,25 @@
 import type { YouTubeConnectionView } from "@plugfolio/core";
-import { Button, SocialGlyph } from "@plugfolio/ui";
-
+import {
+  Button,
+  ConnectedAs,
+  Connection,
+  ConnectionChannel,
+  Connections,
+  DashCard,
+  DashCardHead,
+  DashCardTitle,
+  Hint,
+  SocialGlyph,
+} from "@plugfolio/ui";
 
 /**
- * Account-level social connections (ADR-0004): connect Google, then show the
- * YouTube channels it exposes — the pool profile usernames are picked from.
- * Server component; `youtube` is null when the OAuth app isn't configured.
+ * Account-level social connections (ADR-0004, DESIGN dashboard.html §5.15):
+ * connect Google, then show the YouTube channels it exposes — the pool profile
+ * usernames are picked from. Server component; `youtube` is null when the
+ * OAuth app isn't configured.
+ *
+ * Meta is drawn as a real row rather than omitted, because "coming next" is
+ * information and a missing row is not.
  *
  * The connect action arrives as a prop: importing it here would pull
  * `@/server/auth` into every barrel that re-exports this file, and from there
@@ -22,87 +36,87 @@ export function SocialConnections({
   youtube: YouTubeConnectionView | null;
   /** Starts the Google OAuth connect — a connection, never a login. */
   connectAction: () => void | Promise<void>;
-  /** Skip the section heading — for callers that supply their own (a Card). */
+  /** Skip the card wrapper — for callers that supply their own. */
   bare?: boolean;
 }) {
-  const body =
-    youtube === null ? (
-      <p className="text-muted-foreground text-sm">
-        Google connect isn&apos;t configured on this server yet. Meta (Instagram) is coming next.
-      </p>
-    ) : youtube.connected ? (
-      <YouTubeChannelList channels={youtube.channels} connectAction={connectAction} />
-    ) : (
-      <form action={connectAction}>
-        <Button type="submit" variant="outline" size="sm">
-          <SocialGlyph platform="youtube" />
-          Connect Google (YouTube)
-        </Button>
-      </form>
-    );
+  const channels = youtube?.connected ? youtube.channels : [];
+
+  const body = (
+    <Connections>
+      <Connection
+        icon={<SocialGlyph platform="youtube" />}
+        name="Google · YouTube"
+        status={
+          youtube === null ? (
+            "Not configured on this server yet"
+          ) : youtube.connected ? (
+            <ConnectedAs>Connected</ConnectedAs>
+          ) : (
+            "Connect to claim a username you own"
+          )
+        }
+        action={
+          youtube === null ? null : (
+            <form action={connectAction}>
+              <Button
+                type="submit"
+                variant="outline"
+                className="text-micro min-h-10 flex-none px-4 py-2.5"
+              >
+                {youtube.connected ? "Reconnect" : "Connect"}
+              </Button>
+            </form>
+          )
+        }
+        channels={
+          channels.length > 0
+            ? channels.map((channel) => (
+                <ConnectionChannel key={channel.id}>
+                  {channel.handle ?? channel.title}
+                  {channel.subscriberCount !== null
+                    ? ` · ${subscriberFormat.format(channel.subscriberCount)}`
+                    : null}
+                </ConnectionChannel>
+              ))
+            : youtube?.connected
+              ? // Connected but nothing readable — say which of the two it is.
+                [
+                  <ConnectionChannel key="none">
+                    No channels readable — reconnect to refresh access
+                  </ConnectionChannel>,
+                ]
+              : undefined
+        }
+      />
+      <Connection
+        icon={<SocialGlyph platform="instagram" />}
+        name="Meta · Instagram"
+        status="Coming next — no gateway yet"
+        action={
+          <Button
+            variant="outline"
+            disabled
+            className="text-micro min-h-10 flex-none px-4 py-2.5"
+          >
+            Connect
+          </Button>
+        }
+      />
+    </Connections>
+  );
 
   if (bare) return body;
 
   return (
-    <section aria-label="Connected socials" className="pb-8">
-      <h2 className="pb-1 font-medium">Connections</h2>
-      <p className="text-muted-foreground pb-4 text-sm">
-        Connect the socials you own — profile usernames come from their handles.
-      </p>
+    <DashCard>
+      <DashCardHead>
+        <DashCardTitle>Connections</DashCardTitle>
+      </DashCardHead>
+      <Hint>
+        Connect at least one to create a profile. This is how a username stays yours — you can only
+        connect an account you own.
+      </Hint>
       {body}
-    </section>
-  );
-}
-
-function YouTubeChannelList({
-  channels,
-  connectAction,
-}: {
-  channels: Extract<YouTubeConnectionView, { connected: true }>["channels"];
-  connectAction: () => void | Promise<void>;
-}) {
-  if (channels.length === 0) {
-    return (
-      <div className="flex items-center gap-3">
-        <p className="text-muted-foreground text-sm">
-          Google is connected, but no channels are readable — reconnect to refresh access.
-        </p>
-        <form action={connectAction}>
-          <Button type="submit" variant="outline" size="sm">
-            Reconnect
-          </Button>
-        </form>
-      </div>
-    );
-  }
-  return (
-    <ul className="flex flex-col gap-2">
-      {channels.map((channel) => (
-        <li key={channel.id} className="border-border flex items-center gap-3 rounded-md border p-3">
-          {channel.thumbnailUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element -- remote YouTube avatar, unknown host
-            <img
-              src={channel.thumbnailUrl}
-              alt=""
-              className="size-10 rounded-pill"
-              referrerPolicy="no-referrer"
-            />
-          ) : (
-            <span className="text-muted-foreground flex size-10 items-center justify-center">
-              <SocialGlyph platform="youtube" />
-            </span>
-          )}
-          <div className="min-w-0">
-            <p className="truncate text-sm font-medium">{channel.title}</p>
-            <p className="text-muted-foreground truncate text-xs">
-              {channel.handle ?? "no handle"}
-              {channel.subscriberCount !== null
-                ? ` · ${subscriberFormat.format(channel.subscriberCount)} subscribers`
-                : null}
-            </p>
-          </div>
-        </li>
-      ))}
-    </ul>
+    </DashCard>
   );
 }

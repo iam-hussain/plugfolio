@@ -1,6 +1,5 @@
 import { MAX_PROFILES_PER_ACCOUNT, type AccessibleProfile } from "@plugfolio/core";
 import {
-  DashBody,
   DashHeader,
   DashPage,
   DashTop,
@@ -70,6 +69,3 @@ export function DashboardPageHeader({
     </PageHead>
   );
 }
-
-/** The body below the page header — kept separate so the header sits flush. */
-export { DashBody as DashboardBody };
