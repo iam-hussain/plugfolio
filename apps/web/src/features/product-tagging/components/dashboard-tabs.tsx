@@ -1,15 +1,15 @@
 "use client";
 
-import { cn } from "@plugfolio/ui";
+import { DashTab, DashTabs } from "@plugfolio/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 /**
- * Dashboard section tabs (design handoff open question resolved: text tabs
- * under the top bar — creators work on desktop too, a bottom bar doesn't).
- * Space Mono uppercase per the brand's micro-label rule. Settings shows for
- * Managers too (brief 10: they get the picture control) — the page itself
- * gates everything else to the Admin.
+ * Dashboard section tabs (DESIGN dashboard.html §5.17). Text tabs under the
+ * top bar — creators work on desktop too, where a bottom bar doesn't reach.
+ *
+ * Settings shows for Managers as well (they get the picture control); the page
+ * itself gates everything else to the Admin, visibly rather than by hiding it.
  */
 const TABS = [
   { href: "/dashboard", label: "Home" },
@@ -27,29 +27,21 @@ export type DashboardTabsProps = {
 export function DashboardTabs({ profileId }: DashboardTabsProps) {
   const pathname = usePathname();
   return (
-    <nav aria-label="Dashboard sections" className="overflow-x-auto">
-      <ul className="mx-auto flex w-full max-w-2xl px-4">
-        {TABS.map((tab) => {
-          const active =
-            tab.href === "/dashboard" ? pathname === tab.href : pathname.startsWith(tab.href);
-          return (
-            <li key={tab.href}>
-              <Link
-                href={{ pathname: tab.href, query: profileId ? { profile: profileId } : {} }}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "font-mono tracking-eyebrow inline-flex h-11 items-center border-b-2 px-3 text-[11px] uppercase whitespace-nowrap",
-                  active
-                    ? "border-primary text-foreground"
-                    : "text-muted-foreground hover:text-foreground border-transparent",
-                )}
-              >
-                {tab.label}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+    <DashTabs>
+      {TABS.map((tab) => {
+        // A detail route lights its PARENT tab — the post editor is a Posts
+        // route, not a seventh section, and a shell that lights nothing there
+        // reads as having lost its place.
+        const active =
+          tab.href === "/dashboard" ? pathname === tab.href : pathname.startsWith(tab.href);
+        return (
+          <DashTab key={tab.href} current={active} asChild>
+            <Link href={{ pathname: tab.href, query: profileId ? { profile: profileId } : {} }}>
+              {tab.label}
+            </Link>
+          </DashTab>
+        );
+      })}
+    </DashTabs>
   );
 }

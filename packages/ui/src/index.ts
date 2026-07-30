@@ -114,3 +114,8 @@ export * from "./components/marketing";
 // Panels + share (DESIGN creator.html §.pn / §.sh) — what goes inside a Sheet.
 export * from "./components/panel";
 export * from "./components/share-panel";
+// The back room (DESIGN dashboard.html) — operate mode: dense rows, visible
+// labels, edits that save where you made them.
+export * from "./components/back-room";
+export * from "./components/dash-rows";
+export * from "./components/traffic";

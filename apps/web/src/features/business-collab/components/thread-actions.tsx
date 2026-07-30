@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Input } from "@plugfolio/ui";
+import { AcceptRow, AcceptStatus, Button, Input } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { SendHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -67,19 +67,23 @@ export function ThreadActions({ collabId, hasAgreed, otherSideAgreed }: ThreadAc
           {(send.error ?? agree.error)?.message}
         </p>
       ) : null}
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-muted-foreground text-xs">
+      {/* Status left, action right — the order the decision is actually
+          made in: you read whether they have accepted before deciding
+          whether you do. Once you have, the button states that rather than
+          offering the action again; an enabled button there invites a
+          second press that means nothing. */}
+      <AcceptRow>
+        <AcceptStatus>
           {otherSideAgreed ? "The other side has accepted." : "The other side hasn't accepted yet."}
-        </p>
+        </AcceptStatus>
         <Button
           variant={hasAgreed ? "ghost" : "accent"}
-          size="sm"
           onClick={() => agree.mutate()}
           disabled={hasAgreed || agree.isPending}
         >
           {hasAgreed ? "You accepted" : "Accept terms"}
         </Button>
-      </div>
+      </AcceptRow>
     </div>
   );
 }

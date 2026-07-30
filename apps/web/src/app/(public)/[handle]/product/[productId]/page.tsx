@@ -27,7 +27,7 @@ import {
   ProductTitle,
   ProductWhere,
 } from "@plugfolio/ui";
-import { CouponBlock, ProductTapButton } from "@/features/creator-page";
+import { CouponBlock, ProductTapButton, ViewBeacon } from "@/features/creator-page";
 import {
   CommentClaim,
   CommentForm,
@@ -110,6 +110,7 @@ export default async function ProductPage({
 
   return (
     <main data-accent={page.accent} className="mx-auto w-full max-w-[1180px] px-5 pb-14 lg:px-11">
+      <ViewBeacon surface="product" productId={product.id} />
       <BackLink asChild>
         <Link href={`/${page.username}`}>
           <BackLinkIcon />

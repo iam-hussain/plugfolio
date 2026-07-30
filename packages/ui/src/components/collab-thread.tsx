@@ -66,7 +66,7 @@ export function TermsTitle({ className, ...props }: React.ComponentProps<"h1">) 
     <h1
       data-slot="terms-title"
       className={cn(
-        "font-display tracking-display min-w-0 flex-1 truncate text-title font-bold",
+        "font-display tracking-display text-title min-w-0 flex-1 truncate font-bold",
         className,
       )}
       {...props}
@@ -78,7 +78,7 @@ export function TermsSubtitle({ className, ...props }: React.ComponentProps<"p">
   return (
     <p
       data-slot="terms-subtitle"
-      className={cn("text-muted-foreground truncate pt-1 text-micro", className)}
+      className={cn("text-muted-foreground text-micro truncate pt-1", className)}
       {...props}
     />
   );
@@ -122,7 +122,7 @@ export function TermsLabel({ className, ...props }: React.ComponentProps<"span">
            bare pixel value in a class string the magic value §8 forbids.
            The app has this drift in a few older eyebrows; new work does
            not add to it. */
-        "text-muted-foreground tracking-eyebrow mr-1 font-mono text-micro uppercase",
+        "text-muted-foreground tracking-eyebrow text-micro mr-1 font-mono uppercase",
         className,
       )}
       {...props}
@@ -140,7 +140,7 @@ export function AgreedBanner({ className, children, ...props }: React.ComponentP
     <p
       data-slot="agreed-banner"
       className={cn(
-        "bg-accent text-accent-foreground mt-3 flex items-center gap-2.5 rounded-image px-4 py-3 text-copy font-bold",
+        "bg-accent text-accent-foreground rounded-image text-copy mt-3 flex items-center gap-2.5 px-4 py-3 font-bold",
         className,
       )}
       {...props}
@@ -159,13 +159,9 @@ export function AgreedBanner({ className, children, ...props }: React.ComponentP
  */
 export function ThreadEvent({ className, children, ...props }: React.ComponentProps<"li">) {
   return (
-    <li
-      data-slot="thread-event"
-      className={cn("flex items-center gap-3", className)}
-      {...props}
-    >
+    <li data-slot="thread-event" className={cn("flex items-center gap-3", className)} {...props}>
       <span className="bg-border h-px flex-1" aria-hidden="true" />
-      <span className="text-muted-foreground shrink-0 text-center text-micro font-bold">
+      <span className="text-muted-foreground text-micro shrink-0 text-center font-bold">
         {children}
       </span>
       <span className="bg-border h-px flex-1" aria-hidden="true" />
@@ -214,7 +210,7 @@ export function AcceptRow({ className, ...props }: React.ComponentProps<"div">) 
     <div
       data-slot="accept-row"
       className={cn(
-        "border-border bg-card flex flex-wrap items-center gap-3 rounded-tile border px-4 py-3.5",
+        "border-border bg-card rounded-tile flex flex-wrap items-center gap-3 border px-4 py-3.5",
         className,
       )}
       {...props}
@@ -226,7 +222,7 @@ export function AcceptStatus({ className, ...props }: React.ComponentProps<"p">)
   return (
     <p
       data-slot="accept-status"
-      className={cn("text-muted-foreground min-w-0 flex-1 text-copy", className)}
+      className={cn("text-muted-foreground text-copy min-w-0 flex-1", className)}
       {...props}
     />
   );

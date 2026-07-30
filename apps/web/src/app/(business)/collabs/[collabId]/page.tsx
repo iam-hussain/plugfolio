@@ -3,25 +3,47 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { NotFoundError, getCollabThread } from "@plugfolio/core";
 import {
+  AcceptRow,
+  AcceptStatus,
+  AgreedBanner,
   Avatar,
   AvatarFallback,
   Badge,
   Button,
-  Card,
-  CardContent,
-  Message,
-  MessageAvatar,
-  MessageContent,
-  MessageHeader,
+  MessageBubble,
+  TermsCard,
+  TermsHeader,
+  TermsLabel,
+  TermsLine,
+  TermsSubtitle,
+  TermsTitle,
+  ThreadEvent,
 } from "@plugfolio/ui";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 import { ProposeTermsForm, ThreadActions } from "@/features/business-collab";
 import { auth } from "@/server/auth";
 import { businessCollabDeps } from "@/server/container";
 
-// One collab thread — the bargain happens here (brief 12): terms pinned on
-// top, a simple exchange, Accept from both sides. Participants only;
-// outsiders get a 404, not a hint it exists.
+/**
+ * One collab thread — where the bargain actually happens (§5.24, brief 12).
+ *
+ * ONE SCREEN, TWO ROLES. The viewer's side comes back from the service and
+ * drives the back link, the attribution and which bubbles sit right.
+ * Building a business version and a creator version would be two screens
+ * that have to agree about one conversation forever.
+ *
+ * THE PIN IS THE POINT. A negotiation held only in messages leaves both
+ * sides scrolling to find what was agreed and disagreeing later, so the
+ * live terms sit pinned at the top and a new proposal clears BOTH
+ * acceptances. "Agreed" can then only mean agreed to the terms shown.
+ *
+ * v1 handles no money: price is free text, the thread's job ends at agreed
+ * terms, and the banner says payment settles off Plugfolio rather than
+ * implying an escrow that does not exist.
+ *
+ * Non-participants get notFound(), never a permission error — confirming a
+ * thread exists is itself the leak.
+ */
 type Params = { collabId: string };
 
 export const metadata: Metadata = { title: "Collab" };
@@ -52,98 +74,106 @@ export default async function CollabThreadPage({ params }: { params: Promise<Par
   const mine = side === "business" ? thread.businessAgreedAt : thread.creatorAgreedAt;
   const theirs = side === "business" ? thread.creatorAgreedAt : thread.businessAgreedAt;
 
+  const terms = thread.termsContent
+    ? [
+        thread.termsContent,
+        thread.termsPrice,
+        thread.termsDeadline ? `by ${termsDateFormat.format(thread.termsDeadline)}` : null,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : null;
+
   return (
-    <main className="mx-auto w-full max-w-2xl px-4 pb-8">
+    <main className="mx-auto w-full max-w-reading px-5 pb-14">
+      {/* Back goes where the viewer came from. Sending a creator to /collabs
+          would land them on a business surface they cannot use. */}
       <nav className="py-4">
         <Button variant="ghost" size="sm" asChild>
           <Link href={side === "business" ? "/collabs" : "/dashboard/collabs"}>
-            <ArrowLeft className="size-4" />
-            Collabs
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            All collabs
           </Link>
         </Button>
       </nav>
 
-      {/* The terms, always visible at the top (brief 12). */}
-      <Card className="mb-6">
-        <CardContent className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <div className="min-w-0 flex-1">
-              <h1 className="font-display truncate text-lg font-semibold">
-                {thread.businessName} × @{thread.username}
-              </h1>
-              <p className="text-muted-foreground truncate text-sm">
-                {thread.requirementTitle ?? "Direct collab"}
-              </p>
-            </div>
-            <Badge variant={agreed ? "default" : "outline"}>
-              {agreed ? "Agreed" : "Negotiating"}
-            </Badge>
+      <TermsCard status={agreed ? "agreed" : "negotiating"}>
+        <TermsHeader>
+          <div className="min-w-0 flex-1">
+            <TermsTitle>
+              {thread.businessName} × @{thread.username}
+            </TermsTitle>
+            <TermsSubtitle>{thread.requirementTitle ?? "Direct collab"}</TermsSubtitle>
           </div>
-          {thread.termsContent ? (
-            <p className="border-border bg-muted rounded-md border px-3 py-2 text-sm">
-              <span className="text-muted-foreground font-mono text-[10px] tracking-[0.08em] uppercase">
-                The terms ·{" "}
-              </span>
-              {thread.termsContent}
-              {thread.termsPrice ? ` · ${thread.termsPrice}` : ""}
-              {thread.termsDeadline ? ` · by ${termsDateFormat.format(thread.termsDeadline)}` : ""}
-            </p>
-          ) : (
-            <p className="text-muted-foreground text-xs">
-              No terms proposed yet — pin what gets made, the price, and the deadline below.
-            </p>
-          )}
-        </CardContent>
-      </Card>
-      {agreed ? (
-        <p className="text-muted-foreground pb-6 text-center text-xs">
-          Both sides accepted — payment settles off-platform.
-        </p>
-      ) : null}
+          <Badge variant={agreed ? "default" : "outline"}>
+            {agreed ? "Agreed" : "Negotiating"}
+          </Badge>
+        </TermsHeader>
 
-      <section aria-label="Messages" className="pb-6">
-        <ul className="flex flex-col gap-4">
+        {terms ? (
+          <TermsLine>
+            <TermsLabel>The terms ·</TermsLabel>
+            {terms}
+          </TermsLine>
+        ) : (
+          <TermsLine pending>
+            No terms proposed yet — pin what gets made, the price, and the deadline below.
+          </TermsLine>
+        )}
+
+        {agreed ? (
+          <AgreedBanner>
+            <Check className="size-4 shrink-0" aria-hidden="true" />
+            Both sides accepted — payment settles off Plugfolio.
+          </AgreedBanner>
+        ) : null}
+      </TermsCard>
+
+      {/* Oldest first, and aligned by whose they are. A thread that has to be
+          read top-down to make sense should not also be read bottom-up. */}
+      <section aria-label="Messages" className="pb-7 pt-6">
+        <ul className="flex flex-col gap-3.5">
           {thread.messages.map((message) => {
             const isMine = message.fromBusiness === (side === "business");
             const author = message.fromBusiness ? thread.businessName : `@${thread.username}`;
             return (
-              <li key={message.id}>
-                <Message align={isMine ? "end" : "start"}>
-                  <MessageAvatar>
-                    <Avatar className="size-8">
-                      <AvatarFallback className="bg-muted text-foreground text-xs">
-                        {author.replace("@", "").charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  </MessageAvatar>
-                  <MessageContent>
-                    <MessageHeader>
-                      {author} · {timeFormat.format(message.createdAt)}
-                    </MessageHeader>
-                    <div
-                      className={
-                        isMine
-                          ? "bg-primary text-primary-foreground w-fit rounded-lg px-3 py-2 text-sm"
-                          : "bg-muted text-foreground w-fit rounded-lg px-3 py-2 text-sm"
-                      }
-                    >
-                      {message.body}
-                    </div>
-                  </MessageContent>
-                </Message>
+              <li
+                key={message.id}
+                className={isMine ? "flex flex-col items-end" : "flex flex-col items-start"}
+              >
+                <p className="text-muted-foreground text-micro flex items-center gap-2 pb-1.5">
+                  <Avatar className="size-5">
+                    <AvatarFallback className="bg-muted text-foreground text-micro">
+                      {author.replace("@", "").charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-muted-foreground font-bold">{author}</span>
+                  <time dateTime={message.createdAt.toISOString()}>
+                    {timeFormat.format(message.createdAt)}
+                  </time>
+                </p>
+                <MessageBubble tone={isMine ? "mine" : "theirs"}>{message.body}</MessageBubble>
               </li>
             );
           })}
+
+          {/* The live proposal reads as an event, not as something someone
+              said — it changed what both sides are agreeing to. */}
+          {terms ? <ThreadEvent>Terms currently on the table</ThreadEvent> : null}
         </ul>
       </section>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         <ThreadActions
           collabId={thread.id}
           hasAgreed={mine !== null}
           otherSideAgreed={theirs !== null}
         />
         <ProposeTermsForm collabId={thread.id} />
+        <p className="text-muted-foreground text-micro pt-2 text-center">
+          The thread&rsquo;s job ends at agreed terms. Plugfolio handles no money and takes no cut —
+          payment settles between you.
+        </p>
       </div>
     </main>
   );

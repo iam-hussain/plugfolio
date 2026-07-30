@@ -114,6 +114,11 @@ const preset = {
       // 20/40px gutter, not an ad-hoc max-w per page.
       maxWidth: {
         inner: "1200px",
+        /* The reading measure. A thread, a brief, an email — anything whose
+           job is a column of prose — is unreadable at `inner`, and every
+           surface that needed one was inventing its own literal. Two named
+           measures with a reason beats three arbitrary numbers. */
+        reading: "760px",
       },
       transitionTimingFunction: {
         // The one easing the design uses everywhere (--ease).

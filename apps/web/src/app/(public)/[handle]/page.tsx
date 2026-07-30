@@ -14,7 +14,13 @@ import {
 } from "@plugfolio/core";
 import { Button, CreatorHeader, EmptyState, SocialsRow } from "@plugfolio/ui";
 import { formatCount } from "@/lib/format-count";
-import { CategoryChips, CustomiseDrawer, PageShare, PostGrid } from "@/features/creator-page";
+import {
+  CategoryChips,
+  CustomiseDrawer,
+  PageShare,
+  PostGrid,
+  ViewBeacon,
+} from "@/features/creator-page";
 import { RequestCollabForm } from "@/features/business-collab";
 import {
   CommentClaim,
@@ -162,6 +168,7 @@ export default async function CreatorPage({
 
   return (
     <main data-accent={page.accent} className="mx-auto w-full max-w-[1180px] px-5 pb-14 lg:px-11">
+      <ViewBeacon surface="profile" username={page.username} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

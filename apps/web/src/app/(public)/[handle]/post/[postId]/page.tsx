@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   getCreatorPage,
-  getEarnings,
+  getTraffic,
   getShopperPost,
   isFollowingProfile,
 } from "@plugfolio/core";
@@ -21,7 +21,7 @@ import {
   PostCaption,
   ProductList,
 } from "@plugfolio/ui";
-import { TaggedProductCard } from "@/features/creator-page";
+import { TaggedProductCard, ViewBeacon } from "@/features/creator-page";
 import { FollowButton } from "@/features/shopper-account";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -64,9 +64,9 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
   // Taps are the reason tagging exists, so the owner sees this post's number
   // where they're looking at the post. Visitors never see it.
   const taps = isOwner
-    ? (await getEarnings({ earnings: repositories.earnings }, page.id)).byPost.find(
+    ? ((await getTraffic({ traffic: repositories.traffic }, page.id)).byPost.find(
         (row) => row.postId === post.id,
-      )?.taps ?? 0
+      )?.taps ?? 0)
     : null;
 
   const productCount = post.products.length;
@@ -79,6 +79,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
       data-accent={page.accent}
       className="mx-auto w-full max-w-[720px] px-5 pb-14 lg:px-11"
     >
+      <ViewBeacon surface="post" postId={post.id} />
       <BackLink asChild>
         <Link href={`/${page.username}`}>
           <BackLinkIcon />

@@ -8,5 +8,6 @@ export { TaggedProductCard, type TaggedProductCardProps } from "./components/tag
 export { ProductTapButton, type ProductTapButtonProps } from "./components/product-tap-button";
 export { CouponBlock, type CouponBlockProps } from "./components/coupon-block";
 export { CopyCodeButton, type CopyCodeButtonProps } from "./components/copy-code-button";
+export { ViewBeacon, type ViewBeaconProps } from "./components/view-beacon";
 export { useRecordTap } from "./hooks/use-record-tap";
 export { recordTap, type RecordedTap } from "./api";
