@@ -5,7 +5,9 @@ import { Check, Copy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Logo } from "@/components/brand";
-import { SiteFooter } from "@/components/chrome";
+// Deep import, not the chrome barrel: the barrel re-exports AppTopBar, which
+// pulls @/server/auth (node:crypto) into this client bundle and fails the build.
+import { SiteFooter } from "@/components/chrome/site-footer";
 
 /**
  * Route error boundary (DESIGN error.html, design-handoff §5.25). Must be a

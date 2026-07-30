@@ -44,11 +44,19 @@ export type {
   DiscoveryPostTag,
 } from "./ports/discovery-repository";
 export type {
-  EarningsReadRepository,
-  EarningsSummary,
-  PostTapCount,
-  ProductTapCount,
-} from "./ports/earnings-repository";
+  TrafficReadRepository,
+  TrafficSummary,
+  PostTraffic,
+  ProductTraffic,
+  CodeCopyCount,
+} from "./ports/traffic-repository";
+export type {
+  View,
+  NewView,
+  ViewSurface,
+  ViewRepository,
+  ViewTargetRepository,
+} from "./ports/view-repository";
 export type {
   ProfileRepository,
   ProfileSummary,
@@ -109,6 +117,7 @@ export {
   type RecordCodeCopyInput,
   type RecordCodeCopyCommand,
 } from "./schemas/code-copy";
+export { recordViewInput, type RecordViewInput, type RecordViewCommand } from "./schemas/view";
 export {
   followProfileInput,
   type FollowProfileInput,
@@ -253,7 +262,8 @@ export {
   explorePosts,
   type ExploreDeps,
 } from "./services/explore";
-export { getEarnings, type EarningsReadDeps } from "./services/get-earnings";
+export { getTraffic, tapThroughRate, type TrafficReadDeps } from "./services/get-traffic";
+export { recordView, type RecordViewDeps } from "./services/record-view";
 export { getMyProfiles, type ProfileReadDeps } from "./services/get-my-profiles";
 export {
   listYouTubeChannels,

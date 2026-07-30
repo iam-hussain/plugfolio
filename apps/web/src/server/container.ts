@@ -10,7 +10,7 @@ import {
   createCommentRepository,
   createCreatorPageRepository,
   createDiscoveryRepository,
-  createEarningsRepository,
+  createTrafficRepository,
   createAdPlacementRepository,
   createFollowRepository,
   createProfileRepository,
@@ -28,7 +28,7 @@ import { createYouTubeGateway } from "./youtube";
 export const repositories = {
   creatorPages: createCreatorPageRepository(),
   discovery: createDiscoveryRepository(),
-  earnings: createEarningsRepository(),
+  traffic: createTrafficRepository(),
   profiles: createProfileRepository(),
   follows: createFollowRepository(),
   ads: createAdPlacementRepository(),

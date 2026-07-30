@@ -23,6 +23,8 @@ import {
   createSessionRepository,
   createTapRepository,
   createUserRepository,
+  createViewRepository,
+  createViewTargetRepository,
 } from "@plugfolio/db";
 import { createOgMetadataGateway } from "./gateways/og-metadata";
 import { env } from "./env";
@@ -34,6 +36,8 @@ import { env } from "./env";
  */
 export const repositories = {
   taps: createTapRepository(),
+  views: createViewRepository(),
+  viewTargets: createViewTargetRepository(),
   codeCopies: createCodeCopyRepository(),
   products: createProductRepository(),
   profiles: createProfileRepository(),

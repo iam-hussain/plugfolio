@@ -45,6 +45,8 @@ import {
   recordCodeCopyInput,
   recordOutboundTap,
   recordOutboundTapInput,
+  recordView,
+  recordViewInput,
   removeCategory,
   removeManager,
   removeProduct,
@@ -184,6 +186,30 @@ app.post("/code-copies", async (c) => {
     });
   }
   return c.json({ copy }, 201);
+});
+
+// The third anonymous attribution event: a shoppable surface opening. Same
+// device-identity + idempotency rules as taps — it is the denominator they are
+// read against, so it has to be counted the same way.
+app.post("/views", async (c) => {
+  const input = recordViewInput.parse(await c.req.json());
+  const { deviceId, issued } = deviceIdentity(c);
+
+  const view = await recordView(
+    { views: repositories.views, viewTargets: repositories.viewTargets, now: clock.now },
+    { ...input, deviceId },
+  );
+
+  if (issued) {
+    setCookie(c, DEVICE_COOKIE, issued.token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Lax",
+      path: "/",
+      maxAge: ONE_YEAR_SECONDS,
+    });
+  }
+  return c.json({ view }, 201);
 });
 
 app.post("/follows", async (c) => {

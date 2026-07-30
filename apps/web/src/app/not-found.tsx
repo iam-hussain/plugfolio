@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button, SystemMark, SystemScreen } from "@plugfolio/ui";
 import { exploreCreators } from "@plugfolio/core";
 import { Logo } from "@/components/brand";
-import { SiteFooter } from "@/components/chrome";
+import { SiteFooter } from "@/components/chrome/site-footer";
 import { repositories } from "@/server/container";
 
 /**
