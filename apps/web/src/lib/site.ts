@@ -1,6 +1,6 @@
 /**
- * Site-wide identity constants shared by metadata, robots, sitemap, the
- * manifest, and JSON-LD. NEXT_PUBLIC_SITE_URL overrides per environment
+ * Site-wide identity constants shared by metadata, robots, sitemap, llms.txt,
+ * the manifest, and JSON-LD. NEXT_PUBLIC_SITE_URL overrides per environment
  * (build-time inlined — public config, not a secret, so not in env.ts).
  */
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://plugfolio.com";
