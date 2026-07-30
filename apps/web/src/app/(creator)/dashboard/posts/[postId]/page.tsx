@@ -25,7 +25,6 @@ import { ImageOff, Pencil } from "lucide-react";
 import {
   CategorySelect,
   DashboardPageHeader,
-  DashboardShell,
   PostVisibilitySwitch,
   TagProductForm,
 } from "@/features/product-tagging";
@@ -75,7 +74,7 @@ export default async function TagPostPage({
   const measured = traffic.byPost.find((row) => row.postId === post.id);
 
   return (
-    <DashboardShell profiles={profiles} active={active}>
+    <>
       <DashboardPageHeader
         title={post.caption ?? "Untitled post"}
         eyebrow={`@${active.username} · post`}
@@ -238,6 +237,6 @@ export default async function TagPostPage({
           </div>
         </div>
       </DashBody>
-    </DashboardShell>
+    </>
   );
 }

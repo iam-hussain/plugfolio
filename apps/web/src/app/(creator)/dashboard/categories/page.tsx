@@ -7,7 +7,7 @@ import {
   listProfileProducts,
 } from "@plugfolio/core";
 import { DashBody, Hint } from "@plugfolio/ui";
-import { CategoryManager, DashboardPageHeader, DashboardShell } from "@/features/product-tagging";
+import { CategoryManager, DashboardPageHeader } from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -53,7 +53,7 @@ export default async function DashboardCategoriesPage({
   );
 
   return (
-    <DashboardShell profiles={profiles} active={active}>
+    <>
       <DashboardPageHeader title="Categories" eyebrow={`@${active.username}`} />
 
       <DashBody>
@@ -64,6 +64,6 @@ export default async function DashboardCategoriesPage({
         </Hint>
         <CategoryManager profileId={active.id} categories={categories} counts={counts} />
       </DashBody>
-    </DashboardShell>
+    </>
   );
 }

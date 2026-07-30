@@ -1,7 +1,7 @@
 "use client";
 
 import type { ProfileLinkView, SocialPlatform } from "@plugfolio/core";
-import { Button, Input, Label } from "@plugfolio/ui";
+import { Button, DashField, DashFieldPair, Input } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -56,25 +56,30 @@ export function ProfileLinksForm({ profileId, links }: ProfileLinksFormProps) {
         save.mutate();
       }}
     >
-      {PLATFORMS.map(({ key, label, placeholder }) => (
-        <div key={key} className="flex flex-col gap-1.5">
-          <Label htmlFor={`link-${key}`}>{label}</Label>
-          <Input
-            id={`link-${key}`}
-            type="url"
-            value={urls[key]}
-            onChange={(event) => setUrls((prev) => ({ ...prev, [key]: event.target.value }))}
-            placeholder={placeholder}
-          />
-        </div>
-      ))}
+      {/* Two abreast. Stacked single-column, each of these ran the card's
+          full 1200px measure — a URL field a metre wide, and five of them
+          in a column that scrolled. Paired, they read as a set and each
+          one stays a sane length. */}
+      <DashFieldPair>
+        {PLATFORMS.map(({ key, label, placeholder }) => (
+          <DashField key={key} label={label} htmlFor={`link-${key}`}>
+            <Input
+              id={`link-${key}`}
+              type="url"
+              value={urls[key]}
+              onChange={(event) => setUrls((prev) => ({ ...prev, [key]: event.target.value }))}
+              placeholder={placeholder}
+            />
+          </DashField>
+        ))}
+      </DashFieldPair>
       {save.isError ? (
-        <p role="alert" className="text-destructive text-xs">
+        <p role="alert" className="text-destructive text-micro">
           {save.error.message}
         </p>
       ) : null}
       <div className="flex items-center justify-between gap-3">
-        <p className="text-muted-foreground text-xs">
+        <p className="text-muted-foreground text-micro">
           {save.isSuccess ? "Saved — live on your page." : "Empty fields are removed on save."}
         </p>
         <Button type="submit" size="sm" disabled={save.isPending}>

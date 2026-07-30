@@ -20,7 +20,6 @@ import { Pencil, ShoppingBag } from "lucide-react";
 import {
   AddPostDialog,
   DashboardPageHeader,
-  DashboardShell,
   PostVisibilitySwitch,
 } from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
@@ -67,7 +66,7 @@ export default async function DashboardPostsPage({
   );
 
   return (
-    <DashboardShell profiles={profiles} active={active}>
+    <>
       <DashboardPageHeader
         title="Posts"
         eyebrow={`@${active.username}`}
@@ -152,6 +151,6 @@ export default async function DashboardPostsPage({
           </PostRows>
         )}
       </DashBody>
-    </DashboardShell>
+    </>
   );
 }

@@ -17,7 +17,7 @@ import {
   ProductRows,
 } from "@plugfolio/ui";
 import { ImageOff, Pencil } from "lucide-react";
-import { DashboardPageHeader, DashboardShell } from "@/features/product-tagging";
+import { DashboardPageHeader } from "@/features/product-tagging";
 import { formatPrice } from "@/lib/format-price";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
@@ -60,12 +60,12 @@ export default async function DashboardProductsPage({
     : allProducts;
 
   return (
-    <DashboardShell profiles={profiles} active={active}>
+    <>
       <DashboardPageHeader title="Products" eyebrow={`@${active.username}`} />
 
       <DashBody>
         {allProducts.length > 0 ? (
-          <DashFieldRow method="GET" role="search" className="mt-0 mb-[18px]">
+          <DashFieldRow method="GET" role="search" className="mb-[18px] mt-0">
             <input type="hidden" name="profile" value={active.id} />
             <label className="min-w-0 flex-[1_1_220px]">
               <span className="sr-only">Search products</span>
@@ -95,9 +95,7 @@ export default async function DashboardProductsPage({
             {products.map((product) => {
               const price = formatPrice(product.priceCents, product.currency);
               const shelf = product.categoryId ? categoryById.get(product.categoryId) : null;
-              const destination = product.affiliateUrl
-                ? hostOf(product.affiliateUrl)
-                : null;
+              const destination = product.affiliateUrl ? hostOf(product.affiliateUrl) : null;
               return (
                 <ProductRow
                   key={product.id}
@@ -154,7 +152,9 @@ export default async function DashboardProductsPage({
                   }
                   action={
                     <IconAction label={`Edit ${product.title}`} asChild>
-                      <Link href={`/dashboard/products/${product.id}?profile=${active.id}` as Route}>
+                      <Link
+                        href={`/dashboard/products/${product.id}?profile=${active.id}` as Route}
+                      >
                         <Pencil aria-hidden />
                       </Link>
                     </IconAction>
@@ -165,7 +165,7 @@ export default async function DashboardProductsPage({
           </ProductRows>
         )}
       </DashBody>
-    </DashboardShell>
+    </>
   );
 }
 

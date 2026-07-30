@@ -14,7 +14,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { ChevronDown, Plus } from "lucide-react";
 import type { Route } from "next";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { createProfile } from "../api";
 
 /**
@@ -37,7 +37,21 @@ export type ProfileSwitcherProps = {
   maxProfiles: number;
 };
 
-export function ProfileSwitcher({ profiles, active, maxProfiles }: ProfileSwitcherProps) {
+export function ProfileSwitcher({
+  profiles,
+  active: activeProp,
+  maxProfiles,
+}: ProfileSwitcherProps) {
+  /* The active profile comes from ?profile=, and a Next layout never
+     receives searchParams — so the switcher resolves it here rather than
+     forcing the shell back down into every page just to pass it in. The
+     rule mirrors pickActiveProfile exactly: the requested profile if it is
+     one of yours, otherwise the first. If the two ever disagree, the
+     switcher would name a different profile than the page is showing. */
+  const params = useSearchParams();
+  const requested = params.get("profile") ?? undefined;
+  const active = activeProp ?? profiles.find((p) => p.id === requested) ?? profiles[0];
+
   const router = useRouter();
   const pathname = usePathname();
   const create = useMutation({ mutationFn: createProfile, onSuccess: () => router.refresh() });

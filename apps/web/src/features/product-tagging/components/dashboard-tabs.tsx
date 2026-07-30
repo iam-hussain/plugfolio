@@ -2,7 +2,7 @@
 
 import { DashTab, DashTabs } from "@plugfolio/ui";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 /**
  * Dashboard section tabs (DESIGN dashboard.html §5.17). Text tabs under the
@@ -26,6 +26,13 @@ export type DashboardTabsProps = {
 
 export function DashboardTabs({ profileId }: DashboardTabsProps) {
   const pathname = usePathname();
+  /* Tabs carry ?profile= so switching section keeps the profile you were
+     editing. The shell lives in a layout now and layouts never see
+     searchParams, so the id is read from the URL here — same source the
+     switcher uses, so the two cannot disagree about which profile the row
+     is pointing at. */
+  const params = useSearchParams();
+  const activeProfileId = profileId ?? params.get("profile") ?? undefined;
   return (
     <DashTabs>
       {TABS.map((tab) => {
@@ -36,7 +43,12 @@ export function DashboardTabs({ profileId }: DashboardTabsProps) {
           tab.href === "/dashboard" ? pathname === tab.href : pathname.startsWith(tab.href);
         return (
           <DashTab key={tab.href} current={active} asChild>
-            <Link href={{ pathname: tab.href, query: profileId ? { profile: profileId } : {} }}>
+            <Link
+              href={{
+                pathname: tab.href,
+                query: activeProfileId ? { profile: activeProfileId } : {},
+              }}
+            >
               {tab.label}
             </Link>
           </DashTab>

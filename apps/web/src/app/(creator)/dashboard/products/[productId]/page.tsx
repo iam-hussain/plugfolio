@@ -2,12 +2,7 @@ import type { Metadata, Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import {
-  getMyProfiles,
-  getTraffic,
-  listMyCategories,
-  listProfileProducts,
-} from "@plugfolio/core";
+import { getMyProfiles, getTraffic, listMyCategories, listProfileProducts } from "@plugfolio/core";
 import {
   Button,
   DashBody,
@@ -21,7 +16,7 @@ import {
   Stats,
 } from "@plugfolio/ui";
 import { ImageOff } from "lucide-react";
-import { DashboardPageHeader, DashboardShell, ProductEditor } from "@/features/product-tagging";
+import { DashboardPageHeader, ProductEditor } from "@/features/product-tagging";
 import { formatPrice } from "@/lib/format-price";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
@@ -69,7 +64,7 @@ export default async function ProductEditPage({
   const libraryHref = `/dashboard/products?profile=${active.id}` as Route;
 
   return (
-    <DashboardShell profiles={profiles} active={active}>
+    <>
       <DashboardPageHeader
         title={product.title}
         eyebrow={`@${active.username} · product`}
@@ -102,7 +97,9 @@ export default async function ProductEditPage({
             <span className="min-w-0 flex-[1_1_220px]">
               <span className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1.5">
                 <b className="text-label font-bold">{product.title}</b>
-                {price ? <span className="text-label font-extrabold tabular-nums">{price}</span> : null}
+                {price ? (
+                  <span className="text-label font-extrabold tabular-nums">{price}</span>
+                ) : null}
                 {product.kind === "own" ? <Pill tone="own">Their own</Pill> : null}
                 {product.couponCode ? <Pill tone="code">Code {product.couponCode}</Pill> : null}
               </span>
@@ -150,12 +147,8 @@ export default async function ProductEditPage({
           </Stats>
         </DashCard>
 
-        <ProductEditor
-          product={product}
-          categories={categories}
-          onRemovedHref={libraryHref}
-        />
+        <ProductEditor product={product} categories={categories} onRemovedHref={libraryHref} />
       </DashBody>
-    </DashboardShell>
+    </>
   );
 }

@@ -28,7 +28,7 @@ Migration `20260722090000_product_kinds_and_coupons`:
 - `recordCodeCopy` — mirrors `recordOutboundTap`: profile derived from the product, post
   membership verified, idempotent; additionally rejects copies on code-less products.
 - `recordOutboundTap` — new guard: 404 on a product with no outbound destination.
-- Earnings: `EarningsSummary` gains `totalCodeCopies` and per-product `codeCopies`;
+- Traffic: `TrafficSummary` gains `totalCodeCopies` and per-product `codeCopies`;
   products with copies but no taps (in-store-only) still get a row.
 
 ## API surface
@@ -49,7 +49,7 @@ Migration `20260722090000_product_kinds_and_coupons`:
 - `TagProductForm` — kind radios + `<details>` "+ Add a coupon" (code, date, note);
   default affiliate path unchanged. Submit gated on the channel rule client-side.
 - `ProductRow` — kind tag, coupon editor (empty code = remove), link editor unchanged.
-- `EarningsSummaryView` — "code copies · redemption not tracked" stat + per-product
+- `TrafficSummaryView` — "code copies · redemption not tracked" stat + per-product
   "· N copies".
 
 ## Edge cases
