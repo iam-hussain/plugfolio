@@ -1,2 +1,2 @@
-/** Public surface of the earnings feature (§5: import from here only). */
-export { EarningsSummaryView, type EarningsSummaryViewProps } from "./components/earnings-summary";
+/** Public surface of the traffic feature (§5: import from here only). */
+export { TrafficSummaryView, type TrafficSummaryViewProps } from "./components/traffic-summary";
