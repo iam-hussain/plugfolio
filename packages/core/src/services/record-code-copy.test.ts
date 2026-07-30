@@ -28,7 +28,7 @@ function makeFakeProducts(couponCode: string | null = "MAYA15"): ProductReadRepo
   return {
     async findForAttribution(productId: string) {
       return productId === PRODUCT_ID
-        ? { id: PRODUCT_ID, profileId: OWNER_PROFILE_ID, affiliateUrl: null, couponCode }
+        ? { id: PRODUCT_ID, profileId: OWNER_PROFILE_ID, affiliateUrl: null, couponCode, inStoreNote: null }
         : null;
     },
     async isTaggedToPost() {

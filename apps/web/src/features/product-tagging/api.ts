@@ -1,6 +1,8 @@
 import type {
   CreateCategoryInput,
   CreatePostInput,
+  CreateProductInput,
+  UpdatePostInput,
   SetPostCategoryInput,
   SetPostHiddenInput,
   SetProductCategoryInput,
@@ -17,7 +19,7 @@ import type {
  * Zod-inferred types the API validates, so client and server can't drift.
  */
 
-async function send(path: string, method: string, body?: unknown): Promise<void> {
+async function send<T = void>(path: string, method: string, body?: unknown): Promise<T> {
   const response = await fetch(path, {
     method,
     headers: { "content-type": "application/json" },
@@ -30,10 +32,22 @@ async function send(path: string, method: string, body?: unknown): Promise<void>
     } | null;
     throw new Error(problem?.error?.message ?? "Request failed");
   }
+  return (await response.json().catch(() => undefined)) as T;
 }
 
 export const createProfile = () => send("/api/profiles", "POST");
-export const createPost = (input: CreatePostInput) => send("/api/posts", "POST", input);
+export const createPost = (input: CreatePostInput) =>
+  send<{ post: { id: string } }>("/api/posts", "POST", input);
+export const updatePost = (postId: string, profileId: string, input: UpdatePostInput) =>
+  send(`/api/posts/${postId}`, "PATCH", { ...input, profileId });
+/** A product with no post — the library is a real place (§5.21). */
+export const createProduct = ({ profileId, ...body }: CreateProductInput) =>
+  send<{ product: { id: string } }>(`/api/profiles/${profileId}/products`, "POST", body);
+/** Connecting copies nothing: one product row, many posts. */
+export const connectProduct = (postId: string, productId: string) =>
+  send(`/api/posts/${postId}/products/connect`, "POST", { productId });
+export const disconnectProduct = (postId: string, productId: string) =>
+  send(`/api/posts/${postId}/products/${productId}`, "DELETE");
 export const tagProduct = ({ postId, ...body }: TagProductInput) =>
   send(`/api/posts/${postId}/products`, "POST", body);
 export const updateProduct = (productId: string, input: UpdateProductInput) =>

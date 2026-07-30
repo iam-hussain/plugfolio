@@ -8,7 +8,7 @@ import {
   DashCard,
   DashCardHead,
   DashCardTitle,
-  DashFieldRow,
+  DashFieldForm,
   EmptyState,
   IconAction,
   IconActions,
@@ -83,7 +83,7 @@ export function CategoryManager({ profileId, categories, counts }: CategoryManag
         <DashCardHead>
           <DashCardTitle>Add a shelf</DashCardTitle>
         </DashCardHead>
-        <DashFieldRow
+        <DashFieldForm
           className="mt-0"
           onSubmit={(event) => {
             event.preventDefault();
@@ -111,7 +111,7 @@ export function CategoryManager({ profileId, categories, counts }: CategoryManag
           <Button type="submit" disabled={add.isPending || !title.trim()}>
             {add.isPending ? "Adding…" : "Add"}
           </Button>
-        </DashFieldRow>
+        </DashFieldForm>
       </DashCard>
 
       {categories.length === 0 ? (

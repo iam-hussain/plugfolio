@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCreatorPage, getMyProfiles } from "@plugfolio/core";
 import {
+  Button,
   DashBody,
   EmptyState,
   FilterButton,
@@ -17,11 +18,7 @@ import {
   PostRows,
 } from "@plugfolio/ui";
 import { Pencil, ShoppingBag } from "lucide-react";
-import {
-  AddPostDialog,
-  DashboardPageHeader,
-  PostVisibilitySwitch,
-} from "@/features/product-tagging";
+import { DashboardPageHeader, PostVisibilitySwitch } from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -70,7 +67,13 @@ export default async function DashboardPostsPage({
       <DashboardPageHeader
         title="Posts"
         eyebrow={`@${active.username}`}
-        action={<AddPostDialog profileId={active.id} />}
+        action={
+          <Button asChild>
+            <Link href={{ pathname: "/dashboard/posts/new", query: { profile: active.id } }}>
+              Add post
+            </Link>
+          </Button>
+        }
       />
 
       <DashBody>

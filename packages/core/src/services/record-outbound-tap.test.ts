@@ -29,7 +29,7 @@ function makeFakeProducts(affiliateUrl: string | null = "https://a.test/link"): 
   return {
     async findForAttribution(productId: string) {
       return productId === PRODUCT_ID
-        ? { id: PRODUCT_ID, profileId: OWNER_PROFILE_ID, affiliateUrl, couponCode: null }
+        ? { id: PRODUCT_ID, profileId: OWNER_PROFILE_ID, affiliateUrl, couponCode: null, inStoreNote: null }
         : null;
     },
     async isTaggedToPost(productId: string, postId: string) {

@@ -512,12 +512,30 @@ export function DashFieldPair({ children, className }: { children: React.ReactNo
   );
 }
 
-/** An inline row of controls that ends in a button — search, add-a-shelf, invite. */
+/**
+ * An inline row of controls that ends in a button — search, add-a-shelf,
+ * invite. A `div`, because these rows appear *inside* forms as often as they
+ * are one; a nested `<form>` is invalid HTML and the browser silently drops it,
+ * which shows up as a hydration mismatch rather than as anything readable.
+ */
 export function DashFieldRow({
   children,
   className,
   ...props
-}: React.ComponentProps<"form"> & { asDiv?: never }) {
+}: React.ComponentProps<"div">) {
+  return (
+    <div className={cn("mt-3 flex flex-wrap gap-2", className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
+/** The same row when it IS the form — a search box, an invite, an add. */
+export function DashFieldForm({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"form">) {
   return (
     <form className={cn("mt-3 flex flex-wrap gap-2", className)} {...props}>
       {children}

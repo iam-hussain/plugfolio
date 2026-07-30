@@ -20,7 +20,7 @@ import {
   DashCardTitle,
   DashField,
   DashFieldPair,
-  DashFieldRow,
+  DashFieldForm,
   EmptyState,
   FilterButton,
   Filters,
@@ -330,13 +330,13 @@ export const Posts: Story = {
 export const Products: Story = {
   render: () => (
     <>
-      <DashFieldRow className="mb-[18px] mt-0" role="search">
+      <DashFieldForm className="mb-[18px] mt-0" role="search">
         <label className="min-w-0 flex-[1_1_220px]">
           <span className="sr-only">Search products</span>
           <Input type="search" placeholder="Search your products…" />
         </label>
         <Button variant="outline">Search</Button>
-      </DashFieldRow>
+      </DashFieldForm>
       <ProductRows>
         <ProductRow
           image={square}
@@ -416,7 +416,7 @@ export const Categories: Story = {
         <DashCardHead>
           <DashCardTitle>Add a shelf</DashCardTitle>
         </DashCardHead>
-        <DashFieldRow className="mt-0">
+        <DashFieldForm className="mt-0">
           <label className="min-w-0 flex-[1_1_220px]">
             <span className="sr-only">Shelf title</span>
             <Input placeholder="Title — e.g. Desk setup" />
@@ -426,7 +426,7 @@ export const Categories: Story = {
             <Input placeholder="Description (optional)" />
           </label>
           <Button>Add</Button>
-        </DashFieldRow>
+        </DashFieldForm>
       </DashCard>
       <div className="mt-3.5">
         <CategoryRows>

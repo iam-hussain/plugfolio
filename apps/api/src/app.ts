@@ -13,6 +13,8 @@ import {
   collabMessageInput,
   createBusiness,
   createBusinessInput,
+  connectProductInput,
+  connectProductToPost,
   createCategory,
   emailOnlyInput,
   registerAccount,
@@ -24,6 +26,9 @@ import {
   verifyEmail,
   verifyEmailInput,
   createCategoryInput,
+  createProduct,
+  createProductInput,
+  disconnectProductFromPost,
   createPost,
   createPostInput,
   createProfile,
@@ -66,6 +71,9 @@ import {
   unfollowProfile,
   updateCategory,
   updateCategoryInput,
+  updatePost,
+  updatePostInput,
+  updateProduct,
   updateMemberHandle,
   updateMemberHandleInput,
   createReport,
@@ -387,12 +395,46 @@ app.post("/posts/:postId/products", async (c) => {
   return c.json({ product }, 201);
 });
 
+// The product itself (DESIGN product-edit.html): where it came from, whose it
+// is, where it goes. The channel rule lives in the service — clearing the link
+// is only legal in light of the coupon the product already has.
 app.patch("/products/:productId", async (c) => {
   const userId = await requireUserId(c);
   const productId = uuidParam.parse(c.req.param("productId"));
   const input = updateProductInput.parse(await c.req.json());
-  await updateProductAffiliateUrl(creatorContentDeps, userId, productId, input.affiliateUrl);
+  await updateProduct(creatorContentDeps, userId, productId, input);
   return c.json({ updated: true });
+});
+
+// A product with no post — the library is a real place, and an in-store code
+// has nowhere to be tagged (§5.21).
+app.post("/profiles/:profileId/products", async (c) => {
+  const userId = await requireUserId(c);
+  const input = createProductInput.parse({
+    ...(await c.req.json()),
+    profileId: c.req.param("profileId"),
+  });
+  const product = await createProduct(creatorContentDeps, userId, input);
+  return c.json({ product }, 201);
+});
+
+// Connect an existing product to a post. Copies nothing — one row, many posts.
+app.post("/posts/:postId/products/connect", async (c) => {
+  const userId = await requireUserId(c);
+  const postId = uuidParam.parse(c.req.param("postId"));
+  const input = connectProductInput.parse(await c.req.json());
+  await connectProductToPost(creatorContentDeps, userId, postId, input.productId);
+  return c.json({ connected: true }, 201);
+});
+
+// Take it off this post. Deliberately not a delete — the product is still
+// yours and may sit on others.
+app.delete("/posts/:postId/products/:productId", async (c) => {
+  const userId = await requireUserId(c);
+  const postId = uuidParam.parse(c.req.param("postId"));
+  const productId = uuidParam.parse(c.req.param("productId"));
+  await disconnectProductFromPost(creatorContentDeps, userId, postId, productId);
+  return c.json({ connected: false });
 });
 
 app.delete("/products/:productId", async (c) => {
@@ -439,6 +481,18 @@ app.delete("/categories/:categoryId", async (c) => {
 });
 
 // Hide a post from the public page, or bring it back (brief 07).
+// Edit the post itself (DESIGN post-edit.html): its still, its video, its
+// words, its shelf.
+app.patch("/posts/:postId", async (c) => {
+  const userId = await requireUserId(c);
+  const postId = uuidParam.parse(c.req.param("postId"));
+  const body = (await c.req.json()) as { profileId?: unknown };
+  const profileId = uuidParam.parse(body.profileId);
+  const input = updatePostInput.parse(body);
+  await updatePost(creatorContentDeps, userId, postId, profileId, input);
+  return c.json({ updated: true });
+});
+
 app.patch("/posts/:postId/hidden", async (c) => {
   const userId = await requireUserId(c);
   const postId = uuidParam.parse(c.req.param("postId"));

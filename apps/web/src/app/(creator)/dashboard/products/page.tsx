@@ -6,7 +6,7 @@ import { getCreatorPage, getMyProfiles, listProfileProducts } from "@plugfolio/c
 import {
   Button,
   DashBody,
-  DashFieldRow,
+  DashFieldForm,
   EmptyState,
   IconAction,
   Input,
@@ -65,7 +65,7 @@ export default async function DashboardProductsPage({
 
       <DashBody>
         {allProducts.length > 0 ? (
-          <DashFieldRow method="GET" role="search" className="mb-[18px] mt-0">
+          <DashFieldForm method="GET" role="search" className="mb-[18px] mt-0">
             <input type="hidden" name="profile" value={active.id} />
             <label className="min-w-0 flex-[1_1_220px]">
               <span className="sr-only">Search products</span>
@@ -79,7 +79,7 @@ export default async function DashboardProductsPage({
             <Button type="submit" variant="outline">
               Search
             </Button>
-          </DashFieldRow>
+          </DashFieldForm>
         ) : null}
 
         {products.length === 0 && query ? (
