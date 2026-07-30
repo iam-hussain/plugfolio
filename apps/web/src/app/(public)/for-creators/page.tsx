@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   title: "For creators",
   description:
     "Tag the products in what you already post, pin your own links, and see which post drove the taps. Free to start — and Plugfolio never handles your money.",
+  alternates: { canonical: "/for-creators" },
+  openGraph: { url: "/for-creators" },
 };
 
 export default function Page() {

@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   title: "Explore",
   description:
     "Browse creators and shop their tagged products — search freely, no account needed.",
+  // Search/tab params (?q, ?tab) are the same page — canonicalize to the bare
+  // route so engines don't split its authority across every query string.
+  alternates: { canonical: "/explore" },
+  openGraph: { url: "/explore" },
 };
 
 type SearchParams = { q?: string; tab?: string };

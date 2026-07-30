@@ -2,6 +2,8 @@ import { Button } from "@plugfolio/ui";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { JsonLd } from "@/components/json-ld";
+import { faqPage } from "@/lib/structured-data";
 import { Fact, MarketingDoors, PostCard, SplitBand, mk } from "./marketing-shared";
 
 /**
@@ -74,6 +76,9 @@ function LoopCaption({ n, title, copy }: { n: number; title: string; copy: strin
 export function HowItWorksPage() {
   return (
     <>
+      {/* FAQPage schema (AEO) — built from the same FAQ shown below, so an
+          answer engine quotes exactly what a visitor reads. */}
+      <JsonLd data={faqPage(FAQ)} />
       <main className={mk.main}>
         {/* ── hero ── */}
         <section className="pt-[clamp(28px,5vw,56px)]">

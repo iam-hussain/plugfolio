@@ -11,6 +11,8 @@ import { repositories } from "@/server/container";
 export const metadata: Metadata = {
   title: "Support",
   description: "Contact Plugfolio support — account trouble, lost email, merges, and anything else.",
+  alternates: { canonical: "/support" },
+  openGraph: { url: "/support" },
 };
 
 type SearchParams = { category?: string };

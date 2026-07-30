@@ -31,6 +31,7 @@ import {
 } from "@/features/shopper-account";
 import { ReportButton } from "@/features/reporting";
 import { isFeatureEnabled } from "@plugfolio/core";
+import { breadcrumbList } from "@/lib/structured-data";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -80,19 +81,6 @@ export default async function CreatorPage({
   const page = await loadCreatorPage(handle);
   if (!page) notFound();
 
-  // ProfilePage JSON-LD — tells search/answer engines this is a creator's
-  // shoppable page (AEO); only public facts, nothing session-derived.
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    mainEntity: {
-      "@type": "Person",
-      name: `@${page.username}`,
-      identifier: page.username,
-      url: `${SITE_URL}/${page.username}`,
-    },
-  };
-
   const { category, sort, cpage } = await searchParams;
   const activeSort = commentSort.catch("recent").parse(sort);
   const commentPage = Math.max(1, Number(cpage) || 1);
@@ -135,6 +123,33 @@ export default async function CreatorPage({
         ? new URL(link.url).hostname.replace(/^www\./, "")
         : link.platform.charAt(0).toUpperCase() + link.platform.slice(1),
   }));
+
+  // ProfilePage + breadcrumb JSON-LD (SEO/AEO) — public facts only, nothing
+  // session-derived. `sameAs` ties this page to the creator's other platforms,
+  // which is how entity/answer engines connect them to one person.
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfilePage",
+        "@id": `${SITE_URL}/${page.username}`,
+        mainEntity: {
+          "@type": "Person",
+          name: page.displayName ?? `@${page.username}`,
+          alternateName: `@${page.username}`,
+          identifier: page.username,
+          url: `${SITE_URL}/${page.username}`,
+          ...(page.bio ? { description: page.bio } : {}),
+          ...(page.avatarUrl?.startsWith("http") ? { image: page.avatarUrl } : {}),
+          ...(socials.length > 0 ? { sameAs: socials.map((social) => social.href) } : {}),
+        },
+      },
+      breadcrumbList([
+        { name: SITE_NAME, path: "/" },
+        { name: `@${page.username}`, path: `/${page.username}` },
+      ]),
+    ],
+  };
 
   // Hidden posts (brief 07) never reach visitors — only the dashboard shows
   // them. Category chips filter the rest (ADR-0010); "All" holds everything.

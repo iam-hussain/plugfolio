@@ -36,7 +36,16 @@ import {
 } from "@/features/shopper-account";
 import { ReportButton } from "@/features/reporting";
 import { isFeatureEnabled } from "@plugfolio/core";
+import { JsonLd } from "@/components/json-ld";
 import { formatPrice } from "@/lib/format-price";
+import { breadcrumbList } from "@/lib/structured-data";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
+
+/** JSON-LD wants absolute URLs; page media may be a site-relative path. */
+function absoluteUrl(url: string | null): string | undefined {
+  if (!url) return undefined;
+  return url.startsWith("http") ? url : `${SITE_URL}${url}`;
+}
 import { retailerName } from "@/lib/retailer-name";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -56,7 +65,24 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     handle,
     productId,
   );
-  return { title: product ? `${product.title} · @${handle}` : `@${handle}` };
+  if (!product) return { title: `@${handle}` };
+
+  const price = formatPrice(product.priceCents, product.currency);
+  const title = `${product.title} · @${handle}`;
+  const description = `${product.title}${price ? ` — ${price}` : ""}, tagged by @${handle} on ${SITE_NAME}. Tap through and buy it straight at the retailer — no account needed.`;
+  const path = `/${handle}/product/${productId}`;
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      url: path,
+      title,
+      description,
+      ...(product.imageUrl ? { images: [product.imageUrl] } : {}),
+    },
+  };
 }
 
 export default async function ProductPage({
@@ -108,8 +134,39 @@ export default async function ProductPage({
   // here would promise a shop it can't reach.
   const inStoreOnly = product.affiliateUrl === null;
 
+  // Structured data (SEO/AEO): a Product with an Offer when the tagged price is
+  // known, plus the breadcrumb trail. Only what the page already shows — the
+  // price is the display price, the image is the one on screen.
+  const productPath = `/${page.username}/product/${product.id}`;
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    ...(absoluteUrl(product.imageUrl) ? { image: absoluteUrl(product.imageUrl) } : {}),
+    description: `${product.title}, tagged by @${page.username} on ${SITE_NAME}.`,
+    brand: { "@type": "Brand", name: `@${page.username}` },
+    ...(product.priceCents !== null
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: (product.priceCents / 100).toFixed(2),
+            priceCurrency: product.currency.toUpperCase(),
+            availability: "https://schema.org/InStock",
+            url: `${SITE_URL}${productPath}`,
+          },
+        }
+      : {}),
+  };
+  const crumbs = breadcrumbList([
+    { name: SITE_NAME, path: "/" },
+    { name: `@${page.username}`, path: `/${page.username}` },
+    { name: product.title, path: productPath },
+  ]);
+
   return (
     <main data-accent={page.accent} className="mx-auto w-full max-w-[1180px] px-5 pb-14 lg:px-11">
+      <JsonLd data={productLd} />
+      <JsonLd data={crumbs} />
       <ViewBeacon surface="product" productId={product.id} />
       <BackLink asChild>
         <Link href={`/${page.username}`}>

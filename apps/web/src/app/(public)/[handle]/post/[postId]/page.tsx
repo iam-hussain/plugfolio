@@ -23,6 +23,9 @@ import {
 } from "@plugfolio/ui";
 import { TaggedProductCard, ViewBeacon } from "@/features/creator-page";
 import { FollowButton } from "@/features/shopper-account";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbList } from "@/lib/structured-data";
+import { SITE_NAME } from "@/lib/site";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
 
@@ -34,9 +37,18 @@ type Params = { handle: string; postId: string };
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { handle, postId } = await params;
   const post = await getShopperPost({ creatorPages: repositories.creatorPages }, handle, postId);
+  if (!post) return { title: `Post · @${handle}` };
+
+  const count = post.products.length;
+  const title = post.caption ? `${post.caption} · @${handle}` : `Post · @${handle}`;
+  const tagged = count > 0 ? `${count} product${count === 1 ? "" : "s"} tagged` : "A shoppable post";
+  const description = `${post.caption ? `${post.caption} — ` : ""}${tagged} by @${handle} on ${SITE_NAME}. Tap any tag to buy it straight at the retailer — no account needed.`;
+  const path = `/${handle}/post/${postId}`;
   return {
-    title: post?.caption ? `${post.caption} · @${handle}` : `Post · @${handle}`,
-    ...(post ? { openGraph: { images: [post.mediaUrl] } } : {}),
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: { type: "article", url: path, title, description, images: [post.mediaUrl] },
   };
 }
 
@@ -74,11 +86,18 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
   // follows that column instead of running flush left under it (ADR-0019).
   const portrait = post.mediaKind === "instagram" || post.mediaKind === "tiktok";
 
+  const crumbs = breadcrumbList([
+    { name: SITE_NAME, path: "/" },
+    { name: `@${page.username}`, path: `/${page.username}` },
+    { name: post.caption ?? "Post", path: `/${page.username}/post/${post.id}` },
+  ]);
+
   return (
     <main
       data-accent={page.accent}
       className="mx-auto w-full max-w-[720px] px-5 pb-14 lg:px-11"
     >
+      <JsonLd data={crumbs} />
       <ViewBeacon surface="post" postId={post.id} />
       <BackLink asChild>
         <Link href={`/${page.username}`}>
