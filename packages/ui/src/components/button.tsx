@@ -46,7 +46,7 @@ const buttonVariants = cva(
       },
       size: {
         // Admin design control: 12.5px/600, 6×12 padding, 7px radius.
-        xs: "gap-1.5 rounded-[7px] px-3 py-1.5 text-[12.5px] font-semibold",
+        xs: "gap-1.5 rounded-[7px] px-3 py-1.5 text-micro font-semibold",
         sm: "h-9 px-3",
         md: "h-11 px-5",
         default: "h-11 px-5",

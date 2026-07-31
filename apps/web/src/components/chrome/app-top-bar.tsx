@@ -1,5 +1,5 @@
 import { getMemberHandle } from "@plugfolio/core";
-import { Button } from "@plugfolio/ui";
+import { Button, cn, measure } from "@plugfolio/ui";
 import type { Route } from "next";
 import Link from "next/link";
 import { auth } from "@/server/auth";
@@ -7,6 +7,7 @@ import { repositories } from "@/server/container";
 import { Logo } from "@/components/brand";
 import { AccountMenu, type AccountMenuProfile } from "./account-menu";
 import { SearchIcon, UserIcon } from "./icons";
+import { PAGE_CONTEXT_SLOT } from "./page-context-slot";
 
 /**
  * App top bar — the one shared header on every page (Dev Spec §03; §7 unified
@@ -62,17 +63,26 @@ export async function AppTopBar() {
 
   return (
     <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
-      <div className="mx-auto flex h-14 w-full max-w-[1180px] items-center justify-between gap-4 px-5 lg:h-[62px] lg:px-11">
+      <div className={cn(measure(), "flex h-14 items-center justify-between gap-4 lg:h-[62px]")}>
         <Link href="/" aria-label="Plugfolio home" className="flex items-center">
           <Logo layout="horizontal" tone="auto" />
         </Link>
+
+        {/* A page may own ONE element inside the shared bar (DESIGN chrome.js
+            §data-chrome-slot): /[handle] puts the creator's avatar and Follow
+            here once you have scrolled past their header, so past that point
+            the bar stops being Plugfolio's and becomes theirs. Adopting the
+            shared chrome never costs a page its one bespoke affordance. */}
+        {/* No `flex-1`: an empty slot must take no room at all, or every page
+            without one gets its nav shoved to the right. */}
+        <div id={PAGE_CONTEXT_SLOT} className="flex min-w-0 items-center empty:hidden" />
 
         <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
           {(user ? SIGNED_IN_NAV : MARKETING_NAV).map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-muted-foreground hover:text-foreground text-sm font-semibold"
+              className="text-muted-foreground hover:text-foreground text-copy font-semibold"
             >
               {item.label}
             </Link>
@@ -98,13 +108,13 @@ export async function AppTopBar() {
               </Button>
               <Link
                 href="/signin"
-                className="text-foreground hidden text-sm font-semibold lg:inline"
+                className="text-foreground hidden text-copy font-semibold lg:inline"
               >
                 Log in
               </Link>
               <Link
                 href="/explore"
-                className="bg-primary text-primary-foreground rounded-pill hidden px-[18px] py-[9px] text-sm font-semibold lg:inline-flex"
+                className="bg-primary text-primary-foreground rounded-pill hidden px-[18px] py-[9px] text-copy font-semibold lg:inline-flex"
               >
                 Explore creators
               </Link>

@@ -1,15 +1,6 @@
 import type { AdPlacement, DiscoveryCreator, DiscoveryPost, DiscoveryProduct } from "@plugfolio/core";
 import { EXPLORE_PAGE_SIZE } from "@plugfolio/core";
-import {
-  AdSlot,
-  AdSlotWhy,
-  Button,
-  CreatorFan,
-  PostWall,
-  ThingsGrid,
-  WallEnd,
-  WallEndNote,
-} from "@plugfolio/ui";
+import { AdSlot, AdSlotWhy, Button, cn, CreatorFan, measure, PostWall, ThingsGrid, WallEnd, WallEndNote } from "@plugfolio/ui";
 import Image from "next/image";
 import type { Route } from "next";
 import { Search } from "lucide-react";
@@ -17,6 +8,22 @@ import Link from "next/link";
 import { CreatorCard } from "./creator-card";
 import { PostWallCard } from "./post-wall-card";
 import { ProductCard } from "./product-card";
+import { cva } from "class-variance-authority";
+
+/** The scope chips sit on the violet band, so their states are white-on-tint. */
+const scopeChip = cva(
+  "rounded-pill flex min-h-11 shrink-0 items-center px-[18px] text-label font-semibold whitespace-nowrap",
+  {
+    variants: {
+      active: {
+        true: "bg-card text-foreground border border-white",
+        false: "border border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20",
+      },
+    },
+    defaultVariants: { active: false },
+  },
+);
+
 
 /**
  * The Explore surface (DESIGN explore.html — "the tagged wall"): a mode-coloured
@@ -68,10 +75,10 @@ function Empty({
 }) {
   return (
     <div className="border-border bg-card rounded-bay my-8 border p-[clamp(34px,6vw,64px)] text-center">
-      <h2 className="font-display mx-auto max-w-[24ch] text-[clamp(1.5rem,3vw,2rem)] font-bold tracking-[-0.03em]">
+      <h2 className="font-display mx-auto max-w-[24ch] text-display-sm font-bold tracking-[-0.03em]">
         {title}
       </h2>
-      <p className="text-muted-foreground mx-auto mt-3 max-w-[44ch] text-[0.9375rem] leading-[1.6]">
+      <p className="text-muted-foreground mx-auto mt-3 max-w-[44ch] text-copy leading-[1.6]">
         {copy}
       </p>
       <Button variant={cta.primary ? "primary" : "secondary"} asChild className="mt-6">
@@ -100,12 +107,12 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
     <div className="bg-background min-h-[70vh]">
       {/* ── the gradient hero (shopper mode) ── */}
       <div data-role="shopper" className="bg-role-gradient text-white">
-        <div className="mx-auto w-full max-w-[1180px] px-5 pt-8 pb-16 lg:px-11">
+        <div className={cn(measure(), "pt-8 pb-16")}>
           <div className="flex flex-wrap items-baseline gap-4">
-            <h1 className="font-display text-[clamp(2rem,4vw,2.75rem)] font-extrabold tracking-[-0.035em]">
+            <h1 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
               Explore
             </h1>
-            <p className="rounded-pill bg-white/15 px-3.5 py-1.5 font-mono text-[11px] font-bold tracking-[0.04em] uppercase">
+            <p className="rounded-pill bg-white/15 px-3.5 py-1.5 font-mono text-nano font-bold tracking-[0.04em] uppercase">
               {count}
             </p>
           </div>
@@ -131,7 +138,7 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
             </label>
             <button
               type="submit"
-              className="bg-card text-foreground rounded-pill min-h-[54px] px-6 text-sm font-semibold"
+              className="bg-card text-foreground rounded-pill min-h-[54px] px-6 text-copy font-semibold"
             >
               Search
             </button>
@@ -148,11 +155,7 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
                   key={shelf.tab}
                   href={scopeHref(shelf.tab, query)}
                   aria-current={active ? "true" : undefined}
-                  className={`rounded-pill flex min-h-11 shrink-0 items-center px-[18px] text-sm font-semibold whitespace-nowrap ${
-                    active
-                      ? "bg-card text-foreground border border-white"
-                      : "border border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20"
-                  }`}
+                  className={scopeChip({ active })}
                 >
                   {shelf.label}
                 </Link>
@@ -164,7 +167,7 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
 
       {/* ── the sheet (canvas) ── */}
       <div className="bg-background rounded-t-bay relative z-10 -mt-6">
-        <div className="mx-auto w-full max-w-[1180px] px-5 pt-8 pb-16 lg:px-11">
+        <div className={cn(measure(), "pt-8 pb-16")}>
           {!hasResults ? (
             query ? (
               <Empty
@@ -190,7 +193,7 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
                     {tab === "all" ? (
                       <Link
                         href={scopeHref("creators", query)}
-                        className="text-brand-violet-deep text-[13px] font-bold whitespace-nowrap"
+                        className="text-brand-violet-deep text-label font-bold whitespace-nowrap"
                       >
                         See all creators →
                       </Link>
@@ -219,14 +222,14 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
                       <h2 className="font-display text-xl font-bold tracking-[-0.02em]">
                         {query ? `Posts · ${posts.length}` : "Latest posts"}
                       </h2>
-                      <span className="text-muted-foreground text-[13px]">
+                      <span className="text-muted-foreground text-label">
                         {query ? `${posts.length} match “${query}”` : `${posts.length} posts`}
                       </span>
                     </div>
                     {tab === "all" ? (
                       <Link
                         href={scopeHref("posts", query)}
-                        className="text-brand-violet-deep text-[13px] font-bold whitespace-nowrap"
+                        className="text-brand-violet-deep text-label font-bold whitespace-nowrap"
                       >
                         See all posts →
                       </Link>
@@ -284,14 +287,14 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
                   >
                     <div className="flex items-baseline gap-3">
                       <h2 className="font-display text-xl font-bold tracking-[-0.02em]">Products</h2>
-                      <span className="text-muted-foreground text-[13px]">
+                      <span className="text-muted-foreground text-label">
                         {query ? `${products.length} match “${query}”` : `${products.length} tagged`}
                       </span>
                     </div>
                     {tab === "all" ? (
                       <Link
                         href={scopeHref("products", query)}
-                        className="text-brand-violet-deep text-[13px] font-bold whitespace-nowrap"
+                        className="text-brand-violet-deep text-label font-bold whitespace-nowrap"
                       >
                         See all products →
                       </Link>

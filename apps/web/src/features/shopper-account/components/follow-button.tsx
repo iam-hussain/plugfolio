@@ -29,15 +29,14 @@ export function FollowButton({ profileId, isAuthenticated, initiallyFollowing }:
     onSuccess: () => router.refresh(),
   });
 
+  // Follow is the creator's accent, like every committed action on their page
+  // (DESIGN §.btn--accent). Once you follow it steps back to the white pill
+  // (§.btn--following): the ask has been answered, and a filled button that
+  // only undoes itself keeps asking.
   if (!isAuthenticated) {
     return (
       <>
-        <Button
-          variant="outline"
-          size="sm"
-          className="rounded-pill px-5"
-          onClick={() => setClaiming(true)}
-        >
+        <Button variant="action" className="px-5" onClick={() => setClaiming(true)}>
           Follow
         </Button>
         <ClaimSheet open={claiming} onOpenChange={setClaiming} action="follow" />
@@ -47,9 +46,8 @@ export function FollowButton({ profileId, isAuthenticated, initiallyFollowing }:
 
   return (
     <Button
-      variant={initiallyFollowing ? "ghost" : "outline"}
-      size="sm"
-      className="rounded-pill px-5"
+      variant={initiallyFollowing ? "secondary" : "action"}
+      className="px-5"
       onClick={() => toggle.mutate()}
       disabled={toggle.isPending}
     >

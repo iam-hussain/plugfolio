@@ -39,11 +39,11 @@ export default async function SettingsPage() {
 
       <Panel className="px-6 py-[22px]">
         <h2 className="font-display text-base font-bold">Reserved usernames</h2>
-        <p className="text-muted-foreground mb-3.5 mt-1.5 text-[13px] leading-[1.55]">
+        <p className="text-muted-foreground mb-3.5 mt-1.5 text-label leading-[1.55]">
           Names no member handle — and, when username claiming lands, no profile username — may
           take.
         </p>
-        <p className="font-mono text-faint mb-2 text-[10px] font-bold uppercase tracking-[0.1em]">
+        <p className="font-mono text-faint mb-2 text-pico font-bold uppercase tracking-[0.1em]">
           Always blocked
         </p>
         <div className="mb-4 flex flex-wrap gap-1.5">
@@ -53,7 +53,7 @@ export default async function SettingsPage() {
             </Badge>
           ))}
         </div>
-        <p className="font-mono text-faint mb-2 text-[10px] font-bold uppercase tracking-[0.1em]">
+        <p className="font-mono text-faint mb-2 text-pico font-bold uppercase tracking-[0.1em]">
           Admin additions
         </p>
         <ActionForm action={saveReservedUsernamesAction} successToast="Reserved usernames saved">
@@ -75,7 +75,7 @@ export default async function SettingsPage() {
 
       <Panel className="mt-4 px-6 py-[22px]">
         <h2 className="font-display text-base font-bold">Feature flags</h2>
-        <p className="text-muted-foreground mb-3.5 mt-1.5 text-[13px] leading-[1.55]">
+        <p className="text-muted-foreground mb-3.5 mt-1.5 text-label leading-[1.55]">
           Removing a flag returns the feature to its built-in default.
         </p>
         <Table variant="dense">
@@ -89,7 +89,7 @@ export default async function SettingsPage() {
           <TableBody>
             {Object.entries(flags).map(([name, enabled]) => (
               <TableRow key={name}>
-                <TableCell className="font-mono text-xs">{name}</TableCell>
+                <TableCell className="font-mono text-micro">{name}</TableCell>
                 <TableCell>
                   <Badge shape="square" variant={enabled ? "soft-primary" : "outline-muted"}>
                     {enabled ? "On" : "Off"}

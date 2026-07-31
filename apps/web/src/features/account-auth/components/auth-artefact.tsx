@@ -57,12 +57,12 @@ function DeckCard({ role, front }: { role: AuthRole; front: boolean }) {
         />
       </span>
       <span className="mt-2 block px-0.5">
-        <span className="font-display text-foreground block text-[0.8125rem] font-bold tracking-[-0.01em]">
+        <span className="font-display text-foreground block text-label font-bold tracking-[-0.01em]">
           {copy.deckLabel}
         </span>
         {/* The blurb stands down on a phone (DESIGN hides the em under 960px) —
             the peeking slivers can't fit two lines, so the label carries it. */}
-        <span className="text-muted-foreground mt-0.5 hidden text-[11px] leading-[1.35] lg:block">
+        <span className="text-muted-foreground mt-0.5 hidden text-nano leading-[1.35] lg:block">
           {copy.deckBlurb}
         </span>
       </span>
@@ -81,8 +81,8 @@ function RoleNote({ role }: { role: AuthRole }) {
   return (
     <div className="grid max-w-[340px] justify-items-center gap-1.5 text-center text-white lg:max-w-[380px]">
       <p className="font-display text-lg font-bold tracking-[-0.02em]">{copy.noteTitle}</p>
-      <p className="text-[0.9375rem] leading-[1.5]">{copy.noteBody}</p>
-      <p className="mt-1 inline-flex items-center gap-2 rounded-pill border border-white/40 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-[0.01em] text-white">
+      <p className="text-copy leading-[1.5]">{copy.noteBody}</p>
+      <p className="mt-1 inline-flex items-center gap-2 rounded-pill border border-white/40 px-3 py-1.5 font-mono text-nano font-semibold tracking-[0.01em] text-white">
         <span className="bg-accent size-[7px] shrink-0 rounded-pill" aria-hidden />
         {copy.noteFoot}
       </p>
@@ -96,7 +96,7 @@ function RoleNote({ role }: { role: AuthRole }) {
  */
 function RoleEyebrow({ label }: { label: string }) {
   return (
-    <p className="font-mono text-[11px] font-semibold tracking-[0.14em] text-white uppercase">
+    <p className="font-mono text-nano font-semibold tracking-[0.14em] text-white uppercase">
       {label}
     </p>
   );
@@ -191,7 +191,7 @@ function CreatorCard() {
           height={60}
           className="size-7 rounded-pill object-cover"
         />
-        <span className="bg-active text-brand-violet-deep rounded-pill px-2.5 py-1 font-mono text-[11px] font-semibold">
+        <span className="bg-active text-brand-violet-deep rounded-pill px-2.5 py-1 font-mono text-nano font-semibold">
           2 things
         </span>
       </div>
@@ -222,7 +222,7 @@ function ShopperFan() {
             sizes="132px"
             className="block aspect-square w-full rounded-image object-cover"
           />
-          <span className="text-foreground block truncate px-0.5 pt-2 pb-0.5 text-center text-[11px] font-bold">
+          <span className="text-foreground block truncate px-0.5 pt-2 pb-0.5 text-center text-nano font-bold">
             {f.handle}
           </span>
         </span>
@@ -235,13 +235,13 @@ function ShopperFan() {
 function BusinessBrief() {
   return (
     <div className="bg-card shadow-rest text-foreground rotate-[1.4deg] rounded-paper p-[18px]">
-      <p className="text-muted-foreground font-mono text-[11px] tracking-eyebrow uppercase">
+      <p className="text-muted-foreground font-mono text-nano tracking-eyebrow uppercase">
         Open requirement
       </p>
-      <p className="font-display mt-1.5 text-[17px] font-bold leading-tight tracking-[-0.02em]">
+      <p className="font-display mt-1.5 text-body font-bold leading-tight tracking-[-0.02em]">
         Looking for skincare creators for a spring launch.
       </p>
-      <p className="text-muted-foreground mt-2 text-[0.9375rem] leading-[1.5]">
+      <p className="text-muted-foreground mt-2 text-copy leading-[1.5]">
         Two posts, one story. Budget discussed in the thread.
       </p>
       <div className="border-border mt-3.5 flex items-center border-t pt-3">
@@ -257,7 +257,7 @@ function BusinessBrief() {
             />
           ))}
         </div>
-        <span className="text-muted-foreground ml-3.5 font-mono text-[11px]">
+        <span className="text-muted-foreground ml-3.5 font-mono text-nano">
           3 creators replied
         </span>
       </div>

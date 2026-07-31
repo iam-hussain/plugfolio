@@ -50,7 +50,7 @@ export default async function SponsoredPage() {
             {live ? "ads enabled" : "ads disabled"}
           </Badge>
         </div>
-        <p className="text-muted-foreground mb-3.5 mt-1.5 text-[13px] leading-[1.55]">
+        <p className="text-muted-foreground mb-3.5 mt-1.5 text-label leading-[1.55]">
           Explore shows one slot per page, and only while the <code>ads</code> flag is on. It is
           off by default — an ad nobody remembered enabling is a worse failure than a missing one.
           Turn it on in{" "}
@@ -59,7 +59,7 @@ export default async function SponsoredPage() {
           </Link>
           .
         </p>
-        <p className="text-muted-foreground text-[13px] leading-[1.55]">
+        <p className="text-muted-foreground text-label leading-[1.55]">
           Placements are agreed off-platform. Plugfolio takes no payment here and does no
           targeting — a placement is shown to everyone or to nobody.
         </p>
@@ -67,31 +67,31 @@ export default async function SponsoredPage() {
 
       <Panel className="mt-4 px-6 py-[22px]">
         <h2 className="font-display text-base font-bold">Place one</h2>
-        <p className="text-muted-foreground mb-3.5 mt-1.5 text-[13px] leading-[1.55]">
+        <p className="text-muted-foreground mb-3.5 mt-1.5 text-label leading-[1.55]">
           The newest live placement is the one that shows, so replacing what&apos;s running means
           adding a new one — not hunting for the old one first.
         </p>
         <ActionForm action={createPlacementAction} className="flex flex-col gap-3">
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-semibold">Title</span>
+            <span className="text-label font-semibold">Title</span>
             <Input name="title" maxLength={80} required placeholder="Aster — the notebook that lies flat" />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-semibold">Description</span>
+            <span className="text-label font-semibold">Description</span>
             <Textarea name="description" maxLength={160} rows={2} placeholder="Made in Chennai. Free shipping over ₹999." />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-semibold">Link</span>
+            <span className="text-label font-semibold">Link</span>
             <Input name="url" type="url" required placeholder="https://…" />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-semibold">Image URL</span>
+            <span className="text-label font-semibold">Image URL</span>
             <Input name="imageUrl" type="url" placeholder="https://…/square.jpg" />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-[13px] font-semibold">Runs until (optional)</span>
+            <span className="text-label font-semibold">Runs until (optional)</span>
             <Input name="activeUntil" type="date" />
-            <span className="text-muted-foreground text-xs">
+            <span className="text-muted-foreground text-micro">
               Leave empty and it runs until someone stops it.
             </span>
           </label>
@@ -104,7 +104,7 @@ export default async function SponsoredPage() {
       <Panel className="mt-4 px-6 py-[22px]">
         <h2 className="font-display mb-3.5 text-base font-bold">Placements</h2>
         {placements.length === 0 ? (
-          <p className="text-muted-foreground text-[13px]">Nothing placed yet.</p>
+          <p className="text-muted-foreground text-label">Nothing placed yet.</p>
         ) : (
           <Table>
             <TableHeader>
@@ -122,7 +122,7 @@ export default async function SponsoredPage() {
                 return (
                   <TableRow key={placement.id}>
                     <TableCell className="font-medium">{placement.title}</TableCell>
-                    <TableCell className="text-muted-foreground text-[13px]">
+                    <TableCell className="text-muted-foreground text-label">
                       {when.format(placement.activeFrom)} →{" "}
                       {placement.activeUntil ? when.format(placement.activeUntil) : "open"}
                     </TableCell>

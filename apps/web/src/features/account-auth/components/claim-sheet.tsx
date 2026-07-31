@@ -64,7 +64,7 @@ export function ClaimSheet({ open, onOpenChange, action }: ClaimSheetProps) {
               <button
                 type="button"
                 onClick={() => submit.reset()}
-                className="text-muted-foreground hover:text-foreground text-xs"
+                className="text-muted-foreground hover:text-foreground text-micro"
               >
                 ← Use a different email
               </button>
@@ -110,14 +110,14 @@ export function ClaimSheet({ open, onOpenChange, action }: ClaimSheetProps) {
                 />
               </div>
               {submit.isError ? (
-                <p role="alert" className="text-destructive text-xs">
+                <p role="alert" className="text-destructive text-micro">
                   {submit.error.message}
                 </p>
               ) : null}
               <Button type="submit" disabled={submit.isPending}>
                 {submit.isPending ? "Creating…" : "Create account"}
               </Button>
-              <p className="text-muted-foreground text-center text-xs">
+              <p className="text-muted-foreground text-center text-micro">
                 Already have one?{" "}
                 <Link href="/signin" className="text-primary font-semibold">
                   Sign in

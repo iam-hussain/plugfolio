@@ -114,13 +114,13 @@ export default async function MembersPage({
                   <Link href={`/members/${member.id}`} className="block">
                     <span className="block font-semibold">{member.email}</span>
                     {member.name ? (
-                      <span className="text-muted-foreground mt-0.5 block text-xs">
+                      <span className="text-muted-foreground mt-0.5 block text-micro">
                         {member.name}
                       </span>
                     ) : null}
                   </Link>
                 </TableCell>
-                <TableCell className="font-mono text-muted-foreground text-xs">
+                <TableCell className="font-mono text-muted-foreground text-micro">
                   {member.username ? `@${member.username}` : "—"}
                 </TableCell>
                 <TableCell>

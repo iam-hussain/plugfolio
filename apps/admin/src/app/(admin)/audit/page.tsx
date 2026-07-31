@@ -105,17 +105,17 @@ export default async function AuditPage({
           <TableBody>
             {rows.map((entry) => (
               <TableRow key={entry.id}>
-                <TableCell className="font-mono text-faint whitespace-nowrap text-xs tabular-nums">
+                <TableCell className="font-mono text-faint whitespace-nowrap text-micro tabular-nums">
                   {entry.createdAt.toISOString().replace("T", " ").slice(0, 16)}
                 </TableCell>
-                <TableCell className="text-muted-foreground text-[12.5px]">
+                <TableCell className="text-muted-foreground text-micro">
                   {entry.adminEmail}
                 </TableCell>
-                <TableCell className="font-mono text-primary text-xs">{entry.action}</TableCell>
-                <TableCell className="font-mono text-muted-foreground text-xs">
+                <TableCell className="font-mono text-primary text-micro">{entry.action}</TableCell>
+                <TableCell className="font-mono text-muted-foreground text-micro">
                   {entry.targetType ? `${entry.targetType}:${entry.targetId ?? ""}` : "—"}
                 </TableCell>
-                <TableCell className="text-muted-foreground max-w-[280px] truncate text-[12.5px]">
+                <TableCell className="text-muted-foreground max-w-[280px] truncate text-micro">
                   {entry.detail ?? "—"}
                 </TableCell>
               </TableRow>

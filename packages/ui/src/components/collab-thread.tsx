@@ -61,7 +61,7 @@ export function TermsHeader({ className, ...props }: React.ComponentProps<"div">
   );
 }
 
-export function TermsTitle({ className, ...props }: React.ComponentProps<"h1">) {
+export function TermsTitle({ className, children, ...props }: React.ComponentProps<"h1">) {
   return (
     <h1
       data-slot="terms-title"
@@ -70,7 +70,9 @@ export function TermsTitle({ className, ...props }: React.ComponentProps<"h1">) 
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+    </h1>
   );
 }
 

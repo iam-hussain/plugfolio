@@ -38,7 +38,7 @@ export function CreatorCard({
         ) : null
       }
       avatar={
-        <span className="bg-active text-primary grid size-6 flex-none place-items-center rounded-pill text-[11px] font-bold">
+        <span className="bg-active text-primary grid size-6 flex-none place-items-center rounded-pill text-nano font-bold">
           {creator.username.charAt(0).toUpperCase()}
         </span>
       }

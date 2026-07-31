@@ -14,6 +14,22 @@ import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { tagProduct } from "../api";
+import { cva } from "class-variance-authority";
+
+/** Affiliate or own (ADR-0011) — a segmented radio wearing button clothes. */
+const kindOption = cva(
+  "flex h-9 cursor-pointer items-center justify-center rounded-sm text-label font-medium",
+  {
+    variants: {
+      selected: {
+        true: "bg-primary text-primary-foreground",
+        false: "text-muted-foreground hover:bg-muted",
+      },
+    },
+    defaultVariants: { selected: false },
+  },
+);
+
 
 /**
  * The core tool (lean journey + ADR-0011): paste any product URL — Plugfolio
@@ -81,7 +97,7 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
           required
           placeholder="https://retailer.com/product"
         />
-        <p className="text-muted-foreground text-xs">We grab the title, image &amp; price.</p>
+        <p className="text-muted-foreground text-micro">We grab the title, image &amp; price.</p>
       </div>
 
       {/* Kind toggle (ADR-0011): a two-option segmented control, not a dropdown. */}
@@ -96,9 +112,7 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
           ).map(([value, label]) => (
             <label
               key={value}
-              className={`flex h-9 cursor-pointer items-center justify-center rounded-sm text-sm font-medium ${
-                kind === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
-              }`}
+              className={kindOption({ selected: kind === value })}
             >
               <input
                 type="radio"
@@ -129,7 +143,7 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
       </div>
 
       <Collapsible>
-        <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm">
+        <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-copy">
           <ChevronDown className="size-4" />
           Add a coupon
         </CollapsibleTrigger>
@@ -165,7 +179,7 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
                 maxLength={200}
                 placeholder="Show this code at the counter — Indiranagar store"
               />
-              <p className="text-muted-foreground text-xs">
+              <p className="text-muted-foreground text-micro">
                 A coupon needs the link above, an in-store note, or both.
               </p>
             </div>
@@ -174,7 +188,7 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
       </Collapsible>
 
       {submit.isError ? (
-        <p role="alert" className="text-destructive text-xs">
+        <p role="alert" className="text-destructive text-micro">
           {submit.error.message}
         </p>
       ) : null}

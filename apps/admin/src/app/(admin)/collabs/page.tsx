@@ -73,12 +73,12 @@ export default async function CollabsPage({
                   <Link href={`/collabs/${collab.id}`} className="block">
                     <span className="font-medium">{collab.businessName}</span>{" "}
                     <span className="text-faint">↔</span>{" "}
-                    <span className="font-mono text-muted-foreground text-xs">
+                    <span className="font-mono text-muted-foreground text-micro">
                       /{collab.profileUsername}
                     </span>
                   </Link>
                 </TableCell>
-                <TableCell className="text-muted-foreground text-[13px]">
+                <TableCell className="text-muted-foreground text-label">
                   {collab.requirementTitle ?? "Direct reach-out"}
                 </TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">

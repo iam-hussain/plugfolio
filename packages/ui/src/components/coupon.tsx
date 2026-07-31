@@ -2,7 +2,23 @@
 
 import * as React from "react";
 import { Check, Copy } from "lucide-react";
+import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
+
+/** A live offer is a dashed panel on the page ground; a spent one recedes. */
+const couponPanel = cva("rounded-image border-border mt-3 border px-3.5 py-3", {
+  variants: {
+    live: { true: "bg-background border-dashed", false: "bg-transparent" },
+  },
+  defaultVariants: { live: false },
+});
+
+const couponChannel = cva("text-micro font-bold uppercase tracking-[0.07em]", {
+  variants: {
+    live: { true: "text-muted-foreground", false: "text-faint" },
+  },
+  defaultVariants: { live: false },
+});
 
 /**
  * The coupon block (DESIGN §.coupon, ADR-0011) — **always above the button**:
@@ -32,18 +48,9 @@ export function CouponBlock({
 }) {
   return (
     <div
-      className={cn(
-        "rounded-image border-border mt-3 border px-3.5 py-3",
-        live ? "bg-background border-dashed" : "bg-transparent",
-        className,
-      )}
+      className={cn(couponPanel({ live }), className)}
     >
-      <span
-        className={cn(
-          "text-micro font-bold uppercase tracking-[0.07em]",
-          live ? "text-muted-foreground" : "text-faint",
-        )}
-      >
+      <span className={couponChannel({ live })}>
         {channel}
       </span>
       <div className="mt-[7px] flex flex-wrap items-center gap-2">{children}</div>
@@ -82,10 +89,12 @@ export function CodeButton({
       )}
       {...props}
     >
+      {/* Code first, then what pressing it does — the shopper is looking for
+          the code, not for the verb (DESIGN §.code: `<b>SAVE30</b><em>Copy</em>`). */}
+      <b className="tracking-[0.04em] tabular-nums">{code}</b>
       <span className="text-micro text-muted-foreground font-bold uppercase tracking-[0.07em]">
         {copied ? "Copied" : label}
       </span>
-      <b className="tracking-[0.04em] tabular-nums">{code}</b>
       {copied ? (
         <Check className="size-4" aria-hidden />
       ) : (

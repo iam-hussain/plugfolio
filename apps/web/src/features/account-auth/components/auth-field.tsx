@@ -14,7 +14,7 @@ export function FieldLabel({
   return (
     <label
       htmlFor={htmlFor}
-      className="text-muted-foreground mb-[7px] block font-mono text-[10.5px] uppercase tracking-[0.08em]"
+      className="text-muted-foreground mb-[7px] block font-mono text-pico uppercase tracking-[0.08em]"
     >
       {children}
     </label>
@@ -22,7 +22,7 @@ export function FieldLabel({
 }
 
 export const AUTH_INPUT =
-  "bg-muted border-border focus-visible:border-ring w-full rounded-[9px] border px-3.5 py-[13px] text-sm text-foreground outline-none placeholder:text-muted-foreground/60";
+  "bg-muted border-border focus-visible:border-ring w-full rounded-[9px] border px-3.5 py-[13px] text-copy text-foreground outline-none placeholder:text-muted-foreground/60";
 
 export function TextField({
   className,

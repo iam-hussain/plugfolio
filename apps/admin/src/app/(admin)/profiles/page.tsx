@@ -90,13 +90,13 @@ export default async function ProfilesPage({
               const suggested = generateProfileUsername();
               return (
                 <TableRow key={profile.id}>
-                  <TableCell className="font-mono text-[13px] font-bold">
+                  <TableCell className="font-mono text-label font-bold">
                     <Link href={`/profiles/${profile.id}`}>/{profile.username}</Link>
                   </TableCell>
                   <TableCell>
                     <span className="block">{profile.ownerEmail}</span>
                     {profile.managerCount > 0 ? (
-                      <span className="text-muted-foreground mt-0.5 block text-xs">
+                      <span className="text-muted-foreground mt-0.5 block text-micro">
                         +{profile.managerCount} manager{profile.managerCount > 1 ? "s" : ""}
                       </span>
                     ) : null}

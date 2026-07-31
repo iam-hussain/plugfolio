@@ -158,7 +158,7 @@ export function ForCreatorsPage() {
             <b className="font-display text-brand-violet-deep block text-xl font-bold tracking-[-0.02em]">
               Plugfolio never handles your money.
             </b>
-            <p className="text-muted-foreground mt-2 max-w-[56ch] text-[0.9375rem] leading-[1.55]">
+            <p className="text-muted-foreground mt-2 max-w-[56ch] text-copy leading-[1.55]">
               No payouts to wait for, no balance to withdraw, no cut taken from your deal. Buyers go
               to the retailer on your own link, and you get paid the way you already do. We&apos;re
               the shop window, not the till.

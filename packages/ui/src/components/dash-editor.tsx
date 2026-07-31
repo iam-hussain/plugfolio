@@ -1,6 +1,7 @@
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 import { ChevronDown, CircleAlert, Link2Off } from "lucide-react";
+import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
 
 /**
@@ -80,6 +81,16 @@ export function Segmented({ children, label }: { children: React.ReactNode; labe
   );
 }
 
+const segmentedOption = cva("rounded-nest text-micro min-h-10 flex-1 border-0 bg-transparent font-bold", {
+  variants: {
+    selected: {
+      true: "bg-foreground text-background",
+      false: "text-muted-foreground",
+    },
+  },
+  defaultVariants: { selected: false },
+});
+
 export function SegmentedOption({
   selected,
   className,
@@ -89,15 +100,33 @@ export function SegmentedOption({
     <button
       type="button"
       aria-pressed={selected}
-      className={cn(
-        "rounded-nest text-micro min-h-10 flex-1 border-0 bg-transparent font-bold",
-        selected ? "bg-foreground text-background" : "text-muted-foreground",
-        className,
-      )}
+      className={cn(segmentedOption({ selected }), className)}
       {...props}
     />
   );
 }
+
+/** A connectable channel row — plain, then held once it's connected. */
+const connectRow = cva("rounded-image flex w-full items-center gap-3 border px-3 py-2.5 text-left", {
+  variants: {
+    done: {
+      true: "border-primary bg-active",
+      false: "border-border bg-background hover:border-primary",
+    },
+  },
+  defaultVariants: { done: false },
+});
+
+/** The channel rule (§5.9): unmet reads as quiet copy, met reads as held. */
+const ruleLine = cva("rounded-image text-micro mt-3.5 flex gap-[9px] px-3.5 py-3 leading-[1.5]", {
+  variants: {
+    ok: {
+      true: "bg-active text-brand-violet-deep",
+      false: "bg-background text-muted-foreground",
+    },
+  },
+  defaultVariants: { ok: false },
+});
 
 /* ── A folded block ───────────────────────────────────────────────────────
    Used by the coupon and by the product picker. Most products have no coupon
@@ -172,8 +201,7 @@ export function PickRow({
     <button
       type="button"
       className={cn(
-        "rounded-image flex w-full items-center gap-3 border px-3 py-2.5 text-left",
-        done ? "border-primary bg-active" : "border-border bg-background hover:border-primary",
+        connectRow({ done }),
         className,
       )}
       {...props}
@@ -198,10 +226,7 @@ export function RuleLine({ ok, children }: { ok: boolean; children: React.ReactN
   return (
     <p
       role={ok ? undefined : "status"}
-      className={cn(
-        "rounded-image text-micro mt-3.5 flex gap-[9px] px-3.5 py-3 leading-[1.5]",
-        ok ? "bg-active text-brand-violet-deep" : "bg-background text-muted-foreground",
-      )}
+      className={ruleLine({ ok })}
     >
       <CircleAlert className="mt-px size-[15px] flex-none" aria-hidden />
       {children}
@@ -292,6 +317,7 @@ export function UseRow({
   count,
   className,
   asChild,
+  children,
   ...props
 }: React.ComponentProps<"a"> & {
   image?: React.ReactNode;
@@ -308,6 +334,9 @@ export function UseRow({
       )}
       {...props}
     >
+      {/* Slot clones ONE child; Slottable marks it, and the siblings become
+          that child's children — so the anchor wraps the whole row. */}
+      <Slottable>{children}</Slottable>
       {image}
       <b className="text-label min-w-0 flex-1 truncate font-semibold">{title}</b>
       {count ? <span className="text-faint text-micro font-bold">{count}</span> : null}

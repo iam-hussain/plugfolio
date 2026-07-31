@@ -66,12 +66,12 @@ export function CommentForm({
       }}
     >
       {identities.length > 0 ? (
-        <label className="text-muted-foreground flex items-center gap-2 text-xs">
+        <label className="text-muted-foreground flex items-center gap-2 text-micro">
           Commenting as
           <select
             value={asProfileId}
             onChange={(event) => setAsProfileId(event.target.value)}
-            className="border-border bg-background rounded-md border p-1 text-xs"
+            className="border-border bg-background rounded-md border p-1 text-micro"
           >
             <option value="">@{ownHandle} (you)</option>
             {identities.map((identity) => (
@@ -82,7 +82,7 @@ export function CommentForm({
           </select>
         </label>
       ) : (
-        <p className="text-muted-foreground text-xs">Commenting as @{ownHandle}</p>
+        <p className="text-muted-foreground text-micro">Commenting as @{ownHandle}</p>
       )}
       <label className="sr-only" htmlFor={`comment-body-${parentId ?? productId ?? "page"}`}>
         {placeholder}
@@ -94,11 +94,11 @@ export function CommentForm({
         maxLength={500}
         rows={2}
         placeholder={placeholder}
-        className="border-border bg-background rounded-md border p-2 text-sm"
+        className="border-border bg-background rounded-md border p-2 text-copy"
       />
       <div className="flex items-center justify-between">
         {submit.isError ? (
-          <p role="alert" className="text-muted-foreground text-xs">
+          <p role="alert" className="text-muted-foreground text-micro">
             {submit.error.message}
           </p>
         ) : (

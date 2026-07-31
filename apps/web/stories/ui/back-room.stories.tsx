@@ -4,6 +4,7 @@ import {
   Avatar,
   AvatarFallback,
   Button,
+  CardFoot,
   CategoryRow,
   CategoryRows,
   CollabRow,
@@ -21,7 +22,10 @@ import {
   DashField,
   DashFieldPair,
   DashFieldForm,
+  EditorGrid,
+  EditorMedia,
   EmptyState,
+  Fold,
   FilterButton,
   Filters,
   Hint,
@@ -29,9 +33,13 @@ import {
   IconActions,
   Input,
   ManagerRow,
+  MiniButton,
   MetaDot,
   MetaWarn,
   Nudge,
+  PickList,
+  PickRow,
+  PreviewCard,
   PageHead,
   PageHeadActions,
   PageHeadTitle,
@@ -46,6 +54,9 @@ import {
   ProfileChip,
   ProfileChips,
   Provenance,
+  RuleLine,
+  Segmented,
+  SegmentedOption,
   RankKey,
   RankList,
   RankRow,
@@ -57,8 +68,10 @@ import {
   Switch,
   SwitchLabel,
   TrafficColumns,
+  UseRow,
+  UsesList,
 } from "@plugfolio/ui";
-import { ChevronDown, ChevronUp, Eye, Pencil, ShoppingBag, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Eye, Link2Off, Pencil, ShoppingBag, Trash2 } from "lucide-react";
 
 /**
  * THE BACK ROOM (DESIGN dashboard.html) — the creator's dashboard.
@@ -601,5 +614,197 @@ export const Empty: Story = {
     <EmptyState title="No products yet" action={<Button>Add a product</Button>}>
       Add one here, or connect one while editing a post. Either way it lands in this list.
     </EmptyState>
+  ),
+};
+
+/**
+ * The two editors (DESIGN post-edit.html / product-edit.html). Create and edit
+ * are the same screen; what does not exist yet is absent, not disabled.
+ */
+export const PostEditor: Story = {
+  render: () => (
+    <EditorGrid>
+      <div>
+        <EditorMedia>
+          <span className="block aspect-[3/2] w-full bg-active" />
+        </EditorMedia>
+        <DashCard className="mt-3.5">
+          <DashField
+            label="Photo"
+            hint="· optional on a video"
+            note="Shown on its own, or as the still behind a video’s play button."
+          >
+            <Input type="url" defaultValue="https://images.plugfolio.com/posts/p6.jpg" />
+          </DashField>
+          <DashField label="Caption">
+            <Input defaultValue="The desk reset, finally finished." />
+          </DashField>
+          <Button variant="outline">Save post</Button>
+        </DashCard>
+      </div>
+
+      <DashCard>
+        <DashCardHead>
+          <DashCardTitle>Products on this post</DashCardTitle>
+          <DashCardNote>2 · live on your page now</DashCardNote>
+        </DashCardHead>
+        <ProductRows>
+          <ProductRow
+            image={square}
+            title="Warm-white desk lamp"
+            price="₹2,990"
+            meta={
+              <>
+                <span>Affiliate · opens amazon.in</span>
+                <MetaDot />
+                <span>on 2 posts</span>
+              </>
+            }
+            action={
+              <IconActions>
+                <IconAction label="Edit this product">
+                  <Pencil aria-hidden />
+                </IconAction>
+                <IconAction tone="danger" label="Disconnect from this post">
+                  <Link2Off aria-hidden />
+                </IconAction>
+              </IconActions>
+            }
+          />
+        </ProductRows>
+        {/* Folded: most visits here are to check what's on a post, not to add. */}
+        <Fold className="mt-3.5" open onToggle={() => {}} title="Connect a product">
+          <PickList>
+            <PickRow
+              image={<span className="bg-active rounded-image size-11 flex-none" />}
+              title="Court trainers"
+              meta="$32.00 · their own · on 1 post"
+              action="Connect"
+            />
+            <PickRow
+              done
+              image={<span className="bg-active rounded-image size-11 flex-none" />}
+              title="Insulated 750ml bottle"
+              meta="₹890 · in-store code · not on any post"
+              action="Connected"
+            />
+          </PickList>
+        </Fold>
+      </DashCard>
+    </EditorGrid>
+  ),
+};
+
+/** A new post: absent, not disabled — there is nothing to tag onto yet. */
+export const NewPost: Story = {
+  render: () => (
+    <EditorGrid>
+      <DashCard>
+        <DashField label="Photo" note="Paste an image URL. Uploads are not in v1.">
+          <Input type="url" placeholder="https://…" />
+        </DashField>
+        <Button>Add post</Button>
+        <p className="text-faint text-micro mt-2.5">It goes live as soon as you add it.</p>
+      </DashCard>
+      <EmptyState title="Save the post first">
+        A product connects TO a post, so the post has to exist before there is anything to connect
+        it to. Add it and this side becomes the connector.
+      </EmptyState>
+    </EditorGrid>
+  ),
+};
+
+/** The product page. Every field on the right changes one line of the preview. */
+export const ProductEditor: Story = {
+  render: () => (
+    <div className="grid items-start gap-[18px] min-[940px]:grid-cols-[minmax(0,38%)_minmax(0,1fr)] min-[940px]:gap-[26px]">
+      <PreviewCard
+        image={<span className="bg-active rounded-image block aspect-square w-full" />}
+        title="Brightening serum"
+        price="₹1,299"
+        where="Affiliate pick · opens nykaa.com"
+        marks={<Pill tone="code">Code SAVE30</Pill>}
+        sticky={false}
+      />
+      <DashCard>
+        <DashCardHead>
+          <DashCardTitle>The product</DashCardTitle>
+        </DashCardHead>
+        <DashField
+          label="Product URL"
+          note="We grab the title, image and price from it. If a page won’t read, the product is titled by its site."
+        >
+          <Input type="url" defaultValue="https://nykaa.com/brightening-serum" />
+        </DashField>
+        <DashField
+          label="Kind"
+          note="Own products carry a quiet trust marker and their button reads “Shop their store”."
+        >
+          <Segmented label="Product kind">
+            <SegmentedOption selected>Affiliate product</SegmentedOption>
+            <SegmentedOption>My own product</SegmentedOption>
+          </Segmented>
+        </DashField>
+        <DashField label="Your affiliate link">
+          <Input type="url" defaultValue="https://nykaa.com/aff/brightening-serum" />
+        </DashField>
+        <Fold className="mt-1" open onToggle={() => {}} title="Coupon">
+          <DashField label="Code" note="Clearing the code removes the whole offer.">
+            <Input defaultValue="SAVE30" />
+          </DashField>
+          <DashFieldPair>
+            <DashField label="Valid till" hint="· optional">
+              <Input type="date" />
+            </DashField>
+            <DashField label="In-store note" hint="· optional">
+              <Input placeholder="Show at the counter" />
+            </DashField>
+          </DashFieldPair>
+        </Fold>
+        <RuleLine ok>Ready — tapping Buy will open your link.</RuleLine>
+        <CardFoot>
+          <Button>Save product</Button>
+          <MiniButton danger data-slot="card-foot-danger">
+            <Trash2 aria-hidden />
+            Remove
+          </MiniButton>
+        </CardFoot>
+      </DashCard>
+    </div>
+  ),
+};
+
+/** The rule when a product has nowhere to go — stated, not raised as an error. */
+export const ProductWithNoChannel: Story = {
+  render: () => (
+    <DashCard>
+      <RuleLine ok={false}>
+        A product needs somewhere to go: a link, or a code with an in-store note, or both.
+      </RuleLine>
+    </DashCard>
+  ),
+};
+
+/** Used by, not owned by — the same product can sit on five posts or on none. */
+export const UsedOnPosts: Story = {
+  render: () => (
+    <DashCard>
+      <DashCardHead>
+        <DashCardTitle>On these posts</DashCardTitle>
+        <DashCardNote>2 · editing here changes all of them</DashCardNote>
+      </DashCardHead>
+      <UsesList>
+        <UseRow
+          image={<span className="bg-active rounded-image size-10 flex-none" />}
+          title="Two tubes and a gua sha"
+          count="190 taps"
+        />
+        <UseRow
+          image={<span className="bg-active rounded-image size-10 flex-none" />}
+          title="Everyday face, five things"
+          count="144 taps"
+        />
+      </UsesList>
+    </DashCard>
   ),
 };

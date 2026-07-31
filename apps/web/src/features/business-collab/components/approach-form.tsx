@@ -45,7 +45,7 @@ export function ApproachForm({ requirementId, profileId }: ApproachFormProps) {
         {submit.isPending ? "Sending…" : "Approach"}
       </Button>
       {submit.isError ? (
-        <p role="alert" className="text-destructive text-xs">
+        <p role="alert" className="text-destructive text-micro">
           {submit.error.message}
         </p>
       ) : null}

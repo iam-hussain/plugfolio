@@ -1,4 +1,5 @@
 import * as React from "react";
+import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
 
 /**
@@ -23,6 +24,16 @@ export function ShareModes({ children }: { children: React.ReactNode }) {
   );
 }
 
+const shareMode = cva("rounded-nest text-micro min-h-[38px] flex-1 border-0 bg-transparent font-bold", {
+  variants: {
+    selected: {
+      true: "bg-foreground text-background",
+      false: "text-muted-foreground",
+    },
+  },
+  defaultVariants: { selected: false },
+});
+
 export function ShareMode({
   selected,
   className,
@@ -33,11 +44,7 @@ export function ShareMode({
       type="button"
       role="tab"
       aria-selected={selected}
-      className={cn(
-        "rounded-nest text-micro min-h-[38px] flex-1 border-0 bg-transparent font-bold",
-        selected ? "bg-foreground text-background" : "text-muted-foreground",
-        className,
-      )}
+      className={cn(shareMode({ selected }), className)}
       {...props}
     />
   );
@@ -68,21 +75,24 @@ export function SharePlate({
 }
 
 /** The copy control. Lime once it's done — a real thing just happened. */
+const shareCopy = cva("text-micro min-h-10 flex-none rounded-pill border-0 px-4 py-2.5 font-bold", {
+  variants: {
+    // Lime is the offer/success fill and never type (§7 lime-means-offer).
+    done: {
+      true: "bg-accent text-accent-foreground",
+      false: "bg-foreground text-background",
+    },
+  },
+  defaultVariants: { done: false },
+});
+
 export function ShareCopy({
   done,
   className,
   ...props
 }: React.ComponentProps<"button"> & { done?: boolean }) {
   return (
-    <button
-      type="button"
-      className={cn(
-        "text-micro min-h-10 flex-none rounded-pill border-0 px-4 py-2.5 font-bold",
-        done ? "bg-accent text-accent-foreground" : "bg-foreground text-background",
-        className,
-      )}
-      {...props}
-    />
+    <button type="button" className={cn(shareCopy({ done }), className)} {...props} />
   );
 }
 

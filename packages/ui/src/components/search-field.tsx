@@ -27,7 +27,7 @@ export function SearchField({ className, inputClassName, iconClassName, ...props
         type="search"
         {...props}
         className={cn(
-          "border-border-strong bg-background text-foreground placeholder:text-faint w-full rounded-lg border py-[9px] pl-[34px] pr-3 text-[13.5px] outline-none",
+          "border-border-strong bg-background text-foreground placeholder:text-faint w-full rounded-lg border py-[9px] pl-[34px] pr-3 text-label outline-none",
           "focus:border-primary",
           inputClassName,
         )}

@@ -12,6 +12,9 @@ const preview: Preview = {
   parameters: {
     layout: "centered",
     controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
+    // A contrast or label failure is a bug, not a note — surface it in the
+    // panel rather than letting it pass quietly (§7: AA in both themes).
+    a11y: { test: "error" },
     options: {
       storySort: {
         order: ["Foundations", "Brand", "UI Kit", "Chrome", "Creator page", "Landing"],

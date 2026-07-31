@@ -20,7 +20,7 @@ export function PageHeader({ title, subtitle, children, className }: PageHeaderP
       <div>
         <h1 className="font-display text-2xl font-bold tracking-[-0.02em]">{title}</h1>
         {subtitle ? (
-          <p className="text-muted-foreground mt-1 text-[12.5px]">{subtitle}</p>
+          <p className="text-muted-foreground mt-1 text-micro">{subtitle}</p>
         ) : null}
       </div>
       {children ? <div className="flex flex-wrap items-center gap-2">{children}</div> : null}

@@ -88,7 +88,7 @@ export function ShopperTabBar() {
                 className={tabVariants({ active })}
               >
                 <Glyph className="h-5 w-5" />
-                <span className="tracking-eyebrow font-mono text-[9px] uppercase">{tab.label}</span>
+                <span className="tracking-eyebrow font-mono text-pico uppercase">{tab.label}</span>
               </Link>
             </li>
           );

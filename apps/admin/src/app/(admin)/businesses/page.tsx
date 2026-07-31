@@ -73,11 +73,11 @@ export default async function BusinessesPage({
               <TableRow key={business.id}>
                 <TableCell className="max-w-[340px]">
                   <span className="block font-semibold">{business.name}</span>
-                  <span className="text-muted-foreground mt-0.5 block truncate text-xs">
+                  <span className="text-muted-foreground mt-0.5 block truncate text-micro">
                     {business.description}
                   </span>
                 </TableCell>
-                <TableCell className="text-muted-foreground text-[13px]">
+                <TableCell className="text-muted-foreground text-label">
                   {business.ownerEmail}
                 </TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">
@@ -103,7 +103,7 @@ export default async function BusinessesPage({
                       successToast="Logo cleared"
                     />
                   ) : (
-                    <span className="text-faint text-xs">No logo</span>
+                    <span className="text-faint text-micro">No logo</span>
                   )}
                 </TableCell>
               </TableRow>

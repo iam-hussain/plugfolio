@@ -1,5 +1,17 @@
 import * as React from "react";
+import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
+
+/** A line in the illustrated collab thread — yours, or the other side's. */
+const chatBubble = cva("rounded-tile text-copy m-0 max-w-[82%] px-[17px] py-[13px] leading-[1.5]", {
+  variants: {
+    from: {
+      you: "bg-foreground text-background justify-self-end",
+      them: "bg-card border-border text-muted-foreground border",
+    },
+  },
+  defaultVariants: { from: "them" },
+});
 
 /**
  * The marketing vocabulary (DESIGN how-it-works.html / for-creators.html /
@@ -246,12 +258,7 @@ export function CollabBubble({
   }
   return (
     <p
-      className={cn(
-        "rounded-tile text-copy m-0 max-w-[82%] px-[17px] py-[13px] leading-[1.5]",
-        from === "you"
-          ? "bg-foreground text-background justify-self-end"
-          : "bg-card border-border text-muted-foreground border",
-      )}
+      className={chatBubble({ from })}
     >
       {children}
     </p>

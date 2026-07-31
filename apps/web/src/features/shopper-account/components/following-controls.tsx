@@ -63,13 +63,13 @@ export function FollowingControls({ search, sort }: FollowingControlsProps) {
         aria-label="Search the people you follow"
         autoComplete="off"
         className="max-w-[420px]"
-        inputClassName="border-border bg-card rounded-pill h-[54px] pl-[46px] pr-5 text-[0.9375rem]"
+        inputClassName="border-border bg-card rounded-pill h-[54px] pl-[46px] pr-5 text-copy"
         iconClassName="left-[18px] size-[19px]"
       />
       <div className="flex items-center gap-2.5">
         <label
           htmlFor="following-sort"
-          className="text-muted-foreground whitespace-nowrap font-sans text-xs font-bold uppercase tracking-[0.06em]"
+          className="text-muted-foreground whitespace-nowrap font-sans text-micro font-bold uppercase tracking-[0.06em]"
         >
           Sort
         </label>
@@ -77,7 +77,7 @@ export function FollowingControls({ search, sort }: FollowingControlsProps) {
           id="following-sort"
           value={sort}
           onChange={(event) => push({ sort: event.target.value })}
-          className="border-border bg-card rounded-pill h-[54px] pl-[18px] pr-10 text-[0.9375rem]"
+          className="border-border bg-card rounded-pill h-[54px] pl-[18px] pr-10 text-copy"
         >
           {SORTS.map((option) => (
             <NativeSelectOption key={option.value} value={option.value}>

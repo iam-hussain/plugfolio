@@ -34,9 +34,9 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="max-w-[1200px]">
+    <div className="max-w-inner">
       <h1 className="font-display mb-1 text-2xl font-bold tracking-[-0.02em]">Dashboard</h1>
-      <p className="text-muted-foreground mb-5 text-[13.5px]">
+      <p className="text-muted-foreground mb-5 text-label">
         The daily glance — what is moving, what is on fire.
       </p>
       <div className="grid grid-cols-2 gap-3.5 md:grid-cols-4">
@@ -54,24 +54,24 @@ export default async function DashboardPage() {
       </div>
       <Panel className="mt-5 px-5 py-[18px]">
         <div className="mb-1.5 flex items-center justify-between">
-          <h2 className="font-display text-[15px] font-bold">Recent activity</h2>
-          <Link href="/audit" className="font-mono text-primary text-[11px]">
+          <h2 className="font-display text-copy font-bold">Recent activity</h2>
+          <Link href="/audit" className="font-mono text-primary text-nano">
             View audit log →
           </Link>
         </div>
         {recent.map((entry) => (
           <div key={entry.id} className="border-border flex items-center gap-3.5 border-t py-2.5">
-            <span className="font-mono text-faint w-[118px] shrink-0 text-xs tabular-nums">
+            <span className="font-mono text-faint w-[118px] shrink-0 text-micro tabular-nums">
               {entry.createdAt.toISOString().replace("T", " ").slice(0, 16)}
             </span>
-            <span className="font-mono text-primary shrink-0 text-xs">{entry.action}</span>
-            <span className="text-muted-foreground truncate text-[12.5px]">
+            <span className="font-mono text-primary shrink-0 text-micro">{entry.action}</span>
+            <span className="text-muted-foreground truncate text-micro">
               {entry.detail ?? entry.targetId ?? ""}
             </span>
           </div>
         ))}
         {recent.length === 0 ? (
-          <p className="text-faint border-border border-t py-6 text-center text-[13px]">
+          <p className="text-faint border-border border-t py-6 text-center text-label">
             Nothing yet — admin mutations land here.
           </p>
         ) : null}

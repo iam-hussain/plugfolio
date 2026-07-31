@@ -26,7 +26,7 @@ export function ForgotScreen() {
     return (
       <AuthShell role="generic" artefact={artefact}>
         <AuthStatus icon={<Mail aria-hidden />} title="Check your email">
-          <p className="text-muted-foreground max-w-[38ch] text-[0.9375rem] leading-[1.5]">
+          <p className="text-muted-foreground max-w-[38ch] text-copy leading-[1.5]">
             If an account exists for <b className="text-foreground">{email}</b>, a reset link is on
             its way.
           </p>
@@ -40,10 +40,10 @@ export function ForgotScreen() {
 
   return (
     <AuthShell role="generic" artefact={artefact}>
-      <h1 className="font-display text-[clamp(2rem,4vw,2.75rem)] font-extrabold tracking-[-0.035em]">
+      <h1 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
         Reset your password
       </h1>
-      <p className="text-muted-foreground mt-2.5 text-[0.9375rem] leading-[1.5]">
+      <p className="text-muted-foreground mt-2.5 text-copy leading-[1.5]">
         Enter your email and we&apos;ll send one reset link.
       </p>
       <form
@@ -67,7 +67,7 @@ export function ForgotScreen() {
           {submit.isPending ? "Sending…" : "Send reset link"}
         </Button>
       </form>
-      <div className="border-border mt-[22px] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t pt-5 text-center text-[13px]">
+      <div className="border-border mt-[22px] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t pt-5 text-center text-label">
         <Link href="/signin" className="text-muted-foreground hover:text-primary font-semibold">
           Back to sign in
         </Link>

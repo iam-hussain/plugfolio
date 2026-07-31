@@ -24,7 +24,7 @@ async function login(formData: FormData) {
 }
 
 const monoLabel =
-  "font-mono text-muted-foreground mb-[7px] block text-[10px] uppercase tracking-[0.08em]";
+  "font-mono text-muted-foreground mb-[7px] block text-pico uppercase tracking-[0.08em]";
 
 export default async function SignInPage({
   searchParams,
@@ -40,11 +40,11 @@ export default async function SignInPage({
         <div className="mb-[22px]">
           <Logo tone="auto" markSize="sm" />
         </div>
-        <p className="font-mono text-primary text-[10px] font-bold uppercase tracking-[0.1em]">
+        <p className="font-mono text-primary text-pico font-bold uppercase tracking-[0.1em]">
           Plugfolio
         </p>
-        <h1 className="font-display mt-1 text-[26px] font-bold tracking-[-0.02em]">Admin</h1>
-        <p className="text-muted-foreground mt-2 text-[13.5px] leading-[1.55]">
+        <h1 className="font-display mt-1 text-name-md font-bold tracking-[-0.02em]">Admin</h1>
+        <p className="text-muted-foreground mt-2 text-label leading-[1.55]">
           Operators only. Sign in with your admin credentials.
         </p>
 
@@ -54,7 +54,7 @@ export default async function SignInPage({
             className="bg-destructive/10 border-destructive/30 mt-[18px] flex items-start gap-[11px] rounded-[10px] border px-3.5 py-3"
           >
             <AlertTriangle aria-hidden className="text-destructive mt-px size-[18px] shrink-0" />
-            <p className="text-[13px] font-medium">Wrong email or password.</p>
+            <p className="text-label font-medium">Wrong email or password.</p>
           </div>
         ) : null}
 
@@ -70,7 +70,7 @@ export default async function SignInPage({
               required
               autoComplete="email"
               placeholder="you@plugfolio.com"
-              className="px-[13px] py-3 text-[13.5px]"
+              className="px-[13px] py-3 text-label"
             />
           </div>
           <div className="mt-3.5">
@@ -84,14 +84,14 @@ export default async function SignInPage({
               required
               autoComplete="current-password"
               placeholder="••••••••••"
-              className="px-[13px] py-3 text-[13.5px]"
+              className="px-[13px] py-3 text-label"
             />
           </div>
-          <Button type="submit" className="font-display mt-5 w-full p-3 text-[15px]">
+          <Button type="submit" className="font-display mt-5 w-full p-3 text-copy">
             Sign in
           </Button>
         </form>
-        <p className="text-faint mt-4 text-center text-[11.5px] leading-normal">
+        <p className="text-faint mt-4 text-center text-nano leading-normal">
           Accounts are provisioned by an existing operator.
         </p>
       </Panel>

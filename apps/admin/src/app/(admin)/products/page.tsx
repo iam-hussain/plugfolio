@@ -105,7 +105,7 @@ export default async function ProductsPage({
                 </TableCell>
                 <TableCell>
                   <span className="block font-medium">{product.title}</span>
-                  <span className="font-mono text-muted-foreground mt-0.5 block text-xs">
+                  <span className="font-mono text-muted-foreground mt-0.5 block text-micro">
                     {formatPrice(product.priceCents, product.currency)}
                     {product.affiliateUrl ? (
                       <>
@@ -122,7 +122,7 @@ export default async function ProductsPage({
                     ) : null}
                   </span>
                 </TableCell>
-                <TableCell className="font-mono text-muted-foreground text-xs">
+                <TableCell className="font-mono text-muted-foreground text-micro">
                   /{product.username}
                 </TableCell>
                 <TableCell>

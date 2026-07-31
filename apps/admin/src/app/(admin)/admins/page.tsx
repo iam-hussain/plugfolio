@@ -28,7 +28,7 @@ export const metadata: Metadata = { title: "Admins" };
 export const dynamic = "force-dynamic";
 
 const monoLabel =
-  "font-mono text-muted-foreground mb-1.5 block text-[10px] uppercase tracking-[0.08em]";
+  "font-mono text-muted-foreground mb-1.5 block text-pico uppercase tracking-[0.08em]";
 
 export default async function AdminsPage() {
   const me = await requireAdmin();
@@ -81,7 +81,7 @@ export default async function AdminsPage() {
                 <TableRow key={operator.id}>
                   <TableCell>
                     <span className="block font-semibold">{operator.email}</span>
-                    <span className="text-muted-foreground mt-0.5 block text-xs">
+                    <span className="text-muted-foreground mt-0.5 block text-micro">
                       {self ? `${operator.name ?? "You"} (you)` : (operator.name ?? "—")}
                     </span>
                   </TableCell>
@@ -134,7 +134,7 @@ export default async function AdminsPage() {
 
       <Panel className="mt-4 max-w-[440px] px-6 py-[22px]">
         <h2 className="font-display text-base font-bold">Your account</h2>
-        <p className="text-muted-foreground mb-3.5 mt-1.5 text-[13px]">Change your own password.</p>
+        <p className="text-muted-foreground mb-3.5 mt-1.5 text-label">Change your own password.</p>
         <ActionForm action={changeOwnPasswordAction} successToast="Password changed">
           <label htmlFor="current-password" className={monoLabel}>
             Current password

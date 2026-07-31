@@ -48,7 +48,7 @@ export function JoinScreen({ initialRole }: JoinScreenProps) {
     return (
       <AuthShell role={role} artefact={<RoleArtefact role={role} />}>
         <AuthStatus icon={<Mail aria-hidden />} title="Check your email">
-          <p className="text-muted-foreground max-w-[38ch] text-[0.9375rem] leading-[1.5]">
+          <p className="text-muted-foreground max-w-[38ch] text-copy leading-[1.5]">
             We sent a verification link to <b className="text-foreground">{email}</b>. It works
             once, and it works on any device.
           </p>
@@ -65,10 +65,10 @@ export function JoinScreen({ initialRole }: JoinScreenProps) {
 
   return (
     <AuthShell role={role} artefact={<RoleDeck role={role} onRoleChange={setRole} />}>
-      <h1 className="font-display text-[clamp(2rem,4vw,2.75rem)] font-extrabold tracking-[-0.035em]">
+      <h1 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
         {copy.joinHeadline}
       </h1>
-      <p className="text-muted-foreground mt-2.5 text-[0.9375rem] leading-[1.5]">{copy.joinCopy}</p>
+      <p className="text-muted-foreground mt-2.5 text-copy leading-[1.5]">{copy.joinCopy}</p>
 
       <form
         className="mt-[18px] flex flex-col"
@@ -95,9 +95,9 @@ export function JoinScreen({ initialRole }: JoinScreenProps) {
           onChange={setPassword}
           autoComplete="new-password"
         />
-        <p className="text-muted-foreground mt-[7px] text-xs">At least 8 characters.</p>
+        <p className="text-muted-foreground mt-[7px] text-micro">At least 8 characters.</p>
         {submit.isError ? (
-          <p role="alert" className="text-brand-coral mt-2.5 text-[12.5px]">
+          <p role="alert" className="text-brand-coral mt-2.5 text-micro">
             {submit.error.message}
           </p>
         ) : null}
@@ -105,11 +105,11 @@ export function JoinScreen({ initialRole }: JoinScreenProps) {
           {submit.isPending ? "Creating…" : copy.joinPrimary}
         </Button>
       </form>
-      <p className="text-muted-foreground mt-3 text-center text-xs">
+      <p className="text-muted-foreground mt-3 text-center text-micro">
         We&apos;ll send one verification email.
       </p>
 
-      <div className="border-border mt-[22px] flex items-center justify-center gap-2 border-t pt-5 text-center text-[13px]">
+      <div className="border-border mt-[22px] flex items-center justify-center gap-2 border-t pt-5 text-center text-label">
         <span className="text-muted-foreground">Already have an account?</span>
         <Link href={`/signin?as=${role}`} className="text-brand-violet-deep font-bold">
           Sign in

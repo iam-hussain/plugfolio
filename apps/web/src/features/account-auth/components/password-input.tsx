@@ -28,13 +28,13 @@ export function PasswordInput({ id, value, onChange, autoComplete }: PasswordInp
         minLength={8}
         maxLength={100}
         autoComplete={autoComplete}
-        className="text-foreground min-w-0 flex-1 bg-transparent py-[13px] pl-3.5 text-sm outline-none"
+        className="text-foreground min-w-0 flex-1 bg-transparent py-[13px] pl-3.5 text-copy outline-none"
       />
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
         aria-pressed={visible}
-        className="text-muted-foreground hover:text-foreground shrink-0 px-3.5 py-[13px] font-mono text-[10.5px] uppercase tracking-[0.08em]"
+        className="text-muted-foreground hover:text-foreground shrink-0 px-3.5 py-[13px] font-mono text-pico uppercase tracking-[0.08em]"
       >
         {visible ? "Hide" : "Show"}
       </button>

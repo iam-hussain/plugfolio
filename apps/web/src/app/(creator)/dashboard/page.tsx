@@ -150,7 +150,7 @@ export default async function DashboardPage({
                     role={profile.role === "manager" ? "manager" : undefined}
                     avatar={
                       <Avatar className="size-7">
-                        <AvatarFallback className="bg-active text-primary text-[10px] font-bold">
+                        <AvatarFallback className="bg-active text-primary text-pico font-bold">
                           {profile.username.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>

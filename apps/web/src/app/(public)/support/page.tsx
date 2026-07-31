@@ -33,13 +33,13 @@ export default async function SupportPage({
 
   return (
     <main className="mx-auto w-full max-w-[680px] px-5 pt-[clamp(22px,4vw,40px)] pb-[clamp(48px,7vw,88px)]">
-      <p className="text-muted-foreground font-mono tracking-eyebrow text-[11px] font-semibold uppercase">
+      <p className="text-muted-foreground font-mono tracking-eyebrow text-nano font-semibold uppercase">
         Help
       </p>
-      <h1 className="font-display mt-2.5 text-[clamp(1.875rem,4vw,2.75rem)] font-extrabold tracking-[-0.035em]">
+      <h1 className="font-display mt-2.5 text-display-lg font-extrabold tracking-[-0.035em]">
         What can we help with?
       </h1>
-      <p className="text-muted-foreground mt-3 max-w-[50ch] text-[0.9375rem] leading-[1.5]">
+      <p className="text-muted-foreground mt-3 max-w-[50ch] text-copy leading-[1.5]">
         Pick the closest issue — a person reads every ticket and replies by email.
       </p>
       <SupportForm handle={handle} initialCategory={category} initialEmail={email} />

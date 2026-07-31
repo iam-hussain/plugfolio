@@ -51,7 +51,7 @@ export function ManagerControls({ profileId, managers, maxManagers }: ManagerCon
   return (
     <div className="flex flex-col gap-4">
       {managers.length === 0 ? (
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-copy">
           No Managers yet — invite up to {maxManagers} people to help post.
         </p>
       ) : (
@@ -61,11 +61,11 @@ export function ManagerControls({ profileId, managers, maxManagers }: ManagerCon
             return (
               <li key={manager.userId} className="flex items-center gap-3">
                 <Avatar className="size-8">
-                  <AvatarFallback className="bg-muted text-foreground text-xs">
+                  <AvatarFallback className="bg-muted text-foreground text-micro">
                     {display.trim().charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="min-w-0 flex-1 truncate text-sm">{display}</span>
+                <span className="min-w-0 flex-1 truncate text-copy">{display}</span>
                 <Button
                   variant="ghost"
                   size="icon-sm"
@@ -107,12 +107,12 @@ export function ManagerControls({ profileId, managers, maxManagers }: ManagerCon
         </Button>
       </form>
       {atCap ? (
-        <p className="text-muted-foreground text-xs">
+        <p className="text-muted-foreground text-micro">
           This profile has all {maxManagers} Managers — remove one to invite another.
         </p>
       ) : null}
       {invite.isError || remove.isError ? (
-        <p role="alert" className="text-destructive text-xs">
+        <p role="alert" className="text-destructive text-micro">
           {(invite.error ?? remove.error)?.message}
         </p>
       ) : null}

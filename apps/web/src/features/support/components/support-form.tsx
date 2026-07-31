@@ -92,7 +92,7 @@ function FieldHead({ title, sub }: { title: string; sub: string }) {
   return (
     <>
       <span className="font-display block text-lg font-bold tracking-[-0.02em]">{title}</span>
-      <span className="text-muted-foreground mt-1 mb-3 block text-[0.9375rem]">{sub}</span>
+      <span className="text-muted-foreground mt-1 mb-3 block text-copy">{sub}</span>
     </>
   );
 }
@@ -115,10 +115,10 @@ export function SupportForm({ handle, initialCategory, initialEmail = "" }: Supp
         <span className="bg-active text-brand-violet-deep mx-auto mb-5 grid size-16 place-items-center rounded-pill [&_svg]:size-7">
           <Check aria-hidden />
         </span>
-        <h2 className="font-display text-[clamp(1.75rem,4vw,2.5rem)] font-extrabold tracking-[-0.035em]">
+        <h2 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
           Got it — we&apos;re on it.
         </h2>
-        <p className="text-muted-foreground mx-auto mt-3 max-w-[42ch] text-[0.9375rem] leading-[1.5]">
+        <p className="text-muted-foreground mx-auto mt-3 max-w-[42ch] text-copy leading-[1.5]">
           We&apos;ll reply to <b className="text-foreground">{contactEmail}</b>. A person reads every
           ticket, so it may take a working day. Nothing to wait on here.
         </p>
@@ -134,7 +134,7 @@ export function SupportForm({ handle, initialCategory, initialEmail = "" }: Supp
   return (
     <div>
       {/* Who's asking — a reassurance, not a gate. Hidden once the ticket sends. */}
-      <p className="bg-active text-brand-violet-deep tracking-eyebrow mt-[18px] inline-flex items-center gap-2 rounded-pill px-4 py-2 font-mono text-[11px] font-bold uppercase [&_svg]:size-[15px]">
+      <p className="bg-active text-brand-violet-deep tracking-eyebrow mt-[18px] inline-flex items-center gap-2 rounded-pill px-4 py-2 font-mono text-nano font-bold uppercase [&_svg]:size-[15px]">
         {handle ? (
           <>
             <UserRound aria-hidden /> Signed in as @{handle}
@@ -149,7 +149,7 @@ export function SupportForm({ handle, initialCategory, initialEmail = "" }: Supp
       {submit.isError ? (
         <div
           role="alert"
-          className="bg-brand-coral/15 border-brand-coral/50 rounded-image mt-[22px] flex items-start gap-3 border p-4 text-[0.9375rem] leading-[1.5] [&_svg]:mt-0.5 [&_svg]:size-[18px] [&_svg]:shrink-0"
+          className="bg-brand-coral/15 border-brand-coral/50 rounded-image mt-[22px] flex items-start gap-3 border p-4 text-copy leading-[1.5] [&_svg]:mt-0.5 [&_svg]:size-[18px] [&_svg]:shrink-0"
         >
           <CircleAlert aria-hidden />
           <span>
@@ -169,7 +169,7 @@ export function SupportForm({ handle, initialCategory, initialEmail = "" }: Supp
           <legend className="font-display p-0 text-lg font-bold tracking-[-0.02em]">
             What&apos;s it about?
           </legend>
-          <span className="text-muted-foreground mt-1 mb-3 block text-[0.9375rem]">
+          <span className="text-muted-foreground mt-1 mb-3 block text-copy">
             Closest is close enough — we&apos;ll work it out.
           </span>
           <SupportCategories>

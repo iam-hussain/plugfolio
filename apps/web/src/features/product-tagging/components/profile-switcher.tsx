@@ -71,7 +71,7 @@ export function ProfileSwitcher({
             className="border-border bg-card text-foreground text-label rounded-pill hover:border-primary inline-flex min-h-[44px] flex-none items-center gap-2.5 border py-[7px] pl-2 pr-3.5 font-bold"
           >
             <Avatar className="size-[30px]">
-              <AvatarFallback className="bg-active text-primary text-xs font-bold">
+              <AvatarFallback className="bg-active text-primary text-micro font-bold">
                 {active?.username.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -95,7 +95,7 @@ export function ProfileSwitcher({
               }}
             >
               <Avatar className="size-[26px]">
-                <AvatarFallback className="bg-active text-primary text-[10px] font-bold">
+                <AvatarFallback className="bg-active text-primary text-pico font-bold">
                   {profile.username.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -123,7 +123,7 @@ export function ProfileSwitcher({
         </DropdownMenuContent>
       </DropdownMenu>
       {create.isError ? (
-        <p role="alert" className="text-destructive pt-1 text-xs">
+        <p role="alert" className="text-destructive pt-1 text-micro">
           {create.error.message}
         </p>
       ) : null}

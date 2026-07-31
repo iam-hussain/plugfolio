@@ -1,4 +1,4 @@
-import { Button, ProductTag, Tile, type TileProps } from "@plugfolio/ui";
+import { Button, cn, measure, ProductTag, Tile, type TileProps } from "@plugfolio/ui";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,14 +10,14 @@ import Link from "next/link";
  * from tokens; positions/tilts are literal utility classes, never inline style.
  */
 export const mk = {
-  main: "mx-auto w-full max-w-[1080px] px-5 pb-[clamp(56px,9vw,96px)] lg:px-11",
-  eyebrow: "font-sans text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground",
+  main: cn(measure({ width: "narrow" }), "pb-[clamp(56px,9vw,96px)]"),
+  eyebrow: "font-sans text-micro font-semibold uppercase tracking-[0.06em] text-muted-foreground",
   h1: "font-display mt-2.5 text-[clamp(2.25rem,5vw,3.5rem)] font-extrabold leading-[1.04] tracking-[-0.04em]",
-  lede: "text-muted-foreground mt-4 max-w-[52ch] text-[clamp(1rem,1.5vw,1.15rem)] leading-[1.55]",
+  lede: "text-muted-foreground mt-4 max-w-[52ch] text-body leading-[1.55]",
   cta: "mt-7 flex flex-wrap items-center gap-3",
   band: "mt-[clamp(48px,8vw,88px)]",
-  h2: "font-display text-[clamp(1.75rem,3.4vw,2.5rem)] font-bold leading-[1.12] tracking-[-0.03em]",
-  copy: "text-muted-foreground mt-3 max-w-[62ch] text-[0.9375rem] leading-[1.6]",
+  h2: "font-display text-display-lg font-bold leading-[1.12] tracking-[-0.03em]",
+  copy: "text-muted-foreground mt-3 max-w-[62ch] text-copy leading-[1.6]",
 } as const;
 
 type TileTone = NonNullable<TileProps["tone"]>;
@@ -87,7 +87,7 @@ export function PostCard({
             height={60}
             className="size-7 rounded-pill object-cover"
           />
-          <span className="bg-card text-brand-violet-deep rounded-pill px-2.5 py-1 font-mono text-[11px] font-semibold">
+          <span className="bg-card text-brand-violet-deep rounded-pill px-2.5 py-1 font-mono text-nano font-semibold">
             {footer.count}
           </span>
         </div>
@@ -134,7 +134,7 @@ export function Fact({ title, children }: { title: string; children: React.React
   return (
     <div className="border-border bg-card shadow-rest rounded-card border p-6">
       <b className="font-display block text-lg font-bold tracking-[-0.02em]">{title}</b>
-      <p className="text-muted-foreground mt-2 text-[0.9375rem] leading-[1.55]">{children}</p>
+      <p className="text-muted-foreground mt-2 text-copy leading-[1.55]">{children}</p>
     </div>
   );
 }
@@ -143,11 +143,11 @@ export function Fact({ title, children }: { title: string; children: React.React
 export function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
   return (
     <li className="border-border bg-card shadow-rest rounded-card border p-6">
-      <span className="bg-foreground text-background grid size-7 place-items-center rounded-pill font-mono text-[11px] font-bold">
+      <span className="bg-foreground text-background grid size-7 place-items-center rounded-pill font-mono text-nano font-bold">
         {n}
       </span>
       <b className="font-display mt-3.5 block text-lg font-bold tracking-[-0.02em]">{title}</b>
-      <p className="text-muted-foreground mt-2 text-[0.9375rem] leading-[1.55]">{children}</p>
+      <p className="text-muted-foreground mt-2 text-copy leading-[1.55]">{children}</p>
     </li>
   );
 }
@@ -216,10 +216,10 @@ export function MarketingDoors({
             <h3 className="font-display relative mt-2.5 text-xl font-bold tracking-[-0.02em]">
               {door.title}
             </h3>
-            <p className="text-muted-foreground relative mt-2 text-[0.9375rem] leading-[1.5]">
+            <p className="text-muted-foreground relative mt-2 text-copy leading-[1.5]">
               {door.copy}
             </p>
-            <span className="text-role-deep relative mt-auto flex items-center gap-1.5 pt-5 text-[13px] font-bold">
+            <span className="text-role-deep relative mt-auto flex items-center gap-1.5 pt-5 text-label font-bold">
               {door.go}
               <span aria-hidden className="transition-transform duration-200 group-hover/door:translate-x-1">
                 →

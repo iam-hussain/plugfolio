@@ -61,8 +61,8 @@ export function ForBusinessPage() {
                 <b className="font-display mt-2 mb-2 block text-xl font-bold tracking-[-0.02em]">
                   {door.title}
                 </b>
-                <p className="text-muted-foreground text-[0.9375rem] leading-[1.55]">{door.copy}</p>
-                <span className="text-muted-foreground mt-auto pt-5 text-[13px] font-bold">
+                <p className="text-muted-foreground text-copy leading-[1.55]">{door.copy}</p>
+                <span className="text-muted-foreground mt-auto pt-5 text-label font-bold">
                   {door.go}
                 </span>
               </div>
@@ -91,7 +91,7 @@ export function ForBusinessPage() {
             <b className="font-display mt-2 mb-2 block text-xl font-bold tracking-[-0.02em]">
               Skincare creators for a spring launch
             </b>
-            <p className="text-muted-foreground text-[0.9375rem] leading-[1.55]">
+            <p className="text-muted-foreground text-copy leading-[1.55]">
               Two posts, one story. Budget discussed in the thread.
             </p>
             <div className="border-border mt-4 flex items-center border-t pt-3.5">
@@ -107,7 +107,7 @@ export function ForBusinessPage() {
                   />
                 ))}
               </div>
-              <span className="text-muted-foreground ml-4 text-[0.9375rem]">creators replying</span>
+              <span className="text-muted-foreground ml-4 text-copy">creators replying</span>
             </div>
           </div>
         </SplitBand>

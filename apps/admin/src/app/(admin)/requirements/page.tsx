@@ -73,11 +73,11 @@ export default async function RequirementsPage({
               <TableRow key={requirement.id}>
                 <TableCell className="max-w-[360px]">
                   <span className="block font-medium">{requirement.title}</span>
-                  <span className="text-muted-foreground mt-0.5 block truncate text-xs">
+                  <span className="text-muted-foreground mt-0.5 block truncate text-micro">
                     {requirement.brief}
                   </span>
                 </TableCell>
-                <TableCell className="text-[13px]">{requirement.businessName}</TableCell>
+                <TableCell className="text-label">{requirement.businessName}</TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">
                   {requirement.budget ?? "—"}
                 </TableCell>

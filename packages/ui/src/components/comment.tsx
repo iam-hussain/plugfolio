@@ -104,7 +104,7 @@ export function CommentAvatar({
       )}
     >
       {src ? (
-        // eslint-disable-next-line @next/next/no-img-element -- framework-free package
+        // A plain <img>: this package is framework-free and never imports next/image.
         <img src={src} alt="" className="size-full object-cover" />
       ) : (
         initial

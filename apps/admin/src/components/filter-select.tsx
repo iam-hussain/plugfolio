@@ -19,7 +19,7 @@ export function FilterSelect({
       name={name}
       defaultValue={defaultValue ?? ""}
       aria-label={label}
-      className="border-border-strong bg-background text-foreground cursor-pointer appearance-none rounded-lg border py-2 pl-3 pr-[30px] text-[13px] outline-none"
+      className="border-border-strong bg-background text-foreground cursor-pointer appearance-none rounded-lg border py-2 pl-3 pr-[30px] text-label outline-none"
     >
       {options.map(([value, text]) => (
         <option key={value} value={value}>

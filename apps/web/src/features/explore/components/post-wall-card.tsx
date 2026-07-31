@@ -61,7 +61,7 @@ export function PostWallCard({ post, index }: { post: DiscoveryPost; index: numb
         {more > 0 ? (
           <Link
             href={`/${post.username}/post/${post.id}`}
-            className="bg-foreground text-background shadow-tag rounded-pill absolute bottom-[8%] left-[16%] inline-flex min-h-11 items-center gap-1 px-3.5 text-[13px] font-semibold no-underline"
+            className="bg-foreground text-background shadow-tag rounded-pill absolute bottom-[8%] left-[16%] inline-flex min-h-11 items-center gap-1 px-3.5 text-label font-semibold no-underline"
           >
             {more} more ›
           </Link>
@@ -71,11 +71,11 @@ export function PostWallCard({ post, index }: { post: DiscoveryPost; index: numb
         href={`/${post.username}`}
         className="text-tile-foreground flex items-center gap-2 px-1.5 pt-3 pb-1 no-underline"
       >
-        <span className="bg-card text-foreground grid size-6 shrink-0 place-items-center rounded-pill text-[10px] font-bold">
+        <span className="bg-card text-foreground grid size-6 shrink-0 place-items-center rounded-pill text-pico font-bold">
           {post.username.charAt(0).toUpperCase()}
         </span>
-        <span className="truncate text-[13px] font-semibold">@{post.username}</span>
-        <span className="ml-auto text-[11px] font-bold tabular-nums opacity-80">
+        <span className="truncate text-label font-semibold">@{post.username}</span>
+        <span className="ml-auto text-nano font-bold tabular-nums opacity-80">
           {post.productCount > 0
             ? `${post.productCount} thing${post.productCount === 1 ? "" : "s"}`
             : "Nothing tagged"}

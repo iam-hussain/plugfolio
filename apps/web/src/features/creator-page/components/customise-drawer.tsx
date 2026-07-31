@@ -39,7 +39,10 @@ export function CustomiseDrawer({ profileId, appearance, role }: CustomiseDrawer
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button size="sm" className="rounded-pill px-6">
+        {/* The creator's accent, like every committed action on their page
+            (DESIGN §.ch-act > .btn--accent) — not the ink pill, which is the
+            site's own voice rather than theirs. */}
+        <Button variant="action" className="px-6">
           <Sliders className="size-4" aria-hidden />
           Customise
         </Button>

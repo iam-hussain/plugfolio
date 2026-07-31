@@ -57,7 +57,7 @@ export default async function ProfileDetailPage({
     <div className="max-w-[940px]">
       <Link
         href="/profiles"
-        className="font-mono text-muted-foreground mb-3.5 inline-flex items-center gap-[7px] text-xs"
+        className="font-mono text-muted-foreground mb-3.5 inline-flex items-center gap-[7px] text-micro"
       >
         <ArrowLeft aria-hidden className="size-4" /> Profiles / {profile.username}
       </Link>
@@ -65,16 +65,16 @@ export default async function ProfileDetailPage({
       {!live ? (
         <div className="bg-destructive/10 border-destructive/30 mb-4 flex items-start gap-[11px] rounded-[10px] border px-3.5 py-3">
           <AlertTriangle aria-hidden className="text-destructive mt-px size-[18px] shrink-0" />
-          <p className="text-[13px] font-semibold">This page is not live to shoppers.</p>
+          <p className="text-label font-semibold">This page is not live to shoppers.</p>
         </div>
       ) : null}
 
       <Panel className="flex flex-wrap items-start justify-between gap-5 px-6 py-[22px]">
         <div>
-          <h1 className="font-mono text-[22px] font-bold tracking-[-0.01em]">
+          <h1 className="font-mono text-title font-bold tracking-[-0.01em]">
             /{profile.username}
           </h1>
-          <p className="text-muted-foreground mt-[5px] text-[13.5px]">
+          <p className="text-muted-foreground mt-[5px] text-label">
             {profile.ownerEmail}
             {profile.managerCount > 0 ? (
               <span className="text-faint"> · +{profile.managerCount} managers</span>
@@ -144,7 +144,7 @@ export default async function ProfileDetailPage({
       </div>
 
       <Panel className="mt-4 px-5 py-[18px]">
-        <h2 className="font-display mb-3 text-[15px] font-bold">Posts · 12 newest</h2>
+        <h2 className="font-display mb-3 text-copy font-bold">Posts · 12 newest</h2>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
           {profile.posts.map((post) => (
             <div
@@ -165,7 +165,7 @@ export default async function ProfileDetailPage({
                   <Button
                     size="xs"
                     variant="destructive"
-                    className="absolute right-1 top-1 px-[7px] py-[3px] text-[10px]"
+                    className="absolute right-1 top-1 px-[7px] py-[3px] text-pico"
                   >
                     Remove
                   </Button>
@@ -180,13 +180,13 @@ export default async function ProfileDetailPage({
             </div>
           ))}
           {profile.posts.length === 0 ? (
-            <p className="text-faint col-span-full py-6 text-center text-[13px]">No posts yet.</p>
+            <p className="text-faint col-span-full py-6 text-center text-label">No posts yet.</p>
           ) : null}
         </div>
       </Panel>
 
       <Panel className="mt-4 overflow-hidden px-5 py-[18px]">
-        <h2 className="font-display mb-2 text-[15px] font-bold">Products</h2>
+        <h2 className="font-display mb-2 text-copy font-bold">Products</h2>
         <Table variant="dense">
           <TableHeader>
             <TableRow>
@@ -206,7 +206,7 @@ export default async function ProfileDetailPage({
                     {product.kind === "own" ? "Own" : "Affiliate"}
                   </Badge>
                 </TableCell>
-                <TableCell className="font-mono text-muted-foreground text-xs">
+                <TableCell className="font-mono text-muted-foreground text-micro">
                   {product.couponCode ?? "—"}
                 </TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">
@@ -238,26 +238,26 @@ export default async function ProfileDetailPage({
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <Panel className="px-5 py-[18px]">
-          <h2 className="font-display mb-1.5 text-[15px] font-bold">Managers</h2>
+          <h2 className="font-display mb-1.5 text-copy font-bold">Managers</h2>
           {profile.managers.map((manager) => (
             <div
               key={manager.email}
-              className="border-border flex justify-between border-t py-[9px] text-[13px]"
+              className="border-border flex justify-between border-t py-[9px] text-label"
             >
               <span>{manager.email}</span>
-              <span className="text-faint text-[11px] tabular-nums">
+              <span className="text-faint text-nano tabular-nums">
                 {manager.since.toISOString().slice(0, 10)}
               </span>
             </div>
           ))}
           {profile.managers.length === 0 ? (
-            <p className="text-faint border-border border-t py-5 text-center text-[13px]">
+            <p className="text-faint border-border border-t py-5 text-center text-label">
               No managers invited.
             </p>
           ) : null}
         </Panel>
         <Panel className="px-5 py-[18px]">
-          <h2 className="font-display mb-2.5 text-[15px] font-bold">Categories</h2>
+          <h2 className="font-display mb-2.5 text-copy font-bold">Categories</h2>
           <div className="flex flex-wrap gap-1.5">
             {profile.categories.map((category) => (
               <Badge key={category} shape="square" variant="outline-muted">
@@ -265,7 +265,7 @@ export default async function ProfileDetailPage({
               </Badge>
             ))}
             {profile.categories.length === 0 ? (
-              <p className="text-faint text-[13px]">No categories.</p>
+              <p className="text-faint text-label">No categories.</p>
             ) : null}
           </div>
         </Panel>

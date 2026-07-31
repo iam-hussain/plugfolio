@@ -1,6 +1,29 @@
 import * as React from "react";
 import { Slot, Slottable } from "@radix-ui/react-slot";
+import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
+
+/** A hidden post keeps its row but loses its lift — it isn't gone, it's off. */
+const postRow = cva(
+  "border-border rounded-tile flex flex-wrap items-center gap-3 border py-2.5 pl-2.5 pr-3.5 hover:border-primary",
+  {
+    variants: {
+      hidden: { true: "bg-background [&_[data-slot=post-row-link]]:opacity-55", false: "bg-card" },
+    },
+    defaultVariants: { hidden: false },
+  },
+);
+
+/** Same rule for a closed thread: still readable, no longer raised. */
+const collabRow = cva(
+  "border-border rounded-tile flex flex-wrap items-center gap-3.5 border p-3.5",
+  {
+    variants: {
+      closed: { true: "bg-background [&_[data-slot=collab-body]]:opacity-60", false: "bg-card" },
+    },
+    defaultVariants: { closed: false },
+  },
+);
 
 /**
  * THE BACK ROOM'S ROWS (DESIGN dashboard.html §.plist2/.crow/.cat/.cols).
@@ -33,9 +56,7 @@ export function PostRow({
   return (
     <li
       className={cn(
-        "border-border rounded-tile flex flex-wrap items-center gap-3 border py-2.5 pl-2.5 pr-3.5",
-        "hover:border-primary",
-        hidden ? "bg-background [&_[data-slot=post-row-link]]:opacity-55" : "bg-card",
+        postRow({ hidden }),
         className,
       )}
     >
@@ -230,10 +251,7 @@ export function CollabRow({
 }) {
   return (
     <li
-      className={cn(
-        "border-border rounded-tile flex flex-wrap items-center gap-3.5 border p-3.5",
-        closed ? "bg-background [&_[data-slot=collab-body]]:opacity-60" : "bg-card",
-      )}
+      className={collabRow({ closed })}
     >
       {avatar}
       <span data-slot="collab-body" className="min-w-0 flex-[1_1_260px]">

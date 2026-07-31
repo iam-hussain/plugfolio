@@ -16,7 +16,10 @@ const stub = (file: string) => path.resolve(process.cwd(), ".storybook/stubs", f
 
 const config: StorybookConfig = {
   stories: ["../stories/**/*.stories.@(ts|tsx)"],
-  addons: ["@storybook/addon-essentials", "@storybook/addon-themes"],
+  // a11y runs axe over every story. §7 requires WCAG AA in **both** themes, and
+  // the themes addon already gives us both — without this the requirement had
+  // no check behind it anywhere in the repo.
+  addons: ["@storybook/addon-essentials", "@storybook/addon-themes", "@storybook/addon-a11y"],
   framework: { name: "@storybook/react-vite", options: {} },
   core: { disableTelemetry: true },
   async viteFinal(base) {
@@ -35,6 +38,11 @@ const config: StorybookConfig = {
           "next/image": stub("next-image.tsx"),
           "next/navigation": stub("next-navigation.ts"),
           "next/font/google": stub("next-font-google.ts"),
+          // @plugfolio/core is one barrel and part of it signs the no-login
+          // shopper token with node:crypto (ADR-0002). A component that value-
+          // imports any core constant drags that into the browser bundle and
+          // the preview dies on "createHmac is not exported". See the stub.
+          "node:crypto": stub("node-crypto.ts"),
         },
       },
     });

@@ -75,7 +75,7 @@ export function MediaSlot({
   if (kind === "still" || !embedUrl) {
     return (
       <div className={cn("shadow-rest border-border rounded-bay bg-active overflow-hidden border", className)}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- framework-free package; apps pass an optimised element via the post view when they need one */}
+        {/* A plain <img>: this package is framework-free and never imports next/image. Apps pass an optimised element via the post view when they need one. */}
         <img src={poster} alt={alt} className="block max-h-[62vh] w-full object-cover" />
       </div>
     );
@@ -97,7 +97,7 @@ export function MediaSlot({
           />
         ) : (
           <>
-            {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
+            {/* A plain <img> — see above. */}
             <img src={poster} alt={alt} className="absolute inset-0 size-full object-cover" />
             {/* The poster dims so white controls clear AA over ANY frame. */}
             <span aria-hidden className="bg-brand-ink/45 absolute inset-0" />
@@ -113,7 +113,7 @@ export function MediaSlot({
               onClick={() => setPlaying(true)}
               className="focus-visible:outline-accent absolute inset-0 grid w-full content-center justify-items-center gap-3.5 border-0 bg-transparent text-white focus-visible:outline focus-visible:outline-[3px] focus-visible:-outline-offset-[5px]"
             >
-              <span className="grid size-[72px] place-items-center rounded-pill bg-white/[0.16] shadow-[inset_0_0_0_2px_#FFFFFF] transition-transform duration-200 ease-design group-hover:scale-105 motion-reduce:transition-none">
+              <span className="grid size-[72px] place-items-center rounded-pill bg-white/[0.16] ring-2 ring-inset ring-white transition-transform duration-200 ease-design group-hover:scale-105 motion-reduce:transition-none">
                 <Play className="ml-1 size-[26px]" fill="currentColor" strokeWidth={0} aria-hidden />
               </span>
               <b className="text-label font-bold">Play on {provider.name}</b>

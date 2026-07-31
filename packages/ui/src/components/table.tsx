@@ -11,8 +11,8 @@ const tableVariants = cva("w-full caption-bottom text-sm", {
       default: "",
       // Admin design density: mono-eyebrow headers, 44px rows, muted hover.
       dense:
-        "[&_th]:h-auto [&_th]:px-3.5 [&_th]:py-[11px] [&_th]:font-mono [&_th]:text-[10px] [&_th]:font-bold [&_th]:uppercase [&_th]:tracking-[0.09em] [&_th]:text-faint " +
-        "[&_td]:h-11 [&_td]:px-3.5 [&_td]:py-2 [&_td]:text-[13.5px] [&_tbody_tr:hover]:bg-muted",
+        "[&_th]:h-auto [&_th]:px-3.5 [&_th]:py-[11px] [&_th]:font-mono [&_th]:text-pico [&_th]:font-bold [&_th]:uppercase [&_th]:tracking-[0.09em] [&_th]:text-faint " +
+        "[&_td]:h-11 [&_td]:px-3.5 [&_td]:py-2 [&_td]:text-label [&_tbody_tr:hover]:bg-muted",
     },
   },
   defaultVariants: { variant: "default" },

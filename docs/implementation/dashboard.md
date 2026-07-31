@@ -94,9 +94,58 @@ earned them.
 - The tabs are exercised end to end in the browser: the view beacon writes a
   `View` row and the Traffic card reads it back.
 
+## The two editors
+
+Both are their own route, and for the same reason: neither a post nor a product
+is owned by the screen it used to be edited from.
+
+**Create and edit are the same screen** (`/new` and `/[id]`). What differs is
+what exists yet, and the things that don't exist are **absent, not disabled** —
+a disabled control on a brand-new post is a promise about a state you have not
+reached.
+
+### The post editor — `/dashboard/posts/[postId]`, `/dashboard/posts/new`
+
+- **Two media fields, not one select.** A photo is not a fourth kind of social
+  video: it's an image you own, and it can sit *alongside* a video. The still is
+  what a visitor sees before pressing play and what a link unfurls to when it's
+  shared, so a video post needs one too (ADR-0019). Switching a post back to a
+  still clears the embed, or the play button stays wired to the video it used to
+  be.
+- **Hidden is a state of the whole screen**, not a badge in a corner: an ink
+  banner, and the media dimmed.
+- **Connecting is a pick, not a form.** The connector lists the library with the
+  facts that tell two similar products apart — price, kind, how many posts carry
+  it — and connecting copies nothing. The channel rule is *not* asked here; it
+  lives on the product page, because that's where a product is made, and two
+  screens must not be able to disagree about one object.
+- **Disconnect ≠ delete.** Taking a product off a post removes one connection;
+  the product is still yours and may sit on others.
+- A new post has nothing to tag onto, so that side is one line rather than a
+  disabled form. Saving lands straight in the post's own editor.
+
+### The product page — `/dashboard/products/[productId]`, `/dashboard/products/new`
+
+- **Product URL is distinct from the outbound link.** The first is the retailer
+  page we read the title, image and price from (`Product.sourceUrl`); the second
+  is the creator's own tracked link. Re-reading the page happens only when the
+  source URL actually changed — a silent refetch would let a retailer's A/B test
+  rename someone's product.
+- **The kind toggle relabels the link field** rather than adding a second one: a
+  creator has exactly one URL in their clipboard, and asking which box it goes
+  in is a question the toggle already answered.
+- **The preview is the point of the left column.** Every field changes one line
+  of it, live — a creator editing a coupon should *see* the chip appear.
+- **The channel rule is stated as it goes**, not raised as an error afterwards:
+  a product needs a link, or a code with an in-store note, or both. Enforced in
+  the service too (`updateProduct`), because clearing the link is only legal in
+  light of the coupon already stored, which the request body doesn't carry.
+- **Source URL is required only on create.** A row from before the field existed
+  must still be editable, or its coupon can never be fixed.
+- **"On these posts" is a consequence, not a container** — the same product can
+  sit on five posts or on none.
+
 ## Not built here
 
-- **Add post is still a dialog.** The design moved it to
-  `post-edit.html?mode=new`; the dialog holds the same fields and is one screen
-  fewer. Worth revisiting when the media-kind and shelf pickers land there.
 - **No time range on Traffic.** All-time only, as the design shows.
+- **No post delete.** Hiding covers it, and the design offers no other.

@@ -5,6 +5,19 @@ import Link from "next/link";
 import { JsonLd } from "@/components/json-ld";
 import { faqPage } from "@/lib/structured-data";
 import { Fact, MarketingDoors, PostCard, SplitBand, mk } from "./marketing-shared";
+import { cva } from "class-variance-authority";
+
+/** What we count and what we don't (ADR-0021) — held, or plainly not. */
+const trackedFlag = cva(
+  "rounded-pill px-3 py-1 font-mono text-nano font-semibold tracking-[0.04em] uppercase",
+  {
+    variants: {
+      tracked: { true: "bg-active text-brand-violet-deep", false: "bg-muted text-muted-foreground" },
+    },
+    defaultVariants: { tracked: false },
+  },
+);
+
 
 /**
  * /how-it-works (DESIGN how-it-works.html) — shopper-facing. Shows the loop
@@ -62,12 +75,12 @@ const FAQ: readonly { q: string; a: string }[] = [
 function LoopCaption({ n, title, copy }: { n: number; title: string; copy: string }) {
   return (
     <div className="mt-3.5 flex items-start gap-2.5 px-1">
-      <span className="bg-foreground text-background grid size-[26px] shrink-0 place-items-center rounded-pill font-mono text-[11px] font-bold">
+      <span className="bg-foreground text-background grid size-[26px] shrink-0 place-items-center rounded-pill font-mono text-nano font-bold">
         {n}
       </span>
       <span>
-        <b className="font-display block text-[0.9375rem] font-bold tracking-[-0.01em]">{title}</b>
-        <p className="text-muted-foreground mt-1 text-[0.9375rem] leading-[1.5]">{copy}</p>
+        <b className="font-display block text-copy font-bold tracking-[-0.01em]">{title}</b>
+        <p className="text-muted-foreground mt-1 text-copy leading-[1.5]">{copy}</p>
       </span>
     </div>
   );
@@ -144,12 +157,12 @@ export function HowItWorksPage() {
                   className="block aspect-[4/3] w-full object-cover"
                 />
                 <div className="flex items-center gap-2.5 px-4 py-3.5">
-                  <span className="text-[0.9375rem]">
+                  <span className="text-copy">
                     <b className="font-bold">The retailer</b>
                     <br />
-                    <span className="text-muted-foreground text-xs">their site · their checkout</span>
+                    <span className="text-muted-foreground text-micro">their site · their checkout</span>
                   </span>
-                  <span className="border-border text-muted-foreground ml-auto rounded-pill border px-3.5 py-1.5 text-[11px] font-bold whitespace-nowrap">
+                  <span className="border-border text-muted-foreground ml-auto rounded-pill border px-3.5 py-1.5 text-nano font-bold whitespace-nowrap">
                     Add to basket
                   </span>
                 </div>
@@ -206,15 +219,11 @@ export function HowItWorksPage() {
             {TRACK.map((row, index) => (
               <div
                 key={row.label}
-                className={`flex items-center justify-between gap-4 px-5 py-4 text-[0.9375rem] ${index > 0 ? "border-border border-t" : ""}`}
+                className={`flex items-center justify-between gap-4 px-5 py-4 text-copy ${index > 0 ? "border-border border-t" : ""}`}
               >
                 <span>{row.label}</span>
                 <span
-                  className={`rounded-pill px-3 py-1 font-mono text-[11px] font-semibold tracking-[0.04em] uppercase ${
-                    row.tracked
-                      ? "bg-active text-brand-violet-deep"
-                      : "bg-muted text-muted-foreground"
-                  }`}
+                  className={trackedFlag({ tracked: row.tracked })}
                 >
                   {row.tracked ? "Tracked" : "Not tracked"}
                 </span>
@@ -233,7 +242,7 @@ export function HowItWorksPage() {
                 open={index === 0}
                 className="border-border group/faq border-b"
               >
-                <summary className="font-display flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-[18px] text-[1.0625rem] font-bold tracking-[-0.01em] [&::-webkit-details-marker]:hidden">
+                <summary className="font-display flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-[18px] text-body font-bold tracking-[-0.01em] [&::-webkit-details-marker]:hidden">
                   {item.q}
                   <span
                     aria-hidden
@@ -248,7 +257,7 @@ export function HowItWorksPage() {
                     –
                   </span>
                 </summary>
-                <p className="text-muted-foreground mb-5 max-w-[62ch] text-[0.9375rem] leading-[1.6]">
+                <p className="text-muted-foreground mb-5 max-w-[62ch] text-copy leading-[1.6]">
                   {item.a}
                 </p>
               </details>

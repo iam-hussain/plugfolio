@@ -6,6 +6,17 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import type { ReactionValue } from "@plugfolio/core";
 import { reactToComment } from "../api";
+import { cva } from "class-variance-authority";
+
+/** Helpful / not helpful. Signed out it's a link to sign in, same shape. */
+const reactionControl = cva(
+  "rounded-pill hover:bg-active hover:text-primary inline-flex min-h-9 items-center gap-1.5 px-2.5 py-[7px] text-micro font-bold tabular-nums transition-colors",
+  {
+    variants: { pressed: { true: "text-primary", false: "text-muted-foreground" } },
+    defaultVariants: { pressed: false },
+  },
+);
+
 
 /**
  * Helpful / not helpful on a comment (lean journey). A creator page's comments
@@ -103,8 +114,6 @@ function Reaction({
   /** "Not helpful" at zero is noise — the count appears once someone means it. */
   hideZero?: boolean;
 }) {
-  const shared =
-    "rounded-pill hover:bg-active hover:text-primary inline-flex min-h-9 items-center gap-1.5 px-2.5 py-[7px] text-xs font-bold tabular-nums transition-colors";
   const body = (
     <>
       {icon}
@@ -116,7 +125,7 @@ function Reaction({
     return (
       <Link
         href="/signin"
-        className={`text-muted-foreground ${shared}`}
+        className={reactionControl({ pressed: false })}
         aria-label={`${label} — sign in to react`}
       >
         {body}
@@ -129,7 +138,7 @@ function Reaction({
       onClick={onClick}
       aria-pressed={pressed}
       aria-label={label}
-      className={`${pressed ? "text-primary" : "text-muted-foreground"} ${shared}`}
+      className={reactionControl({ pressed })}
     >
       {body}
     </button>

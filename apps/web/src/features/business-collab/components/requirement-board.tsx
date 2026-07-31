@@ -16,7 +16,7 @@ const dateFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric
 
 export function RequirementBoard({ requirements, approachAsProfileId }: RequirementBoardProps) {
   if (requirements.length === 0) {
-    return <p className="text-muted-foreground text-sm">No open requirements.</p>;
+    return <p className="text-muted-foreground text-copy">No open requirements.</p>;
   }
 
   return (
@@ -35,7 +35,7 @@ export function RequirementBoard({ requirements, approachAsProfileId }: Requirem
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
-              <p className="text-sm">{requirement.brief}</p>
+              <p className="text-copy">{requirement.brief}</p>
               {approachAsProfileId ? (
                 <ApproachForm
                   requirementId={requirement.id}

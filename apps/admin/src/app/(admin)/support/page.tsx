@@ -107,19 +107,19 @@ export default async function SupportPage({
                   <Badge shape="square" variant="outline-muted">
                     {CATEGORY_LABEL[ticket.category] ?? ticket.category}
                   </Badge>
-                  <span className="mt-1 block whitespace-pre-wrap text-[13px]">
+                  <span className="mt-1 block whitespace-pre-wrap text-label">
                     {ticket.message}
                   </span>
                 </TableCell>
                 <TableCell>
                   <a
                     href={`mailto:${ticket.contactEmail}`}
-                    className="text-primary font-mono text-[11.5px] hover:underline"
+                    className="text-primary font-mono text-nano hover:underline"
                   >
                     {ticket.contactEmail}
                   </a>
                 </TableCell>
-                <TableCell className="font-mono text-muted-foreground text-[11.5px]">
+                <TableCell className="font-mono text-muted-foreground text-nano">
                   {ticket.requesterLabel}
                 </TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">

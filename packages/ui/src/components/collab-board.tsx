@@ -64,13 +64,15 @@ const requirementTitleVariants = cva("min-w-0 flex-1 text-label font-bold", {
 export type RequirementTitleProps = React.ComponentProps<"h3"> &
   VariantProps<typeof requirementTitleVariants>;
 
-export function RequirementTitle({ className, state, ...props }: RequirementTitleProps) {
+export function RequirementTitle({ className, state, children, ...props }: RequirementTitleProps) {
   return (
     <h3
       data-slot="requirement-title"
       className={cn(requirementTitleVariants({ state }), className)}
       {...props}
-    />
+    >
+      {children}
+    </h3>
   );
 }
 
@@ -156,13 +158,15 @@ export function BoardHeading({ className, ...props }: React.ComponentProps<"div"
   );
 }
 
-export function BoardTitle({ className, ...props }: React.ComponentProps<"h2">) {
+export function BoardTitle({ className, children, ...props }: React.ComponentProps<"h2">) {
   return (
     <h2
       data-slot="board-title"
       className={cn("font-display tracking-display text-title font-bold", className)}
       {...props}
-    />
+    >
+      {children}
+    </h2>
   );
 }
 

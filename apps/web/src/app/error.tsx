@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, SystemMark, SystemScreen } from "@plugfolio/ui";
+import { Button, cn, measure, SystemMark, SystemScreen } from "@plugfolio/ui";
 import { Check, Copy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -62,13 +62,13 @@ export default function Error({
 
   return (
     <div className="bg-background text-foreground flex min-h-dvh flex-col">
-      <header className="mx-auto flex w-full max-w-[1180px] items-center px-5 py-4 lg:px-11">
+      <header className={cn(measure(), "flex items-center py-4")}>
         <Link href="/" aria-label="Plugfolio home" className="flex items-center">
           <Logo layout="horizontal" tone="auto" />
         </Link>
       </header>
 
-      <main className="mx-auto w-full max-w-[1180px] flex-1 px-5 lg:px-11">
+      <main className={cn(measure(), "flex-1")}>
         <SystemScreen
           mark={<SystemMark state="cracked" title="A plug with a split body" />}
           title="Something went wrong."

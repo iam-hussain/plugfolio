@@ -30,10 +30,10 @@ export default async function CollabThreadPage({
   }
 
   return (
-    <div className="mx-auto max-w-[760px]">
+    <div className="mx-auto max-w-reading">
       <Link
         href="/collabs"
-        className="font-mono text-muted-foreground mb-3.5 inline-flex items-center gap-[7px] text-xs"
+        className="font-mono text-muted-foreground mb-3.5 inline-flex items-center gap-[7px] text-micro"
       >
         <ArrowLeft aria-hidden className="size-4" /> Collabs
       </Link>
@@ -44,7 +44,7 @@ export default async function CollabThreadPage({
           <span className="font-mono">/{thread.profileUsername}</span>
         </h1>
         <div className="mt-2 flex flex-wrap items-center gap-2.5">
-          <span className="text-muted-foreground text-[12.5px]">
+          <span className="text-muted-foreground text-micro">
             Source: {thread.requirementTitle ?? "Direct reach-out"}
           </span>
           <CollabStateBadge
@@ -63,21 +63,21 @@ export default async function CollabThreadPage({
           >
             <div className="max-w-[78%]">
               <div className="mb-1 flex items-center gap-2">
-                <span className="text-xs font-semibold">{message.senderName}</span>
+                <span className="text-micro font-semibold">{message.senderName}</span>
                 <Badge
                   shape="square"
                   variant="outline-muted"
-                  className="px-1.5 py-px text-[9px]"
+                  className="px-1.5 py-px text-pico"
                 >
                   {creatorSide ? "Creator" : "Business"}
                 </Badge>
-                <span className="font-mono text-faint text-[10px] tabular-nums">
+                <span className="font-mono text-faint text-pico tabular-nums">
                   {message.createdAt.toISOString().replace("T", " ").slice(0, 16)}
                 </span>
               </div>
               <div
                 className={cn(
-                  "border-border rounded-md border px-3.5 py-[11px] text-[13.5px] leading-normal",
+                  "border-border rounded-md border px-3.5 py-[11px] text-label leading-normal",
                   creatorSide ? "bg-active" : "bg-background",
                 )}
               >
@@ -106,10 +106,10 @@ export default async function CollabThreadPage({
         );
       })}
       {thread.messages.length === 0 ? (
-        <p className="text-faint py-8 text-center text-[13px]">No messages yet.</p>
+        <p className="text-faint py-8 text-center text-label">No messages yet.</p>
       ) : null}
 
-      <p className="font-mono text-faint pb-1 pt-2 text-center text-[11px]">
+      <p className="font-mono text-faint pb-1 pt-2 text-center text-nano">
         Read-only oversight — admins never write into threads.
       </p>
     </div>

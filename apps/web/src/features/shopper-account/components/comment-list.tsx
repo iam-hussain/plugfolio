@@ -31,7 +31,7 @@ function CommentIdentity({ comment }: { comment: CommentView }) {
     return (
       <>
         <span className="font-medium">{comment.asProfile.username}</span>{" "}
-        <span className="bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 text-[10px] font-medium">
+        <span className="bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 text-pico font-medium">
           Creator
         </span>
       </>
@@ -41,7 +41,7 @@ function CommentIdentity({ comment }: { comment: CommentView }) {
     <>
       <span className="font-medium">{comment.author.name ?? `@${comment.author.handle}`}</span>
       {comment.author.name ? (
-        <span className="text-muted-foreground text-xs"> @{comment.author.handle}</span>
+        <span className="text-muted-foreground text-micro"> @{comment.author.handle}</span>
       ) : null}
     </>
   );
@@ -50,7 +50,7 @@ function CommentIdentity({ comment }: { comment: CommentView }) {
 function CommentBody({ comment }: { comment: CommentView }) {
   return (
     <div className="group flex items-start gap-1">
-      <p className="text-sm">
+      <p className="text-copy">
         <CommentIdentity comment={comment} />{" "}
         <span className="text-muted-foreground">{comment.body}</span>
       </p>
@@ -63,7 +63,7 @@ function CommentBody({ comment }: { comment: CommentView }) {
 
 export function CommentList({ comments, replyContext, signedIn = false }: CommentListProps) {
   if (comments.length === 0) {
-    return <p className="text-muted-foreground text-sm">No comments yet.</p>;
+    return <p className="text-muted-foreground text-copy">No comments yet.</p>;
   }
 
   return (

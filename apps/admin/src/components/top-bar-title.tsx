@@ -17,7 +17,7 @@ export function TopBarTitle() {
     item.href === "/" ? pathname === "/" : pathname.startsWith(item.href),
   );
   return (
-    <span className="font-display text-[14.5px] font-semibold tracking-[-0.01em]">
+    <span className="font-display text-copy font-semibold tracking-[-0.01em]">
       {detail?.title ?? nav?.title ?? ""}
     </span>
   );

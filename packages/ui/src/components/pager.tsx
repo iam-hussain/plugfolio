@@ -17,7 +17,7 @@ export type PagerProps = {
 };
 
 const pageButton =
-  "border-border-strong bg-background text-foreground hover:bg-muted inline-flex h-[30px] min-w-[30px] items-center justify-center rounded-[7px] border px-2 text-[13px] font-semibold";
+  "border-border-strong bg-background text-foreground hover:bg-muted inline-flex h-[30px] min-w-[30px] items-center justify-center rounded-[7px] border px-2 text-label font-semibold";
 
 function pageNumbers(page: number, pages: number): (number | "gap")[] {
   if (pages <= 7) return Array.from({ length: pages }, (_, i) => i + 1);
@@ -40,7 +40,7 @@ export function Pager({ page, pageSize, total, hrefFor, className }: PagerProps)
       aria-label="Pagination"
       className={cn("flex flex-wrap items-center justify-between gap-3 px-0.5 pt-4", className)}
     >
-      <p className="text-muted-foreground text-xs tabular-nums">
+      <p className="text-muted-foreground text-micro tabular-nums">
         Showing {from.toLocaleString()}–{to.toLocaleString()} of {total.toLocaleString()}
       </p>
       <div className="flex items-center gap-1.5">

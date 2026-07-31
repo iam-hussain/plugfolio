@@ -98,7 +98,7 @@ export function AdminSidebar({ adminEmail }: { adminEmail: string }) {
           <Logo layout="symbol" tone="auto" markSize="sm" className="shrink-0" />
           <div className="group-data-[collapsible=icon]:hidden">
             <Wordmark tone="auto" className="text-lg leading-none" />
-            <p className="font-mono text-primary mt-[3px] text-[10px] font-bold uppercase leading-none tracking-[0.1em]">
+            <p className="font-mono text-primary mt-[3px] text-pico font-bold uppercase leading-none tracking-[0.1em]">
               Admin
             </p>
           </div>
@@ -108,7 +108,7 @@ export function AdminSidebar({ adminEmail }: { adminEmail: string }) {
         {NAV.map((group) => (
           <SidebarGroup key={group.label ?? "main"} className="p-0">
             {group.label ? (
-              <SidebarGroupLabel className="font-mono text-faint h-auto px-2.5 pb-1.5 pt-3.5 text-[10px] font-bold uppercase tracking-[0.1em] group-data-[collapsible=icon]:hidden">
+              <SidebarGroupLabel className="font-mono text-faint h-auto px-2.5 pb-1.5 pt-3.5 text-pico font-bold uppercase tracking-[0.1em] group-data-[collapsible=icon]:hidden">
                 {group.label}
               </SidebarGroupLabel>
             ) : null}
@@ -123,7 +123,7 @@ export function AdminSidebar({ adminEmail }: { adminEmail: string }) {
                         asChild
                         isActive={active}
                         tooltip={item.title}
-                        className="text-muted-foreground hover:bg-muted hover:text-foreground data-[active=true]:bg-active data-[active=true]:text-primary gap-[11px] rounded-lg px-2.5 py-2 text-[13.5px] font-medium data-[active=true]:font-semibold"
+                        className="text-muted-foreground hover:bg-muted hover:text-foreground data-[active=true]:bg-active data-[active=true]:text-primary gap-[11px] rounded-lg px-2.5 py-2 text-label font-medium data-[active=true]:font-semibold"
                       >
                         <Link href={item.href}>
                           <item.icon />
@@ -139,14 +139,14 @@ export function AdminSidebar({ adminEmail }: { adminEmail: string }) {
         ))}
       </SidebarContent>
       <SidebarFooter className="border-border border-t p-3">
-        <p className="text-faint truncate px-2 pb-2 text-xs group-data-[collapsible=icon]:hidden">
+        <p className="text-faint truncate px-2 pb-2 text-micro group-data-[collapsible=icon]:hidden">
           {adminEmail}
         </p>
         <form action={logout}>
           <SidebarMenuButton
             type="submit"
             tooltip="Sign out"
-            className="text-muted-foreground hover:bg-muted hover:text-foreground gap-[11px] rounded-lg px-2.5 py-2 text-[13.5px] font-medium"
+            className="text-muted-foreground hover:bg-muted hover:text-foreground gap-[11px] rounded-lg px-2.5 py-2 text-label font-medium"
           >
             <LogOut />
             <span>Sign out</span>

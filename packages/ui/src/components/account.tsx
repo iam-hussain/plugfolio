@@ -50,7 +50,7 @@ export function AccountSection({
 }) {
   return (
     <section id={id} className="scroll-mt-24 pt-[clamp(30px,4vw,46px)]">
-      <h2 className="font-display text-[1.375rem] font-bold leading-[1.2] tracking-[-0.02em]">
+      <h2 className="font-display text-title font-bold leading-[1.2] tracking-[-0.02em]">
         {title}
       </h2>
       {lead ? (
@@ -133,8 +133,8 @@ export function RoleBlock({
     >
       <div className="flex flex-wrap items-center gap-3">
         <span aria-hidden className="bg-role-deep size-2.5 flex-none rounded-pill" />
-        <b className="font-display text-[1.375rem] font-bold tracking-[-0.02em]">{title}</b>
-        <span className="text-faint font-sans text-xs font-semibold uppercase tracking-[0.06em]">
+        <b className="font-display text-title font-bold tracking-[-0.02em]">{title}</b>
+        <span className="text-faint font-sans text-micro font-semibold uppercase tracking-[0.06em]">
           {note}
         </span>
         {action ? <div className="ml-auto">{action}</div> : null}
@@ -207,9 +207,9 @@ export function ProfileRow({
       </span>
       <span className="min-w-0">
         <b className="block truncate text-label font-bold">@{username}</b>
-        <span className="text-faint block truncate text-xs">{meta}</span>
+        <span className="text-faint block truncate text-micro">{meta}</span>
       </span>
-      <span className="text-muted-foreground ml-auto whitespace-nowrap text-xs font-bold">
+      <span className="text-muted-foreground ml-auto whitespace-nowrap text-micro font-bold">
         {badge}
       </span>
     </Comp>

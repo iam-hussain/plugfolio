@@ -42,7 +42,7 @@ export function ProposeTermsForm({ collabId }: { collabId: string }) {
 
   return (
     <Collapsible>
-      <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm">
+      <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-copy">
         <ChevronDown className="size-4" />
         Propose terms
       </CollapsibleTrigger>
@@ -87,12 +87,12 @@ export function ProposeTermsForm({ collabId }: { collabId: string }) {
             </div>
           </div>
           {submit.isError ? (
-            <p role="alert" className="text-destructive text-xs">
+            <p role="alert" className="text-destructive text-micro">
               {submit.error.message}
             </p>
           ) : null}
           <div className="flex items-center justify-between gap-3">
-            <p className="text-muted-foreground text-xs">
+            <p className="text-muted-foreground text-micro">
               A new proposal resets both acceptances.
             </p>
             <Button type="submit" size="sm" disabled={submit.isPending || !content.trim()}>

@@ -85,12 +85,12 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
                     href={post.mediaUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="font-mono text-primary text-[11px]"
+                    className="font-mono text-primary text-nano"
                   >
                     View media ↗
                   </a>
                 </TableCell>
-                <TableCell className="font-mono text-muted-foreground text-xs">
+                <TableCell className="font-mono text-muted-foreground text-micro">
                   /{post.username}
                 </TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">

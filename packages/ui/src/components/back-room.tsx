@@ -3,6 +3,35 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cn } from "../lib/cn";
 
+/** The underlined section tab across the top of the back room. */
+const dashTab = cva(
+  "text-label -mb-px inline-flex min-h-[44px] flex-none snap-start items-center rounded-t-image border-b-2 px-3.5 py-2.5 font-semibold hover:text-primary",
+  {
+    variants: {
+      current: {
+        true: "border-primary text-foreground font-bold",
+        false: "text-muted-foreground border-transparent",
+      },
+    },
+    defaultVariants: { current: false },
+  },
+);
+
+/** The pill filter beside a list — anything interactive is a pill (§7). */
+const dashFilter = cva(
+  "text-micro rounded-pill inline-flex min-h-10 flex-none items-center border px-4 py-2.5 font-bold",
+  {
+    variants: {
+      current: {
+        true: "bg-foreground border-foreground text-background",
+        false: "border-border bg-card text-muted-foreground hover:border-primary hover:text-primary",
+      },
+    },
+    defaultVariants: { current: false },
+  },
+);
+import { measure } from "./measure";
+
 /**
  * THE BACK ROOM (DESIGN styles.css §"THE BACK ROOM", dashboard.html) — the
  * creator's dashboard, post editor and product editor.
@@ -24,7 +53,7 @@ import { cn } from "../lib/cn";
 export function DashHeader({ children }: { children: React.ReactNode }) {
   return (
     <div className="border-border bg-background sticky top-0 z-40 border-b">
-      <div className="mx-auto w-full max-w-inner px-5 lg:px-10">{children}</div>
+      <div className={measure()}>{children}</div>
     </div>
   );
 }
@@ -59,14 +88,7 @@ export function DashTab({
   return (
     <Comp
       aria-current={current ? "page" : undefined}
-      className={cn(
-        "text-label -mb-px inline-flex flex-none snap-start items-center rounded-t-image border-b-2 px-3.5 py-2.5 font-semibold",
-        "min-h-[44px] hover:text-primary",
-        current
-          ? "border-primary text-foreground font-bold"
-          : "text-muted-foreground border-transparent",
-        className,
-      )}
+      className={cn(dashTab({ current }), className)}
       {...props}
     />
   );
@@ -74,7 +96,7 @@ export function DashTab({
 
 /** The centred column every back-room page body sits in. */
 export function DashPage({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <main className={cn("mx-auto w-full max-w-inner px-5 lg:px-10", className)}>{children}</main>;
+  return <main className={cn(measure(), className)}>{children}</main>;
 }
 
 /* ── Page header ───────────────────────────────────────────────────────────
@@ -342,13 +364,7 @@ export function FilterButton({
   return (
     <Comp
       aria-current={current ? "true" : undefined}
-      className={cn(
-        "text-micro rounded-pill inline-flex min-h-10 flex-none items-center border px-4 py-2.5 font-bold",
-        current
-          ? "bg-foreground border-foreground text-background"
-          : "border-border bg-card text-muted-foreground hover:border-primary hover:text-primary",
-        className,
-      )}
+      className={cn(dashFilter({ current }), className)}
       {...props}
     >
       <Slottable>{children}</Slottable>

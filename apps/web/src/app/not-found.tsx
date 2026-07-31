@@ -1,7 +1,7 @@
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Button, SystemMark, SystemScreen } from "@plugfolio/ui";
+import { Button, cn, measure, SystemMark, SystemScreen } from "@plugfolio/ui";
 import { exploreCreators } from "@plugfolio/core";
 import { Logo } from "@/components/brand";
 import { SiteFooter } from "@/components/chrome/site-footer";
@@ -35,14 +35,14 @@ export default async function NotFound() {
 
   return (
     <div className="bg-background text-foreground flex min-h-dvh flex-col">
-      <header className="mx-auto flex w-full max-w-[1180px] items-center px-5 py-4 lg:px-11">
+      <header className={cn(measure(), "flex items-center py-4")}>
         <Link href="/" aria-label="Plugfolio home" className="flex items-center">
           <Logo layout="horizontal" tone="auto" />
         </Link>
       </header>
 
       <main className="flex-1">
-        <div className="mx-auto w-full max-w-[1180px] px-5 lg:px-11">
+        <div className={measure()}>
           <SystemScreen
             mark={<SystemMark state="unplugged" title="An unplugged plug" />}
             title="This page doesn’t exist."

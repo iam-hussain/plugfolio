@@ -31,7 +31,7 @@ const badgeVariants = cva(
       shape: {
         pill: "",
         // Admin design: 6px-radius chips at 11px/600.
-        square: "rounded-[6px] px-2 py-0.5 text-[11px] font-semibold leading-normal",
+        square: "rounded-[6px] px-2 py-0.5 text-nano font-semibold leading-normal",
       },
     },
     defaultVariants: {

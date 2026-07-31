@@ -43,7 +43,7 @@ const FAN = [
   { rest: "md:[transform:translate(calc(-50%_+_300px),54px)_rotate(15deg)]", hover: "md:hover:[transform:translate(calc(-50%_+_300px),28px)_rotate(15deg)]", z: "md:z-10" },
 ] as const;
 
-const eyebrow = "font-sans text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground";
+const eyebrow = "font-sans text-micro font-semibold uppercase tracking-[0.06em] text-muted-foreground";
 
 export function LandingPage() {
   return (
@@ -54,8 +54,8 @@ export function LandingPage() {
       <main id="main">
         {/* ── Section 1 — the deck hero ── */}
         <section className="px-5 pt-6 lg:px-10">
-          <div className="mx-auto max-w-[1200px] text-center">
-            <span className="bg-active text-brand-violet-deep inline-flex items-center gap-2 rounded-pill px-4 py-2 text-[13px] font-semibold">
+          <div className="mx-auto max-w-inner text-center">
+            <span className="bg-active text-brand-violet-deep inline-flex items-center gap-2 rounded-pill px-4 py-2 text-label font-semibold">
               <span className="bg-primary size-[7px] rounded-pill" aria-hidden />
               No account needed to shop
             </span>
@@ -64,7 +64,7 @@ export function LandingPage() {
               <br />
               The whole deck.
             </h1>
-            <p className="text-muted-foreground mx-auto mt-5 max-w-[48ch] text-[1.0625rem] leading-relaxed">
+            <p className="text-muted-foreground mx-auto mt-5 max-w-[48ch] text-body leading-relaxed">
               Every post a creator makes is a card you can buy from. Tap one and land at the
               retailer — no account, no cart, no checkout.
             </p>
@@ -81,7 +81,7 @@ export function LandingPage() {
           {/* The fan of shoppable posts — absolute overlap on desktop, snap rail on phones. */}
           <ul
             aria-label="Shoppable posts from creators"
-            className="relative mx-auto mt-8 flex max-w-[1200px] snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [scrollbar-width:none] md:mt-[clamp(30px,4vw,50px)] md:block md:h-[clamp(340px,38vw,430px)] md:snap-none md:overflow-visible md:pb-0"
+            className="relative mx-auto mt-8 flex max-w-inner snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [scrollbar-width:none] md:mt-[clamp(30px,4vw,50px)] md:block md:h-[clamp(340px,38vw,430px)] md:snap-none md:overflow-visible md:pb-0"
           >
             {DECK.map((card, i) => (
               <li key={`${card.handle}-${card.photo}`} className="contents">
@@ -112,8 +112,8 @@ export function LandingPage() {
                       height={22}
                       className="rounded-pill object-cover"
                     />
-                    <b className="text-[13px] font-semibold">@{card.handle}</b>
-                    <em className="text-brand-violet-deep ml-auto text-xs font-bold not-italic">
+                    <b className="text-label font-semibold">@{card.handle}</b>
+                    <em className="text-brand-violet-deep ml-auto text-micro font-bold not-italic">
                       {card.tagged} tagged
                     </em>
                   </div>
@@ -125,19 +125,19 @@ export function LandingPage() {
 
         {/* ── Section 2 — three taps ── */}
         <section id="how" aria-labelledby="how-h" className="px-5 pt-[clamp(56px,9vw,96px)] lg:px-10">
-          <div className="mx-auto max-w-[1200px]">
+          <div className="mx-auto max-w-inner">
             <div className="mx-auto max-w-[42ch] text-center">
-              <h2 id="how-h" className="font-display text-[clamp(1.875rem,3.6vw,3rem)] font-bold leading-[1.08] tracking-[-0.035em] text-balance">
+              <h2 id="how-h" className="font-display text-display font-bold leading-[1.08] tracking-[-0.035em] text-balance">
                 Three taps from a post to the shop.
               </h2>
-              <p className="text-muted-foreground mt-4 text-[1.0625rem] leading-relaxed">
+              <p className="text-muted-foreground mt-4 text-body leading-relaxed">
                 Nothing in between asks who you are.
               </p>
             </div>
 
             <ol className="mt-[clamp(34px,4vw,52px)] grid gap-[34px] md:grid-cols-3 md:gap-7">
               <TrailStep n={1} tone="sky" tilt="[transform:rotate(-1.6deg)]" title="Find a creator" copy="Search a name, or arrive straight from their bio link. Nothing asks you to sign in.">
-                <div className="bg-card text-foreground rounded-pill flex items-center gap-2 px-3.5 py-2.5 text-[13px] font-semibold">
+                <div className="bg-card text-foreground rounded-pill flex items-center gap-2 px-3.5 py-2.5 text-label font-semibold">
                   <span className="opacity-50" aria-hidden>⌕</span>@mayamoves
                   <span className="bg-primary ml-0.5 h-3.5 w-0.5" aria-hidden />
                 </div>
@@ -155,11 +155,11 @@ export function LandingPage() {
               <TrailStep n={3} tone="mint" tilt="[transform:rotate(-1.2deg)] md:mt-14" title="Buy at the retailer" copy="One tap opens the store you already shop with. Plugfolio runs no cart and no checkout.">
                 <div className="bg-card rounded-image grid gap-1.5 p-4">
                   <span className={eyebrow}>Handing you over</span>
-                  <b className="font-display text-[1.375rem] tracking-[-0.02em]">amazon.in</b>
-                  <span className="bg-foreground text-background rounded-pill mt-1 inline-flex w-fit px-3.5 py-1.5 text-[13px] font-bold">
+                  <b className="font-display text-title tracking-[-0.02em]">amazon.in</b>
+                  <span className="bg-foreground text-background rounded-pill mt-1 inline-flex w-fit px-3.5 py-1.5 text-label font-bold">
                     Opening…
                   </span>
-                  <span className="text-muted-foreground text-xs">We never see your card</span>
+                  <span className="text-muted-foreground text-micro">We never see your card</span>
                 </div>
               </TrailStep>
             </ol>
@@ -175,8 +175,8 @@ export function LandingPage() {
 
         {/* ── Section 3 — pick your side ── */}
         <section aria-labelledby="doors-h" className="px-5 pt-[clamp(56px,9vw,96px)] pb-[clamp(56px,9vw,96px)] lg:px-10">
-          <div className="mx-auto max-w-[1200px]">
-            <h2 id="doors-h" className="font-display mx-auto max-w-[42ch] text-center text-[clamp(1.875rem,3.6vw,3rem)] font-bold leading-[1.08] tracking-[-0.035em]">
+          <div className="mx-auto max-w-inner">
+            <h2 id="doors-h" className="font-display mx-auto max-w-[42ch] text-center text-display font-bold leading-[1.08] tracking-[-0.035em]">
               Pick your side.
             </h2>
             <div className="mt-[clamp(30px,4vw,46px)] grid gap-4 md:grid-cols-2">
@@ -226,11 +226,11 @@ function TrailStep({
       >
         {children}
       </Tile>
-      <span className="bg-foreground text-background mt-5 mb-3 inline-grid size-[34px] place-items-center rounded-pill text-[13px] font-bold">
+      <span className="bg-foreground text-background mt-5 mb-3 inline-grid size-[34px] place-items-center rounded-pill text-label font-bold">
         {n}
       </span>
-      <h3 className="font-display mb-2 text-[1.375rem] font-bold tracking-[-0.02em]">{title}</h3>
-      <p className="text-muted-foreground text-[0.9375rem] leading-[1.55]">{copy}</p>
+      <h3 className="font-display mb-2 text-title font-bold tracking-[-0.02em]">{title}</h3>
+      <p className="text-muted-foreground text-copy leading-[1.55]">{copy}</p>
     </li>
   );
 }
@@ -250,8 +250,8 @@ function MockCreator({
     <div className={`bg-card rounded-image flex items-center gap-2.5 p-2.5 ${dim ? "opacity-60" : ""}`}>
       <Image src={`/landing/avatars/${avatar}.jpg`} alt="" width={26} height={26} className="rounded-pill object-cover" />
       <span>
-        <b className="text-foreground block text-[13px] font-semibold">@{handle}</b>
-        <i className="text-muted-foreground block text-xs not-italic">{meta}</i>
+        <b className="text-foreground block text-label font-semibold">@{handle}</b>
+        <i className="text-muted-foreground block text-micro not-italic">{meta}</i>
       </span>
     </div>
   );
@@ -294,26 +294,26 @@ function DoorCard({
         aria-hidden
         className="from-role-solid/35 pointer-events-none absolute inset-0 bg-gradient-to-br via-transparent to-transparent opacity-70 transition-opacity duration-200 group-hover/db:opacity-100"
       />
-      <span className="text-muted-foreground relative flex items-center gap-2 text-[0.9375rem]">
+      <span className="text-muted-foreground relative flex items-center gap-2 text-copy">
         <span className="bg-role-deep size-[6px] rounded-pill" aria-hidden />
         {micro}
       </span>
-      <h3 className="font-display relative mt-3.5 mb-2.5 text-[clamp(1.875rem,3.6vw,3rem)] font-extrabold leading-none tracking-[-0.035em]">
+      <h3 className="font-display relative mt-3.5 mb-2.5 text-display font-extrabold leading-none tracking-[-0.035em]">
         {title}
       </h3>
-      <p className="text-muted-foreground relative max-w-[44ch] text-[0.9375rem] leading-[1.55]">
+      <p className="text-muted-foreground relative max-w-[44ch] text-copy leading-[1.55]">
         {copy}
       </p>
       {list ? (
         <ul className="border-border relative mt-[22px] border-t">
           {list.map((item) => (
-            <li key={item} className="border-border text-muted-foreground border-b py-2.5 text-[0.9375rem]">
+            <li key={item} className="border-border text-muted-foreground border-b py-2.5 text-copy">
               {item}
             </li>
           ))}
         </ul>
       ) : null}
-      <span className="text-foreground relative mt-auto flex items-center justify-between pt-6 text-[13px] font-bold">
+      <span className="text-foreground relative mt-auto flex items-center justify-between pt-6 text-label font-bold">
         {go}
         <span
           aria-hidden

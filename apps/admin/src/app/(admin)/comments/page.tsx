@@ -94,7 +94,7 @@ export default async function CommentsPage({
                 <TableCell className="max-w-[420px]">
                   <span className="block truncate leading-[1.4]">{comment.body}</span>
                   {comment.replyCount > 0 ? (
-                    <span className="text-muted-foreground mt-0.5 block text-xs">
+                    <span className="text-muted-foreground mt-0.5 block text-micro">
                       {comment.replyCount} repl{comment.replyCount > 1 ? "ies" : "y"} (deleted with
                       it)
                     </span>
@@ -106,16 +106,16 @@ export default async function CommentsPage({
                       /{comment.asProfileUsername}
                     </Badge>
                   ) : (
-                    <span className="font-mono text-muted-foreground text-xs">
+                    <span className="font-mono text-muted-foreground text-micro">
                       @{comment.authorHandle}
                     </span>
                   )}
                 </TableCell>
-                <TableCell className="text-muted-foreground max-w-[200px] truncate text-[12.5px]">
+                <TableCell className="text-muted-foreground max-w-[200px] truncate text-micro">
                   /{comment.pageUsername}
                   {comment.productTitle ? ` · ${comment.productTitle}` : ""}
                 </TableCell>
-                <TableCell className="font-mono text-faint text-[11.5px] tabular-nums">
+                <TableCell className="font-mono text-faint text-nano tabular-nums">
                   {comment.createdAt.toISOString().replace("T", " ").slice(0, 16)}
                 </TableCell>
                 <TableCell className="text-right">
@@ -148,7 +148,7 @@ export default async function CommentsPage({
               <a href={moreHref}>Load more</a>
             </Button>
           ) : null}
-          <span className="font-mono text-faint text-[11px] tabular-nums">
+          <span className="font-mono text-faint text-nano tabular-nums">
             Showing {rows.length.toLocaleString()} of {total.toLocaleString()}
           </span>
         </div>

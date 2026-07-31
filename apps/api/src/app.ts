@@ -82,7 +82,6 @@ import {
   createSupportTicketInput,
   isFeatureEnabled,
   ForbiddenError,
-  updateProductAffiliateUrl,
   updateProductInput,
 } from "@plugfolio/core";
 import { deviceIdentity, requireUserId, sessionUserId } from "./auth";

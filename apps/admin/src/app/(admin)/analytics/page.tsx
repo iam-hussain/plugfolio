@@ -30,7 +30,7 @@ export default async function AnalyticsPage() {
   return (
     <div className="max-w-[1100px]">
       <h1 className="font-display text-2xl font-bold tracking-[-0.02em]">Analytics</h1>
-      <p className="text-muted-foreground mb-5 mt-1 text-[13.5px]">
+      <p className="text-muted-foreground mb-5 mt-1 text-label">
         Projections over the append-only tap and code-copy events — the same truth Earnings reads.
       </p>
 
@@ -42,44 +42,44 @@ export default async function AnalyticsPage() {
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <Panel className="px-5 py-[18px]">
-          <h2 className="font-display mb-2 text-[15px] font-bold">Top profiles · 30d</h2>
+          <h2 className="font-display mb-2 text-copy font-bold">Top profiles · 30d</h2>
           {analytics.topProfiles.map((row) => (
             <div
               key={row.username}
               className="border-border flex items-center justify-between border-t py-[7px]"
             >
-              <span className="font-mono text-muted-foreground text-xs">/{row.username}</span>
-              <span className="text-[13.5px] font-semibold tabular-nums">
+              <span className="font-mono text-muted-foreground text-micro">/{row.username}</span>
+              <span className="text-label font-semibold tabular-nums">
                 {row.taps.toLocaleString()}
               </span>
             </div>
           ))}
           {analytics.topProfiles.length === 0 ? (
-            <p className="text-faint border-border border-t py-6 text-center text-[13px]">
+            <p className="text-faint border-border border-t py-6 text-center text-label">
               No taps yet.
             </p>
           ) : null}
         </Panel>
         <Panel className="px-5 py-[18px]">
-          <h2 className="font-display mb-2 text-[15px] font-bold">Top products · 30d</h2>
+          <h2 className="font-display mb-2 text-copy font-bold">Top products · 30d</h2>
           {analytics.topProducts.map((row, index) => (
             <div
               key={`${row.title}-${index}`}
               className="border-border flex items-center justify-between gap-3 border-t py-[7px]"
             >
               <span className="min-w-0">
-                <span className="block truncate text-[13px] font-medium">{row.title}</span>
-                <span className="font-mono text-muted-foreground block text-xs">
+                <span className="block truncate text-label font-medium">{row.title}</span>
+                <span className="font-mono text-muted-foreground block text-micro">
                   /{row.username}
                 </span>
               </span>
-              <span className="shrink-0 text-[13.5px] font-semibold tabular-nums">
+              <span className="shrink-0 text-label font-semibold tabular-nums">
                 {row.taps.toLocaleString()}
               </span>
             </div>
           ))}
           {analytics.topProducts.length === 0 ? (
-            <p className="text-faint border-border border-t py-6 text-center text-[13px]">
+            <p className="text-faint border-border border-t py-6 text-center text-label">
               No taps yet.
             </p>
           ) : null}
@@ -87,12 +87,12 @@ export default async function AnalyticsPage() {
       </div>
 
       <Panel className="mt-4 max-w-[520px] px-5 py-[18px]">
-        <h2 className="font-display mb-3 text-[15px] font-bold">Tap sources · 30d</h2>
+        <h2 className="font-display mb-3 text-copy font-bold">Tap sources · 30d</h2>
         {analytics.sourceSplit.map((row) => {
           const pct = splitTotal === 0 ? 0 : Math.round((row.taps / splitTotal) * 100);
           return (
             <div key={row.source} className="mb-3">
-              <div className="mb-[5px] flex items-center justify-between text-[13px]">
+              <div className="mb-[5px] flex items-center justify-between text-label">
                 <span className="capitalize">{row.source}</span>
                 <span className="text-muted-foreground tabular-nums">
                   {row.taps.toLocaleString()} · {pct}%
@@ -103,14 +103,14 @@ export default async function AnalyticsPage() {
           );
         })}
         {analytics.sourceSplit.length === 0 ? (
-          <p className="text-faint py-4 text-center text-[13px]">No taps yet.</p>
+          <p className="text-faint py-4 text-center text-label">No taps yet.</p>
         ) : null}
       </Panel>
 
       <Panel className="mt-4 px-5 py-[18px]">
         <div className="mb-3.5 flex items-center justify-between">
-          <h2 className="font-display text-[15px] font-bold">Taps · last 30 days</h2>
-          <span className="text-muted-foreground flex items-center gap-1.5 text-[11px]">
+          <h2 className="font-display text-copy font-bold">Taps · last 30 days</h2>
+          <span className="text-muted-foreground flex items-center gap-1.5 text-nano">
             <span aria-hidden className="bg-primary size-[9px] rounded-[2px]" />
             Taps
           </span>
@@ -124,7 +124,7 @@ export default async function AnalyticsPage() {
             />
           ))}
         </div>
-        <div className="font-mono text-faint mt-2 flex justify-between text-[10px]">
+        <div className="font-mono text-faint mt-2 flex justify-between text-pico">
           <span>30d ago</span>
           <span>Today</span>
         </div>

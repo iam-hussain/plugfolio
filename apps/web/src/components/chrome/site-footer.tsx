@@ -1,5 +1,6 @@
 import type { Route } from "next";
 import Link from "next/link";
+import { cn, measure } from "@plugfolio/ui";
 import { Logo } from "@/components/brand";
 
 /**
@@ -33,7 +34,7 @@ export function SiteFooter({ note }: SiteFooterProps = {}) {
   const line = note === undefined ? `One link, everything shoppable · ${new Date().getFullYear()}` : note;
   return (
     <footer className="border-border border-t">
-      <div className="mx-auto flex w-full max-w-[1180px] flex-wrap items-center justify-between gap-x-6 gap-y-1.5 px-5 pb-[clamp(14px,2vw,22px)] pt-[clamp(22px,3vw,32px)] lg:px-11">
+      <div className={cn(measure(), "flex flex-wrap items-center justify-between gap-x-6 gap-y-1.5 pb-[clamp(14px,2vw,22px)] pt-[clamp(22px,3vw,32px)]")}>
         <Link href="/" aria-label="Plugfolio home" className="flex items-center">
           <Logo layout="horizontal" tone="auto" />
         </Link>
@@ -42,13 +43,13 @@ export function SiteFooter({ note }: SiteFooterProps = {}) {
             <Link
               key={item.label}
               href={item.href}
-              className="text-muted-foreground hover:text-primary inline-flex min-h-11 items-center py-3 text-[13px] font-semibold transition-colors"
+              className="text-muted-foreground hover:text-primary inline-flex min-h-11 items-center py-3 text-label font-semibold transition-colors"
             >
               {item.label}
             </Link>
           ))}
           {line ? (
-            <span className="text-faint font-sans text-xs font-semibold uppercase tracking-[0.06em]">
+            <span className="text-faint font-sans text-micro font-semibold uppercase tracking-[0.06em]">
               {line}
             </span>
           ) : null}

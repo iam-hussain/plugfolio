@@ -114,10 +114,10 @@ export default async function ReportsPage({
                     <span className="flex items-start gap-[9px]">
                       <meta.icon aria-hidden className="text-muted-foreground mt-px size-4 shrink-0" />
                       <span className="min-w-0">
-                        <span className="font-mono text-faint block text-[10px] font-bold uppercase tracking-[0.09em]">
+                        <span className="font-mono text-faint block text-pico font-bold uppercase tracking-[0.09em]">
                           {meta.label}
                         </span>
-                        <span className="mt-0.5 block truncate text-[13px]">{report.snippet}</span>
+                        <span className="mt-0.5 block truncate text-label">{report.snippet}</span>
                       </span>
                     </span>
                   </TableCell>
@@ -126,12 +126,12 @@ export default async function ReportsPage({
                       {CATEGORY_LABEL[report.category] ?? report.category}
                     </Badge>
                     {report.note ? (
-                      <span className="text-muted-foreground mt-0.5 block text-xs">
+                      <span className="text-muted-foreground mt-0.5 block text-micro">
                         {report.note}
                       </span>
                     ) : null}
                   </TableCell>
-                  <TableCell className="font-mono text-muted-foreground text-[11.5px]">
+                  <TableCell className="font-mono text-muted-foreground text-nano">
                     {report.reporterLabel}
                   </TableCell>
                   <TableCell className="text-muted-foreground tabular-nums">

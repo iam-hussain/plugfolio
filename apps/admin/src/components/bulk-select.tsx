@@ -117,7 +117,7 @@ export function BulkBar({
         >
           <X aria-hidden className="size-[15px]" />
         </Button>
-        <span className="text-[13.5px] font-bold tabular-nums">{count} selected</span>
+        <span className="text-label font-bold tabular-nums">{count} selected</span>
       </div>
       <ConfirmDialog
         trigger={

@@ -20,7 +20,7 @@ export function NewProfileButton() {
         {create.isPending ? "Creating…" : "New profile"}
       </Button>
       {create.isError ? (
-        <p role="alert" className="text-muted-foreground text-xs">
+        <p role="alert" className="text-muted-foreground text-micro">
           {create.error.message}
         </p>
       ) : null}

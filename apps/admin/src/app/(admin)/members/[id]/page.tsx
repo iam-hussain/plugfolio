@@ -32,7 +32,7 @@ const PROVIDER_LABEL: Record<string, string> = {
 };
 
 function sectionTitle(text: string) {
-  return <h2 className="font-display mb-1.5 text-[15px] font-bold">{text}</h2>;
+  return <h2 className="font-display mb-1.5 text-copy font-bold">{text}</h2>;
 }
 
 export default async function MemberDetailPage({
@@ -56,7 +56,7 @@ export default async function MemberDetailPage({
     <div className="max-w-[940px]">
       <Link
         href="/members"
-        className="font-mono text-muted-foreground mb-3.5 inline-flex items-center gap-[7px] text-xs"
+        className="font-mono text-muted-foreground mb-3.5 inline-flex items-center gap-[7px] text-micro"
       >
         <ArrowLeft aria-hidden className="size-4" /> Members / {member.email}
       </Link>
@@ -64,7 +64,7 @@ export default async function MemberDetailPage({
       {member.suspendedAt ? (
         <div className="bg-destructive/10 border-destructive/30 mb-4 flex items-start gap-[11px] rounded-[10px] border px-3.5 py-3">
           <AlertTriangle aria-hidden className="text-destructive mt-px size-[18px] shrink-0" />
-          <p className="text-[13px] font-semibold">
+          <p className="text-label font-semibold">
             This member is suspended — blocked from signing in, all owned profiles hidden.
           </p>
         </div>
@@ -72,8 +72,8 @@ export default async function MemberDetailPage({
 
       <Panel className="flex flex-wrap items-start justify-between gap-5 px-6 py-[22px]">
         <div>
-          <h1 className="font-display text-[22px] font-bold tracking-[-0.02em]">{member.email}</h1>
-          <p className="text-muted-foreground mt-1 text-[13.5px]">
+          <h1 className="font-display text-title font-bold tracking-[-0.02em]">{member.email}</h1>
+          <p className="text-muted-foreground mt-1 text-label">
             {member.name ?? "—"} · <span className="font-mono">@{member.username}</span>
           </p>
           <div className="mt-3 flex flex-wrap gap-1.5">
@@ -180,14 +180,14 @@ export default async function MemberDetailPage({
               key={profile.id}
               className="border-border flex items-center justify-between border-t py-[9px]"
             >
-              <Link href={`/profiles/${profile.id}`} className="font-mono text-[13px] font-bold">
+              <Link href={`/profiles/${profile.id}`} className="font-mono text-label font-bold">
                 /{profile.username}
               </Link>
               <Badge shape="square" variant="soft-primary">{profile.role}</Badge>
             </div>
           ))}
           {member.profiles.length === 0 ? (
-            <p className="text-faint border-border border-t py-5 text-center text-[13px]">
+            <p className="text-faint border-border border-t py-5 text-center text-label">
               No profiles.
             </p>
           ) : null}
@@ -201,14 +201,14 @@ export default async function MemberDetailPage({
               className="border-border flex items-center gap-2.5 border-t py-[9px]"
             >
               <Link2 aria-hidden className="text-muted-foreground size-4 shrink-0" />
-              <span className="flex-1 text-[13px] font-medium">
+              <span className="flex-1 text-label font-medium">
                 {PROVIDER_LABEL[social.provider] ?? social.provider}
               </span>
-              <span className="text-faint text-[11px]">connected</span>
+              <span className="text-faint text-nano">connected</span>
             </div>
           ))}
           {member.socials.length === 0 ? (
-            <p className="text-faint border-border border-t py-5 text-center text-[13px]">
+            <p className="text-faint border-border border-t py-5 text-center text-label">
               Nothing connected.
             </p>
           ) : null}
@@ -216,24 +216,24 @@ export default async function MemberDetailPage({
 
         <Panel className="px-5 py-[18px]">
           <div className="mb-1.5 flex items-center justify-between">
-            <h2 className="font-display text-[15px] font-bold">Recent comments</h2>
+            <h2 className="font-display text-copy font-bold">Recent comments</h2>
             <Link
               href={`/comments?q=${encodeURIComponent(member.username)}`}
-              className="font-mono text-primary text-[11px]"
+              className="font-mono text-primary text-nano"
             >
               All →
             </Link>
           </div>
           {member.recentComments.map((comment, index) => (
             <div key={index} className="border-border border-t py-[9px]">
-              <p className="text-[13px]">{comment.body}</p>
-              <p className="font-mono text-muted-foreground mt-0.5 text-xs tabular-nums">
+              <p className="text-label">{comment.body}</p>
+              <p className="font-mono text-muted-foreground mt-0.5 text-micro tabular-nums">
                 {comment.createdAt.toISOString().slice(0, 10)}
               </p>
             </div>
           ))}
           {member.recentComments.length === 0 ? (
-            <p className="text-faint border-border border-t py-5 text-center text-[13px]">
+            <p className="text-faint border-border border-t py-5 text-center text-label">
               No comments.
             </p>
           ) : null}
@@ -241,15 +241,15 @@ export default async function MemberDetailPage({
 
         <Panel className="px-5 py-[18px]">
           {sectionTitle("Meta")}
-          <div className="border-border flex justify-between border-t py-[9px] text-[13px]">
+          <div className="border-border flex justify-between border-t py-[9px] text-label">
             <span className="text-muted-foreground">Joined</span>
             <span className="tabular-nums">{member.createdAt.toISOString().slice(0, 10)}</span>
           </div>
-          <div className="border-border flex justify-between border-t py-[9px] text-[13px]">
+          <div className="border-border flex justify-between border-t py-[9px] text-label">
             <span className="text-muted-foreground">Member id</span>
-            <span className="font-mono text-xs">{member.id}</span>
+            <span className="font-mono text-micro">{member.id}</span>
           </div>
-          <div className="border-border flex justify-between border-t py-[9px] text-[13px]">
+          <div className="border-border flex justify-between border-t py-[9px] text-label">
             <span className="text-muted-foreground">Following</span>
             <span className="tabular-nums">{member.followingCount}</span>
           </div>

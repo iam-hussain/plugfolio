@@ -1,6 +1,22 @@
 import * as React from "react";
 import { Slot, Slottable } from "@radix-ui/react-slot";
+import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
+
+/**
+ * The corner flag on a product tile. Lime means "there is an offer here" and
+ * nothing else (§7 lime-means-offer) — it prints the code so a shopper knows
+ * what they're getting before the tap.
+ */
+const productFlag = cva(
+  "text-micro absolute left-2 top-2 rounded-pill px-2.5 py-1 font-bold uppercase tracking-[0.04em]",
+  {
+    variants: {
+      tone: { offer: "bg-accent text-accent-foreground", own: "bg-active text-primary" },
+    },
+    defaultVariants: { tone: "own" },
+  },
+);
 
 /**
  * Explore (DESIGN explore.html) — the fan of creators, the wall of posts, and
@@ -191,14 +207,7 @@ export function ThingCard({
         <div className="rounded-image bg-active aspect-square w-full overflow-hidden">{image}</div>
         {flag ? (
           <span
-            className={cn(
-              "text-micro absolute left-2 top-2 rounded-pill px-2.5 py-1 font-bold uppercase tracking-[0.04em]",
-              // Lime still means "there is an offer here", and it prints the
-              // code so a shopper knows what they're getting before the tap.
-              flag.tone === "offer"
-                ? "bg-accent text-accent-foreground"
-                : "bg-active text-primary",
-            )}
+            className={productFlag({ tone: flag.tone })}
           >
             {flag.label}
           </span>
