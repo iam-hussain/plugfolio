@@ -1,5 +1,6 @@
 import { getMemberHandle } from "@plugfolio/core";
-import { Button, cn, measure } from "@plugfolio/ui";
+import { Button, cn, measure, ThemeToggle } from "@plugfolio/ui";
+import { cookies } from "next/headers";
 import type { Route } from "next";
 import Link from "next/link";
 import { auth } from "@/server/auth";
@@ -36,6 +37,9 @@ const SIGNED_IN_NAV: readonly { label: string; href: Route }[] = [
 export async function AppTopBar() {
   const session = await auth();
   const user = session?.user;
+  // The same cookie `RootLayout` puts on <html>; read again here rather than
+  // threaded through, because every route already renders this bar.
+  const theme = (await cookies()).get("theme")?.value === "dark" ? "dark" : "light";
 
   // Signed-in: gather the account menu's data (handle, roles, business).
   const menu = user
@@ -90,6 +94,11 @@ export async function AppTopBar() {
         </nav>
 
         <div className="flex items-center gap-1 lg:gap-3">
+          {/* Signed out or in — the theme is a device preference, not an
+              account setting, so it sits outside the account menu and needs no
+              session. Seeded from the cookie so the icon is right on the first
+              paint, same as `RootLayout`'s `data-theme`. */}
+          <ThemeToggle initialTheme={theme} />
           {menu ? (
             <>
               <Button variant="ghost" size="icon-sm" asChild className="lg:hidden">

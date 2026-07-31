@@ -24,6 +24,16 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+/**
+ * Seeded from the server's cookie read. Without `initialTheme` the button can
+ * only learn the theme after hydration, so it paints a moon on a dark page and
+ * corrects itself a beat later — a wrong-icon flash on every page load. Both
+ * apps pass it; the prop stays optional so the effect remains the fallback.
+ */
+export const SeededDark: Story = {
+  args: { initialTheme: "dark" },
+};
+
 /** In place: the top-bar cluster it actually lives in. */
 export const InATopBar: Story = {
   args: {},
