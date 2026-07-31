@@ -44,6 +44,39 @@ jobs:
           DEVICE_TOKEN_SECRET: ci-build-placeholder-secret-not-used-at-runtime
           AUTH_SECRET: ci-build-placeholder-secret-not-used-at-runtime
 
+  # Non-prod apps/api runs on a Lightsail box (ADR-0008). Gated on `verify`
+  # rather than the whole workflow: e2e and db-integration still stand up
+  # Postgres containers against a MongoDB schema, so they never go green.
+  deploy-api:
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-api
+      cancel-in-progress: false
+    steps:
+      - name: Pull, regenerate, restart
+        env:
+          SSH_KEY: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          HOST: ${{ secrets.LIGHTSAIL_HOST }}
+        run: |
+          install -m 600 /dev/null ~/deploy_key
+          printf '%s\n' "$SSH_KEY" > ~/deploy_key
+          ssh -i ~/deploy_key -o StrictHostKeyChecking=accept-new \
+            "ubuntu@$HOST" 'bash -ls' <<'REMOTE'
+          set -euo pipefail
+          cd /srv/plugfolio
+          git pull --ff-only
+          pnpm install --frozen-lockfile --filter @plugfolio/api...
+          pnpm --filter @plugfolio/db db:generate
+          sudo systemctl restart plugfolio-api
+          REMOTE
+
+      # Restarting is not deploying — a boot-time Zod failure in env.ts exits
+      # before serving, and systemd would keep restarting it silently.
+      - name: Verify it came back
+        run: curl -fsS --retry 10 --retry-delay 3 https://43-204-137-4.nip.io/api/health
+
   e2e:
     runs-on: ubuntu-latest
     services:
