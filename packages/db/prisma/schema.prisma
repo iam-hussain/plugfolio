@@ -8,6 +8,13 @@
 // Generated into the workspace, not pnpm's virtual store: Next's file tracing
 // won't follow the query-engine .so out of node_modules/.pnpm into a Vercel
 // lambda, so the deploy builds fine and then 500s on the first query.
+//
+// That alone isn't enough. transpilePackages compiles this package INTO each
+// app's chunks, so at runtime Prisma resolves the engine against the app dir
+// (/var/task/apps/web/generated/client) rather than against this package, and
+// still misses. Each Next app's build script therefore copies the engine into
+// .next/server/ — one of the paths Prisma searches, and one Vercel always
+// ships. Both halves are needed; drop either and the lambda 500s.
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/client"
