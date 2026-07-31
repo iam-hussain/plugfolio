@@ -6,7 +6,19 @@
     "build": {
       "dependsOn": ["^build", "db:generate"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "env": ["DATABASE_URL", "DEVICE_TOKEN_SECRET", "AUTH_SECRET", "EMAIL_FROM", "API_URL"]
+      "env": [
+        "DATABASE_URL",
+        "DEVICE_TOKEN_SECRET",
+        "AUTH_SECRET",
+        "EMAIL_FROM",
+        "API_URL",
+        "NEXT_PUBLIC_SITE_URL",
+        "S3_PUBLIC_BASE_URL",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "FACEBOOK_CLIENT_ID",
+        "FACEBOOK_CLIENT_SECRET"
+      ]
     },
     "dev": {
       "dependsOn": ["^build"],

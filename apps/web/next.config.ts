@@ -20,7 +20,9 @@ const nextConfig: NextConfig = {
   // dynamic; fallback only fires when no route matched, so Auth.js stays
   // served by this app.
   async rewrites() {
-    const apiUrl = process.env.API_URL ?? "http://localhost:3001";
+    // Trimmed: a value pasted into a hosting dashboard picks up whitespace,
+    // and the build then fails on "destination does not start with https://".
+    const apiUrl = process.env.API_URL?.trim() || "http://localhost:3001";
     return {
       fallback: [{ source: "/api/:path*", destination: `${apiUrl}/api/:path*` }],
     };
