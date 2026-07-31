@@ -68,7 +68,11 @@ export function AccountMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="bg-active text-brand-violet-deep hover:border-brand-violet-deep/40 rounded-pill text-copy flex min-h-11 items-center gap-2 border border-transparent py-1.5 pl-1.5 pr-3 font-bold"
+        // Symmetric padding by default, and the extra right padding only from
+        // `sm` — which is exactly where the "Shopping ▾" label appears. Below
+        // that the label is hidden but `pr-3` stayed, so the pill rendered
+        // 52×46: a visibly squashed egg around a perfectly round avatar.
+        className="bg-active text-brand-violet-deep hover:border-brand-violet-deep/40 rounded-pill text-copy flex min-h-11 items-center gap-2 border border-transparent p-1.5 font-bold sm:pr-3"
       >
         <Avatar className="size-8">
           {avatarUrl ? <AvatarImage src={avatarUrl} alt="" /> : null}
