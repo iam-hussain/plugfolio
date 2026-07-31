@@ -44,3 +44,4 @@ storybook-static/
 .design-sync/sb-reference/
 .ds-sync/
 ds-bundle/
+packages/ui/dist/

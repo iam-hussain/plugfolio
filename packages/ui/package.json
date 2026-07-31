@@ -4,6 +4,7 @@
   "private": true,
   "license": "UNLICENSED",
   "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./lib/cn": "./src/lib/cn.ts",
