@@ -558,7 +558,7 @@ export const Settings: Story = {
           <DashField
             label="Picture URL"
             htmlFor="pic"
-            note="Paste an image URL. Uploads are not in v1."
+            note="Upload a photo, or paste an image URL."
           >
             <Input id="pic" type="url" defaultValue="https://images.plugfolio.com/maya.jpg" />
           </DashField>
@@ -700,7 +700,7 @@ export const NewPost: Story = {
   render: () => (
     <EditorGrid>
       <DashCard>
-        <DashField label="Photo" note="Paste an image URL. Uploads are not in v1.">
+        <DashField label="Photo" note="Upload a photo, or paste an image URL.">
           <Input type="url" placeholder="https://…" />
         </DashField>
         <Button>Add post</Button>

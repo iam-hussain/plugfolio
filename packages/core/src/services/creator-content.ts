@@ -294,6 +294,8 @@ export async function updateProduct(
           ...(metadata.currency ? { currency: metadata.currency } : {}),
         }
       : {}),
+    // An explicit image (an upload) wins over whatever the scrape found.
+    ...(input.imageUrl === undefined ? {} : { imageUrl: input.imageUrl }),
   });
 }
 

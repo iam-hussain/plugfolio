@@ -1,4 +1,5 @@
 import type {
+  UploadKind,
   CreateCategoryInput,
   CreatePostInput,
   CreateProductInput,
@@ -33,6 +34,28 @@ async function send<T = void>(path: string, method: string, body?: unknown): Pro
     throw new Error(problem?.error?.message ?? "Request failed");
   }
   return (await response.json().catch(() => undefined)) as T;
+}
+
+/**
+ * Upload an image (ADR-0023) — multipart, so it can't use `send` (JSON). The
+ * API processes it (crop + watermark + WebP → S3) and returns the URL, which
+ * the caller saves onto their profile/post/product through the JSON routes.
+ */
+export async function uploadImage(kind: UploadKind, file: File): Promise<string> {
+  const form = new FormData();
+  form.append("file", file);
+  const response = await fetch(`/api/uploads/${kind}`, {
+    method: "POST",
+    body: form,
+    credentials: "same-origin",
+  });
+  if (!response.ok) {
+    const problem = (await response.json().catch(() => null)) as {
+      error?: { message?: string };
+    } | null;
+    throw new Error(problem?.error?.message ?? "Upload failed");
+  }
+  return ((await response.json()) as { url: string }).url;
 }
 
 export const createProfile = () => send("/api/profiles", "POST");

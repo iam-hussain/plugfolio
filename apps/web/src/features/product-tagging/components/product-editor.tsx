@@ -19,6 +19,7 @@ import type { Route } from "next";
 import { Trash2 } from "lucide-react";
 import { useProductEditor } from "../hooks/use-product-editor";
 import { CouponFields } from "./coupon-fields";
+import { ImageUploadButton } from "./image-upload-button";
 import { ProductEditorPreview, type EditableProduct } from "./product-editor-preview";
 import { ShelfOptions } from "./shelf-options";
 
@@ -54,6 +55,7 @@ export function ProductEditor({ profileId, categories, product, libraryHref }: P
         kind={fields.kind}
         affiliateUrl={fields.affiliateUrl}
         couponCode={fields.couponCode}
+        imageUrl={fields.imageUrl}
       />
 
       <div>
@@ -117,6 +119,21 @@ export function ProductEditor({ profileId, categories, product, libraryHref }: P
                 placeholder="https://…/your-link"
               />
             </DashField>
+
+            {/* Upload only when editing: a new product's image is scraped from
+                the URL on first save; a replacement can be uploaded after. */}
+            {product ? (
+              <DashField
+                label="Photo"
+                note="Replace the scraped image with your own — cropped, watermarked and stored."
+              >
+                <ImageUploadButton
+                  kind="product"
+                  onUploaded={fields.setImageUrl}
+                  label="Upload photo"
+                />
+              </DashField>
+            ) : null}
 
             {categories.length > 0 ? (
               <DashField label="Shelf" htmlFor="product-shelf">

@@ -2,7 +2,11 @@ import { Hono } from "hono";
 import { setCookie } from "hono/cookie";
 import { z } from "zod";
 import {
+  AppError,
   DEVICE_COOKIE,
+  MAX_UPLOAD_BYTES,
+  uploadImage,
+  uploadKind,
   addComment,
   addCommentInput,
   reactToComment,
@@ -90,6 +94,7 @@ import {
   businessCollabDeps,
   clock,
   creatorContentDeps,
+  imageUploadDeps,
   profileIdentityDeps,
   profileLinkDeps,
   profileManagerDeps,
@@ -415,6 +420,20 @@ app.post("/profiles/:profileId/products", async (c) => {
   });
   const product = await createProduct(creatorContentDeps, userId, input);
   return c.json({ product }, 201);
+});
+
+// Upload an image (ADR-0023): process → S3 → return the URL the caller then
+// saves onto their own profile/post/product via the existing edit routes.
+app.post("/uploads/:kind", async (c) => {
+  await requireUserId(c);
+  if (!imageUploadDeps) throw new AppError("INTERNAL", "Image uploads are not configured");
+  const kind = uploadKind.parse(c.req.param("kind"));
+  const file = (await c.req.parseBody()).file;
+  if (!(file instanceof File)) throw new AppError("VALIDATION", "Expected a file field named 'file'");
+  if (file.size > MAX_UPLOAD_BYTES) throw new AppError("VALIDATION", "Image too large");
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const uploaded = await uploadImage(imageUploadDeps, kind, { bytes });
+  return c.json(uploaded, 201);
 });
 
 // Connect an existing product to a post. Copies nothing — one row, many posts.

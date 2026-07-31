@@ -68,6 +68,20 @@ export type {
   ProductMetadataGateway,
 } from "./ports/creator-content-repository";
 export type {
+  ImageSpec,
+  ProcessedImage,
+  ImageProcessor,
+  ImageStore,
+} from "./ports/image-storage";
+export {
+  uploadKind,
+  type UploadKind,
+  IMAGE_SPECS,
+  MAX_UPLOAD_BYTES,
+  sniffImageMime,
+} from "./schemas/image-upload";
+export { uploadImage, type UploadImageDeps, type UploadedImage } from "./services/upload-image";
+export type {
   SocialProvider,
   SocialTokens,
   SocialConnectionRepository,

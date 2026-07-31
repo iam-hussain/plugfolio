@@ -14,7 +14,10 @@ type AdapterUser = Parameters<NonNullable<Adapter["createUser"]>>[0];
  * sign-in (ADR-0009) — sign-up stays one step; the handle is changeable later.
  */
 export function createAuthAdapter(): Adapter {
-  const adapter = PrismaAdapter(prisma);
+  // The adapter types its client against @prisma/client; ours is generated into
+  // the workspace (schema.prisma) — an identical but separately-declared type,
+  // and comparing the two structurally exhausts tsc's stack depth.
+  const adapter = PrismaAdapter(prisma as unknown as Parameters<typeof PrismaAdapter>[0]);
   return {
     ...adapter,
     createUser(user: AdapterUser) {

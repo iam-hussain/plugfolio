@@ -15,6 +15,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { updateProfileIdentity } from "../api";
+import { ImageUploadButton } from "./image-upload-button";
 
 /**
  * Public-identity form (brief 10): the Admin edits name, picture and bio; a
@@ -63,17 +64,20 @@ export function ProfileIdentityForm({
           full 1200px measure. */}
       <DashFieldPair>
         <DashField
-          label="Picture URL"
+          label="Picture"
           htmlFor="identity-avatar"
-          note="Paste an image URL. Uploads are not in v1."
+          note="Upload a photo — cropped, watermarked and stored — or paste an image URL."
         >
-          <Input
-            id="identity-avatar"
-            type="url"
-            value={avatarUrl}
-            onChange={(event) => setAvatarUrl(event.target.value)}
-            placeholder="https://…/you.jpg"
-          />
+          <div className="flex flex-col gap-2">
+            <ImageUploadButton kind="avatar" onUploaded={setAvatarUrl} label="Upload photo" />
+            <Input
+              id="identity-avatar"
+              type="url"
+              value={avatarUrl}
+              onChange={(event) => setAvatarUrl(event.target.value)}
+              placeholder="…or paste https://…/you.jpg"
+            />
+          </div>
         </DashField>
         <div className="flex items-center gap-3.5 pt-1">
           <Avatar className="size-14 shrink-0">

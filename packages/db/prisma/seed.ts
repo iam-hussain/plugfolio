@@ -1,5 +1,5 @@
 import { hashPassword } from "@plugfolio/core";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../generated/client";
 
 /**
  * Dev seed — a minimal working graph so `pnpm dev` shows a real creator page

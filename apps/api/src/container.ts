@@ -27,6 +27,8 @@ import {
   createViewTargetRepository,
 } from "@plugfolio/db";
 import { createOgMetadataGateway } from "./gateways/og-metadata";
+import { createSharpImageProcessor } from "./gateways/sharp-image-processor";
+import { createS3ImageStore } from "./gateways/s3-image-store";
 import { env } from "./env";
 
 /**
@@ -102,6 +104,20 @@ export const profileIdentityDeps = {
   profiles: repositories.profiles,
   identity: repositories.profileIdentity,
 };
+
+// Image uploads (ADR-0023): wired only when S3 is configured, so a dev without
+// credentials boots fine and the route reports uploads as unavailable.
+export const imageUploadDeps =
+  env.S3_REGION && env.S3_BUCKET && env.S3_PUBLIC_BASE_URL
+    ? {
+        processor: createSharpImageProcessor(),
+        store: createS3ImageStore({
+          region: env.S3_REGION,
+          bucket: env.S3_BUCKET,
+          publicBaseUrl: env.S3_PUBLIC_BASE_URL,
+        }),
+      }
+    : null;
 
 const consoleMailer: AuthMailer = {
   async sendVerification(email, url) {

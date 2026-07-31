@@ -34,6 +34,8 @@ export type ProductEditorPreviewProps = {
   kind: ProductKind;
   affiliateUrl: string;
   couponCode: string;
+  /** A just-uploaded image, shown before save overrides the stored one. */
+  imageUrl?: string;
 };
 
 export function ProductEditorPreview({
@@ -41,18 +43,20 @@ export function ProductEditorPreview({
   kind,
   affiliateUrl,
   couponCode,
+  imageUrl,
 }: ProductEditorPreviewProps) {
   const price = product ? formatPrice(product.priceCents, product.currency) : null;
   const hasLink = affiliateUrl.trim() !== "";
   const hasCode = couponCode.trim() !== "";
+  const previewImage = imageUrl?.trim() || product?.imageUrl;
 
   return (
     <PreviewCard
       image={
-        product?.imageUrl ? (
+        previewImage ? (
           <span className="bg-active rounded-image relative block aspect-square w-full overflow-hidden">
             <Image
-              src={product.imageUrl}
+              src={previewImage}
               alt=""
               fill
               unoptimized

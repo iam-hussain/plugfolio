@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/client";
 import type { AuthAccount, AuthAccountRepository, AuthTokenRepository } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 

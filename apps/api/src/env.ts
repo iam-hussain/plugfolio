@@ -16,6 +16,12 @@ const schema = z.object({
   // Real mail transport (ADR-0015) — console fallback when absent.
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
+  // Image uploads (ADR-0023) — all three present enables the /uploads route;
+  // absent, it returns a clear "not configured" error. AWS credentials come
+  // from the standard provider chain (env/IAM role), not from here.
+  S3_REGION: z.string().optional(),
+  S3_BUCKET: z.string().optional(),
+  S3_PUBLIC_BASE_URL: z.string().url().optional(),
 });
 
 const parsed = schema.safeParse(process.env);

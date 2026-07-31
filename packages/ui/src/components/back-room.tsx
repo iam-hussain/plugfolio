@@ -529,7 +529,7 @@ export function DashField({
   label: React.ReactNode;
   /** "· Admin only" — set in the accent, appended to the label. */
   hint?: React.ReactNode;
-  /** The line under the control ("Uploads are not in v1."). */
+  /** The line under the control (e.g. "Upload a photo, or paste an image URL."). */
   note?: React.ReactNode;
   htmlFor?: string;
   children: React.ReactNode;

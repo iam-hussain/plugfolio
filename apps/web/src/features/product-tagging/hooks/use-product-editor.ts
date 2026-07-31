@@ -42,6 +42,7 @@ export function useProductEditor({ profileId, product, libraryHref }: UseProduct
   const [couponCode, setCouponCode] = useState(product?.couponCode ?? "");
   const [offerEnds, setOfferEnds] = useState(dateValue(product?.offerEndsAt ?? null));
   const [inStoreNote, setInStoreNote] = useState(product?.inStoreNote ?? "");
+  const [imageUrl, setImageUrl] = useState(product?.imageUrl ?? "");
 
   // The same channel rule the tagging editor enforces, because it is the same
   // object: a product needs a link, or a code with an in-store note, or both.
@@ -96,6 +97,10 @@ export function useProductEditor({ profileId, product, libraryHref }: UseProduct
         ...(hasSource ? { sourceUrl: sourceUrl.trim() } : {}),
         kind,
         affiliateUrl: hasLink ? affiliateUrl.trim() : null,
+        // An uploaded image overrides the scrape; only sent when it changed.
+        ...(imageUrl.trim() && imageUrl.trim() !== (product.imageUrl ?? "")
+          ? { imageUrl: imageUrl.trim() }
+          : {}),
         // Re-read the page only when the source actually changed. A silent
         // refetch would let a retailer's A/B test rename someone's product.
         refreshMetadata: sourceUrl.trim() !== (product.sourceUrl ?? ""),
@@ -137,6 +142,8 @@ export function useProductEditor({ profileId, product, libraryHref }: UseProduct
       setOfferEnds,
       inStoreNote,
       setInStoreNote,
+      imageUrl,
+      setImageUrl,
     },
     state: { hasSource, hasLink, hasCode, ready, rule },
     save,

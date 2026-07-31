@@ -5,8 +5,12 @@
 // Post<->Product link is Mongo's array-based many-to-many (id arrays on each
 // side). Referential actions run in Prisma's emulation (the Mongo default).
 
+// Generated into the workspace, not pnpm's virtual store: Next's file tracing
+// won't follow the query-engine .so out of node_modules/.pnpm into a Vercel
+// lambda, so the deploy builds fine and then 500s on the first query.
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/client"
 }
 
 datasource db {
@@ -100,7 +104,7 @@ model Profile {
   username  String    @unique
   /// Public identity (brief 10): shown as the page's big name; null = @username.
   displayName String?
-  /// Pasted image URL (no upload infra in v1). Null = initial-letter tile.
+  /// Image URL — uploaded (ADR-0023) or pasted. Null = initial-letter tile.
   avatarUrl   String?
   bio         String?
   /// Page appearance (ADR-0017) — a closed set, never a theme editor. Unset =

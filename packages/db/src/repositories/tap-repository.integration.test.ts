@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../generated/client";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createTapRepository } from "./tap-repository";
 

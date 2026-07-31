@@ -159,6 +159,8 @@ export const updateProductInput = z.object({
   sourceUrl: z.string().url().optional(),
   kind: productKind.optional(),
   affiliateUrl: z.string().url().nullish(),
+  /** An uploaded (or pasted) product image, overriding the scraped one. */
+  imageUrl: z.string().url().nullish(),
   /** Re-read the page when the source URL changed — off by default. */
   refreshMetadata: z.boolean().optional(),
 });
