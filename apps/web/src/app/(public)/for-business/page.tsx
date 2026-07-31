@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   title: "For business",
   description:
     "Post a brief or approach a creator directly, then agree terms in one thread. Plugfolio handles no money and takes no cut — payment settles off-platform.",
+  alternates: { canonical: "/for-business" },
+  openGraph: { url: "/for-business" },
 };
 
 export default function Page() {

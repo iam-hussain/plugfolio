@@ -1,6 +1,7 @@
 "use client";
 
 import type { CommentSort } from "@plugfolio/core";
+import { CommentSort as SortRow, SortButton } from "@plugfolio/ui";
 import type { Route } from "next";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -11,6 +12,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
  *
  * The anchor is `#comments`: re-sorting shouldn't throw a reader back to the
  * top of a creator's whole page.
+ *
+ * The chips are `SortButton` from the design system. This file used to redraw
+ * them with a template-literal ternary, which is how they drifted off the
+ * design's own hover and pressed states.
  */
 const OPTIONS: readonly { value: CommentSort; label: string }[] = [
   { value: "recent", label: "Recent" },
@@ -33,25 +38,16 @@ export function CommentSortChips({ sort }: { sort: CommentSort }) {
   };
 
   return (
-    <div role="group" aria-label="Sort comments" className="flex flex-wrap items-center gap-1.5">
-      {OPTIONS.map((option) => {
-        const active = option.value === sort;
-        return (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => pick(option.value)}
-            aria-pressed={active}
-            className={`rounded-pill min-h-9 px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
-              active
-                ? "bg-foreground text-background"
-                : "border-border text-muted-foreground hover:border-primary hover:text-primary border"
-            }`}
-          >
-            {option.label}
-          </button>
-        );
-      })}
-    </div>
+    <SortRow>
+      {OPTIONS.map((option) => (
+        <SortButton
+          key={option.value}
+          selected={option.value === sort}
+          onClick={() => pick(option.value)}
+        >
+          {option.label}
+        </SortButton>
+      ))}
+    </SortRow>
   );
 }

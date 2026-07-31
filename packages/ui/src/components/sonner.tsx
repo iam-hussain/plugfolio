@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   CircleCheckIcon,
   InfoIcon,
   Loader2Icon,
   OctagonXIcon,
   TriangleAlertIcon,
-} from "lucide-react"
-import { Toaster as Sonner, type ToasterProps } from "sonner"
+} from "lucide-react";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 /**
  * Toaster — sonner themed on our tokens (Admin design: bottom-right card,
@@ -16,13 +16,11 @@ import { Toaster as Sonner, type ToasterProps } from "sonner"
  * `data-theme`; sonner's className API is its documented theming seam.
  */
 const Toaster = ({ ...props }: ToasterProps) => {
-  const [theme, setTheme] = React.useState<ToasterProps["theme"]>("light")
+  const [theme, setTheme] = React.useState<ToasterProps["theme"]>("light");
 
   React.useEffect(() => {
-    setTheme(
-      (document.documentElement.dataset.theme as ToasterProps["theme"]) ?? "light",
-    )
-  }, [])
+    setTheme((document.documentElement.dataset.theme as ToasterProps["theme"]) ?? "light");
+  }, []);
 
   return (
     <Sonner
@@ -39,12 +37,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "!bg-background !text-foreground !border-border-strong !shadow-overlay !rounded-[11px] !text-[13px]",
+            "!bg-background !text-foreground !border-border-strong !shadow-overlay !rounded-[11px] !text-label",
         },
       }}
       {...props}
     />
-  )
-}
+  );
+};
 
-export { Toaster }
+export { Toaster };

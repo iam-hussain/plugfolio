@@ -5,13 +5,7 @@ import { z } from "zod";
  * dashboard Settings). One URL per platform; the save replaces the whole set
  * so the form stays a single Save button.
  */
-export const socialPlatform = z.enum([
-  "instagram",
-  "youtube",
-  "tiktok",
-  "facebook",
-  "website",
-]);
+export const socialPlatform = z.enum(["instagram", "youtube", "tiktok", "facebook", "website"]);
 
 export type SocialPlatform = z.infer<typeof socialPlatform>;
 

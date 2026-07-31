@@ -37,7 +37,7 @@ export function PanelHeader({
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="border-border bg-card text-muted-foreground hover:border-primary hover:text-primary ml-auto grid size-10 flex-none place-items-center rounded-pill border"
+          className="border-border bg-card text-muted-foreground hover:border-primary hover:text-primary rounded-pill ml-auto grid size-10 flex-none place-items-center border"
         >
           <X className="size-4" aria-hidden />
         </button>
@@ -48,13 +48,17 @@ export function PanelHeader({
 
 /** The control row between header and body — sort chips, a "new" action. */
 export function PanelControls({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex flex-wrap items-center gap-1.5 px-5 pb-1 pt-3.5">{children}</div>
-  );
+  return <div className="flex flex-wrap items-center gap-1.5 px-5 pb-1 pt-3.5">{children}</div>;
 }
 
 /** The only scrolling region, so the header and footer never move. */
-export function PanelBody({ children, className }: { children: React.ReactNode; className?: string }) {
+export function PanelBody({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return <div className={cn("flex-1 overflow-y-auto px-5 pb-5", className)}>{children}</div>;
 }
 
@@ -65,7 +69,7 @@ export function PanelBody({ children, className }: { children: React.ReactNode; 
  */
 export function PanelFooter({ children }: { children: React.ReactNode }) {
   return (
-    <div className="border-border flex flex-wrap items-center gap-2.5 border-t px-5 pt-3.5 pb-[calc(14px+env(safe-area-inset-bottom))]">
+    <div className="border-border flex flex-wrap items-center gap-2.5 border-t px-5 pb-[calc(14px+env(safe-area-inset-bottom))] pt-3.5">
       {children}
     </div>
   );

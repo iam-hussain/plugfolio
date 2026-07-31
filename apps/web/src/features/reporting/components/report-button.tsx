@@ -13,10 +13,21 @@ import {
   DialogTitle,
   DialogTrigger,
   Textarea,
-  cn,
 } from "@plugfolio/ui";
 import { Flag } from "lucide-react";
 import { submitReport } from "../api";
+import { cva } from "class-variance-authority";
+
+/** Spam · Scam · Offensive · Impersonation · Other — pick exactly one. */
+const categoryChip = cva("rounded-pill border px-3 py-1.5 text-micro font-medium", {
+  variants: {
+    selected: {
+      true: "bg-primary text-primary-foreground border-primary",
+      false: "border-border text-muted-foreground",
+    },
+  },
+  defaultVariants: { selected: false },
+});
 
 /**
  * The quiet report affordance (admin queue inflow): flag icon → category +
@@ -71,21 +82,21 @@ export function ReportButton({ targetType, targetId, targetLabel, iconOnly }: Re
           title={`Report ${targetLabel}`}
         >
           <Flag aria-hidden className="size-3.5" />
-          {iconOnly ? null : <span className="text-xs">Report</span>}
+          {iconOnly ? null : <span className="text-micro">Report</span>}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle className="font-display text-lg font-bold">
+          <DialogTitle className="font-display text-body font-bold">
             Report {targetLabel}
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground text-[13px]">
+          <DialogDescription className="text-muted-foreground text-label">
             No account needed. Reports go straight to the Plugfolio team.
           </DialogDescription>
         </DialogHeader>
 
         {send.isSuccess ? (
-          <p className="text-sm font-medium">Thanks — the team will take a look.</p>
+          <p className="text-copy font-medium">Thanks — the team will take a look.</p>
         ) : (
           <form
             className="flex flex-col gap-3"
@@ -102,12 +113,7 @@ export function ReportButton({ targetType, targetId, targetLabel, iconOnly }: Re
                   role="radio"
                   aria-checked={category === option.value}
                   onClick={() => setCategory(option.value)}
-                  className={cn(
-                    "rounded-pill border px-3 py-1.5 text-xs font-medium",
-                    category === option.value
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border text-muted-foreground",
-                  )}
+                  className={categoryChip({ selected: category === option.value })}
                 >
                   {option.label}
                 </button>
@@ -120,10 +126,10 @@ export function ReportButton({ targetType, targetId, targetLabel, iconOnly }: Re
               maxLength={500}
               placeholder="Anything that helps us judge it (optional)"
               aria-label="Details (optional)"
-              className="text-sm"
+              className="text-copy"
             />
             {send.isError ? (
-              <p role="alert" className="text-destructive text-xs">
+              <p role="alert" className="text-destructive text-micro">
                 {send.error instanceof Error ? send.error.message : "Could not send the report"}
               </p>
             ) : null}

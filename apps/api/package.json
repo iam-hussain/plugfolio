@@ -11,10 +11,12 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1101.0",
     "@hono/node-server": "^1.13.7",
     "@plugfolio/core": "workspace:*",
     "@plugfolio/db": "workspace:*",
     "hono": "^4.6.14",
+    "sharp": "^0.35.3",
     "tsx": "^4.19.2",
     "zod": "^3.24.1"
   },

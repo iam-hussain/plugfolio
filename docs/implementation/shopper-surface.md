@@ -6,12 +6,12 @@
 
 - **`Post`** — the shoppable unit ("tap a post"). `profileId`, `mediaUrl`, `caption?`. No social import yet, so rows come from seed/dashboard; every row is treated as published — the publish flag lands with the tagging dashboard.
 - **`Post ↔ Product`** — implicit many-to-many (`_PostToProduct`): a post tags several products, a product appears in several posts.
-- **`Tap.postId`** (nullable) — per-post attribution, the Earnings promise ("this reel drove 312 taps"). `SetNull` on post delete, not Cascade: taps are append-only earnings events (§6.6) and must survive a post's deletion. Indexed on `(postId, occurredAt)` for the read model.
+- **`Tap.postId`** (nullable) — per-post attribution, the Traffic promise ("this reel drove 312 taps"). `SetNull` on post delete, not Cascade: taps are append-only traffic events (§6.6) and must survive a post's deletion. Indexed on `(postId, occurredAt)` for the read model.
 - **`Product.imageUrl` / `priceCents` / `currency`** — display-only metadata grabbed at tag time; the retailer owns the real price. Migration: `20260718150000_posts_and_product_details`.
 
 ## API surface
 
-- `POST /api/taps` now accepts optional `postId`. The service (`recordOutboundTap`) verifies via `ProductReadRepository.isTaggedToPost` that the post actually has the product tagged — a forged `postId` gets `NOT_FOUND`, so per-post earnings can't be skewed. Response tap includes `postId`.
+- `POST /api/taps` now accepts optional `postId`. The service (`recordOutboundTap`) verifies via `ProductReadRepository.isTaggedToPost` that the post actually has the product tagged — a forged `postId` gets `NOT_FOUND`, so per-post traffic can't be skewed. Response tap includes `postId`.
 - Reads have no HTTP endpoints: public RSC pages call the read services directly (§6.11) — `getCreatorPage`, `getShopperPost`, `getShopperProduct` over the `CreatorPageReadRepository` port (Prisma impl in `@plugfolio/db`). Post/product lookups are scoped by username so one creator's content is a 404 under another's handle.
 
 ## Components

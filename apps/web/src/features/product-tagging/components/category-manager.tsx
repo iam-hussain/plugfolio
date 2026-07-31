@@ -8,7 +8,7 @@ import {
   DashCard,
   DashCardHead,
   DashCardTitle,
-  DashFieldRow,
+  DashFieldForm,
   EmptyState,
   IconAction,
   IconActions,
@@ -63,7 +63,12 @@ export function CategoryManager({ profileId, categories, counts }: CategoryManag
   // list don't earn a pointer-events implementation, and arrows work on a
   // phone and with a keyboard, which a drag handle does not.
   const reorder = useMutation({
-    mutationFn: async (move: { id: string; sortOrder: number; otherId: string; otherSortOrder: number }) => {
+    mutationFn: async (move: {
+      id: string;
+      sortOrder: number;
+      otherId: string;
+      otherSortOrder: number;
+    }) => {
       await updateCategory(move.id, { sortOrder: move.otherSortOrder });
       await updateCategory(move.otherId, { sortOrder: move.sortOrder });
     },
@@ -83,7 +88,7 @@ export function CategoryManager({ profileId, categories, counts }: CategoryManag
         <DashCardHead>
           <DashCardTitle>Add a shelf</DashCardTitle>
         </DashCardHead>
-        <DashFieldRow
+        <DashFieldForm
           className="mt-0"
           onSubmit={(event) => {
             event.preventDefault();
@@ -111,7 +116,7 @@ export function CategoryManager({ profileId, categories, counts }: CategoryManag
           <Button type="submit" disabled={add.isPending || !title.trim()}>
             {add.isPending ? "Adding…" : "Add"}
           </Button>
-        </DashFieldRow>
+        </DashFieldForm>
       </DashCard>
 
       {categories.length === 0 ? (

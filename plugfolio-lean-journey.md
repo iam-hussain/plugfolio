@@ -110,18 +110,31 @@ Three words, kept straight:
 
 ---
 
-## The creator's dashboard — four tabs, not thirteen
+## The creator's dashboard — six tabs, not thirteen
 
 The public page is the shop window. The dashboard is the back room, and it stays small. If the account runs several profiles, a **profile switcher** picks which one you're editing; a **Manager** sees every tab except profile settings and connections.
 
 | Tab | What's there |
 |---|---|
-| **Posts** | Every imported post. Tap one to tag its products. That's the core tool. |
-| **Products** | The things they've tagged — affiliate or their own. Fix a link, attach or edit a coupon, remove one. |
-| **Earnings** | Clicks and outbound taps, tied to the post that drove them: "this reel drove 312 taps." Where the creator's affiliate network reports conversions back, those sales show too — always honestly labeled *tracked* vs. *estimated*. |
+| **Home** | The profile you're editing, what needs tagging, the profiles you can switch to, what the account is connected to — and **Traffic**. |
+| **Posts** | Every post, as a list: is it on the page, which shelf, how many products. Tap one to open its editor — the still, an optional video, the caption, the shelf, and what's tagged on it. That's the core tool. |
+| **Products** | The library — a list you scan, never a CRM. Every row opens the product's own page: where it came from, whose it is, where it goes, its coupon and its shelf, with a live preview of what a shopper will see. |
+| **Categories** | The profile's shelves ([ADR-0010](./docs/adr/0010-per-profile-categories.md)): add, rename, reorder, delete. Deleting never deletes content. |
 | **Collabs** | Two lists in one place: **open requirements** businesses have posted (approach any that fit) and **incoming requests** from businesses who reached out — each a simple thread to agree content and price. |
+| **Settings** | Identity, how the page looks, links, connections, Managers, and the one destructive action. |
 
-No media kit, no coupon scheduler, no payouts console in v1. Four tabs a creator understands in ten seconds.
+**Traffic** (once called *Earnings*, until it was pointed out that it earns nothing — Plugfolio handles no money and sees no sale, so the word promised a number this product cannot produce). Three measured counts and the rate between two of them:
+
+- **Views** — the page, a post or a product page opening ([ADR-0021](./docs/adr/0021-view-events.md)).
+- **Taps** — someone leaving for a retailer, tied to the post that drove it: "this reel drove 312 taps."
+- **Tap-through** — taps ÷ views. Views and taps are never shown apart, because either alone misleads: 1,284 taps sounds enormous until you see 20,410 views, and 20,410 views sounds like reach until you see how few moved.
+- **Code copies** — labeled *redemption not tracked*, because redemption happens at the retailer where Plugfolio cannot see it.
+
+Every figure is *tracked* — a directly measured event. There is no *estimated* column: v1 has no conversion source, and a plausible number here would be the one dishonest thing in the product. Where a creator's affiliate network reports conversions back, those sales join later, labeled.
+
+**A product is not owned by the post it was tagged on.** It can sit on several posts, or on none — an in-store code has nowhere to be tagged and is still a product. So products are made and edited in their own place, and a post *connects* to one rather than containing it: connecting copies nothing, so changing a price once changes every post carrying it. Taking a product off a post is a disconnect, never a delete.
+
+No media kit, no coupon scheduler, no payouts console in v1.
 
 **Settings also holds how the page looks** — a bounded set, never a theme editor ([ADR-0017](./docs/adr/0017-creator-page-appearance.md)): one **accent** from five measured colours, one of three **header treatments** (Compact / Balanced / Centred), one of three **grid layouts** (Grid / Cards / List), and an optional one-line **greeting** above the name. That's the whole surface. The accent list is closed *because* it is closed — every option passes AA behind white label text, so a creator can't pick a colour that breaks the Buy button on their own page. No custom fonts, no backgrounds, no section reordering.
 

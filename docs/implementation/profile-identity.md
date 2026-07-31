@@ -4,7 +4,7 @@
 
 ## Data model
 
-Migration `20260724…_profile_identity`: `Profile.displayName?`, `avatarUrl?` (pasted image URL — no upload infra in v1), `bio?`. All nullable; null renders the old defaults (@username, initial tile).
+Migration `20260724…_profile_identity`: `Profile.displayName?`, `avatarUrl?` (image URL — uploaded per ADR-0023, or pasted), `bio?`. All nullable; null renders the old defaults (@username, initial tile).
 
 ## Services (`profile-identity.ts`)
 

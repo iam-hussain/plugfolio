@@ -12,6 +12,8 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "db:generate": "turbo run db:generate",
+    "storybook": "pnpm --filter @plugfolio/web storybook",
+    "build-storybook": "pnpm --filter @plugfolio/web build-storybook",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,json,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,md,json,css}\""
   },

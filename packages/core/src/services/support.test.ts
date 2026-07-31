@@ -6,11 +6,7 @@ import type {
   NewSupportTicket,
   SupportTicketWriteRepository,
 } from "../ports/support-repository";
-import {
-  createSupportTicket,
-  dismissSupportTicket,
-  resolveSupportTicket,
-} from "./support";
+import { createSupportTicket, dismissSupportTicket, resolveSupportTicket } from "./support";
 
 function makeInflowDeps() {
   const created: NewSupportTicket[] = [];

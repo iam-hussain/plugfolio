@@ -31,6 +31,9 @@ export function Wordmark({ tone, className, ...props }: WordmarkProps) {
   return (
     <span
       className={cn(
+        // Brand geometry, not page type: the spark dot and the letter spacing
+        // are sized in `em` off this, so the lockup scales as one drawing. It
+        // is the mark's own ratio and does not belong on the type scale.
         "font-display inline-flex items-baseline gap-[0.12em] text-[1.25rem] font-bold leading-none tracking-[-0.045em] text-current",
         className,
       )}

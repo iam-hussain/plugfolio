@@ -14,6 +14,22 @@ import { FieldLabel, TextField } from "./auth-field";
 import { AuthShell } from "./auth-shell";
 import { PasswordInput } from "./password-input";
 import { DEFAULT_ROLE, readStoredRole, writeStoredRole } from "./role-store";
+import { cva } from "class-variance-authority";
+
+/** Coral for a problem, violet wash for a notice. Never lime — nothing is on
+    offer on an auth screen (§7 lime-means-offer). */
+const authBanner = cva(
+  "rounded-image text-foreground mt-5 flex items-start gap-3 border p-4 text-copy leading-[1.5]",
+  {
+    variants: {
+      tone: {
+        bad: "bg-brand-coral/15 border-brand-coral/50",
+        info: "bg-active border-transparent",
+      },
+    },
+    defaultVariants: { tone: "info" },
+  },
+);
 
 /**
  * Login (brief 04, ADR-0012): email + password, one step, no email round-trip.
@@ -61,14 +77,11 @@ export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenPro
   const resend = useMutation({ mutationFn: () => resendVerification({ email }) });
 
   return (
-    <AuthShell
-      role="generic"
-      artefact={<RoleArtefact role={role} />}
-    >
-      <h1 className="font-display text-[clamp(2rem,4vw,2.75rem)] font-extrabold tracking-[-0.035em]">
+    <AuthShell role="generic" artefact={<RoleArtefact role={role} />}>
+      <h1 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
         Welcome back
       </h1>
-      <p className="text-muted-foreground mt-2.5 text-[0.9375rem] leading-[1.5]">
+      <p className="text-muted-foreground text-copy mt-2.5 leading-[1.5]">
         Email and password. That&apos;s the whole thing.
       </p>
 
@@ -133,7 +146,7 @@ export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenPro
         </Button>
       </form>
 
-      <div className="border-border mt-[22px] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t pt-5 text-center text-[13px]">
+      <div className="border-border text-label mt-[22px] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t pt-5 text-center">
         <Link href="/forgot" className="text-muted-foreground hover:text-primary font-semibold">
           Forgot password?
         </Link>
@@ -156,12 +169,7 @@ export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenPro
 function AuthBanner({ tone, children }: { tone: "bad" | "info"; children: React.ReactNode }) {
   const Icon = tone === "bad" ? CircleAlert : Mail;
   return (
-    <div
-      role="alert"
-      className={`rounded-image text-foreground mt-5 flex items-start gap-3 border p-4 text-[0.9375rem] leading-[1.5] ${
-        tone === "bad" ? "bg-brand-coral/15 border-brand-coral/50" : "bg-active border-transparent"
-      }`}
-    >
+    <div role="alert" className={authBanner({ tone })}>
       <Icon aria-hidden className="mt-0.5 size-[18px] shrink-0" />
       <span>{children}</span>
     </div>

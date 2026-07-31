@@ -1,11 +1,34 @@
 "use client";
 
 import type { PageAccent, PageGridStyle, PageHeaderStyle } from "@plugfolio/core";
-import { Button, Input, Label, cn } from "@plugfolio/ui";
+import { Button, Input, Label } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { updateProfileIdentity } from "../api";
+import { cva } from "class-variance-authority";
+
+/** The accent picker's chips — the dot inside carries the colour, not this. */
+const accentChip = cva(
+  "rounded-pill inline-flex min-h-11 items-center gap-2 border px-3.5 text-label font-semibold transition-colors",
+  {
+    variants: {
+      selected: {
+        true: "border-foreground bg-active",
+        false: "border-border text-muted-foreground hover:border-primary",
+      },
+    },
+    defaultVariants: { selected: false },
+  },
+);
+
+/** Header-style and grid-style options: a card, held when it's the current one. */
+const layoutCard = cva("rounded-image border p-3 text-left transition-colors", {
+  variants: {
+    selected: { true: "border-primary bg-active", false: "border-border hover:border-primary" },
+  },
+  defaultVariants: { selected: false },
+});
 
 /**
  * How the creator's page looks (ADR-0017) — the whole surface, and it's meant
@@ -32,17 +55,27 @@ export type PageAppearanceFormProps = {
   role: "admin" | "manager";
 };
 
-/** The swatch classes are literal so the JIT can see them (§8). */
-const ACCENTS: readonly { value: PageAccent; label: string; swatch: string }[] = [
-  { value: "violet", label: "Violet", swatch: "bg-[#7C3AED]" },
-  { value: "indigo", label: "Indigo", swatch: "bg-[#4338CA]" },
-  { value: "coral", label: "Coral", swatch: "bg-[#CC3626]" },
-  { value: "forest", label: "Forest", swatch: "bg-[#146B4A]" },
-  { value: "magenta", label: "Magenta", swatch: "bg-[#B31D74]" },
+/**
+ * The five accents (ADR-0017). No swatch colour is written here: each dot wears
+ * its own `data-accent`, which is the same scope the creator's page uses, and
+ * fills with `bg-primary`. So the dot literally renders the token the choice
+ * sets — the swatch cannot drift from the result, which a hardcoded hex per
+ * option did the moment either side moved.
+ */
+const ACCENTS: readonly { value: PageAccent; label: string }[] = [
+  { value: "violet", label: "Violet" },
+  { value: "indigo", label: "Indigo" },
+  { value: "coral", label: "Coral" },
+  { value: "forest", label: "Forest" },
+  { value: "magenta", label: "Magenta" },
 ];
 
 const HEADERS: readonly { value: PageHeaderStyle; label: string; note: string }[] = [
-  { value: "compact", label: "Compact", note: "Goods first. Everything tightens; nothing is dropped." },
+  {
+    value: "compact",
+    label: "Compact",
+    note: "Goods first. Everything tightens; nothing is dropped.",
+  },
   { value: "balanced", label: "Balanced", note: "Identity, then shelves, then posts." },
   { value: "centred", label: "Centred", note: "Big avatar, centred. Reads as a profile." },
 ];
@@ -74,7 +107,7 @@ export function PageAppearanceForm({ profileId, appearance, role }: PageAppearan
 
   if (!isAdmin) {
     return (
-      <p className="text-muted-foreground text-sm">
+      <p className="text-muted-foreground text-copy">
         How the page looks is the Admin&apos;s to set.
       </p>
     );
@@ -89,8 +122,8 @@ export function PageAppearanceForm({ profileId, appearance, role }: PageAppearan
       }}
     >
       <fieldset className="flex flex-col gap-2">
-        <legend className="text-[13px] font-bold">Accent</legend>
-        <p className="text-muted-foreground text-xs">
+        <legend className="text-label font-bold">Accent</legend>
+        <p className="text-muted-foreground text-micro">
           Five, and only five — each one is checked to stay readable behind white text.
         </p>
         <div className="mt-1 flex flex-wrap gap-2">
@@ -100,14 +133,13 @@ export function PageAppearanceForm({ profileId, appearance, role }: PageAppearan
               type="button"
               onClick={() => setAccent(option.value)}
               aria-pressed={accent === option.value}
-              className={cn(
-                "rounded-pill inline-flex min-h-11 items-center gap-2 border px-3.5 text-[13px] font-semibold transition-colors",
-                accent === option.value
-                  ? "border-foreground bg-active"
-                  : "border-border text-muted-foreground hover:border-primary",
-              )}
+              className={accentChip({ selected: accent === option.value })}
             >
-              <span aria-hidden className={cn("size-3.5 rounded-pill", option.swatch)} />
+              <span
+                aria-hidden
+                data-accent={option.value}
+                className="bg-primary rounded-pill size-3.5"
+              />
               {option.label}
             </button>
           ))}
@@ -136,16 +168,18 @@ export function PageAppearanceForm({ profileId, appearance, role }: PageAppearan
           maxLength={80}
           placeholder="Hey — glad you found me."
         />
-        <p className="text-muted-foreground text-xs">One line above your name. Leave it empty for none.</p>
+        <p className="text-muted-foreground text-micro">
+          One line above your name. Leave it empty for none.
+        </p>
       </div>
 
       {save.isError ? (
-        <p role="alert" className="text-destructive text-xs">
+        <p role="alert" className="text-destructive text-micro">
           {save.error.message}
         </p>
       ) : null}
       <div className="flex items-center justify-between gap-3">
-        <p className="text-muted-foreground text-xs">
+        <p className="text-muted-foreground text-micro">
           {save.isSuccess ? "Saved — live on your page." : "Changes show on your public page."}
         </p>
         <Button type="submit" size="sm" disabled={save.isPending}>
@@ -170,7 +204,7 @@ function Choice<T extends string>({
 }) {
   return (
     <fieldset className="flex flex-col gap-2">
-      <legend className="text-[13px] font-bold">{legend}</legend>
+      <legend className="text-label font-bold">{legend}</legend>
       <div className="mt-1 grid gap-2 sm:grid-cols-3">
         {options.map((option) => (
           <button
@@ -178,15 +212,10 @@ function Choice<T extends string>({
             type="button"
             onClick={() => onPick(option.value)}
             aria-pressed={value === option.value}
-            className={cn(
-              "rounded-image border p-3 text-left transition-colors",
-              value === option.value
-                ? "border-primary bg-active"
-                : "border-border hover:border-primary",
-            )}
+            className={layoutCard({ selected: value === option.value })}
           >
-            <b className="block text-[13px] font-bold">{option.label}</b>
-            <span className="text-muted-foreground mt-1 block text-xs leading-[1.4]">
+            <b className="text-label block font-bold">{option.label}</b>
+            <span className="text-muted-foreground text-micro mt-1 block leading-[1.4]">
               {option.note}
             </span>
           </button>

@@ -34,7 +34,7 @@ export const AdminShell: Story = {
       <Sidebar>
         <SidebarHeader className="px-4 py-3">
           <Logo tone="auto" />
-          <p className="font-mono tracking-eyebrow text-muted-foreground text-[10px] uppercase">
+          <p className="tracking-eyebrow text-muted-foreground font-mono text-[10px] uppercase">
             Admin
           </p>
         </SidebarHeader>

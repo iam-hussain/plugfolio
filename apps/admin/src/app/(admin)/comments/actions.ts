@@ -29,7 +29,11 @@ export async function bulkDeleteCommentsAction(formData: FormData): Promise<Acti
   const ids = z
     .array(z.string().uuid())
     .min(1)
-    .parse(String(formData.get("ids") ?? "").split(",").filter(Boolean));
+    .parse(
+      String(formData.get("ids") ?? "")
+        .split(",")
+        .filter(Boolean),
+    );
   await deleteCommentsBulk(adminContentDeps, admin.id, ids);
   revalidatePath("/comments");
   return { ok: true };

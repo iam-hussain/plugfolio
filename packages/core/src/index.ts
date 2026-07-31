@@ -7,11 +7,7 @@
 export * from "./errors";
 
 // Anonymous shopper identity (§6.7, ADR-0002) — shared by both deployables
-export {
-  DEVICE_COOKIE,
-  verifyDeviceToken,
-  issueDeviceToken,
-} from "./auth/device-token";
+export { DEVICE_COOKIE, verifyDeviceToken, issueDeviceToken } from "./auth/device-token";
 
 // Domain
 export type { OutboundTap, NewOutboundTap, TapSource } from "./domain/tap";
@@ -71,6 +67,20 @@ export type {
   ProductMetadata,
   ProductMetadataGateway,
 } from "./ports/creator-content-repository";
+export type {
+  ImageSpec,
+  ProcessedImage,
+  ImageProcessor,
+  ImageStore,
+} from "./ports/image-storage";
+export {
+  uploadKind,
+  type UploadKind,
+  IMAGE_SPECS,
+  MAX_UPLOAD_BYTES,
+  sniffImageMime,
+} from "./schemas/image-upload";
+export { uploadImage, type UploadImageDeps, type UploadedImage } from "./services/upload-image";
 export type {
   SocialProvider,
   SocialTokens,
@@ -142,10 +152,7 @@ export {
   commentSort,
   type CommentSort,
 } from "./schemas/comment-reaction";
-export {
-  createAdPlacementInput,
-  type CreateAdPlacementInput,
-} from "./schemas/ad-placement";
+export { createAdPlacementInput, type CreateAdPlacementInput } from "./schemas/ad-placement";
 export {
   getLiveAdPlacement,
   listAdPlacements,
@@ -185,6 +192,14 @@ export {
   type UpdateProductInput,
   setProductCouponInput,
   type SetProductCouponInput,
+  updatePostInput,
+  type UpdatePostInput,
+  postMediaKind,
+  type PostMediaKind,
+  createProductInput,
+  type CreateProductInput,
+  connectProductInput,
+  type ConnectProductInput,
   createCategoryInput,
   type CreateCategoryInput,
   updateCategoryInput,
@@ -196,10 +211,7 @@ export {
   setProductCategoryInput,
   type SetProductCategoryInput,
 } from "./schemas/creator-content";
-export {
-  updateMemberHandleInput,
-  type UpdateMemberHandleInput,
-} from "./schemas/member-handle";
+export { updateMemberHandleInput, type UpdateMemberHandleInput } from "./schemas/member-handle";
 export {
   socialPlatform,
   type SocialPlatform,
@@ -207,10 +219,7 @@ export {
   setProfileLinksInput,
   type SetProfileLinksInput,
 } from "./schemas/profile-links";
-export {
-  type ProfileLinkRepository,
-  type ProfileLinkView,
-} from "./ports/profile-link-repository";
+export { type ProfileLinkRepository, type ProfileLinkView } from "./ports/profile-link-repository";
 export {
   getProfileLinks,
   listMyProfileLinks,
@@ -287,6 +296,11 @@ export {
   setProductCoupon,
   removeProduct,
   listMyCategories,
+  updatePost,
+  createProduct,
+  updateProduct,
+  connectProductToPost,
+  disconnectProductFromPost,
   createCategory,
   updateCategory,
   removeCategory,

@@ -12,7 +12,7 @@ export function CommentClaim() {
   const [claiming, setClaiming] = useState(false);
 
   return (
-    <p className="border-border text-muted-foreground rounded-xl border border-dashed p-4 text-center text-[13.5px]">
+    <p className="border-border text-muted-foreground text-label rounded-xl border border-dashed p-4 text-center">
       <button
         type="button"
         onClick={() => setClaiming(true)}

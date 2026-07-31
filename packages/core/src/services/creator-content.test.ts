@@ -10,18 +10,22 @@ import type {
 } from "../ports/creator-content-repository";
 import type { ProductReadRepository } from "../ports/product-repository";
 import type { ProfileRepository } from "../ports/profile-repository";
-import { tagProductInput } from "../schemas/creator-content";
+import { tagProductInput, updatePostInput } from "../schemas/creator-content";
 import {
   MAX_PROFILES_PER_ACCOUNT,
+  connectProductToPost,
   createCategory,
   createPost,
   createProfile,
+  disconnectProductFromPost,
   removeProduct,
   setPostCategory,
   setPostHidden,
   setProductCategory,
   setProductCoupon,
   tagProductToPost,
+  updatePost,
+  updateProduct,
   updateProductAffiliateUrl,
 } from "./creator-content";
 
@@ -43,8 +47,12 @@ function makeDeps(
     productUrl?: string | null;
   } = {},
 ) {
-  const { connected = true, profileCount = 1, metadata = null, productUrl = "https://a.test/x" } =
-    options;
+  const {
+    connected = true,
+    profileCount = 1,
+    metadata = null,
+    productUrl = "https://a.test/x",
+  } = options;
   const created: { username: string }[] = [];
   const taggedRows: { title: string; imageUrl: string | null; priceCents: number | null }[] = [];
   const updates: string[] = [];
@@ -56,9 +64,7 @@ function makeDeps(
       return userId === USER ? [{ id: PROFILE_ID, username: "lena" }] : [];
     },
     async listAccessibleByUser(userId) {
-      return userId === USER
-        ? [{ id: PROFILE_ID, username: "lena", role: "admin" as const }]
-        : [];
+      return userId === USER ? [{ id: PROFILE_ID, username: "lena", role: "admin" as const }] : [];
     },
     async exists() {
       return true;
@@ -77,10 +83,17 @@ function makeDeps(
     },
   };
   const postCategoryChanges: (string | null)[] = [];
+  const postUpdates: { mediaKind: string; embedUrl: string | null }[] = [];
+  const productUpdates: { kind?: string; affiliateUrl?: string | null }[] = [];
+  const productLinks: { productId: string; postId: string }[] = [];
+  const productUnlinks: { productId: string; postId: string }[] = [];
   const postHiddenChanges: boolean[] = [];
   const posts: PostWriteRepository = {
     async create() {
       return { id: "new-post" };
+    },
+    async update(_postId, post) {
+      postUpdates.push(post);
     },
     async belongsToProfile(postId, profileId) {
       return postId === POST_ID && profileId === PROFILE_ID;
@@ -95,7 +108,13 @@ function makeDeps(
   const products: ProductReadRepository = {
     async findForAttribution(productId) {
       return productId === PRODUCT_ID
-        ? { id: PRODUCT_ID, profileId: PROFILE_ID, affiliateUrl: productUrl, couponCode: null }
+        ? {
+            id: PRODUCT_ID,
+            profileId: PROFILE_ID,
+            affiliateUrl: productUrl,
+            couponCode: null,
+            inStoreNote: null,
+          }
         : null;
     },
     async isTaggedToPost() {
@@ -110,6 +129,23 @@ function makeDeps(
         priceCents: product.priceCents,
       });
       return { id: "new-product" };
+    },
+    async create(product) {
+      taggedRows.push({
+        title: product.title,
+        imageUrl: product.imageUrl,
+        priceCents: product.priceCents,
+      });
+      return { id: "new-product" };
+    },
+    async update(_productId, patch) {
+      productUpdates.push(patch);
+    },
+    async connectToPost(productId, postId) {
+      productLinks.push({ productId, postId });
+    },
+    async disconnectFromPost(productId, postId) {
+      productUnlinks.push({ productId, postId });
     },
     async updateAffiliateUrl(productId) {
       updates.push(productId);
@@ -169,6 +205,10 @@ function makeDeps(
     postCategoryChanges,
     postHiddenChanges,
     productCategoryChanges,
+    postUpdates,
+    productUpdates,
+    productLinks,
+    productUnlinks,
   };
 }
 
@@ -202,13 +242,22 @@ describe("createPost / tagProductToPost", () => {
   it("rejects posting to someone else's profile", async () => {
     const { deps } = makeDeps();
     await expect(
-      createPost(deps, OUTSIDER, { profileId: PROFILE_ID, mediaUrl: "https://x.test/m.jpg" }),
+      createPost(deps, OUTSIDER, {
+        profileId: PROFILE_ID,
+        mediaUrl: "https://x.test/m.jpg",
+        mediaKind: "still",
+      }),
     ).rejects.toBeInstanceOf(ForbiddenError);
   });
 
   it("tags with grabbed metadata when the page is readable", async () => {
     const { deps, taggedRows } = makeDeps({
-      metadata: { title: "Everyday Tote", imageUrl: "https://x.test/t.jpg", priceCents: 4900, currency: "usd" },
+      metadata: {
+        title: "Everyday Tote",
+        imageUrl: "https://x.test/t.jpg",
+        priceCents: 4900,
+        currency: "usd",
+      },
     });
     await tagProductToPost(deps, USER, tagInput);
     expect(taggedRows[0]).toEqual({
@@ -264,21 +313,21 @@ describe("coupons (ADR-0011)", () => {
 
   it("sets a coupon when the product has an outbound link", async () => {
     const { deps, couponUpdates } = makeDeps();
-    await setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: "SAVE10" });
+    await setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: "SAVE10", inStoreNote: null });
     expect(couponUpdates).toEqual([{ couponCode: "SAVE10", inStoreNote: null }]);
   });
 
   it("rejects a coupon with no channel (link-less product, no in-store note)", async () => {
     const { deps, couponUpdates } = makeDeps({ productUrl: null });
     await expect(
-      setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: "SAVE10" }),
+      setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: "SAVE10", inStoreNote: null }),
     ).rejects.toBeInstanceOf(AppError);
     expect(couponUpdates).toEqual([]);
   });
 
   it("clearing the code clears the whole coupon, even on a link-less product", async () => {
     const { deps, couponUpdates } = makeDeps({ productUrl: null });
-    await setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: null });
+    await setProductCoupon(deps, USER, PRODUCT_ID, { couponCode: null, inStoreNote: null });
     expect(couponUpdates).toEqual([{ couponCode: null, inStoreNote: null }]);
   });
 });
@@ -324,5 +373,66 @@ describe("categories (ADR-0010)", () => {
         hidden: true,
       }),
     ).rejects.toBeInstanceOf(NotFoundError);
+  });
+});
+
+describe("updatePost / product editing (DESIGN post-edit + product-edit)", () => {
+  it("clears a stale embed when a video post becomes a still", async () => {
+    const { deps, postUpdates } = makeDeps();
+    await updatePost(deps, USER, POST_ID, PROFILE_ID, {
+      mediaUrl: "https://x.test/still.jpg",
+      mediaKind: "still",
+      embedUrl: "https://youtube.com/embed/abc",
+      sourceUrl: "https://youtube.com/watch?v=abc",
+    });
+    // Otherwise the play button stays wired to the video it used to be.
+    expect(postUpdates).toEqual([
+      expect.objectContaining({ mediaKind: "still", embedUrl: null, sourceUrl: null }),
+    ]);
+  });
+
+  it("refuses a video post with no video link", () => {
+    expect(
+      updatePostInput.safeParse({ mediaUrl: "https://x.test/p.jpg", mediaKind: "youtube" }).success,
+    ).toBe(false);
+    expect(
+      updatePostInput.safeParse({
+        mediaUrl: "https://x.test/p.jpg",
+        mediaKind: "youtube",
+        embedUrl: "https://youtube.com/embed/abc",
+      }).success,
+    ).toBe(true);
+  });
+
+  it("refuses to leave a product with nowhere to go", async () => {
+    const { deps, productUpdates } = makeDeps();
+    // The fake product has a link and no in-store note, so clearing the link
+    // would leave a card that can take neither a tap nor a copy.
+    await expect(
+      updateProduct(deps, USER, PRODUCT_ID, { affiliateUrl: null }),
+    ).rejects.toBeInstanceOf(AppError);
+    expect(productUpdates).toEqual([]);
+  });
+
+  it("changes the kind without touching anything else", async () => {
+    const { deps, productUpdates } = makeDeps();
+    await updateProduct(deps, USER, PRODUCT_ID, { kind: "own" });
+    expect(productUpdates).toEqual([{ kind: "own" }]);
+  });
+
+  it("connects and disconnects an existing product", async () => {
+    const { deps, productLinks, productUnlinks } = makeDeps();
+    await connectProductToPost(deps, USER, POST_ID, PRODUCT_ID);
+    await disconnectProductFromPost(deps, USER, POST_ID, PRODUCT_ID);
+    expect(productLinks).toEqual([{ productId: PRODUCT_ID, postId: POST_ID }]);
+    expect(productUnlinks).toEqual([{ productId: PRODUCT_ID, postId: POST_ID }]);
+  });
+
+  it("refuses to connect a product to someone else's post", async () => {
+    const { deps, productLinks } = makeDeps();
+    await expect(
+      connectProductToPost(deps, USER, "99999999-0000-0000-0000-000000000000", PRODUCT_ID),
+    ).rejects.toBeInstanceOf(NotFoundError);
+    expect(productLinks).toEqual([]);
   });
 });

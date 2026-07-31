@@ -10,7 +10,10 @@ export type ActionResult = { ok: true } | { ok: false; error: string };
 
 export async function saveReservedUsernamesAction(formData: FormData): Promise<ActionResult> {
   const admin = await requireAdmin();
-  const lines = z.string().parse(formData.get("usernames") ?? "").split("\n");
+  const lines = z
+    .string()
+    .parse(formData.get("usernames") ?? "")
+    .split("\n");
   await setReservedUsernames(appSettingsDeps, admin.id, lines);
   revalidatePath("/settings");
   return { ok: true };

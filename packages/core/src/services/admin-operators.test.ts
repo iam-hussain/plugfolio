@@ -124,7 +124,12 @@ describe("operator management", () => {
     const { deps, operators } = makeDeps();
     await expect(removeOperator(deps, "admin-1", "admin-1")).rejects.toBeInstanceOf(ForbiddenError);
     await expect(removeOperator(deps, "admin-1", "ghost")).rejects.toBeInstanceOf(ForbiddenError); // last operator guard
-    operators.set("admin-2", { id: "admin-2", email: "kay@plugfolio.com", passwordHash: null, sessionVersion: 0 });
+    operators.set("admin-2", {
+      id: "admin-2",
+      email: "kay@plugfolio.com",
+      passwordHash: null,
+      sessionVersion: 0,
+    });
     await expect(removeOperator(deps, "admin-1", "ghost")).rejects.toBeInstanceOf(NotFoundError);
     await removeOperator(deps, "admin-1", "admin-2");
     expect(operators.has("admin-2")).toBe(false);

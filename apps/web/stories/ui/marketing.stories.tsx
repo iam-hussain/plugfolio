@@ -49,7 +49,11 @@ export const Loop: Story = {
           <Tile tone="butter" data-artefact className="rounded-card shadow-rest p-2.5">
             <div className="relative">
               <div className="rounded-image overflow-hidden">
-                <img src={swatch("#FFD84D")} alt="" className="block aspect-[4/3] w-full object-cover" />
+                <img
+                  src={swatch("#FFD84D")}
+                  alt=""
+                  className="block aspect-[4/3] w-full object-cover"
+                />
               </div>
               <ProductTag name="Desk lamp" price="$48" className="absolute left-[10%] top-[30%]" />
             </div>
@@ -64,7 +68,11 @@ export const Loop: Story = {
         artefact={
           <Tile tone="sky" data-artefact className="rounded-card shadow-rest p-2.5">
             <div className="rounded-image overflow-hidden">
-              <img src={swatch("#A9D8FF")} alt="" className="block aspect-[4/3] w-full object-cover" />
+              <img
+                src={swatch("#A9D8FF")}
+                alt=""
+                className="block aspect-[4/3] w-full object-cover"
+              />
             </div>
           </Tile>
         }
@@ -77,7 +85,11 @@ export const Loop: Story = {
         artefact={
           <div data-artefact>
             <RetailerFrame name="Desk lamp — warm white" note="on the retailer's site">
-              <img src={swatch("#EDEAF6")} alt="" className="block aspect-[4/3] w-full object-cover" />
+              <img
+                src={swatch("#EDEAF6")}
+                alt=""
+                className="block aspect-[4/3] w-full object-cover"
+              />
             </RetailerFrame>
           </div>
         }

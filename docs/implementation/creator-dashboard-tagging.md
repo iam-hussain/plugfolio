@@ -30,7 +30,7 @@ Every page renders inside `DashboardShell` (feature `product-tagging`): brand to
 the 5-cap) + mono-uppercase section tabs (Home / Posts / Products / Categories / Collabs /
 Settings — Settings admin-only), per briefs 07–10.
 
-- `/dashboard` — active-profile card (View page), untagged-posts nudge, profile chips + New-profile, connect status, earnings (stat tiles + by-post/by-product).
+- `/dashboard` — active-profile card (View page), untagged-posts nudge, profile chips + New-profile, connect status, Traffic (views · taps · tap-through, by post and by product — see traffic.md).
 - `/dashboard/posts` — thumbnail grid with tagged/untagged chips (+ a "hidden" chip), All/Tagged/Untagged filter (`?filter=`), Add-post dialog; each post opens the tagging editor.
 - `/dashboard/posts/:postId` — the core tool: media + caption + category, tagged-product cards (same `ProductRow` as the Products tab), tag form (kind toggle, collapsible coupon), View-as-visitor link, and **Hide from page / Show on page** (brief 07: `Post.hiddenAt` — hidden posts stay in the dashboard, vanish from the public grid, and their public post URL 404s; Admin AND Managers, same tier as tagging, via `PATCH /api/posts/:id/hidden`).
 - `/dashboard/products` — every product of the profile (including ones whose post was deleted, via `listProducts`) as cards: image, kind tag, coupon chip, **"in N posts"** (`CreatorProductRow.postCount`), a plain GET search (`?q=`, title match), inline affiliate-link fix + coupon edit + remove. Link-health checks ("link may be broken") stay deferred — they need a checker job.
@@ -38,7 +38,7 @@ Settings — Settings admin-only), per briefs 07–10.
 
 ## Edge cases
 
-- Deleting a product cascades its taps: that product's earnings leave the projection (profile totals rebuild without it). Post-level history for other products is untouched.
+- Deleting a product cascades its taps: that product's traffic leaves the projection (profile totals rebuild without it). Post-level history for other products is untouched.
 - All dashboard reads reuse the shopper read models scoped by the creator's own username — another profile's post 404s in the editor.
 - Tagging a URL whose page can't be fetched creates the product titled by hostname; the creator fixes the title later (title editing lands with the products-tab polish).
 

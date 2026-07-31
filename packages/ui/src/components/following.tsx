@@ -1,7 +1,23 @@
 import * as React from "react";
 import { Slot, Slottable } from "@radix-ui/react-slot";
 import { Clock } from "lucide-react";
+import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
+
+const followBadge = cva(
+  "text-micro rounded-pill px-3 py-1.5 font-bold uppercase tracking-[0.04em] tabular-nums whitespace-nowrap",
+  {
+    variants: {
+      tone: {
+        new: "bg-primary text-primary-foreground",
+        // The design's quiet badge is the hairline colour, not the raised
+        // surface — `bg-muted` is white here, i.e. invisible on a white card.
+        quiet: "bg-border text-muted-foreground",
+      },
+    },
+    defaultVariants: { tone: "quiet" },
+  },
+);
 
 /**
  * /following (DESIGN following.html) — the followed-creators list.
@@ -18,7 +34,7 @@ import { cn } from "../lib/cn";
  */
 export function LastLooked({ children }: { children: React.ReactNode }) {
   return (
-    <p className="bg-active text-primary text-micro inline-flex items-center gap-2.5 rounded-pill px-3.5 py-2 font-bold uppercase tracking-[0.04em]">
+    <p className="bg-active text-primary text-micro rounded-pill inline-flex items-center gap-2.5 px-3.5 py-2 font-bold uppercase tracking-[0.04em]">
       <Clock aria-hidden className="size-[15px] flex-none" />
       {children}
     </p>
@@ -144,18 +160,5 @@ export function FollowBadge({
   tone?: "new" | "quiet";
   children: React.ReactNode;
 }) {
-  return (
-    <span
-      className={cn(
-        "text-micro rounded-pill px-3 py-1.5 font-bold uppercase tracking-[0.04em] tabular-nums whitespace-nowrap",
-        tone === "new"
-          ? "bg-primary text-primary-foreground"
-          // The design's quiet badge is the hairline colour, not the raised
-          // surface — `bg-muted` is white here, i.e. invisible on a white card.
-          : "bg-border text-muted-foreground",
-      )}
-    >
-      {children}
-    </span>
-  );
+  return <span className={followBadge({ tone })}>{children}</span>;
 }

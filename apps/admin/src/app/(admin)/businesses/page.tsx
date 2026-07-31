@@ -73,28 +73,37 @@ export default async function BusinessesPage({
               <TableRow key={business.id}>
                 <TableCell className="max-w-[340px]">
                   <span className="block font-semibold">{business.name}</span>
-                  <span className="text-muted-foreground mt-0.5 block truncate text-xs">
+                  <span className="text-muted-foreground text-micro mt-0.5 block truncate">
                     {business.description}
                   </span>
                 </TableCell>
-                <TableCell className="text-muted-foreground text-[13px]">
+                <TableCell className="text-muted-foreground text-label">
                   {business.ownerEmail}
                 </TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">
-                  {business.requirementCount} requirement{business.requirementCount === 1 ? "" : "s"} ·{" "}
-                  {business.collabCount} collab{business.collabCount === 1 ? "" : "s"}
+                  {business.requirementCount} requirement
+                  {business.requirementCount === 1 ? "" : "s"} · {business.collabCount} collab
+                  {business.collabCount === 1 ? "" : "s"}
                 </TableCell>
                 <TableCell>
                   {business.ownerSuspendedAt ? (
-                    <Badge shape="square" variant="soft-destructive">Owner suspended</Badge>
+                    <Badge shape="square" variant="soft-destructive">
+                      Owner suspended
+                    </Badge>
                   ) : (
-                    <Badge shape="square" variant="outline-muted">Active</Badge>
+                    <Badge shape="square" variant="outline-muted">
+                      Active
+                    </Badge>
                   )}
                 </TableCell>
                 <TableCell className="text-right">
                   {business.logoUrl ? (
                     <ConfirmDialog
-                      trigger={<Button size="xs" variant="ghost-muted">Clear logo</Button>}
+                      trigger={
+                        <Button size="xs" variant="ghost-muted">
+                          Clear logo
+                        </Button>
+                      }
                       title="Clear this logo?"
                       body="The uploaded logo is removed and the business shows its default mark. Recorded in the audit log."
                       confirmLabel="Clear logo"
@@ -103,7 +112,7 @@ export default async function BusinessesPage({
                       successToast="Logo cleared"
                     />
                   ) : (
-                    <span className="text-faint text-xs">No logo</span>
+                    <span className="text-faint text-micro">No logo</span>
                   )}
                 </TableCell>
               </TableRow>
@@ -118,7 +127,12 @@ export default async function BusinessesPage({
           </TableBody>
         </Table>
       </Panel>
-      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/businesses", params)} />
+      <Pager
+        page={page.page}
+        pageSize={page.pageSize}
+        total={total}
+        hrefFor={pagedHref("/businesses", params)}
+      />
     </>
   );
 }

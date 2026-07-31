@@ -1,5 +1,5 @@
 import { getAdminCollabThread, NotFoundError } from "@plugfolio/core";
-import { Badge, Button, ConfirmDialog, cn } from "@plugfolio/ui";
+import { Badge, Button, cn, ConfirmDialog, MessageBubble } from "@plugfolio/ui";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -13,11 +13,7 @@ import { deleteCollabMessageAction } from "./actions";
 export const metadata: Metadata = { title: "Collab thread" };
 export const dynamic = "force-dynamic";
 
-export default async function CollabThreadPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function CollabThreadPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
   const { id } = await params;
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) notFound();
@@ -30,21 +26,21 @@ export default async function CollabThreadPage({
   }
 
   return (
-    <div className="mx-auto max-w-[760px]">
+    <div className="max-w-reading mx-auto">
       <Link
         href="/collabs"
-        className="font-mono text-muted-foreground mb-3.5 inline-flex items-center gap-[7px] text-xs"
+        className="text-muted-foreground text-micro mb-3.5 inline-flex items-center gap-[7px] font-mono"
       >
         <ArrowLeft aria-hidden className="size-4" /> Collabs
       </Link>
 
       <Panel className="mb-4 px-5 py-[18px]">
-        <h1 className="font-display text-lg font-bold tracking-[-0.01em]">
+        <h1 className="font-display text-body font-bold tracking-[-0.01em]">
           {thread.businessName} <span className="text-faint">↔</span>{" "}
           <span className="font-mono">/{thread.profileUsername}</span>
         </h1>
         <div className="mt-2 flex flex-wrap items-center gap-2.5">
-          <span className="text-muted-foreground text-[12.5px]">
+          <span className="text-muted-foreground text-micro">
             Source: {thread.requirementTitle ?? "Direct reach-out"}
           </span>
           <CollabStateBadge
@@ -63,24 +59,15 @@ export default async function CollabThreadPage({
           >
             <div className="max-w-[78%]">
               <div className="mb-1 flex items-center gap-2">
-                <span className="text-xs font-semibold">{message.senderName}</span>
-                <Badge
-                  shape="square"
-                  variant="outline-muted"
-                  className="px-1.5 py-px text-[9px]"
-                >
+                <span className="text-micro font-semibold">{message.senderName}</span>
+                <Badge shape="square" variant="outline-muted" className="text-pico px-1.5 py-px">
                   {creatorSide ? "Creator" : "Business"}
                 </Badge>
-                <span className="font-mono text-faint text-[10px] tabular-nums">
+                <span className="text-faint text-pico font-mono tabular-nums">
                   {message.createdAt.toISOString().replace("T", " ").slice(0, 16)}
                 </span>
               </div>
-              <div
-                className={cn(
-                  "border-border rounded-md border px-3.5 py-[11px] text-[13.5px] leading-normal",
-                  creatorSide ? "bg-active" : "bg-background",
-                )}
-              >
+              <MessageBubble className="max-w-none" tone={creatorSide ? "creator" : "business"}>
                 {message.body}
                 <ConfirmDialog
                   trigger={
@@ -100,16 +87,16 @@ export default async function CollabThreadPage({
                   hiddenFields={{ messageId: message.id }}
                   successToast="Message deleted"
                 />
-              </div>
+              </MessageBubble>
             </div>
           </div>
         );
       })}
       {thread.messages.length === 0 ? (
-        <p className="text-faint py-8 text-center text-[13px]">No messages yet.</p>
+        <p className="text-faint text-label py-8 text-center">No messages yet.</p>
       ) : null}
 
-      <p className="font-mono text-faint pb-1 pt-2 text-center text-[11px]">
+      <p className="text-faint text-nano pb-1 pt-2 text-center font-mono">
         Read-only oversight — admins never write into threads.
       </p>
     </div>

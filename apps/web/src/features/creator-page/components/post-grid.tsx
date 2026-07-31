@@ -5,6 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "@/lib/format-price";
 
+/** A list row gets one line of copy; a stacked card gets two. */
+const cardCopy = cva("text-muted-foreground mt-1 overflow-hidden text-copy leading-[1.45]", {
+  variants: { layout: { list: "line-clamp-1", stack: "line-clamp-2" } },
+  defaultVariants: { layout: "stack" },
+});
+
 /**
  * The creator page's Shop wall (DESIGN creator.html §.grid): one grid holding
  * two kinds of tile — a **post** (photo + white product-count chip) and a
@@ -64,7 +70,7 @@ const media = cva("bg-muted relative block overflow-hidden", {
 });
 
 // The corner chips sit on the photo in grid/cards and beside the words in list.
-const corner = cva("shadow-tag rounded-pill absolute z-10 text-xs", {
+const corner = cva("shadow-tag rounded-pill absolute z-10 text-micro", {
   variants: {
     layout: { grid: "right-2 top-2", cards: "right-[18px] top-[18px]", list: "hidden" },
   },
@@ -73,7 +79,7 @@ const corner = cva("shadow-tag rounded-pill absolute z-10 text-xs", {
 // The four commercial flags a product tile can carry (§.tile-flag). own stacks
 // with an offer; in-store, offer and ended are mutually exclusive.
 const flag = cva(
-  "rounded-pill shadow-tag px-[9px] py-[5px] text-xs font-bold uppercase tracking-[0.04em]",
+  "rounded-pill shadow-tag px-[9px] py-[5px] text-micro font-bold uppercase tracking-[0.04em]",
   {
     variants: {
       tone: {
@@ -134,19 +140,11 @@ function Words({
   const isList = layout === "list";
   return (
     <div className={isList ? "min-w-0 flex-1" : "px-1 pt-2.5"}>
-      <b className="block truncate text-[13px] font-bold leading-[1.35]">{title}</b>
-      {copy ? (
-        <p
-          className={`text-muted-foreground mt-1 overflow-hidden text-[0.9375rem] leading-[1.45] ${
-            isList ? "line-clamp-1" : "line-clamp-2"
-          }`}
-        >
-          {copy}
-        </p>
-      ) : null}
-      <span className="text-primary mt-2 block text-[13px] font-bold">{action}</span>
+      <b className="text-label block truncate font-bold leading-[1.35]">{title}</b>
+      {copy ? <p className={cardCopy({ layout: isList ? "list" : "stack" })}>{copy}</p> : null}
+      <span className="text-primary text-label mt-2 block font-bold">{action}</span>
       {note && !isList ? (
-        <span className="text-faint mt-1.5 block text-xs leading-[1.4]">{note}</span>
+        <span className="text-faint text-micro mt-1.5 block leading-[1.4]">{note}</span>
       ) : null}
     </div>
   );
@@ -207,7 +205,7 @@ function ProductTile({
         note={product.inStoreNote}
       />
       {layout === "list" && price ? (
-        <span className="text-foreground shrink-0 text-[13px] font-extrabold tabular-nums">
+        <span className="text-foreground text-label shrink-0 font-extrabold tabular-nums">
           {price}
         </span>
       ) : null}
@@ -254,7 +252,7 @@ function PostTile({
         action="Open post →"
       />
       {layout === "list" && tagged > 0 ? (
-        <span className="text-muted-foreground shrink-0 text-xs font-bold tabular-nums">
+        <span className="text-muted-foreground text-micro shrink-0 font-bold tabular-nums">
           {tagged} tagged
         </span>
       ) : null}
@@ -264,7 +262,7 @@ function PostTile({
 
 export function PostGrid({ handle, posts, products = [], layout = "grid" }: PostGridProps) {
   if (posts.length === 0 && products.length === 0) {
-    return <p className="text-muted-foreground py-12 text-center text-sm">Nothing here yet.</p>;
+    return <p className="text-muted-foreground text-copy py-12 text-center">Nothing here yet.</p>;
   }
 
   return (

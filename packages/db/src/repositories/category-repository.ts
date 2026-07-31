@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/client";
 import type { CategoryPatch, CategoryRepository, CategoryView, NewCategory } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 

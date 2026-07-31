@@ -35,6 +35,8 @@ export type SharePanelProps = {
   avatarUrl?: string | null;
   /** "18 posts · 42 things" — the unfurl's second line. */
   meta: string;
+  /** What gets shared. Defaults to the creator's page; a post shares itself. */
+  path?: string;
   /** Which way they asked for — the panel opens already on it. */
   mode: "link" | "code";
   onModeChange: (mode: "link" | "code") => void;
@@ -47,6 +49,7 @@ export function SharePanel({
   displayName,
   avatarUrl,
   meta,
+  path,
   mode,
   onModeChange,
   open,
@@ -54,7 +57,8 @@ export function SharePanel({
 }: SharePanelProps) {
   const [copied, setCopied] = useState(false);
   // The origin is only knowable in the browser.
-  const url = typeof window === "undefined" ? "" : `${window.location.origin}/${handle}`;
+  const url =
+    typeof window === "undefined" ? "" : `${window.location.origin}${path ?? `/${handle}`}`;
 
   const qr = useMemo(() => {
     if (!url || mode !== "code") return null;
@@ -105,7 +109,7 @@ export function SharePanel({
 
               <ShareCard
                 avatar={
-                  <span className="bg-active text-primary grid size-[34px] flex-none place-items-center overflow-hidden rounded-pill text-xs font-bold">
+                  <span className="bg-active text-primary rounded-pill text-micro grid size-[34px] flex-none place-items-center overflow-hidden font-bold">
                     {avatarUrl ? (
                       /* eslint-disable-next-line @next/next/no-img-element -- preview of an unfurl, not page content */
                       <img src={avatarUrl} alt="" className="size-full object-cover" />
@@ -149,9 +153,13 @@ export function SharePanel({
                 shapeRendering="crispEdges"
                 role="img"
                 aria-label={`QR code for @${handle}`}
-                className="block size-full"
+                /* Ink from the token, not a literal — but deliberately the
+                   *light*-theme ink either way: the plate under a QR is forced
+                   white so a camera can read it, so the code must not follow
+                   the viewer's theme into a dark-on-dark that won't scan. */
+                className="text-brand-ink block size-full"
               >
-                <path d={qr.d} fill="#12101C" />
+                <path d={qr.d} fill="currentColor" />
               </svg>
             </ShareQr>
           ) : (

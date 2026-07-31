@@ -41,7 +41,9 @@ export function FollowRow({ creator, meta, badge }: FollowRowProps) {
 
   const toggle = useMutation({
     mutationFn: (unfollow: boolean) =>
-      unfollow ? unfollowProfile({ profileId: creator.id }) : followProfile({ profileId: creator.id }),
+      unfollow
+        ? unfollowProfile({ profileId: creator.id })
+        : followProfile({ profileId: creator.id }),
     onMutate: (unfollow) => {
       setFailed(false);
       setGone(unfollow);
@@ -60,7 +62,7 @@ export function FollowRow({ creator, meta, badge }: FollowRowProps) {
         avatar={
           <Avatar className="size-[52px]">
             {creator.avatarUrl ? <AvatarImage src={creator.avatarUrl} alt="" /> : null}
-            <AvatarFallback className="bg-active text-primary font-display text-lg font-bold">
+            <AvatarFallback className="bg-active text-primary font-display text-body font-bold">
               {creator.username.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>

@@ -63,7 +63,7 @@ export function ThreadActions({ collabId, hasAgreed, otherSideAgreed }: ThreadAc
         </Button>
       </form>
       {send.isError || agree.isError ? (
-        <p role="alert" className="text-destructive text-xs">
+        <p role="alert" className="text-destructive text-micro">
           {(send.error ?? agree.error)?.message}
         </p>
       ) : null}

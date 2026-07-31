@@ -22,8 +22,8 @@ Auth.js Prisma-adapter tables (migration `20260718170000_authjs_identity`, hand-
 ## Dashboard v0 (`/dashboard`)
 
 - Server component; `auth()` → no session → `redirect("/api/auth/signin")`. **Never a shop wall** — every shopper path stays account-free (§2.2); e2e asserts the gate exists AND the shop paths stay open.
-- Reads via `getMyProfiles(userId)` (new `ProfileReadRepository` port) then `getEarnings(profileId)` for the first profile — earnings scoping comes from the session-derived profile list, never from client input.
-- Renders the `earnings` feature's `EarningsSummaryView` (total taps · by post · by product, labeled tracked). Posts/Products/Collabs tabs and the profile switcher land with tagging, social connects, and multi-profile creation.
+- Reads via `getMyProfiles(userId)` (new `ProfileReadRepository` port) then `getTraffic(profileId)` for the first profile — traffic scoping comes from the session-derived profile list, never from client input.
+- Renders the `traffic` feature's `TrafficSummaryView` (views · taps · tap-through, by post and by product, labeled tracked). Posts/Products/Collabs tabs and the profile switcher land with tagging, social connects, and multi-profile creation.
 
 ## Social connections (Google/YouTube — first half of ADR-0004)
 

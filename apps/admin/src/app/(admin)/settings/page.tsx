@@ -35,25 +35,30 @@ export default async function SettingsPage() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="font-display mb-5 text-2xl font-bold tracking-[-0.02em]">Settings</h1>
+      <h1 className="font-display text-name mb-5 font-bold tracking-[-0.02em]">Settings</h1>
 
       <Panel className="px-6 py-[22px]">
-        <h2 className="font-display text-base font-bold">Reserved usernames</h2>
-        <p className="text-muted-foreground mb-3.5 mt-1.5 text-[13px] leading-[1.55]">
+        <h2 className="font-display text-body font-bold">Reserved usernames</h2>
+        <p className="text-muted-foreground text-label mb-3.5 mt-1.5 leading-[1.55]">
           Names no member handle — and, when username claiming lands, no profile username — may
           take.
         </p>
-        <p className="font-mono text-faint mb-2 text-[10px] font-bold uppercase tracking-[0.1em]">
+        <p className="text-faint text-pico mb-2 font-mono font-bold uppercase tracking-[0.1em]">
           Always blocked
         </p>
         <div className="mb-4 flex flex-wrap gap-1.5">
           {BASELINE_RESERVED_USERNAMES.map((name) => (
-            <Badge key={name} shape="square" variant="outline-muted" className="font-mono opacity-75">
+            <Badge
+              key={name}
+              shape="square"
+              variant="outline-muted"
+              className="font-mono opacity-75"
+            >
               {name}
             </Badge>
           ))}
         </div>
-        <p className="font-mono text-faint mb-2 text-[10px] font-bold uppercase tracking-[0.1em]">
+        <p className="text-faint text-pico mb-2 font-mono font-bold uppercase tracking-[0.1em]">
           Admin additions
         </p>
         <ActionForm action={saveReservedUsernamesAction} successToast="Reserved usernames saved">
@@ -63,7 +68,7 @@ export default async function SettingsPage() {
             rows={4}
             placeholder={"vip\nwinner\ngiveaway"}
             aria-label="Additional reserved usernames, one per line"
-            className="font-mono resize-y leading-[1.6]"
+            className="resize-y font-mono leading-[1.6]"
           />
           <div className="mt-3.5">
             <Button type="submit" size="xs">
@@ -74,8 +79,8 @@ export default async function SettingsPage() {
       </Panel>
 
       <Panel className="mt-4 px-6 py-[22px]">
-        <h2 className="font-display text-base font-bold">Feature flags</h2>
-        <p className="text-muted-foreground mb-3.5 mt-1.5 text-[13px] leading-[1.55]">
+        <h2 className="font-display text-body font-bold">Feature flags</h2>
+        <p className="text-muted-foreground text-label mb-3.5 mt-1.5 leading-[1.55]">
           Removing a flag returns the feature to its built-in default.
         </p>
         <Table variant="dense">
@@ -89,7 +94,7 @@ export default async function SettingsPage() {
           <TableBody>
             {Object.entries(flags).map(([name, enabled]) => (
               <TableRow key={name}>
-                <TableCell className="font-mono text-xs">{name}</TableCell>
+                <TableCell className="text-micro font-mono">{name}</TableCell>
                 <TableCell>
                   <Badge shape="square" variant={enabled ? "soft-primary" : "outline-muted"}>
                     {enabled ? "On" : "Off"}
@@ -107,7 +112,11 @@ export default async function SettingsPage() {
                       </Button>
                     </ActionForm>
                     <ConfirmDialog
-                      trigger={<Button size="xs" variant="ghost-muted">Remove</Button>}
+                      trigger={
+                        <Button size="xs" variant="ghost-muted">
+                          Remove
+                        </Button>
+                      }
                       title="Remove this flag?"
                       body="The feature returns to its built-in default. Recorded in the audit log."
                       confirmLabel="Remove flag"
@@ -139,7 +148,7 @@ export default async function SettingsPage() {
             placeholder="new-flag-name"
             aria-label="New flag name"
             required
-            className="font-mono max-w-[280px]"
+            className="max-w-[280px] font-mono"
           />
           <Button type="submit" size="xs" variant="outline-strong">
             Add flag (on)

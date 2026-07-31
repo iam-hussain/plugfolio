@@ -11,6 +11,8 @@ export type ProductForAttribution = {
   readonly affiliateUrl: string | null;
   /** Copies are only valid on products that actually carry a code. */
   readonly couponCode: string | null;
+  /** The in-store channel (ADR-0011) — the other half of the channel rule. */
+  readonly inStoreNote: string | null;
 };
 
 export type ProductReadRepository = {

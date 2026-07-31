@@ -25,12 +25,19 @@ export type AccountMenuProps = {
 };
 
 const itemClass =
-  "hover:bg-active hover:text-brand-violet-deep text-foreground rounded-image flex min-h-11 w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm font-semibold no-underline transition-colors";
+  "hover:bg-active hover:text-brand-violet-deep text-foreground rounded-image flex min-h-11 w-full items-center gap-2.5 px-3 py-2.5 text-left text-copy font-semibold no-underline transition-colors";
 const sectionClass =
-  "text-muted-foreground mx-3 mt-2.5 mb-1 text-[11px] font-bold tracking-[0.08em] uppercase";
-const subClass = "text-faint ml-auto text-xs font-semibold";
+  "text-muted-foreground mx-3 mt-2.5 mb-1 text-nano font-bold tracking-[0.08em] uppercase";
+const subClass = "text-faint ml-auto text-micro font-semibold";
 
-export function AccountMenu({ name, handle, email, avatarUrl, profiles, hasBusiness }: AccountMenuProps) {
+export function AccountMenu({
+  name,
+  handle,
+  email,
+  avatarUrl,
+  profiles,
+  hasBusiness,
+}: AccountMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -52,12 +59,7 @@ export function AccountMenu({ name, handle, email, avatarUrl, profiles, hasBusin
 
   // The handle first, and strip a leading "@" so the fallback is a letter
   // (a name of "@maya" would otherwise stamp "@" on the avatar).
-  const initial =
-    (handle || name || "?")
-      .trim()
-      .replace(/^@/, "")
-      .charAt(0)
-      .toUpperCase() || "?";
+  const initial = (handle || name || "?").trim().replace(/^@/, "").charAt(0).toUpperCase() || "?";
 
   return (
     <div ref={ref} className="relative inline-flex">
@@ -66,16 +68,22 @@ export function AccountMenu({ name, handle, email, avatarUrl, profiles, hasBusin
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="bg-active text-brand-violet-deep hover:border-brand-violet-deep/40 rounded-pill flex min-h-11 items-center gap-2 border border-transparent py-1.5 pr-3 pl-1.5 text-sm font-bold"
+        // Symmetric padding by default, and the extra right padding only from
+        // `sm` — which is exactly where the "Shopping ▾" label appears. Below
+        // that the label is hidden but `pr-3` stayed, so the pill rendered
+        // 52×46: a visibly squashed egg around a perfectly round avatar.
+        className="bg-active text-brand-violet-deep hover:border-brand-violet-deep/40 rounded-pill text-copy flex min-h-11 items-center gap-2 border border-transparent p-1.5 font-bold sm:pr-3"
       >
         <Avatar className="size-8">
           {avatarUrl ? <AvatarImage src={avatarUrl} alt="" /> : null}
-          <AvatarFallback className="bg-card text-brand-violet-deep text-xs">{initial}</AvatarFallback>
+          <AvatarFallback className="bg-card text-brand-violet-deep text-micro">
+            {initial}
+          </AvatarFallback>
         </Avatar>
         <span className="hidden items-center gap-1.5 sm:inline-flex">
-          <span className="bg-primary size-2 shrink-0 rounded-pill" aria-hidden />
+          <span className="bg-primary rounded-pill size-2 shrink-0" aria-hidden />
           Shopping
-          <span aria-hidden className="text-[10px]">
+          <span aria-hidden className="text-pico">
             ▾
           </span>
         </span>
@@ -85,18 +93,23 @@ export function AccountMenu({ name, handle, email, avatarUrl, profiles, hasBusin
       {open ? (
         <div
           role="menu"
-          className="border-border bg-card shadow-lift rounded-tile absolute top-[calc(100%+8px)] right-0 z-50 w-[min(300px,calc(100vw-32px))] border p-2"
+          className="border-border bg-card shadow-lift rounded-tile absolute right-0 top-[calc(100%+8px)] z-50 w-[min(300px,calc(100vw-32px))] border p-2"
         >
-          <div className="border-border mb-1.5 border-b px-3 pt-2.5 pb-3">
-            <b className="text-foreground block text-sm font-bold">{name}</b>
-            <span className="text-muted-foreground mt-0.5 block text-xs">
+          <div className="border-border mb-1.5 border-b px-3 pb-3 pt-2.5">
+            <b className="text-foreground text-copy block font-bold">{name}</b>
+            <span className="text-muted-foreground text-micro mt-0.5 block">
               @{handle} · {email}
             </span>
           </div>
 
           <p className={sectionClass}>You are here</p>
-          <Link role="menuitem" href="/following" className={itemClass} onClick={() => setOpen(false)}>
-            <span className="bg-primary size-2.5 shrink-0 rounded-pill" aria-hidden />
+          <Link
+            role="menuitem"
+            href="/following"
+            className={itemClass}
+            onClick={() => setOpen(false)}
+          >
+            <span className="bg-primary rounded-pill size-2.5 shrink-0" aria-hidden />
             Shopping
             <span className={subClass}>Following</span>
           </Link>
@@ -112,7 +125,7 @@ export function AccountMenu({ name, handle, email, avatarUrl, profiles, hasBusin
                   className={itemClass}
                   onClick={() => setOpen(false)}
                 >
-                  <span className="bg-muted text-foreground grid size-[22px] shrink-0 place-items-center rounded-pill text-[10px] font-bold">
+                  <span className="bg-muted text-foreground rounded-pill text-pico grid size-[22px] shrink-0 place-items-center font-bold">
                     {profile.username.charAt(0).toUpperCase()}
                   </span>
                   @{profile.username}
@@ -125,8 +138,13 @@ export function AccountMenu({ name, handle, email, avatarUrl, profiles, hasBusin
           <hr className="border-border my-1.5" />
 
           {hasBusiness ? (
-            <Link role="menuitem" href="/collabs" className={itemClass} onClick={() => setOpen(false)}>
-              <span className="bg-tile-mint size-2.5 shrink-0 rounded-pill" aria-hidden />
+            <Link
+              role="menuitem"
+              href="/collabs"
+              className={itemClass}
+              onClick={() => setOpen(false)}
+            >
+              <span className="bg-tile-mint rounded-pill size-2.5 shrink-0" aria-hidden />
               Your business
             </Link>
           ) : (
@@ -136,14 +154,24 @@ export function AccountMenu({ name, handle, email, avatarUrl, profiles, hasBusin
               className={itemClass}
               onClick={() => setOpen(false)}
             >
-              <span className="bg-tile-mint size-2.5 shrink-0 rounded-pill" aria-hidden />
+              <span className="bg-tile-mint rounded-pill size-2.5 shrink-0" aria-hidden />
               Create a business
             </Link>
           )}
-          <Link role="menuitem" href="/account" className={itemClass} onClick={() => setOpen(false)}>
+          <Link
+            role="menuitem"
+            href="/account"
+            className={itemClass}
+            onClick={() => setOpen(false)}
+          >
             Account settings
           </Link>
-          <Link role="menuitem" href="/support" className={itemClass} onClick={() => setOpen(false)}>
+          <Link
+            role="menuitem"
+            href="/support"
+            className={itemClass}
+            onClick={() => setOpen(false)}
+          >
             Help
           </Link>
 

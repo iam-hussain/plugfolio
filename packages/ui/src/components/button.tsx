@@ -27,8 +27,7 @@ const buttonVariants = cva(
         // chosen accent (ADR-0017) — which is what those contrast numbers were
         // measured for. NOT `accent`: that's Electric Lime, and lime means a
         // real offer (§7), not "this is the button".
-        action:
-          "bg-primary text-primary-foreground hover:bg-foreground hover:text-background",
+        action: "bg-primary text-primary-foreground hover:bg-foreground hover:text-background",
         // White pill with a hairline — the second action in a pair.
         secondary: "border border-border bg-card text-foreground hover:bg-active",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
@@ -37,8 +36,7 @@ const buttonVariants = cva(
           "border border-destructive/30 bg-transparent text-destructive hover:bg-destructive/10",
         outline: "border border-border bg-transparent text-foreground hover:bg-active",
         // Secondary: raised white fill with the strong hairline.
-        "outline-strong":
-          "border border-border-strong bg-card text-foreground hover:bg-active",
+        "outline-strong": "border border-border-strong bg-card text-foreground hover:bg-active",
         ghost: "text-foreground hover:bg-active",
         // Ghost: muted at rest, full text on hover.
         "ghost-muted": "text-muted-foreground hover:bg-active hover:text-foreground",
@@ -46,7 +44,7 @@ const buttonVariants = cva(
       },
       size: {
         // Admin design control: 12.5px/600, 6×12 padding, 7px radius.
-        xs: "gap-1.5 rounded-[7px] px-3 py-1.5 text-[12.5px] font-semibold",
+        xs: "gap-1.5 rounded-[7px] px-3 py-1.5 text-micro font-semibold",
         sm: "h-9 px-3",
         md: "h-11 px-5",
         default: "h-11 px-5",

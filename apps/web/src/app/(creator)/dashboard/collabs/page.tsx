@@ -20,7 +20,7 @@ import {
 } from "@plugfolio/ui";
 import { Eye } from "lucide-react";
 import { RequirementBoard } from "@/features/business-collab";
-import { DashboardPageHeader, DashboardShell } from "@/features/product-tagging";
+import { DashboardPageHeader } from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { businessCollabDeps, repositories } from "@/server/container";
@@ -69,7 +69,7 @@ export default async function CreatorCollabsPage({
   const needsReplyCount = rows.filter((row) => row.needsReply).length;
 
   return (
-    <DashboardShell profiles={profiles} active={active}>
+    <>
       <DashboardPageHeader
         title="Collabs"
         eyebrow={active ? `@${active.username}` : undefined}
@@ -181,7 +181,7 @@ export default async function CreatorCollabsPage({
           )}
         </DashCard>
       </DashBody>
-    </DashboardShell>
+    </>
   );
 }
 

@@ -26,15 +26,23 @@ const RANGES: Record<string, number | undefined> = {
   today: 1,
   all: undefined,
 };
-const ACTION_PREFIXES = ["member.", "profile.", "post.", "product.", "comment.", "business.", "requirement.", "collab.", "report.", "settings.", "admin."];
+const ACTION_PREFIXES = [
+  "member.",
+  "profile.",
+  "post.",
+  "product.",
+  "comment.",
+  "business.",
+  "requirement.",
+  "collab.",
+  "report.",
+  "settings.",
+  "admin.",
+];
 
 type AuditParams = { admin?: string; action?: string; range?: string; page?: string };
 
-export default async function AuditPage({
-  searchParams,
-}: {
-  searchParams: Promise<AuditParams>;
-}) {
+export default async function AuditPage({ searchParams }: { searchParams: Promise<AuditParams> }) {
   const params = await searchParams;
   const page = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
   const rangeDays = RANGES[params.range ?? "30d"];
@@ -78,7 +86,12 @@ export default async function AuditPage({
             name="range"
             defaultValue={params.range ?? "30d"}
             label="Filter by date range"
-            options={[["30d", "Last 30 days"], ["7d", "Last 7 days"], ["today", "Today"], ["all", "All time"]]}
+            options={[
+              ["30d", "Last 30 days"],
+              ["7d", "Last 7 days"],
+              ["today", "Today"],
+              ["all", "All time"],
+            ]}
           />
           <Button type="submit" size="xs" variant="outline-strong">
             Apply
@@ -105,17 +118,17 @@ export default async function AuditPage({
           <TableBody>
             {rows.map((entry) => (
               <TableRow key={entry.id}>
-                <TableCell className="font-mono text-faint whitespace-nowrap text-xs tabular-nums">
+                <TableCell className="text-faint text-micro whitespace-nowrap font-mono tabular-nums">
                   {entry.createdAt.toISOString().replace("T", " ").slice(0, 16)}
                 </TableCell>
-                <TableCell className="text-muted-foreground text-[12.5px]">
+                <TableCell className="text-muted-foreground text-micro">
                   {entry.adminEmail}
                 </TableCell>
-                <TableCell className="font-mono text-primary text-xs">{entry.action}</TableCell>
-                <TableCell className="font-mono text-muted-foreground text-xs">
+                <TableCell className="text-primary text-micro font-mono">{entry.action}</TableCell>
+                <TableCell className="text-muted-foreground text-micro font-mono">
                   {entry.targetType ? `${entry.targetType}:${entry.targetId ?? ""}` : "—"}
                 </TableCell>
-                <TableCell className="text-muted-foreground max-w-[280px] truncate text-[12.5px]">
+                <TableCell className="text-muted-foreground text-micro max-w-[280px] truncate">
                   {entry.detail ?? "—"}
                 </TableCell>
               </TableRow>

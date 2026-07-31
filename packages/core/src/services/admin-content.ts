@@ -27,9 +27,7 @@ export type AdminContentDeps = {
 const DETAIL_SNIPPET_LENGTH = 80;
 
 function snippet(text: string): string {
-  return text.length > DETAIL_SNIPPET_LENGTH
-    ? `${text.slice(0, DETAIL_SNIPPET_LENGTH)}…`
-    : text;
+  return text.length > DETAIL_SNIPPET_LENGTH ? `${text.slice(0, DETAIL_SNIPPET_LENGTH)}…` : text;
 }
 
 export async function searchComments(

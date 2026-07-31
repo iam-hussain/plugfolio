@@ -2,7 +2,30 @@ import { Button } from "@plugfolio/ui";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { JsonLd } from "@/components/json-ld";
+import { faqPage } from "@/lib/structured-data";
 import { Fact, MarketingDoors, PostCard, SplitBand, mk } from "./marketing-shared";
+import { cva } from "class-variance-authority";
+
+/** Rows in the "what we track" table; every row but the first takes a rule. */
+const trackRow = cva("flex items-center justify-between gap-4 px-5 py-4 text-copy", {
+  variants: { divided: { true: "border-border border-t", false: "" } },
+  defaultVariants: { divided: false },
+});
+
+/** What we count and what we don't (ADR-0021) — held, or plainly not. */
+const trackedFlag = cva(
+  "rounded-pill px-3 py-1 font-mono text-nano font-semibold tracking-[0.04em] uppercase",
+  {
+    variants: {
+      tracked: {
+        true: "bg-active text-brand-violet-deep",
+        false: "bg-muted text-muted-foreground",
+      },
+    },
+    defaultVariants: { tracked: false },
+  },
+);
 
 /**
  * /how-it-works (DESIGN how-it-works.html) — shopper-facing. Shows the loop
@@ -60,12 +83,12 @@ const FAQ: readonly { q: string; a: string }[] = [
 function LoopCaption({ n, title, copy }: { n: number; title: string; copy: string }) {
   return (
     <div className="mt-3.5 flex items-start gap-2.5 px-1">
-      <span className="bg-foreground text-background grid size-[26px] shrink-0 place-items-center rounded-pill font-mono text-[11px] font-bold">
+      <span className="bg-foreground text-background rounded-pill text-nano grid size-[26px] shrink-0 place-items-center font-mono font-bold">
         {n}
       </span>
       <span>
-        <b className="font-display block text-[0.9375rem] font-bold tracking-[-0.01em]">{title}</b>
-        <p className="text-muted-foreground mt-1 text-[0.9375rem] leading-[1.5]">{copy}</p>
+        <b className="font-display text-copy block font-bold tracking-[-0.01em]">{title}</b>
+        <p className="text-muted-foreground text-copy mt-1 leading-[1.5]">{copy}</p>
       </span>
     </div>
   );
@@ -74,6 +97,9 @@ function LoopCaption({ n, title, copy }: { n: number; title: string; copy: strin
 export function HowItWorksPage() {
   return (
     <>
+      {/* FAQPage schema (AEO) — built from the same FAQ shown below, so an
+          answer engine quotes exactly what a visitor reads. */}
+      <JsonLd data={faqPage(FAQ)} />
       <main className={mk.main}>
         {/* ── hero ── */}
         <section className="pt-[clamp(28px,5vw,56px)]">
@@ -122,7 +148,9 @@ export function HowItWorksPage() {
                 alt="The tagged product, shown large"
                 square
                 wrap="rotate-[1.4deg]"
-                tags={[{ name: "Serum", price: "₹1,299", tone: "offer", pos: "left-[12%] top-[58%]" }]}
+                tags={[
+                  { name: "Serum", price: "₹1,299", tone: "offer", pos: "left-[12%] top-[58%]" },
+                ]}
               />
               <LoopCaption {...LOOP[1]!} />
             </div>
@@ -139,12 +167,14 @@ export function HowItWorksPage() {
                   className="block aspect-[4/3] w-full object-cover"
                 />
                 <div className="flex items-center gap-2.5 px-4 py-3.5">
-                  <span className="text-[0.9375rem]">
+                  <span className="text-copy">
                     <b className="font-bold">The retailer</b>
                     <br />
-                    <span className="text-muted-foreground text-xs">their site · their checkout</span>
+                    <span className="text-muted-foreground text-micro">
+                      their site · their checkout
+                    </span>
                   </span>
-                  <span className="border-border text-muted-foreground ml-auto rounded-pill border px-3.5 py-1.5 text-[11px] font-bold whitespace-nowrap">
+                  <span className="border-border text-muted-foreground rounded-pill text-nano ml-auto whitespace-nowrap border px-3.5 py-1.5 font-bold">
                     Add to basket
                   </span>
                 </div>
@@ -171,8 +201,8 @@ export function HowItWorksPage() {
               there&apos;s no total and no basket.
             </Fact>
             <Fact title="We never see your card">
-              Payment happens on the retailer&apos;s site, under their terms. Your card details never
-              touch us because we&apos;re never in that step.
+              Payment happens on the retailer&apos;s site, under their terms. Your card details
+              never touch us because we&apos;re never in that step.
             </Fact>
             <Fact title="Nothing is estimated">
               Every number a creator sees is directly measured. Where something can&apos;t be
@@ -199,18 +229,9 @@ export function HowItWorksPage() {
         >
           <div className="border-border bg-card shadow-rest rounded-card w-full overflow-hidden border">
             {TRACK.map((row, index) => (
-              <div
-                key={row.label}
-                className={`flex items-center justify-between gap-4 px-5 py-4 text-[0.9375rem] ${index > 0 ? "border-border border-t" : ""}`}
-              >
+              <div key={row.label} className={trackRow({ divided: index > 0 })}>
                 <span>{row.label}</span>
-                <span
-                  className={`rounded-pill px-3 py-1 font-mono text-[11px] font-semibold tracking-[0.04em] uppercase ${
-                    row.tracked
-                      ? "bg-active text-brand-violet-deep"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
+                <span className={trackedFlag({ tracked: row.tracked })}>
                   {row.tracked ? "Tracked" : "Not tracked"}
                 </span>
               </div>
@@ -223,27 +244,23 @@ export function HowItWorksPage() {
           <h2 className={mk.h2}>Questions people actually ask.</h2>
           <div className="border-border mt-[clamp(20px,3vw,30px)] border-t">
             {FAQ.map((item, index) => (
-              <details
-                key={item.q}
-                open={index === 0}
-                className="border-border group/faq border-b"
-              >
-                <summary className="font-display flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-[18px] text-[1.0625rem] font-bold tracking-[-0.01em] [&::-webkit-details-marker]:hidden">
+              <details key={item.q} open={index === 0} className="border-border group/faq border-b">
+                <summary className="font-display text-body flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 py-[18px] font-bold tracking-[-0.01em] [&::-webkit-details-marker]:hidden">
                   {item.q}
                   <span
                     aria-hidden
-                    className="text-muted-foreground text-2xl leading-none group-open/faq:hidden"
+                    className="text-muted-foreground text-name leading-none group-open/faq:hidden"
                   >
                     +
                   </span>
                   <span
                     aria-hidden
-                    className="text-muted-foreground hidden text-2xl leading-none group-open/faq:inline"
+                    className="text-muted-foreground text-name hidden leading-none group-open/faq:inline"
                   >
                     –
                   </span>
                 </summary>
-                <p className="text-muted-foreground mb-5 max-w-[62ch] text-[0.9375rem] leading-[1.6]">
+                <p className="text-muted-foreground text-copy mb-5 max-w-[62ch] leading-[1.6]">
                   {item.a}
                 </p>
               </details>

@@ -5,8 +5,12 @@
 // Post<->Product link is Mongo's array-based many-to-many (id arrays on each
 // side). Referential actions run in Prisma's emulation (the Mongo default).
 
+// Generated into the workspace, not pnpm's virtual store: Next's file tracing
+// won't follow the query-engine .so out of node_modules/.pnpm into a Vercel
+// lambda, so the deploy builds fine and then 500s on the first query.
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/client"
 }
 
 datasource db {
@@ -100,7 +104,7 @@ model Profile {
   username  String    @unique
   /// Public identity (brief 10): shown as the page's big name; null = @username.
   displayName String?
-  /// Pasted image URL (no upload infra in v1). Null = initial-letter tile.
+  /// Image URL — uploaded (ADR-0023) or pasted. Null = initial-letter tile.
   avatarUrl   String?
   bio         String?
   /// Page appearance (ADR-0017) — a closed set, never a theme editor. Unset =
@@ -370,6 +374,11 @@ model Product {
   /// the creator's own store (kind=own). Null = in-store-only coupon: no Buy
   /// button, the code + inStoreNote IS the buy path (ADR-0011).
   affiliateUrl  String?
+  /// The product page this was read from — where the title, image and price
+  /// came from. Distinct from `affiliateUrl`: a creator pastes the retailer's
+  /// public page here and their own tracked link there, and the two are
+  /// usually different URLs on the same site.
+  sourceUrl     String?
   /// Coupon attachment: code + optional expiry + optional in-store channel.
   /// Channel rule (≥1 of affiliateUrl/inStoreNote) enforced in the service.
   couponCode    String?

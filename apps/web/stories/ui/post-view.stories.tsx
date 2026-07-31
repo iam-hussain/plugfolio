@@ -32,7 +32,13 @@ const swatch = (hue: string) =>
 const meta: Meta = {
   title: "Post view/Media",
   parameters: { layout: "padded" },
-  decorators: [(Story) => <div className="mx-auto max-w-[720px]"><Story /></div>],
+  decorators: [
+    (Story) => (
+      <div className="mx-auto max-w-[720px]">
+        <Story />
+      </div>
+    ),
+  ],
 };
 export default meta;
 type Story = StoryObj;
@@ -117,7 +123,9 @@ export const TaggedProducts: Story = {
           price="₹8,499"
           where="affiliate pick · opens Amazon"
           action={<Button variant="action">Buy</Button>}
-          note={<OffPlatformNote>Payment settles off-platform · opens the retailer</OffPlatformNote>}
+          note={
+            <OffPlatformNote>Payment settles off-platform · opens the retailer</OffPlatformNote>
+          }
         />
         <ProductCard
           image={<img src={swatch("#A9D8FF")} alt="" className="size-full object-cover" />}
@@ -131,7 +139,9 @@ export const TaggedProducts: Story = {
             </CouponBlock>
           }
           action={<Button variant="action">Buy</Button>}
-          note={<OffPlatformNote>Payment settles off-platform · opens the retailer</OffPlatformNote>}
+          note={
+            <OffPlatformNote>Payment settles off-platform · opens the retailer</OffPlatformNote>
+          }
         />
         <ProductCard
           image={<img src={swatch("#96E6BC")} alt="" className="size-full object-cover" />}
@@ -154,7 +164,9 @@ export const TaggedProducts: Story = {
               <CodeButton code="COUNTER10" />
             </CouponBlock>
           }
-          note={<OffPlatformNote>Payment settles off-platform · show the code in store</OffPlatformNote>}
+          note={
+            <OffPlatformNote>Payment settles off-platform · show the code in store</OffPlatformNote>
+          }
         />
       </ProductList>
     </>

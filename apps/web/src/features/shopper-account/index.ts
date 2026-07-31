@@ -17,3 +17,4 @@ export { FollowRow, type FollowRowProps } from "./components/follow-row";
 export { CommentClaim } from "./components/comment-claim";
 export { CommentReactions, type CommentReactionsProps } from "./components/comment-reactions";
 export { CommentSortChips } from "./components/comment-sort";
+export { CommentsSection, type CommentsSectionProps } from "./components/comments-section";

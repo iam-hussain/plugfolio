@@ -6,11 +6,7 @@ export const metadata: Metadata = { title: "Create your account" };
 
 type SearchParams = { as?: string };
 
-export default async function JoinPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>;
-}) {
+export default async function JoinPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { as } = await searchParams;
   return <JoinScreen initialRole={isAuthRole(as) ? as : undefined} />;
 }

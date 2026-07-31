@@ -1,4 +1,5 @@
 import * as React from "react";
+import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
 
 /**
@@ -23,6 +24,19 @@ export function ShareModes({ children }: { children: React.ReactNode }) {
   );
 }
 
+const shareMode = cva(
+  "rounded-nest text-micro min-h-[38px] flex-1 border-0 bg-transparent font-bold",
+  {
+    variants: {
+      selected: {
+        true: "bg-foreground text-background",
+        false: "text-muted-foreground",
+      },
+    },
+    defaultVariants: { selected: false },
+  },
+);
+
 export function ShareMode({
   selected,
   className,
@@ -33,11 +47,7 @@ export function ShareMode({
       type="button"
       role="tab"
       aria-selected={selected}
-      className={cn(
-        "rounded-nest text-micro min-h-[38px] flex-1 border-0 bg-transparent font-bold",
-        selected ? "bg-foreground text-background" : "text-muted-foreground",
-        className,
-      )}
+      className={cn(shareMode({ selected }), className)}
       {...props}
     />
   );
@@ -57,7 +67,7 @@ export function SharePlate({
   action: React.ReactNode;
 }) {
   return (
-    <div className="border-border bg-card flex items-center gap-2.5 rounded-pill border py-1.5 pl-4 pr-1.5">
+    <div className="border-border bg-card rounded-pill flex items-center gap-2.5 border py-1.5 pl-4 pr-1.5">
       <span className="text-label min-w-0 flex-1 truncate font-semibold tracking-[0.01em]">
         {prefix}
         <b className="text-primary font-bold">{handle}</b>
@@ -68,22 +78,23 @@ export function SharePlate({
 }
 
 /** The copy control. Lime once it's done — a real thing just happened. */
+const shareCopy = cva("text-micro min-h-10 flex-none rounded-pill border-0 px-4 py-2.5 font-bold", {
+  variants: {
+    // Lime is the offer/success fill and never type (§7 lime-means-offer).
+    done: {
+      true: "bg-accent text-accent-foreground",
+      false: "bg-foreground text-background",
+    },
+  },
+  defaultVariants: { done: false },
+});
+
 export function ShareCopy({
   done,
   className,
   ...props
 }: React.ComponentProps<"button"> & { done?: boolean }) {
-  return (
-    <button
-      type="button"
-      className={cn(
-        "text-micro min-h-10 flex-none rounded-pill border-0 px-4 py-2.5 font-bold",
-        done ? "bg-accent text-accent-foreground" : "bg-foreground text-background",
-        className,
-      )}
-      {...props}
-    />
-  );
+  return <button type="button" className={cn(shareCopy({ done }), className)} {...props} />;
 }
 
 /**
@@ -160,9 +171,7 @@ export function ShareQr({ children, note }: { children: React.ReactNode; note?: 
   return (
     <div className="border-border rounded-tile grid justify-items-center gap-3 border border-dashed p-[22px]">
       <div className="rounded-image w-[min(220px,60vw)] bg-white p-2">{children}</div>
-      {note ? (
-        <p className="text-faint text-micro m-0 text-center">{note}</p>
-      ) : null}
+      {note ? <p className="text-faint text-micro m-0 text-center">{note}</p> : null}
     </div>
   );
 }

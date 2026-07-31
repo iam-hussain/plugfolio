@@ -1,202 +1,191 @@
 "use client";
 
-import type { CategoryView, ShopperProduct } from "@plugfolio/core";
+import type { CategoryView } from "@plugfolio/core";
 import {
   Button,
+  CardFoot,
   DashCard,
   DashCardHead,
   DashCardTitle,
   DashField,
-  DashFieldPair,
-  DangerZone,
-  Hint,
   Input,
+  MiniButton,
+  NativeSelect,
+  RuleLine,
+  Segmented,
+  SegmentedOption,
 } from "@plugfolio/ui";
 import type { Route } from "next";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { removeProduct, setProductCoupon, updateProduct } from "../api";
-import { CategorySelect } from "./category-select";
+import { Trash2 } from "lucide-react";
+import { useProductEditor } from "../hooks/use-product-editor";
+import { CouponFields } from "./coupon-fields";
+import { ImageUploadButton } from "./image-upload-button";
+import { ProductEditorPreview, type EditableProduct } from "./product-editor-preview";
+import { ShelfOptions } from "./shelf-options";
 
 /**
- * The product editor (DESIGN product-edit.html; dashboard.html §5.21 sends
- * every row here).
+ * The product editor (DESIGN product-edit.html) — the same screen for create
+ * and edit.
  *
- * Editing lives on one screen, not two. Inline link, coupon and shelf editors
- * used to sit in the library row, which meant two surfaces could each claim to
- * be where a product is changed — and the library is meant to be a list you
- * scan, not a CRM.
+ * Its own page, because a product is not owned by the post it was tagged on.
+ * It can sit on several posts, or on none once its post is deleted, and every
+ * one of them shows the same title, price, link and coupon. Editing it from
+ * inside one post's editor made a shared object look like that post's property.
+ *
+ * This file is now the *composition* only: the preview column, the fields, and
+ * the coupon fold are their own components, and the state, the channel rule and
+ * the two-step write live in `useProductEditor`.
  */
 export type ProductEditorProps = {
-  product: ShopperProduct;
+  profileId: string;
   categories: readonly CategoryView[];
-  /** Where to land after the product is deleted. */
-  onRemovedHref: Route;
+  /** Absent = create. Present = edit. */
+  product?: EditableProduct;
+  /** Where the library lives — the landing spot after a create or a delete. */
+  libraryHref: Route;
 };
 
-export function ProductEditor({ product, categories, onRemovedHref }: ProductEditorProps) {
-  const router = useRouter();
-  const [affiliateUrl, setAffiliateUrl] = useState(product.affiliateUrl ?? "");
-  const [couponCode, setCouponCode] = useState(product.couponCode ?? "");
-  const [offerEnds, setOfferEnds] = useState(
-    product.offerEndsAt ? product.offerEndsAt.toISOString().slice(0, 10) : "",
-  );
-  const [inStoreNote, setInStoreNote] = useState(product.inStoreNote ?? "");
-
-  const save = useMutation({
-    mutationFn: () => updateProduct(product.id, { affiliateUrl }),
-    onSuccess: () => router.refresh(),
-  });
-  const remove = useMutation({
-    mutationFn: () => removeProduct(product.id),
-    onSuccess: () => router.push(onRemovedHref),
-  });
-  // "Fix a code" (ADR-0011): an empty code clears the whole coupon.
-  const saveCoupon = useMutation({
-    mutationFn: () =>
-      setProductCoupon(product.id, {
-        couponCode: couponCode.trim() || null,
-        offerEndsAt: couponCode.trim() && offerEnds ? new Date(offerEnds) : null,
-        inStoreNote: couponCode.trim() && inStoreNote.trim() ? inStoreNote.trim() : null,
-      }),
-    onSuccess: () => router.refresh(),
-  });
+export function ProductEditor({ profileId, categories, product, libraryHref }: ProductEditorProps) {
+  const { fields, state, save, remove } = useProductEditor({ profileId, product, libraryHref });
 
   return (
-    <>
-      <DashCard>
-        <DashCardHead>
-          <DashCardTitle>Where it goes</DashCardTitle>
-        </DashCardHead>
-        <Hint>
-          Your own affiliate link. Plugfolio never rewrites it and never takes a cut — whatever the
-          retailer pays you is between the two of you.
-        </Hint>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (affiliateUrl.trim()) save.mutate();
-          }}
-        >
-          <DashField label="Affiliate link" htmlFor="affiliate-url">
-            <Input
-              id="affiliate-url"
-              type="url"
-              value={affiliateUrl}
-              onChange={(event) => setAffiliateUrl(event.target.value)}
-              placeholder="https://…/your-affiliate-link"
-            />
-          </DashField>
-          <Button
-            type="submit"
-            disabled={save.isPending || affiliateUrl === (product.affiliateUrl ?? "")}
+    <div className="grid items-start gap-[18px] min-[940px]:grid-cols-[minmax(0,38%)_minmax(0,1fr)] min-[940px]:gap-[26px]">
+      <ProductEditorPreview
+        product={product}
+        kind={fields.kind}
+        affiliateUrl={fields.affiliateUrl}
+        couponCode={fields.couponCode}
+        imageUrl={fields.imageUrl}
+      />
+
+      <div>
+        <DashCard>
+          <DashCardHead>
+            <DashCardTitle>The product</DashCardTitle>
+          </DashCardHead>
+
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (state.ready) save.mutate();
+            }}
           >
-            {save.isPending ? "Saving…" : "Save link"}
-          </Button>
-        </form>
-      </DashCard>
-
-      <DashCard>
-        <DashCardHead>
-          <DashCardTitle>Coupon</DashCardTitle>
-        </DashCardHead>
-        <Hint>
-          A code shoppers can copy. Plugfolio counts the copies and nothing more — redemption
-          happens at the retailer, where we cannot see it. Clearing the code removes the whole
-          coupon.
-        </Hint>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            saveCoupon.mutate();
-          }}
-        >
-          <DashFieldPair>
-            <DashField label="Code" htmlFor="coupon-code" note="Empty removes the coupon.">
-              <Input
-                id="coupon-code"
-                value={couponCode}
-                onChange={(event) => setCouponCode(event.target.value)}
-                maxLength={40}
-                placeholder="SAVE30"
-              />
-            </DashField>
-            <DashField label="Offer ends" htmlFor="offer-ends">
-              <Input
-                id="offer-ends"
-                type="date"
-                value={offerEnds}
-                onChange={(event) => setOfferEnds(event.target.value)}
-              />
-            </DashField>
-          </DashFieldPair>
-          <DashField
-            label="In-store note"
-            htmlFor="in-store-note"
-            note="For a code with no link — “show at the counter”."
-          >
-            <Input
-              id="in-store-note"
-              value={inStoreNote}
-              onChange={(event) => setInStoreNote(event.target.value)}
-              maxLength={200}
-              placeholder="Show this at the till"
-            />
-          </DashField>
-          <Button type="submit" disabled={saveCoupon.isPending}>
-            {saveCoupon.isPending ? "Saving…" : "Save coupon"}
-          </Button>
-        </form>
-      </DashCard>
-
-      <DashCard>
-        <DashCardHead>
-          <DashCardTitle>Shelf</DashCardTitle>
-        </DashCardHead>
-        <Hint>
-          Shelves are yours alone — there is no shared list of categories across Plugfolio. A
-          product sits on one shelf, or none.
-        </Hint>
-        <CategorySelect
-          target={{ kind: "product", productId: product.id }}
-          categories={categories}
-          currentCategoryId={product.categoryId}
-        />
-      </DashCard>
-
-      <DashCard>
-        <DangerZone
-          title="Remove this product"
-          action={
-            <Button
-              variant="destructive"
-              disabled={remove.isPending}
-              onClick={() => {
-                // Removing affects every post the product is tagged on.
-                if (
-                  window.confirm(
-                    `Remove "${product.title}"? It disappears from every post using it.`,
-                  )
-                ) {
-                  remove.mutate();
-                }
-              }}
+            <DashField
+              label="Product URL"
+              htmlFor="product-url"
+              note="We grab the title, image and price from it. If a page won’t read, the product is titled by its site — never an error, and you can still tag it."
             >
-              {remove.isPending ? "Removing…" : `Remove ${product.title}`}
-            </Button>
-          }
-        >
-          It disappears from every post it is tagged on. Taps already recorded stay in your traffic
-          totals — they happened.
-        </DangerZone>
-      </DashCard>
+              <Input
+                id="product-url"
+                type="url"
+                value={fields.sourceUrl}
+                onChange={(event) => fields.setSourceUrl(event.target.value)}
+                placeholder="https://retailer.com/product"
+                // Only on create: native validation silently refuses to submit
+                // the form, so requiring it on a legacy row with no source URL
+                // would make Save do nothing at all, with no message.
+                required={!product}
+              />
+            </DashField>
 
-      {save.isError || remove.isError || saveCoupon.isError ? (
-        <p role="alert" className="text-destructive mt-3.5 text-copy">
-          {(save.error ?? remove.error ?? saveCoupon.error)?.message}
-        </p>
-      ) : null}
-    </>
+            {/* Relabels the link field rather than adding a second one — a
+                creator has exactly one URL in their clipboard. */}
+            <DashField
+              label="Kind"
+              note="Own products carry a quiet trust marker and their button reads “Shop their store”. Nothing else differs."
+            >
+              <Segmented label="Product kind">
+                {(["affiliate", "own"] as const).map((option) => (
+                  <SegmentedOption
+                    key={option}
+                    selected={fields.kind === option}
+                    onClick={() => fields.setKind(option)}
+                  >
+                    {option === "own" ? "My own product" : "Affiliate product"}
+                  </SegmentedOption>
+                ))}
+              </Segmented>
+            </DashField>
+
+            <DashField
+              label={fields.kind === "own" ? "Your store / product link" : "Your affiliate link"}
+              htmlFor="product-link"
+            >
+              <Input
+                id="product-link"
+                type="url"
+                value={fields.affiliateUrl}
+                onChange={(event) => fields.setAffiliateUrl(event.target.value)}
+                placeholder="https://…/your-link"
+              />
+            </DashField>
+
+            {/* Upload only when editing: a new product's image is scraped from
+                the URL on first save; a replacement can be uploaded after. */}
+            {product ? (
+              <DashField
+                label="Photo"
+                note="Replace the scraped image with your own — cropped, watermarked and stored."
+              >
+                <ImageUploadButton
+                  kind="product"
+                  onUploaded={fields.setImageUrl}
+                  label="Upload photo"
+                />
+              </DashField>
+            ) : null}
+
+            {categories.length > 0 ? (
+              <DashField label="Shelf" htmlFor="product-shelf">
+                <NativeSelect
+                  id="product-shelf"
+                  className="w-full"
+                  value={fields.categoryId}
+                  onChange={(event) => fields.setCategoryId(event.target.value)}
+                >
+                  <ShelfOptions categories={categories} />
+                </NativeSelect>
+              </DashField>
+            ) : null}
+
+            <CouponFields fields={fields} />
+
+            <RuleLine ok={state.ready}>{state.rule}</RuleLine>
+
+            {save.isError || remove.isError ? (
+              <p role="alert" className="text-destructive text-copy mt-3.5">
+                {(save.error ?? remove.error)?.message}
+              </p>
+            ) : null}
+
+            <CardFoot>
+              <Button type="submit" disabled={!state.ready || save.isPending}>
+                {save.isPending ? "Saving…" : product ? "Save product" : "Add product"}
+              </Button>
+              {product ? (
+                <MiniButton
+                  danger
+                  data-slot="card-foot-danger"
+                  disabled={remove.isPending}
+                  onClick={() => {
+                    // Removing affects every post the product is tagged on.
+                    if (
+                      window.confirm(
+                        `Remove "${product.title}"? It disappears from every post using it.`,
+                      )
+                    ) {
+                      remove.mutate();
+                    }
+                  }}
+                >
+                  <Trash2 aria-hidden />
+                  {remove.isPending ? "Removing…" : "Remove"}
+                </MiniButton>
+              ) : null}
+            </CardFoot>
+          </form>
+        </DashCard>
+      </div>
+    </div>
   );
 }

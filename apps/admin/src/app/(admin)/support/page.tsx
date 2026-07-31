@@ -1,4 +1,8 @@
-import { listSupportTickets, type SupportCategory, type SupportTicketStatus } from "@plugfolio/core";
+import {
+  listSupportTickets,
+  type SupportCategory,
+  type SupportTicketStatus,
+} from "@plugfolio/core";
 import {
   ActionForm,
   Badge,
@@ -74,13 +78,21 @@ export default async function SupportPage({
 
   return (
     <>
-      <PageHeader title="Support" subtitle="Requests from users — oldest open first. Reply by email.">
+      <PageHeader
+        title="Support"
+        subtitle="Requests from users — oldest open first. Reply by email."
+      >
         <form className="flex flex-wrap items-center gap-2">
           <FilterSelect
             name="status"
             defaultValue={status}
             label="Filter by status"
-            options={[["open", "Open"], ["resolved", "Resolved"], ["dismissed", "Dismissed"], ["all", "All"]]}
+            options={[
+              ["open", "Open"],
+              ["resolved", "Resolved"],
+              ["dismissed", "Dismissed"],
+              ["all", "All"],
+            ]}
           />
           <Button type="submit" size="xs" variant="outline-strong">
             Apply
@@ -107,19 +119,19 @@ export default async function SupportPage({
                   <Badge shape="square" variant="outline-muted">
                     {CATEGORY_LABEL[ticket.category] ?? ticket.category}
                   </Badge>
-                  <span className="mt-1 block whitespace-pre-wrap text-[13px]">
+                  <span className="text-label mt-1 block whitespace-pre-wrap">
                     {ticket.message}
                   </span>
                 </TableCell>
                 <TableCell>
                   <a
                     href={`mailto:${ticket.contactEmail}`}
-                    className="text-primary font-mono text-[11.5px] hover:underline"
+                    className="text-primary text-nano font-mono hover:underline"
                   >
                     {ticket.contactEmail}
                   </a>
                 </TableCell>
-                <TableCell className="font-mono text-muted-foreground text-[11.5px]">
+                <TableCell className="text-muted-foreground text-nano font-mono">
                   {ticket.requesterLabel}
                 </TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">
@@ -127,7 +139,9 @@ export default async function SupportPage({
                 </TableCell>
                 <TableCell>
                   {ticket.status === "open" ? (
-                    <Badge shape="square" variant="soft-primary">Open</Badge>
+                    <Badge shape="square" variant="soft-primary">
+                      Open
+                    </Badge>
                   ) : (
                     <Badge shape="square" variant="outline-muted">
                       {ticket.status === "resolved" ? "Resolved" : "Dismissed"}

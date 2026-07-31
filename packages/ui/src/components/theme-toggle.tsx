@@ -6,11 +6,23 @@ import { Button } from "./button";
 
 /**
  * ThemeToggle — flips `data-theme` on <html> and persists the choice in a
- * cookie so the server renders the right theme on the next request. The
- * Admin-design top-bar control: moon on light, sun on dark.
+ * cookie so the server renders the right theme on the next request. Moon on
+ * light, sun on dark.
+ *
+ * Pass `initialTheme` from whatever already read the cookie on the server. The
+ * effect below can only learn the theme *after* hydration, so without it the
+ * button renders a moon on a dark page and corrects itself a beat later — a
+ * visible wrong-icon flash on every single page load. The effect stays as the
+ * fallback for callers that don't know the theme up front.
  */
-export function ThemeToggle({ cookieName = "theme" }: { cookieName?: string }) {
-  const [theme, setTheme] = React.useState<string | null>(null);
+export function ThemeToggle({
+  cookieName = "theme",
+  initialTheme,
+}: {
+  cookieName?: string;
+  initialTheme?: "light" | "dark";
+}) {
+  const [theme, setTheme] = React.useState<string | null>(initialTheme ?? null);
 
   React.useEffect(() => {
     setTheme(document.documentElement.dataset.theme ?? "light");

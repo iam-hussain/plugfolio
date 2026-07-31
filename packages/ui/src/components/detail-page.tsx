@@ -55,7 +55,8 @@ export function CreatorByline({
   name,
   handle,
   avatar,
-  href,
+  asChild,
+  children,
   action,
   className,
 }: {
@@ -64,23 +65,45 @@ export function CreatorByline({
   /** Rendered under the name; omit when the name already IS the handle. */
   handle?: React.ReactNode;
   avatar: React.ReactNode;
-  /** Slot for the app's router link wrapping name + avatar. */
-  href?: React.ReactNode;
+  /**
+   * Render the identity block as the app's router link. Pass a bare
+   * `<Link href=… />` as `children`; the avatar and the two lines are injected
+   * into it, so the link never re-states the layout.
+   *
+   * This used to be an `href` *slot* that replaced the identity block whole —
+   * which meant every caller pasted the avatar, name and handle markup back
+   * inside their own `<Link>`, and `name`/`handle`/`avatar` went dead. Two
+   * pages, two copies, one component that no longer controlled its own layout.
+   */
+  asChild?: boolean;
+  children?: React.ReactNode;
   action?: React.ReactNode;
   className?: string;
 }) {
+  const identity = (
+    <>
+      {avatar}
+      <span className="flex min-w-0 flex-1 flex-col">
+        <b className="font-display text-label font-extrabold tracking-[-0.02em]">{name}</b>
+        {handle ? (
+          <span className="text-muted-foreground text-micro font-semibold">{handle}</span>
+        ) : null}
+      </span>
+    </>
+  );
+
   return (
     <div className={cn("flex flex-wrap items-center gap-3 pb-5 pt-1", className)}>
-      {href ?? (
-        <>
-          {avatar}
-          <span className="flex min-w-0 flex-1 flex-col">
-            <b className="font-display text-label font-extrabold tracking-[-0.02em]">{name}</b>
-            {handle ? (
-              <span className="text-muted-foreground text-micro font-semibold">{handle}</span>
-            ) : null}
-          </span>
-        </>
+      {asChild ? (
+        // Slottable marks where the caller's element goes; everything beside it
+        // becomes that element's children — so the `<Link>` ends up wrapping the
+        // identity block without ever having been handed its markup.
+        <Slot className="flex min-w-0 flex-1 items-center gap-3 no-underline">
+          {identity}
+          <Slottable>{children}</Slottable>
+        </Slot>
+      ) : (
+        identity
       )}
       {action ? <div className="ml-auto flex flex-none gap-2">{action}</div> : null}
     </div>
@@ -90,9 +113,9 @@ export function CreatorByline({
 /** The 44px round avatar the byline uses. */
 export function BylineAvatar({ initial, src }: { initial: string; src?: string | null }) {
   return (
-    <span className="bg-active text-primary font-display grid size-11 flex-none place-items-center overflow-hidden rounded-pill text-lg font-extrabold">
+    <span className="bg-active text-primary font-display rounded-pill text-body grid size-11 flex-none place-items-center overflow-hidden font-extrabold">
       {src ? (
-        // eslint-disable-next-line @next/next/no-img-element -- framework-free package
+        // A plain <img>: this package is framework-free and never imports next/image.
         <img src={src} alt="" className="size-full object-cover" />
       ) : (
         initial
@@ -104,7 +127,7 @@ export function BylineAvatar({ initial, src }: { initial: string; src?: string |
 /** "their own product" — quiet, and the action word changes with it. */
 export function OwnBadge({ children = "their own product" }: { children?: React.ReactNode }) {
   return (
-    <span className="bg-active text-primary text-micro mb-1.5 inline-flex items-center gap-[5px] rounded-pill px-[9px] py-[3px] font-bold">
+    <span className="bg-active text-primary text-micro rounded-pill mb-1.5 inline-flex items-center gap-[5px] px-[9px] py-[3px] font-bold">
       <Check className="size-3" strokeWidth={2.6} aria-hidden />
       {children}
     </span>

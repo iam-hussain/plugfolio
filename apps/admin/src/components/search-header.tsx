@@ -12,7 +12,7 @@ export function SearchHeader({
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
-      <h1 className="font-display text-2xl font-bold">{title}</h1>
+      <h1 className="font-display text-name font-bold">{title}</h1>
       <form className="flex gap-2">
         <Input
           name="q"

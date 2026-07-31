@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../generated/client";
 
 /**
  * Single Prisma client. In dev, Next.js hot-reload would otherwise open a new

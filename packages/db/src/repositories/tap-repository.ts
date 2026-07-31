@@ -1,5 +1,5 @@
 import type { NewOutboundTap, OutboundTap, TapRepository } from "@plugfolio/core";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/client";
 import { prisma, type PrismaClient } from "../client";
 
 /**

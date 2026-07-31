@@ -1,4 +1,4 @@
-import { Skeleton, SkeletonScreen } from "@plugfolio/ui";
+import { cn, measure, Skeleton, SkeletonScreen } from "@plugfolio/ui";
 
 /**
  * The creator page, while it streams.
@@ -6,7 +6,7 @@ import { Skeleton, SkeletonScreen } from "@plugfolio/ui";
  * This is the surface a stranger meets first — they tapped a link in a bio
  * and know nothing about us yet — so the wait has to look like the page
  * they were promised, at the width and rhythm it actually renders at
- * (max-w-[1180px], px-5 / lg:px-11, cover → avatar → identity → chips →
+ * (max-w-inner, px-5 / lg:px-10, cover → avatar → identity → chips →
  * grid). Same container, same steps, so nothing shifts on arrival.
  *
  * No text is faked. A grey bar where a name goes is honest; the word
@@ -15,10 +15,7 @@ import { Skeleton, SkeletonScreen } from "@plugfolio/ui";
  */
 export default function Loading() {
   return (
-    <SkeletonScreen
-      label="Loading this creator's page"
-      className="mx-auto w-full max-w-[1180px] px-5 pb-14 lg:px-11"
-    >
+    <SkeletonScreen label="Loading this creator's page" className={cn(measure(), "pb-14")}>
       {/* Cover — the tallest thing on the page and the one whose absence
           would move everything below it. */}
       <Skeleton className="rounded-tile h-[168px] w-full" />

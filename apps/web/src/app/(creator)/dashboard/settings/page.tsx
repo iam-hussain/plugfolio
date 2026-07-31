@@ -24,7 +24,6 @@ import { SocialConnections } from "@/features/account-auth";
 import { connectGoogle } from "@/features/account-auth/connect-social-action";
 import {
   DashboardPageHeader,
-  DashboardShell,
   DeleteProfileButton,
   ManagerControls,
   PageAppearanceForm,
@@ -74,7 +73,7 @@ export default async function SettingsPage({
   ]);
 
   return (
-    <DashboardShell profiles={profiles} active={active}>
+    <>
       <DashboardPageHeader
         title="Settings"
         eyebrow={`@${active.username}`}
@@ -92,9 +91,9 @@ export default async function SettingsPage({
             <DashCardTitle>Public profile</DashCardTitle>
           </DashCardHead>
           <Hint>
-            Your page lives at <b>plugfolio.com/{active.username}</b>. The username is fixed for
-            now — choosing and renaming it lands with the social APIs, because a username is only
-            yours if you can prove you own the handle.
+            Your page lives at <b>plugfolio.com/{active.username}</b>. The username is fixed for now
+            — choosing and renaming it lands with the social APIs, because a username is only yours
+            if you can prove you own the handle.
           </Hint>
           <ProfileIdentityForm
             profileId={active.id}
@@ -109,8 +108,8 @@ export default async function SettingsPage({
             <DashCardTitle>How it looks</DashCardTitle>
           </DashCardHead>
           <Hint>
-            A small, closed set on purpose (ADR-0017) — accent, header, post layout and the
-            greeting line. No setting here can make your Buy button hard to read.
+            A small, closed set on purpose (ADR-0017) — accent, header, post layout and the greeting
+            line. No setting here can make your Buy button hard to read.
           </Hint>
           <PageAppearanceForm
             profileId={active.id}
@@ -177,13 +176,12 @@ export default async function SettingsPage({
               <DashCardTitle>Admin-only</DashCardTitle>
             </DashCardHead>
             <Hint className="mb-0">
-              Links, connections and Managers are the Admin&rsquo;s. You manage this
-              profile&rsquo;s content — posts, products and shelves — and you can change its
-              picture above.
+              Links, connections and Managers are the Admin&rsquo;s. You manage this profile&rsquo;s
+              content — posts, products and shelves — and you can change its picture above.
             </Hint>
           </DashCard>
         )}
       </DashBody>
-    </DashboardShell>
+    </>
   );
 }

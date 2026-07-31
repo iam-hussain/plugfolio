@@ -23,6 +23,15 @@ const structuredData = {
       name: SITE_NAME,
       url: SITE_URL,
       publisher: { "@id": `${SITE_URL}/#organization` },
+      // Sitelinks searchbox → the explore search, so engines can offer it.
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${SITE_URL}/explore?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
     },
     {
       "@type": "FAQPage",

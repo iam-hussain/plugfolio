@@ -25,11 +25,19 @@ const PRODUCT_ID = "11111111-1111-1111-1111-111111111111";
 const OWNER_PROFILE_ID = "22222222-2222-2222-2222-222222222222";
 const TAGGED_POST_ID = "55555555-5555-5555-5555-555555555555";
 
-function makeFakeProducts(affiliateUrl: string | null = "https://a.test/link"): ProductReadRepository {
+function makeFakeProducts(
+  affiliateUrl: string | null = "https://a.test/link",
+): ProductReadRepository {
   return {
     async findForAttribution(productId: string) {
       return productId === PRODUCT_ID
-        ? { id: PRODUCT_ID, profileId: OWNER_PROFILE_ID, affiliateUrl, couponCode: null }
+        ? {
+            id: PRODUCT_ID,
+            profileId: OWNER_PROFILE_ID,
+            affiliateUrl,
+            couponCode: null,
+            inStoreNote: null,
+          }
         : null;
     },
     async isTaggedToPost(productId: string, postId: string) {

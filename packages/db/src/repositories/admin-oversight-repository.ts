@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/client";
 import type {
   AdminAnalytics,
   AdminAnalyticsRepository,
@@ -143,7 +143,13 @@ const collabSelect = {
 
 type CollabRow = Prisma.CollabGetPayload<{ select: typeof collabSelect }>;
 
-function toCollabRow({ business, profile, requirement, _count, ...row }: CollabRow): AdminCollabRow {
+function toCollabRow({
+  business,
+  profile,
+  requirement,
+  _count,
+  ...row
+}: CollabRow): AdminCollabRow {
   return {
     ...row,
     businessName: business.name,

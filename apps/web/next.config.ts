@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
+// Allow next/image to optimize images served from our upload bucket/CDN
+// (ADR-0023). Pasted third-party URLs stay `unoptimized` per-image.
+const uploadBaseUrl = process.env.S3_PUBLIC_BASE_URL;
+const uploadHost = uploadBaseUrl ? new URL(uploadBaseUrl).hostname : null;
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  ...(uploadHost
+    ? { images: { remotePatterns: [{ protocol: "https", hostname: uploadHost }] } }
+    : {}),
   // Compile shared workspace packages from source (no separate build step).
   transpilePackages: ["@plugfolio/ui", "@plugfolio/tokens", "@plugfolio/core", "@plugfolio/db"],
   typedRoutes: true,

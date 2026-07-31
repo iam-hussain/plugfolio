@@ -50,11 +50,7 @@ export function ClaimSheet({ open, onOpenChange, action }: ClaimSheetProps) {
               </SheetDescription>
             </SheetHeader>
             <div className="flex flex-col gap-3 px-4 pb-6">
-              <Button
-                variant="outline"
-                onClick={() => resend.mutate()}
-                disabled={resend.isPending}
-              >
+              <Button variant="outline" onClick={() => resend.mutate()} disabled={resend.isPending}>
                 {resend.isPending
                   ? "Sending…"
                   : resend.isSuccess
@@ -64,7 +60,7 @@ export function ClaimSheet({ open, onOpenChange, action }: ClaimSheetProps) {
               <button
                 type="button"
                 onClick={() => submit.reset()}
-                className="text-muted-foreground hover:text-foreground text-xs"
+                className="text-muted-foreground hover:text-foreground text-micro"
               >
                 ← Use a different email
               </button>
@@ -77,8 +73,8 @@ export function ClaimSheet({ open, onOpenChange, action }: ClaimSheetProps) {
                 {action === "follow" ? "Follow with a free account" : "Comment with a free account"}
               </SheetTitle>
               <SheetDescription>
-                One email link to verify, then you sign in with your password. Shopping never
-                needs an account.
+                One email link to verify, then you sign in with your password. Shopping never needs
+                an account.
               </SheetDescription>
             </SheetHeader>
             <form
@@ -110,14 +106,14 @@ export function ClaimSheet({ open, onOpenChange, action }: ClaimSheetProps) {
                 />
               </div>
               {submit.isError ? (
-                <p role="alert" className="text-destructive text-xs">
+                <p role="alert" className="text-destructive text-micro">
                   {submit.error.message}
                 </p>
               ) : null}
               <Button type="submit" disabled={submit.isPending}>
                 {submit.isPending ? "Creating…" : "Create account"}
               </Button>
-              <p className="text-muted-foreground text-center text-xs">
+              <p className="text-muted-foreground text-micro text-center">
                 Already have one?{" "}
                 <Link href="/signin" className="text-primary font-semibold">
                   Sign in

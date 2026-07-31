@@ -61,7 +61,7 @@ export function TermsHeader({ className, ...props }: React.ComponentProps<"div">
   );
 }
 
-export function TermsTitle({ className, ...props }: React.ComponentProps<"h1">) {
+export function TermsTitle({ className, children, ...props }: React.ComponentProps<"h1">) {
   return (
     <h1
       data-slot="terms-title"
@@ -70,7 +70,9 @@ export function TermsTitle({ className, ...props }: React.ComponentProps<"h1">) 
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+    </h1>
   );
 }
 
@@ -176,11 +178,19 @@ export function ThreadEvent({ className, children, ...props }: React.ComponentPr
  * strings inline in the page — which is how one side quietly drifts from
  * the other. One variant, one place.
  */
+/**
+ * Two views of the same thread. A *participant* reads it as mine/theirs — the
+ * question is "did I say this". An *observer* (the admin queue) is neither
+ * side, so for them the question is "which party said this", and colouring one
+ * of them `mine` would put admin in the conversation.
+ */
 const bubbleVariants = cva("w-fit max-w-[76%] rounded-tile px-4 py-2.5 text-copy leading-relaxed", {
   variants: {
     tone: {
       mine: "bg-primary text-primary-foreground",
       theirs: "bg-card text-foreground border-border border",
+      creator: "bg-active text-foreground border-border border",
+      business: "bg-background text-foreground border-border border",
     },
   },
   defaultVariants: { tone: "theirs" },

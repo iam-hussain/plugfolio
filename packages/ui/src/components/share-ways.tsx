@@ -32,23 +32,24 @@ export type ShareWayProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   icon?: React.ReactNode;
 };
 
-export const ShareWay = React.forwardRef<HTMLButtonElement, ShareWayProps>(
-  function ShareWay({ icon, children, className, ...props }, ref) {
-    return (
-      <button
-        ref={ref}
-        type="button"
-        {...props}
-        className={cn(
-          "border-border bg-card text-muted-foreground hover:border-primary hover:text-primary hover:bg-active",
-          "text-micro inline-flex min-h-9 items-center gap-[7px] rounded-pill border px-3.5 py-2 font-bold transition-colors duration-200 ease-design",
-          "[&>svg]:size-[15px]",
-          className,
-        )}
-      >
-        {icon}
-        {children}
-      </button>
-    );
-  },
-);
+export const ShareWay = React.forwardRef<HTMLButtonElement, ShareWayProps>(function ShareWay(
+  { icon, children, className, ...props },
+  ref,
+) {
+  return (
+    <button
+      ref={ref}
+      type="button"
+      {...props}
+      className={cn(
+        "border-border bg-card text-muted-foreground hover:border-primary hover:text-primary hover:bg-active",
+        "text-micro rounded-pill ease-design inline-flex min-h-9 items-center gap-[7px] border px-3.5 py-2 font-bold transition-colors duration-200",
+        "[&>svg]:size-[15px]",
+        className,
+      )}
+    >
+      {icon}
+      {children}
+    </button>
+  );
+});

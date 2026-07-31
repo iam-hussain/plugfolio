@@ -12,12 +12,15 @@ import type { ProfileRepository, ProfileSummary } from "../ports/profile-reposit
 import type {
   CreateCategoryInput,
   CreatePostInput,
+  CreateProductInput,
   SetPostCategoryInput,
   SetPostHiddenInput,
   SetProductCategoryInput,
   SetProductCouponInput,
   TagProductInput,
   UpdateCategoryInput,
+  UpdatePostInput,
+  UpdateProductInput,
 } from "../schemas/creator-content";
 
 /**
@@ -75,17 +78,52 @@ export async function createProfile(
   return deps.profiles.create({ userId, username: generateProfileUsername() });
 }
 
+/** The post's media + words, normalised once so create and update agree. */
+function postContent(input: {
+  mediaUrl: string;
+  mediaKind?: string;
+  embedUrl?: string | null;
+  sourceUrl?: string | null;
+  caption?: string | null;
+  categoryId?: string | null;
+}) {
+  const mediaKind = input.mediaKind ?? "still";
+  const isVideo = mediaKind !== "still";
+  return {
+    mediaUrl: input.mediaUrl,
+    mediaKind,
+    // A still has nothing to embed; keeping a stale embed on it would leave a
+    // play button wired to the last video the post used to be.
+    embedUrl: isVideo ? (input.embedUrl ?? null) : null,
+    sourceUrl: isVideo ? (input.sourceUrl ?? null) : null,
+    caption: input.caption ?? null,
+    categoryId: input.categoryId ?? null,
+  };
+}
+
 export async function createPost(
   deps: CreatorContentDeps,
   userId: string,
   input: CreatePostInput,
 ): Promise<{ id: string }> {
   await requireOwnProfile(deps, userId, input.profileId);
-  return deps.posts.create({
-    profileId: input.profileId,
-    mediaUrl: input.mediaUrl,
-    caption: input.caption ?? null,
-  });
+  // It goes live as soon as it's added — publish-free, no draft state (§5.20).
+  return deps.posts.create({ profileId: input.profileId, ...postContent(input) });
+}
+
+/** Edit the post itself: its still, its video, its words, its shelf. */
+export async function updatePost(
+  deps: CreatorContentDeps,
+  userId: string,
+  postId: string,
+  profileId: string,
+  input: UpdatePostInput,
+): Promise<void> {
+  await requireOwnProfile(deps, userId, profileId);
+  if (!(await deps.posts.belongsToProfile(postId, profileId))) {
+    throw new NotFoundError("Post not found");
+  }
+  await deps.posts.update(postId, postContent(input));
 }
 
 /** The core tool: paste a product URL, grab its metadata, tag it to the post.
@@ -110,6 +148,7 @@ export async function tagProductToPost(
     postId: input.postId,
     kind: input.kind,
     title: metadata?.title ?? fallbackTitle,
+    sourceUrl: input.url,
     affiliateUrl: input.affiliateUrl ?? null,
     couponCode: input.couponCode ?? null,
     offerEndsAt: input.offerEndsAt ?? null,
@@ -117,7 +156,76 @@ export async function tagProductToPost(
     imageUrl: metadata?.imageUrl ?? null,
     priceCents: metadata?.priceCents ?? null,
     currency: metadata?.currency ?? "usd",
+    categoryId: null,
   });
+}
+
+/**
+ * The same product, made from the library instead of from a post. A product
+ * isn't owned by the post it was tagged on — it can sit on several, or on none
+ * (an in-store code has nowhere to be tagged), so it has to be creatable here.
+ */
+export async function createProduct(
+  deps: CreatorContentDeps,
+  userId: string,
+  input: CreateProductInput,
+): Promise<{ id: string }> {
+  await requireOwnProfile(deps, userId, input.profileId);
+
+  const metadata = await deps.metadata.fetchMetadata(input.url);
+  // A page we can't read never blocks the product — it's titled by its site.
+  const fallbackTitle = new URL(input.url).hostname;
+
+  return deps.productWrites.create({
+    profileId: input.profileId,
+    kind: input.kind,
+    title: metadata?.title ?? fallbackTitle,
+    sourceUrl: input.url,
+    affiliateUrl: input.affiliateUrl ?? null,
+    couponCode: input.couponCode ?? null,
+    offerEndsAt: input.offerEndsAt ?? null,
+    inStoreNote: input.inStoreNote ?? null,
+    imageUrl: metadata?.imageUrl ?? null,
+    priceCents: metadata?.priceCents ?? null,
+    currency: metadata?.currency ?? "usd",
+    categoryId: input.categoryId ?? null,
+  });
+}
+
+/**
+ * Connect an existing product to a post. Copies nothing: change a price once
+ * and every post carrying it changes with it.
+ */
+export async function connectProductToPost(
+  deps: CreatorContentDeps,
+  userId: string,
+  postId: string,
+  productId: string,
+): Promise<void> {
+  const product = await deps.products.findForAttribution(productId);
+  if (!product) throw new NotFoundError("Product not found");
+  await requireOwnProfile(deps, userId, product.profileId);
+  // A product can only be pinned onto its own profile's post.
+  if (!(await deps.posts.belongsToProfile(postId, product.profileId))) {
+    throw new NotFoundError("Post not found");
+  }
+  await deps.productWrites.connectToPost(productId, postId);
+}
+
+/**
+ * Take a product off a post. Deliberately not a delete: the product is still
+ * yours and may sit on other posts — this only removes one connection.
+ */
+export async function disconnectProductFromPost(
+  deps: CreatorContentDeps,
+  userId: string,
+  postId: string,
+  productId: string,
+): Promise<void> {
+  const product = await deps.products.findForAttribution(productId);
+  if (!product) throw new NotFoundError("Product not found");
+  await requireOwnProfile(deps, userId, product.profileId);
+  await deps.productWrites.disconnectFromPost(productId, postId);
 }
 
 async function requireOwnProduct(
@@ -138,6 +246,57 @@ export async function updateProductAffiliateUrl(
 ): Promise<void> {
   await requireOwnProduct(deps, userId, productId);
   await deps.productWrites.updateAffiliateUrl(productId, affiliateUrl);
+}
+
+/**
+ * Edit the product itself (DESIGN product-edit.html): where it came from,
+ * whose it is, where it goes.
+ *
+ * The channel rule (ADR-0011) is enforced here rather than at the boundary,
+ * because clearing the link is only legal in light of the coupon the product
+ * already has — which the request body doesn't carry. A product with no link
+ * and no in-store note could take no taps and no copies; it would be a card
+ * that does nothing.
+ */
+export async function updateProduct(
+  deps: CreatorContentDeps,
+  userId: string,
+  productId: string,
+  input: UpdateProductInput,
+): Promise<void> {
+  const product = await deps.products.findForAttribution(productId);
+  if (!product) throw new NotFoundError("Product not found");
+  await requireOwnProfile(deps, userId, product.profileId);
+
+  if (input.affiliateUrl === null && !product.inStoreNote) {
+    throw new AppError(
+      "VALIDATION",
+      "A product needs somewhere to go: a link, or a code with an in-store note",
+    );
+  }
+
+  // Re-read the page only when asked. A silent refetch on every save would let
+  // a retailer's A/B test quietly rename a creator's product.
+  const metadata =
+    input.refreshMetadata && input.sourceUrl
+      ? await deps.metadata.fetchMetadata(input.sourceUrl)
+      : null;
+
+  await deps.productWrites.update(productId, {
+    ...(input.sourceUrl === undefined ? {} : { sourceUrl: input.sourceUrl }),
+    ...(input.kind === undefined ? {} : { kind: input.kind }),
+    ...(input.affiliateUrl === undefined ? {} : { affiliateUrl: input.affiliateUrl }),
+    ...(metadata
+      ? {
+          ...(metadata.title ? { title: metadata.title } : {}),
+          imageUrl: metadata.imageUrl,
+          priceCents: metadata.priceCents,
+          ...(metadata.currency ? { currency: metadata.currency } : {}),
+        }
+      : {}),
+    // An explicit image (an upload) wins over whatever the scrape found.
+    ...(input.imageUrl === undefined ? {} : { imageUrl: input.imageUrl }),
+  });
 }
 
 export async function removeProduct(

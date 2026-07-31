@@ -91,11 +91,11 @@ export function PromptDialog({
             </div>
             <div className="min-w-0 flex-1">
               <DialogHeader className="space-y-0 text-left">
-                <DialogTitle className="font-display text-[17px] font-bold tracking-[-0.01em]">
+                <DialogTitle className="font-display text-body font-bold tracking-[-0.01em]">
                   {title}
                 </DialogTitle>
                 {description ? (
-                  <DialogDescription className="text-muted-foreground mt-1.5 text-[13.5px] leading-[1.55]">
+                  <DialogDescription className="text-muted-foreground text-label mt-1.5 leading-[1.55]">
                     {description}
                   </DialogDescription>
                 ) : null}
@@ -106,7 +106,7 @@ export function PromptDialog({
               ))}
 
               {current || becomes ? (
-                <div className="bg-muted border-border font-mono mt-3.5 rounded-[9px] border p-3 text-xs leading-normal">
+                <div className="bg-muted border-border text-micro mt-3.5 rounded-[9px] border p-3 font-mono leading-normal">
                   {current ? (
                     <p className="text-faint">
                       Current — <span className="text-foreground">{current}</span>
@@ -114,8 +114,8 @@ export function PromptDialog({
                   ) : null}
                   {becomes ? (
                     <p className="text-faint mt-1.5">
-                      Becomes — <span className="text-foreground">{becomes}</span> — or the name
-                      you enter below
+                      Becomes — <span className="text-foreground">{becomes}</span> — or the name you
+                      enter below
                     </p>
                   ) : null}
                 </div>
@@ -123,7 +123,7 @@ export function PromptDialog({
 
               <label
                 htmlFor={inputId}
-                className="font-mono text-muted-foreground mb-1.5 mt-3.5 block text-[10px] uppercase tracking-[0.08em]"
+                className="text-muted-foreground text-pico mb-1.5 mt-3.5 block font-mono uppercase tracking-[0.08em]"
               >
                 {label}
               </label>
@@ -140,7 +140,7 @@ export function PromptDialog({
                 className="font-mono"
               />
               {patternHint ? (
-                <p className="text-faint mt-[7px] text-[11.5px] leading-normal">{patternHint}</p>
+                <p className="text-faint text-nano mt-[7px] leading-normal">{patternHint}</p>
               ) : null}
             </div>
           </div>

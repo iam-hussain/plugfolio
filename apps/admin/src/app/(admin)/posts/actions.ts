@@ -25,7 +25,11 @@ export async function bulkDeletePostsAction(formData: FormData): Promise<ActionR
   const ids = z
     .array(z.string().uuid())
     .min(1)
-    .parse(String(formData.get("ids") ?? "").split(",").filter(Boolean));
+    .parse(
+      String(formData.get("ids") ?? "")
+        .split(",")
+        .filter(Boolean),
+    );
   await deletePostsBulk(adminContentDeps, admin.id, ids);
   revalidatePath("/posts");
   return { ok: true };

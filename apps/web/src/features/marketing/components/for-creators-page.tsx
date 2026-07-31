@@ -2,14 +2,7 @@ import { Button, HandleClaim, ProofRow } from "@plugfolio/ui";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Fact,
-  MarketingDoors,
-  PostCard,
-  SplitBand,
-  Step,
-  mk,
-} from "./marketing-shared";
+import { Fact, MarketingDoors, PostCard, SplitBand, Step, mk } from "./marketing-shared";
 
 /**
  * /for-creators (DESIGN for-creators.html) — written for someone who does NOT
@@ -112,8 +105,8 @@ export function ForCreatorsPage() {
               </p>
               <p className={mk.copy}>
                 Where something genuinely can&apos;t be measured — someone using an in-store code at
-                a till — it says so rather than guessing. You should be able to trust the numbers you
-                act on.
+                a till — it says so rather than guessing. You should be able to trust the numbers
+                you act on.
               </p>
             </>
           }
@@ -155,10 +148,10 @@ export function ForCreatorsPage() {
         {/* ── the money rule ── */}
         <section className={mk.band}>
           <div className="bg-active rounded-tile p-[clamp(22px,3vw,28px)]">
-            <b className="font-display text-brand-violet-deep block text-xl font-bold tracking-[-0.02em]">
+            <b className="font-display text-brand-violet-deep text-title block font-bold tracking-[-0.02em]">
               Plugfolio never handles your money.
             </b>
-            <p className="text-muted-foreground mt-2 max-w-[56ch] text-[0.9375rem] leading-[1.55]">
+            <p className="text-muted-foreground text-copy mt-2 max-w-[56ch] leading-[1.55]">
               No payouts to wait for, no balance to withdraw, no cut taken from your deal. Buyers go
               to the retailer on your own link, and you get paid the way you already do. We&apos;re
               the shop window, not the till.

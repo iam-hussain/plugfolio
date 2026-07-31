@@ -1,5 +1,6 @@
 import { getMemberHandle } from "@plugfolio/core";
-import { Button } from "@plugfolio/ui";
+import { Button, cn, measure, ThemeToggle } from "@plugfolio/ui";
+import { cookies } from "next/headers";
 import type { Route } from "next";
 import Link from "next/link";
 import { auth } from "@/server/auth";
@@ -7,6 +8,7 @@ import { repositories } from "@/server/container";
 import { Logo } from "@/components/brand";
 import { AccountMenu, type AccountMenuProfile } from "./account-menu";
 import { SearchIcon, UserIcon } from "./icons";
+import { PAGE_CONTEXT_SLOT } from "./page-context-slot";
 
 /**
  * App top bar — the one shared header on every page (Dev Spec §03; §7 unified
@@ -35,6 +37,9 @@ const SIGNED_IN_NAV: readonly { label: string; href: Route }[] = [
 export async function AppTopBar() {
   const session = await auth();
   const user = session?.user;
+  // The same cookie `RootLayout` puts on <html>; read again here rather than
+  // threaded through, because every route already renders this bar.
+  const theme = (await cookies()).get("theme")?.value === "dark" ? "dark" : "light";
 
   // Signed-in: gather the account menu's data (handle, roles, business).
   const menu = user
@@ -62,17 +67,26 @@ export async function AppTopBar() {
 
   return (
     <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
-      <div className="mx-auto flex h-14 w-full max-w-[1180px] items-center justify-between gap-4 px-5 lg:h-[62px] lg:px-11">
+      <div className={cn(measure(), "flex h-14 items-center justify-between gap-4 lg:h-[62px]")}>
         <Link href="/" aria-label="Plugfolio home" className="flex items-center">
           <Logo layout="horizontal" tone="auto" />
         </Link>
+
+        {/* A page may own ONE element inside the shared bar (DESIGN chrome.js
+            §data-chrome-slot): /[handle] puts the creator's avatar and Follow
+            here once you have scrolled past their header, so past that point
+            the bar stops being Plugfolio's and becomes theirs. Adopting the
+            shared chrome never costs a page its one bespoke affordance. */}
+        {/* No `flex-1`: an empty slot must take no room at all, or every page
+            without one gets its nav shoved to the right. */}
+        <div id={PAGE_CONTEXT_SLOT} className="flex min-w-0 items-center empty:hidden" />
 
         <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
           {(user ? SIGNED_IN_NAV : MARKETING_NAV).map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-muted-foreground hover:text-foreground text-sm font-semibold"
+              className="text-muted-foreground hover:text-foreground text-copy font-semibold"
             >
               {item.label}
             </Link>
@@ -80,6 +94,11 @@ export async function AppTopBar() {
         </nav>
 
         <div className="flex items-center gap-1 lg:gap-3">
+          {/* Signed out or in — the theme is a device preference, not an
+              account setting, so it sits outside the account menu and needs no
+              session. Seeded from the cookie so the icon is right on the first
+              paint, same as `RootLayout`'s `data-theme`. */}
+          <ThemeToggle initialTheme={theme} />
           {menu ? (
             <>
               <Button variant="ghost" size="icon-sm" asChild className="lg:hidden">
@@ -98,13 +117,13 @@ export async function AppTopBar() {
               </Button>
               <Link
                 href="/signin"
-                className="text-foreground hidden text-sm font-semibold lg:inline"
+                className="text-foreground text-copy hidden font-semibold lg:inline"
               >
                 Log in
               </Link>
               <Link
                 href="/explore"
-                className="bg-primary text-primary-foreground rounded-pill hidden px-[18px] py-[9px] text-sm font-semibold lg:inline-flex"
+                className="bg-primary text-primary-foreground rounded-pill text-copy hidden px-[18px] py-[9px] font-semibold lg:inline-flex"
               >
                 Explore creators
               </Link>

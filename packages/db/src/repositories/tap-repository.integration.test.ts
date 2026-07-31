@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../generated/client";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createTapRepository } from "./tap-repository";
 
@@ -27,7 +27,13 @@ describe.skipIf(!url)("TapRepository (integration)", () => {
   beforeAll(async () => {
     db = new PrismaClient({ datasources: { db: { url } } });
     taps = createTapRepository(db);
-    await db.user.create({ data: { id: accountId, email: `${accountId}@example.com`, username: `user-${accountId.slice(0, 8)}` } });
+    await db.user.create({
+      data: {
+        id: accountId,
+        email: `${accountId}@example.com`,
+        username: `user-${accountId.slice(0, 8)}`,
+      },
+    });
     await db.profile.create({
       data: { id: profileId, username: accountId.slice(0, 8), userId: accountId },
     });

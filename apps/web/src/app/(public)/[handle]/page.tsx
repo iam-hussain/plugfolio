@@ -1,36 +1,18 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import {
-  COMMENTS_PAGE_SIZE,
   commentSort,
   getComments,
   getCreatorPage,
   getMemberHandle,
   getProfileLinks,
+  isFeatureEnabled,
   isFollowingProfile,
   listProfileProducts,
 } from "@plugfolio/core";
-import { Button, CreatorHeader, EmptyState, SocialsRow } from "@plugfolio/ui";
-import { formatCount } from "@/lib/format-count";
-import {
-  CategoryChips,
-  CustomiseDrawer,
-  PageShare,
-  PostGrid,
-  ViewBeacon,
-} from "@/features/creator-page";
-import { RequestCollabForm } from "@/features/business-collab";
-import {
-  CommentClaim,
-  CommentForm,
-  CommentList,
-  CommentSortChips,
-  FollowButton,
-} from "@/features/shopper-account";
-import { ReportButton } from "@/features/reporting";
-import { isFeatureEnabled } from "@plugfolio/core";
+import { CreatorPageView } from "@/features/creator-page";
+import { breadcrumbList } from "@/lib/structured-data";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -80,19 +62,6 @@ export default async function CreatorPage({
   const page = await loadCreatorPage(handle);
   if (!page) notFound();
 
-  // ProfilePage JSON-LD — tells search/answer engines this is a creator's
-  // shoppable page (AEO); only public facts, nothing session-derived.
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    mainEntity: {
-      "@type": "Person",
-      name: `@${page.username}`,
-      identifier: page.username,
-      url: `${SITE_URL}/${page.username}`,
-    },
-  };
-
   const { category, sort, cpage } = await searchParams;
   const activeSort = commentSort.catch("recent").parse(sort);
   const commentPage = Math.max(1, Number(cpage) || 1);
@@ -112,9 +81,7 @@ export default async function CreatorPage({
         page: commentPage,
         viewerId: session?.user?.id ?? null,
       }),
-      session?.user
-        ? repositories.businesses.findByUser(session.user.id)
-        : Promise.resolve(null),
+      session?.user ? repositories.businesses.findByUser(session.user.id) : Promise.resolve(null),
       session?.user
         ? getMemberHandle({ users: repositories.users }, session.user.id)
         : Promise.resolve(""),
@@ -136,207 +103,54 @@ export default async function CreatorPage({
         : link.platform.charAt(0).toUpperCase() + link.platform.slice(1),
   }));
 
-  // Hidden posts (brief 07) never reach visitors — only the dashboard shows
-  // them. Category chips filter the rest (ADR-0010); "All" holds everything.
-  const visiblePosts = page.posts.filter((post) => post.hiddenAt === null);
-  // A shelf can also hold products the creator sells or recommends directly,
-  // with no post behind them (design §"two kinds of thing, one wall"). Products
-  // already tagged inside a post are shown via that post — not twice.
-  const standaloneProducts = allProducts.filter((product) => product.postCount === 0);
-  const activeCategory = page.categories.find((c) => c.id === category) ?? null;
-  const posts = activeCategory
-    ? visiblePosts.filter((post) => post.categoryId === activeCategory.id)
-    : visiblePosts;
-  const products = activeCategory
-    ? standaloneProducts.filter((product) => product.categoryId === activeCategory.id)
-    : standaloneProducts;
-  const shopCount = posts.length + products.length;
-  // "41 things tagged" — tag instances inside posts, which is what the phrase
-  // means; the standalone products are already counted on their own.
-  const thingsTagged = posts.reduce((total, post) => total + post.products.length, 0);
-
-  // One page, four viewers (design-out): the owner (Admin or Manager) gets
-  // owner tools where visitors get Follow — the buy path never changes.
-  const ownMembership = memberships.find((membership) => membership.id === page.id) ?? null;
-
-  // ADR-0009 default: on your own page you speak as the profile; the picker
-  // lets a member choose otherwise, per comment.
-  const identities = memberships.map(({ id, username }) => ({ id, username }));
-  const defaultAsProfileId = identities.some((identity) => identity.id === page.id)
-    ? page.id
-    : null;
+  // ProfilePage + breadcrumb JSON-LD (SEO/AEO) — public facts only, nothing
+  // session-derived. `sameAs` ties this page to the creator's other platforms,
+  // which is how entity/answer engines connect them to one person.
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfilePage",
+        "@id": `${SITE_URL}/${page.username}`,
+        mainEntity: {
+          "@type": "Person",
+          name: page.displayName ?? `@${page.username}`,
+          alternateName: `@${page.username}`,
+          identifier: page.username,
+          url: `${SITE_URL}/${page.username}`,
+          ...(page.bio ? { description: page.bio } : {}),
+          ...(page.avatarUrl?.startsWith("http") ? { image: page.avatarUrl } : {}),
+          ...(socials.length > 0 ? { sameAs: socials.map((social) => social.href) } : {}),
+        },
+      },
+      breadcrumbList([
+        { name: SITE_NAME, path: "/" },
+        { name: `@${page.username}`, path: `/${page.username}` },
+      ]),
+    ],
+  };
 
   return (
-    <main data-accent={page.accent} className="mx-auto w-full max-w-[1180px] px-5 pb-14 lg:px-11">
-      <ViewBeacon surface="profile" username={page.username} />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-      <CreatorHeader
-        handle={page.username}
-        displayName={page.displayName}
-        avatarUrl={page.avatarUrl}
-        bio={page.bio}
-        greeting={page.greeting}
-        followers={formatCount(page.followerCount)}
-        style={page.headerStyle}
-        socials={<SocialsRow links={socials} />}
-        share={
-          <PageShare
-            handle={page.username}
-            displayName={page.displayName}
-            avatarUrl={page.avatarUrl}
-            meta={`${posts.length} posts · ${thingsTagged} things`}
-          />
-        }
-        action={
-          ownMembership ? (
-            ownMembership.role === "admin" ? (
-              // The page's own live editor (ADR-0017): the drawer opens over the
-              // page, so the creator edits against the real thing.
-              <CustomiseDrawer
-                profileId={page.id}
-                role={ownMembership.role}
-                appearance={{
-                  accent: page.accent,
-                  headerStyle: page.headerStyle,
-                  gridStyle: page.gridStyle,
-                  greeting: page.greeting,
-                }}
-              />
-            ) : null
-          ) : (
-            <FollowButton
-              profileId={page.id}
-              isAuthenticated={!!session?.user}
-              initiallyFollowing={following}
-            />
-          )
-        }
-      />
-      {ownMembership ? (
-        <div className="border-border bg-muted mt-4 flex flex-wrap items-center justify-between gap-2 rounded-[14px] border px-4 py-3.5">
-          <p className="text-sm">
-            <span className="text-primary font-mono text-[10px] tracking-[0.08em] uppercase">
-              This is your page
-            </span>
-            <span className="text-muted-foreground block">
-              Visitors see exactly this{ownMembership.role === "admin" && socials.length === 0
-                ? " — add your links in Settings to show your socials"
-                : ""}
-              .
-            </span>
-          </p>
-          <Button variant="outline" size="sm" asChild>
-            <Link href={{ pathname: "/dashboard", query: { profile: page.id } }}>Dashboard</Link>
-          </Button>
-        </div>
-      ) : null}
-      {business && !ownMembership ? (
-        <div className="border-border bg-muted mt-4 rounded-[14px] border px-4 py-3.5">
-          <p className="text-primary mb-2 font-mono text-[10px] uppercase tracking-[0.08em]">
-            You own a business
-          </p>
-          <RequestCollabForm profileId={page.id} />
-        </div>
-      ) : null}
-      {/* The "Shelves" label belongs to ShelfChips now; the page had one too. */}
-      {page.categories.length > 0 ? (
-        <div className="mt-8">
-          <CategoryChips
-            handle={page.username}
-            categories={page.categories}
-            activeId={activeCategory?.id ?? null}
-          />
-        </div>
-      ) : null}
-      <div className="mt-8 mb-3.5 flex items-baseline gap-3">
-        <h2 className="text-[1.375rem] font-extrabold tracking-[-0.02em]">Shop</h2>
-        <span className="text-muted-foreground ml-auto text-xs font-semibold uppercase tracking-[0.06em]">
-          {posts.length} post{posts.length === 1 ? "" : "s"}
-          {products.length > 0
-            ? ` · ${products.length} product${products.length === 1 ? "" : "s"}`
-            : ""}
-          {thingsTagged > 0 ? ` · ${thingsTagged} thing${thingsTagged === 1 ? "" : "s"} tagged` : ""}
-        </span>
-      </div>
-      {activeCategory && shopCount === 0 ? (
-        <EmptyState
-          title="Nothing on this shelf yet"
-          action={
-            <Button variant="secondary" asChild>
-              <Link href={`/${page.username}`}>See everything</Link>
-            </Button>
-          }
-        >
-          This shelf is empty — the rest of the page still has everything on it.
-        </EmptyState>
-      ) : (
-        <PostGrid handle={page.username} posts={posts} products={products} layout={page.gridStyle} />
-      )}
-      <section
-        id="comments"
-        aria-label="Comments"
-        className="border-border mt-[34px] scroll-mt-20 border-t pt-[34px]"
-      >
-        <div className="mb-3 flex items-baseline gap-2">
-          <h2 className="text-[1.375rem] font-extrabold tracking-[-0.02em]">Comments</h2>
-          <span className="text-muted-foreground text-xs font-bold tabular-nums">
-            {comments.total}
-          </span>
-          <span className="ml-auto">
-            <ReportButton targetType="profile" targetId={page.id} targetLabel="this page" />
-          </span>
-        </div>
-        {comments.total > 1 ? (
-          <div className="mb-4">
-            <CommentSortChips sort={activeSort} />
-          </div>
-        ) : null}
-        <div className="pb-5">
-          {!commentsEnabled ? (
-            <p className="text-muted-foreground text-sm">Comments are switched off right now.</p>
-          ) : session?.user ? (
-            <CommentForm
-              profileId={page.id}
-              ownHandle={ownHandle}
-              identities={identities}
-              defaultAsProfileId={defaultAsProfileId}
-            />
-          ) : (
-            <CommentClaim />
-          )}
-        </div>
-        <CommentList
-          comments={comments.threads}
-          signedIn={!!session?.user}
-          replyContext={
-            session?.user && commentsEnabled
-              ? { profileId: page.id, ownHandle, identities, defaultAsProfileId }
-              : null
-          }
-        />
-        {comments.total > commentPage * COMMENTS_PAGE_SIZE ? (
-          <div className="pt-5">
-            <Button variant="secondary" asChild>
-              <Link
-                href={{
-                  pathname: `/${page.username}`,
-                  query: {
-                    ...(category ? { category } : {}),
-                    ...(activeSort === "recent" ? {} : { sort: activeSort }),
-                    cpage: commentPage + 1,
-                  },
-                  hash: "comments",
-                }}
-              >
-                Load more comments
-              </Link>
-            </Button>
-          </div>
-        ) : null}
-      </section>
-    </main>
+    <CreatorPageView
+      page={page}
+      allProducts={allProducts}
+      links={links}
+      category={category}
+      comments={{
+        page: comments,
+        sort: activeSort,
+        pageNumber: commentPage,
+        enabled: commentsEnabled,
+      }}
+      viewer={{
+        signedIn: !!session?.user,
+        following,
+        ownHandle,
+        identities: memberships.map(({ id, username }) => ({ id, username })),
+        membership: memberships.find((membership) => membership.id === page.id) ?? null,
+        hasBusiness: !!business,
+      }}
+      structuredData={structuredData}
+    />
   );
 }

@@ -9,7 +9,7 @@ import { repositories } from "@/server/container";
 export const metadata: Metadata = { title: "Set password" };
 
 const monoLabel =
-  "font-mono text-muted-foreground mb-[7px] block text-[10px] uppercase tracking-[0.08em]";
+  "font-mono text-muted-foreground mb-[7px] block text-pico uppercase tracking-[0.08em]";
 
 async function setPassword(formData: FormData) {
   "use server";
@@ -42,12 +42,14 @@ export default async function SetPasswordPage({
         <div className="mb-[22px]">
           <Logo tone="auto" markSize="sm" />
         </div>
-        <h1 className="font-display text-[26px] font-bold tracking-[-0.02em]">Set your password</h1>
-        <p className="text-muted-foreground mt-2 text-[13.5px] leading-[1.55]">
+        <h1 className="font-display text-name-md font-bold tracking-[-0.02em]">
+          Set your password
+        </h1>
+        <p className="text-muted-foreground text-label mt-2 leading-[1.55]">
           This link proves your inbox — pick an operator password (10+ characters) and sign in.
         </p>
         {error ? (
-          <p role="alert" className="text-destructive mt-4 text-[13px] font-medium">
+          <p role="alert" className="text-destructive text-label mt-4 font-medium">
             {error === "expired"
               ? "That link has expired or was already used — ask an operator for a fresh one."
               : "Password must be at least 10 characters."}
@@ -66,10 +68,10 @@ export default async function SetPasswordPage({
               required
               autoComplete="new-password"
               placeholder="••••••••••"
-              className="px-[13px] py-3 text-[13.5px]"
+              className="text-label px-[13px] py-3"
             />
           </div>
-          <Button type="submit" className="font-display mt-5 w-full p-3 text-[15px]">
+          <Button type="submit" className="font-display text-copy mt-5 w-full p-3">
             Set password
           </Button>
         </form>

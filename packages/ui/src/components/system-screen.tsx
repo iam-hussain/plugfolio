@@ -36,8 +36,12 @@ export function SystemScreen({
     >
       <div className="max-w-[48ch]">
         {mark ? <div className="mb-[26px] flex justify-center">{mark}</div> : null}
-        <h1 className="font-display text-name font-extrabold tracking-[-0.03em] text-balance">{title}</h1>
-        <p className="text-copy text-muted-foreground mx-auto mt-3.5 max-w-[44ch] leading-[1.6]">{lede}</p>
+        <h1 className="font-display text-name text-balance font-extrabold tracking-[-0.03em]">
+          {title}
+        </h1>
+        <p className="text-copy text-muted-foreground mx-auto mt-3.5 max-w-[44ch] leading-[1.6]">
+          {lede}
+        </p>
         {actions ? (
           <div className="mt-7 flex flex-wrap justify-center gap-2.5">{actions}</div>
         ) : null}

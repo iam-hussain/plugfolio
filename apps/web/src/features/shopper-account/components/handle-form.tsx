@@ -52,11 +52,11 @@ export function HandleForm({ currentHandle }: HandleFormProps) {
         </Button>
       </div>
       {save.isError ? (
-        <p role="alert" className="text-destructive text-xs">
+        <p role="alert" className="text-destructive text-micro">
           {save.error.message}
         </p>
       ) : null}
-      {save.isSuccess ? <p className="text-muted-foreground text-xs">Saved.</p> : null}
+      {save.isSuccess ? <p className="text-muted-foreground text-micro">Saved.</p> : null}
     </form>
   );
 }

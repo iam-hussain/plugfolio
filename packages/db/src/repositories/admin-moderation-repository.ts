@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/client";
 import type {
   AdminCommentRow,
   AdminContentRepository,
@@ -168,10 +168,7 @@ export function createAdminProfileRepository(db: PrismaClient = prisma): AdminPr
 
 export function createAdminContentRepository(db: PrismaClient = prisma): AdminContentRepository {
   return {
-    async searchComments(
-      query: string | undefined,
-      limit: number,
-    ): Promise<Page<AdminCommentRow>> {
+    async searchComments(query: string | undefined, limit: number): Promise<Page<AdminCommentRow>> {
       const where: Prisma.CommentWhereInput = query
         ? {
             OR: [

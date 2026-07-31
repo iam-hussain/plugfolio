@@ -51,8 +51,9 @@ export function ShelfChip({ selected, asChild, className, ...props }: ShelfChipP
       className={cn(
         "border-border bg-card text-muted-foreground rounded-image text-label",
         "inline-flex min-h-10 flex-none items-center whitespace-nowrap border px-4 py-2.5 font-semibold no-underline",
-        "transition-colors duration-200 ease-design hover:border-primary hover:text-primary",
-        selected && "bg-primary border-primary text-primary-foreground hover:text-primary-foreground",
+        "ease-design hover:border-primary hover:text-primary transition-colors duration-200",
+        selected &&
+          "bg-primary border-primary text-primary-foreground hover:text-primary-foreground",
         className,
       )}
       {...props}

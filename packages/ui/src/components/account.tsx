@@ -13,21 +13,17 @@ import { cn } from "../lib/cn";
  */
 
 /** Section links — a snap rail on phones, a sticky column from 900px. */
-export function AccountNav({
-  sections,
-}: {
-  sections: readonly { id: string; label: string }[];
-}) {
+export function AccountNav({ sections }: { sections: readonly { id: string; label: string }[] }) {
   return (
     <nav
       aria-label="Account sections"
-      className="-mx-5 flex snap-x [scrollbar-width:none] snap-proximity gap-2 overflow-x-auto px-5 pb-1 min-[900px]:sticky min-[900px]:top-[78px] min-[900px]:mx-0 min-[900px]:flex-col min-[900px]:gap-0.5 min-[900px]:overflow-visible min-[900px]:px-0"
+      className="-mx-5 flex snap-x snap-proximity gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] min-[900px]:sticky min-[900px]:top-[78px] min-[900px]:mx-0 min-[900px]:flex-col min-[900px]:gap-0.5 min-[900px]:overflow-visible min-[900px]:px-0"
     >
       {sections.map((section) => (
         <a
           key={section.id}
           href={`#${section.id}`}
-          className="border-border bg-card text-muted-foreground rounded-pill hover:border-primary hover:text-primary inline-flex min-h-11 flex-none snap-start items-center whitespace-nowrap border px-4 py-2.5 text-label font-semibold no-underline transition-colors min-[900px]:rounded-image min-[900px]:hover:bg-active min-[900px]:w-full min-[900px]:border-0 min-[900px]:bg-transparent min-[900px]:px-3.5 min-[900px]:py-2.5 min-[900px]:hover:border-0"
+          className="border-border bg-card text-muted-foreground rounded-pill hover:border-primary hover:text-primary text-label min-[900px]:rounded-image min-[900px]:hover:bg-active inline-flex min-h-11 flex-none snap-start items-center whitespace-nowrap border px-4 py-2.5 font-semibold no-underline transition-colors min-[900px]:w-full min-[900px]:border-0 min-[900px]:bg-transparent min-[900px]:px-3.5 min-[900px]:py-2.5 min-[900px]:hover:border-0"
         >
           {section.label}
         </a>
@@ -50,13 +46,11 @@ export function AccountSection({
 }) {
   return (
     <section id={id} className="scroll-mt-24 pt-[clamp(30px,4vw,46px)]">
-      <h2 className="font-display text-[1.375rem] font-bold leading-[1.2] tracking-[-0.02em]">
+      <h2 className="font-display text-title font-bold leading-[1.2] tracking-[-0.02em]">
         {title}
       </h2>
       {lead ? (
-        <p className="text-muted-foreground mt-1 max-w-[58ch] text-copy leading-[1.55]">
-          {lead}
-        </p>
+        <p className="text-muted-foreground text-copy mt-1 max-w-[58ch] leading-[1.55]">{lead}</p>
       ) : null}
       <div className="mt-4">{children}</div>
     </section>
@@ -93,10 +87,10 @@ export function SettingRow({
   return (
     <div className="px-5 py-4">
       <div className="flex flex-wrap items-center gap-4">
-        <dt className="min-w-[148px] text-label font-bold">{label}</dt>
-        <dd className="text-muted-foreground m-0 min-w-0 text-copy [overflow-wrap:anywhere]">
+        <dt className="text-label min-w-[148px] font-bold">{label}</dt>
+        <dd className="text-muted-foreground text-copy m-0 min-w-0 [overflow-wrap:anywhere]">
           {value}
-          {hint ? <span className="text-faint mt-0.5 block text-label">{hint}</span> : null}
+          {hint ? <span className="text-faint text-label mt-0.5 block">{hint}</span> : null}
         </dd>
         {action ? <div className="ml-auto">{action}</div> : null}
       </div>
@@ -132,9 +126,9 @@ export function RoleBlock({
       className="border-border bg-card rounded-tile border px-5 py-5 [&+&]:mt-3"
     >
       <div className="flex flex-wrap items-center gap-3">
-        <span aria-hidden className="bg-role-deep size-2.5 flex-none rounded-pill" />
-        <b className="font-display text-[1.375rem] font-bold tracking-[-0.02em]">{title}</b>
-        <span className="text-faint font-sans text-xs font-semibold uppercase tracking-[0.06em]">
+        <span aria-hidden className="bg-role-deep rounded-pill size-2.5 flex-none" />
+        <b className="font-display text-title font-bold tracking-[-0.02em]">{title}</b>
+        <span className="text-faint text-micro font-sans font-semibold uppercase tracking-[0.06em]">
           {note}
         </span>
         {action ? <div className="ml-auto">{action}</div> : null}
@@ -147,9 +141,7 @@ export function RoleBlock({
 /** A role block's body copy — the paragraph under the heading row. */
 export function RoleCopy({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-muted-foreground mt-2 max-w-[60ch] text-copy leading-[1.55]">
-      {children}
-    </p>
+    <p className="text-muted-foreground text-copy mt-2 max-w-[60ch] leading-[1.55]">{children}</p>
   );
 }
 
@@ -165,7 +157,7 @@ export function Prerequisite({
   children: React.ReactNode;
 }) {
   return (
-    <p className="bg-active text-primary rounded-image mt-3.5 flex gap-3 px-4 py-3 text-copy leading-[1.5]">
+    <p className="bg-active text-primary rounded-image text-copy mt-3.5 flex gap-3 px-4 py-3 leading-[1.5]">
       <span aria-hidden className="mt-0.5 flex-none">
         {icon}
       </span>
@@ -202,14 +194,14 @@ export function ProfileRow({
           that element's children — which is what lets the app pass its router
           Link while the design system supplies the contents. */}
       <Slottable>{children}</Slottable>
-      <span className="bg-active text-primary grid size-8 flex-none place-items-center rounded-pill text-label font-bold">
+      <span className="bg-active text-primary rounded-pill text-label grid size-8 flex-none place-items-center font-bold">
         {username.charAt(0).toUpperCase()}
       </span>
       <span className="min-w-0">
-        <b className="block truncate text-label font-bold">@{username}</b>
-        <span className="text-faint block truncate text-xs">{meta}</span>
+        <b className="text-label block truncate font-bold">@{username}</b>
+        <span className="text-faint text-micro block truncate">{meta}</span>
       </span>
-      <span className="text-muted-foreground ml-auto whitespace-nowrap text-xs font-bold">
+      <span className="text-muted-foreground text-micro ml-auto whitespace-nowrap font-bold">
         {badge}
       </span>
     </Comp>
@@ -228,7 +220,7 @@ export function ProfileNewRow({
   return (
     <Comp
       className={cn(
-        "border-border text-muted-foreground rounded-image hover:border-primary hover:text-primary flex items-center gap-3 border border-dashed px-3.5 py-3 text-label font-semibold no-underline transition-colors",
+        "border-border text-muted-foreground rounded-image hover:border-primary hover:text-primary text-label flex items-center gap-3 border border-dashed px-3.5 py-3 font-semibold no-underline transition-colors",
         className,
       )}
       {...props}
@@ -277,8 +269,8 @@ export function ConnectionRow({
         {glyph}
       </span>
       <span className="min-w-0">
-        <b className="block text-label font-bold">{title}</b>
-        <span className="text-faint block text-label">{detail}</span>
+        <b className="text-label block font-bold">{title}</b>
+        <span className="text-faint text-label block">{detail}</span>
       </span>
       <Badge variant={badge.variant}>{badge.label}</Badge>
       {action ? <div className="ml-auto">{action}</div> : null}

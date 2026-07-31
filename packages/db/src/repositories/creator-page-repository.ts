@@ -93,7 +93,7 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
       const rows = await db.product.findMany({
         where: { profile: { username, ...liveProfile } },
         orderBy: { createdAt: "desc" },
-        select: { ...productSelect, _count: { select: { posts: true } } },
+        select: { ...productSelect, sourceUrl: true, _count: { select: { posts: true } } },
       });
       return rows.map(({ _count, ...product }) => ({ ...product, postCount: _count.posts }));
     },

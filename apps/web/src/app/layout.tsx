@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 import { Manrope, Sora, Space_Mono } from "next/font/google";
 import { brand } from "@plugfolio/tokens";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
@@ -65,11 +66,17 @@ export const viewport: Viewport = {
   themeColor: brand.surfaceLight,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Read on the server so the first paint is already the right theme. Doing
+  // this on the client instead flashes light before correcting itself, which is
+  // worst on exactly the slow in-app browsers most visitors arrive in (§2.5).
+  // Light stays the default for anyone who has never chosen (§7).
+  const theme = (await cookies()).get("theme")?.value === "dark" ? "dark" : "light";
+
   return (
     <html
       lang="en"
-      data-theme="light"
+      data-theme={theme}
       className={`${sora.variable} ${manrope.variable} ${spaceMono.variable}`}
     >
       <body>

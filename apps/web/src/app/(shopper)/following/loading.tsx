@@ -1,4 +1,4 @@
-import { Skeleton, SkeletonScreen } from "@plugfolio/ui";
+import { cn, measure, Skeleton, SkeletonScreen } from "@plugfolio/ui";
 
 /**
  * Following, while it streams. A column of rows — the shape the page is,
@@ -7,10 +7,7 @@ import { Skeleton, SkeletonScreen } from "@plugfolio/ui";
  */
 export default function Loading() {
   return (
-    <SkeletonScreen
-      label="Loading the creators you follow"
-      className="mx-auto w-full max-w-[1180px] px-5 py-8 lg:px-11"
-    >
+    <SkeletonScreen label="Loading the creators you follow" className={cn(measure(), "py-8")}>
       <Skeleton className="h-9 w-44" />
       <Skeleton className="rounded-pill mt-4 h-[54px] w-full max-w-[420px]" />
 

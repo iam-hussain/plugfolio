@@ -52,7 +52,7 @@ export const CreatorRail: Story = {
           meta={c.meta}
           cover={img(c.hue)}
           avatar={
-            <span className="bg-active text-primary grid size-6 place-items-center rounded-pill text-[11px] font-bold">
+            <span className="bg-active text-primary rounded-pill grid size-6 place-items-center text-[11px] font-bold">
               {c.handle.charAt(1).toUpperCase()}
             </span>
           }
@@ -79,7 +79,7 @@ export const CreatorResults: Story = {
           meta={c.meta}
           cover={img(c.hue)}
           avatar={
-            <span className="bg-active text-primary grid size-6 place-items-center rounded-pill text-[11px] font-bold">
+            <span className="bg-active text-primary rounded-pill grid size-6 place-items-center text-[11px] font-bold">
               {c.handle.charAt(1).toUpperCase()}
             </span>
           }
@@ -100,7 +100,11 @@ export const Wall: Story = {
             <Tile tone="lavender" className="rounded-card shadow-rest p-2">
               <div className="relative">
                 <div className="rounded-image overflow-hidden">
-                  <img src={swatch(hue)} alt="" className="block aspect-[4/5] w-full object-cover" />
+                  <img
+                    src={swatch(hue)}
+                    alt=""
+                    className="block aspect-[4/5] w-full object-cover"
+                  />
                 </div>
                 <ProductTag name="Desk lamp" price="$48" className="absolute left-[8%] top-[24%]" />
                 {i % 2 === 0 ? (
@@ -143,7 +147,13 @@ export const Things: Story = {
         go="Shop →"
         image={img("#A9D8FF")}
       />
-      <ThingCard href="#" title="Desk lamp" by="by @arjunbuilds" price="$48.00" image={img("#FFD84D")} />
+      <ThingCard
+        href="#"
+        title="Desk lamp"
+        by="by @arjunbuilds"
+        price="$48.00"
+        image={img("#FFD84D")}
+      />
       <ThingCard
         href="#"
         title="Brass task lamp — price unknown"
@@ -181,7 +191,9 @@ export const Ends: Story = {
         <WallEndNote>Showing 24 of 128</WallEndNote>
       </WallEnd>
       <WallEnd>
-        <WallEndNote>That&apos;s everything for now. More lands as creators tag their posts.</WallEndNote>
+        <WallEndNote>
+          That&apos;s everything for now. More lands as creators tag their posts.
+        </WallEndNote>
       </WallEnd>
     </div>
   ),

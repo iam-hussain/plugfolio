@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { AppError, ForbiddenError, NotFoundError } from "../errors";
-import type {
-  CommentRepository,
-  CommentThread,
-  NewComment,
-} from "../ports/comment-repository";
+import type { CommentRepository, CommentThread, NewComment } from "../ports/comment-repository";
 import type { FollowRepository } from "../ports/follow-repository";
 import type { ProductReadRepository } from "../ports/product-repository";
 import type { ProfileRepository } from "../ports/profile-repository";
@@ -132,7 +128,13 @@ function makeFakeProducts(): ProductReadRepository {
   return {
     async findForAttribution(productId: string) {
       return productId === PRODUCT_ID
-        ? { id: PRODUCT_ID, profileId: PROFILE_ID, affiliateUrl: "https://a.test/x", couponCode: null }
+        ? {
+            id: PRODUCT_ID,
+            profileId: PROFILE_ID,
+            affiliateUrl: "https://a.test/x",
+            couponCode: null,
+            inStoreNote: null,
+          }
         : null;
     },
     async isTaggedToPost() {
@@ -285,7 +287,10 @@ describe("comment targets & replies (ADR-0013)", () => {
 describe("reactToComment", () => {
   it("records a reaction, and null clears it", async () => {
     const deps = makeDeps();
-    const comment = await addComment(deps, USER_ID, { profileId: PROFILE_ID, body: "Ships to Pune?" });
+    const comment = await addComment(deps, USER_ID, {
+      profileId: PROFILE_ID,
+      body: "Ships to Pune?",
+    });
 
     await reactToComment(deps, USER_ID, { commentId: comment.id, value: "helpful" });
     expect(deps.comments.rows[0]?.myReaction).toBe("helpful");

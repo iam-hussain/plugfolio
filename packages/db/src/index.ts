@@ -6,10 +6,7 @@ export { createProductRepository } from "./repositories/product-repository";
 export { createCreatorPageRepository } from "./repositories/creator-page-repository";
 export { createDiscoveryRepository } from "./repositories/discovery-repository";
 export { createTrafficRepository } from "./repositories/traffic-repository";
-export {
-  createViewRepository,
-  createViewTargetRepository,
-} from "./repositories/view-repository";
+export { createViewRepository, createViewTargetRepository } from "./repositories/view-repository";
 export {
   createProfileRepository,
   createProfileIdentityRepository,

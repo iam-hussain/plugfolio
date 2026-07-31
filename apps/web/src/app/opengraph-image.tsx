@@ -21,107 +21,105 @@ export default async function OpengraphImage() {
   ]);
 
   return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "64px 72px",
-          background: `linear-gradient(150deg, ${brand.ink} 55%, ${brand.violetDeep} 130%)`,
-          fontFamily: "Inter",
-        }}
-      >
-        {/* lockup — on-dark rule: white body, lime prongs, lime spark */}
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <svg width="56" height="56" viewBox="0 0 100 100">
-            <g strokeWidth={3} strokeLinejoin="round">
-              <polygon
-                points="33,53 33,27 39.5,15 46,27 46,53"
-                fill={brand.lime}
-                stroke={brand.lime}
-              />
-              <polygon
-                points="54,53 54,27 60.5,15 67,27 67,53"
-                fill={brand.lime}
-                stroke={brand.lime}
-              />
-              <rect x="18" y="43" width="64" height="44" rx="13" fill="#FFFFFF" stroke="#FFFFFF" />
-            </g>
-          </svg>
-          <div style={{ display: "flex", alignItems: "flex-end" }}>
-            <span
-              style={{
-                fontFamily: "Sora",
-                fontSize: 44,
-                color: "#FFFFFF",
-                letterSpacing: "-0.045em",
-              }}
-            >
-              plugfolio
-            </span>
-            <div
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: 3,
-                background: brand.lime,
-                marginLeft: 7,
-                marginBottom: 10,
-              }}
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        padding: "64px 72px",
+        background: `linear-gradient(150deg, ${brand.ink} 55%, ${brand.violetDeep} 130%)`,
+        fontFamily: "Inter",
+      }}
+    >
+      {/* lockup — on-dark rule: white body, lime prongs, lime spark */}
+      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        <svg width="56" height="56" viewBox="0 0 100 100">
+          <g strokeWidth={3} strokeLinejoin="round">
+            <polygon
+              points="33,53 33,27 39.5,15 46,27 46,53"
+              fill={brand.lime}
+              stroke={brand.lime}
             />
-          </div>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div
+            <polygon
+              points="54,53 54,27 60.5,15 67,27 67,53"
+              fill={brand.lime}
+              stroke={brand.lime}
+            />
+            <rect x="18" y="43" width="64" height="44" rx="13" fill="#FFFFFF" stroke="#FFFFFF" />
+          </g>
+        </svg>
+        <div style={{ display: "flex", alignItems: "flex-end" }}>
+          <span
             style={{
               fontFamily: "Sora",
-              fontSize: 84,
+              fontSize: 44,
               color: "#FFFFFF",
-              letterSpacing: "-0.04em",
-              lineHeight: 1.02,
+              letterSpacing: "-0.045em",
             }}
           >
-            Buy what your favorites post.
-          </div>
+            plugfolio
+          </span>
           <div
             style={{
-              fontSize: 30,
-              color: "rgba(255,255,255,0.72)",
-              marginTop: 26,
-              maxWidth: 900,
-              lineHeight: 1.4,
-            }}
-          >
-            {SITE_DESCRIPTION}
-          </div>
-        </div>
-
-        {/* the honesty promise — sanctioned lime moment: fill + ink text */}
-        <div style={{ display: "flex" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
+              width: 10,
+              height: 10,
+              borderRadius: 3,
               background: brand.lime,
-              color: brand.ink,
-              borderRadius: 999,
-              padding: "14px 30px",
-              fontSize: 24,
-              fontFamily: "Sora",
-              letterSpacing: "0.04em",
+              marginLeft: 7,
+              marginBottom: 10,
             }}
-          >
-            <div style={{ width: 10, height: 10, borderRadius: 999, background: brand.ink }} />
-            NO LOGIN TO SHOP
-          </div>
+          />
         </div>
       </div>
-    ),
+
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            fontFamily: "Sora",
+            fontSize: 84,
+            color: "#FFFFFF",
+            letterSpacing: "-0.04em",
+            lineHeight: 1.02,
+          }}
+        >
+          Buy what your favorites post.
+        </div>
+        <div
+          style={{
+            fontSize: 30,
+            color: "rgba(255,255,255,0.72)",
+            marginTop: 26,
+            maxWidth: 900,
+            lineHeight: 1.4,
+          }}
+        >
+          {SITE_DESCRIPTION}
+        </div>
+      </div>
+
+      {/* the honesty promise — sanctioned lime moment: fill + ink text */}
+      <div style={{ display: "flex" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            background: brand.lime,
+            color: brand.ink,
+            borderRadius: 999,
+            padding: "14px 30px",
+            fontSize: 24,
+            fontFamily: "Sora",
+            letterSpacing: "0.04em",
+          }}
+        >
+          <div style={{ width: 10, height: 10, borderRadius: 999, background: brand.ink }} />
+          NO LOGIN TO SHOP
+        </div>
+      </div>
+    </div>,
     {
       ...size,
       fonts: [

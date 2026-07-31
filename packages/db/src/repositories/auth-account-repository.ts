@@ -1,9 +1,5 @@
-import { Prisma } from "@prisma/client";
-import type {
-  AuthAccount,
-  AuthAccountRepository,
-  AuthTokenRepository,
-} from "@plugfolio/core";
+import { Prisma } from "../../generated/client";
+import type { AuthAccount, AuthAccountRepository, AuthTokenRepository } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 
 /** Prisma implementations of the password-auth ports (ADR-0012). */

@@ -41,13 +41,17 @@ export const AdminList: Story = {
         {rows.map((row) => (
           <TableRow key={row.handle}>
             <TableCell className="font-mono text-xs">{row.handle}</TableCell>
-            <TableCell>{row.role === "—" ? "—" : <Badge variant="secondary">{row.role}</Badge>}</TableCell>
+            <TableCell>
+              {row.role === "—" ? "—" : <Badge variant="secondary">{row.role}</Badge>}
+            </TableCell>
             <TableCell>
               <Badge variant={row.status === "Suspended" ? "destructive" : "outline"}>
                 {row.status}
               </Badge>
             </TableCell>
-            <TableCell className="text-muted-foreground text-xs tabular-nums">{row.joined}</TableCell>
+            <TableCell className="text-muted-foreground text-xs tabular-nums">
+              {row.joined}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

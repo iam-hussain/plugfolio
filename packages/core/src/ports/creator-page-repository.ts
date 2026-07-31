@@ -79,8 +79,15 @@ export type ShopperProductView = ShopperProduct & {
   readonly fromPost: { readonly id: string; readonly mediaUrl: string } | null;
 };
 
-/** The creator's Products tab row: the product + how many posts use it. */
-export type CreatorProductRow = ShopperProduct & { readonly postCount: number };
+/**
+ * The creator's Products tab row: the product, how many posts use it, and the
+ * page it was read from. `sourceUrl` is creator-only — a shopper is shown the
+ * outbound link, never where the metadata came from.
+ */
+export type CreatorProductRow = ShopperProduct & {
+  readonly postCount: number;
+  readonly sourceUrl: string | null;
+};
 
 export type CreatorPageReadRepository = {
   findByUsername(username: string): Promise<CreatorPage | null>;

@@ -73,11 +73,11 @@ export default async function RequirementsPage({
               <TableRow key={requirement.id}>
                 <TableCell className="max-w-[360px]">
                   <span className="block font-medium">{requirement.title}</span>
-                  <span className="text-muted-foreground mt-0.5 block truncate text-xs">
+                  <span className="text-muted-foreground text-micro mt-0.5 block truncate">
                     {requirement.brief}
                   </span>
                 </TableCell>
-                <TableCell className="text-[13px]">{requirement.businessName}</TableCell>
+                <TableCell className="text-label">{requirement.businessName}</TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">
                   {requirement.budget ?? "—"}
                 </TableCell>
@@ -89,7 +89,11 @@ export default async function RequirementsPage({
                 </TableCell>
                 <TableCell className="text-right">
                   <ConfirmDialog
-                    trigger={<Button size="xs" variant="destructive-outline">Remove</Button>}
+                    trigger={
+                      <Button size="xs" variant="destructive-outline">
+                        Remove
+                      </Button>
+                    }
                     title="Remove this requirement?"
                     body="The brief comes off the open board. Existing collab threads on it survive. Recorded in the audit log."
                     confirmLabel="Remove requirement"
@@ -110,7 +114,12 @@ export default async function RequirementsPage({
           </TableBody>
         </Table>
       </Panel>
-      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/requirements", params)} />
+      <Pager
+        page={page.page}
+        pageSize={page.pageSize}
+        total={total}
+        hrefFor={pagedHref("/requirements", params)}
+      />
     </>
   );
 }

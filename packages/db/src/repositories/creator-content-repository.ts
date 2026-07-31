@@ -56,6 +56,10 @@ export function createPostWriteRepository(db: PrismaClient = prisma): PostWriteR
       return db.post.create({ data: post, select: { id: true } });
     },
 
+    async update(postId, post): Promise<void> {
+      await db.post.update({ where: { id: postId }, data: post });
+    },
+
     async belongsToProfile(postId: string, profileId: string): Promise<boolean> {
       const count = await db.post.count({ where: { id: postId, profileId } });
       return count > 0;
@@ -81,6 +85,28 @@ export function createProductWriteRepository(db: PrismaClient = prisma): Product
       return db.product.create({
         data: { ...data, posts: { connect: { id: postId } } },
         select: { id: true },
+      });
+    },
+
+    async create(product): Promise<{ id: string }> {
+      return db.product.create({ data: product, select: { id: true } });
+    },
+
+    async update(productId, patch): Promise<void> {
+      await db.product.update({ where: { id: productId }, data: patch });
+    },
+
+    async connectToPost(productId: string, postId: string): Promise<void> {
+      await db.product.update({
+        where: { id: productId },
+        data: { posts: { connect: { id: postId } } },
+      });
+    },
+
+    async disconnectFromPost(productId: string, postId: string): Promise<void> {
+      await db.product.update({
+        where: { id: productId },
+        data: { posts: { disconnect: { id: postId } } },
       });
     },
 

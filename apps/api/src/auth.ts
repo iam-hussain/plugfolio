@@ -1,6 +1,11 @@
 import type { Context } from "hono";
 import { getCookie } from "hono/cookie";
-import { DEVICE_COOKIE, UnauthorizedError, issueDeviceToken, verifyDeviceToken } from "@plugfolio/core";
+import {
+  DEVICE_COOKIE,
+  UnauthorizedError,
+  issueDeviceToken,
+  verifyDeviceToken,
+} from "@plugfolio/core";
 import { env } from "./env";
 import { repositories } from "./container";
 

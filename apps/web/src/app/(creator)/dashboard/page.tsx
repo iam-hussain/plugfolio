@@ -28,11 +28,7 @@ import {
 import { env } from "@/env";
 import { SocialConnections } from "@/features/account-auth";
 import { connectGoogle } from "@/features/account-auth/connect-social-action";
-import {
-  DashboardPageHeader,
-  DashboardShell,
-  NewProfileButton,
-} from "@/features/product-tagging";
+import { DashboardPageHeader, NewProfileButton } from "@/features/product-tagging";
 import { TrafficSummaryView } from "@/features/traffic";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
@@ -70,7 +66,7 @@ export default async function DashboardPage({
   const untagged = page?.posts.filter((post) => post.products.length === 0).length ?? 0;
 
   return (
-    <DashboardShell profiles={profiles} active={active}>
+    <>
       <DashboardPageHeader title="Dashboard" eyebrow={session.user.email ?? undefined} />
 
       <DashBody>
@@ -154,7 +150,7 @@ export default async function DashboardPage({
                     role={profile.role === "manager" ? "manager" : undefined}
                     avatar={
                       <Avatar className="size-7">
-                        <AvatarFallback className="bg-active text-primary text-[10px] font-bold">
+                        <AvatarFallback className="bg-active text-primary text-pico font-bold">
                           {profile.username.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -181,6 +177,6 @@ export default async function DashboardPage({
           </DashCard>
         ) : null}
       </DashBody>
-    </DashboardShell>
+    </>
   );
 }

@@ -34,7 +34,11 @@ export async function deleteProductAction(formData: FormData): Promise<ActionRes
 export async function clearCouponAction(formData: FormData): Promise<ActionResult> {
   const admin = await requireAdmin();
   try {
-    await clearProductCoupon(adminContentDeps, admin.id, productId.parse(formData.get("productId")));
+    await clearProductCoupon(
+      adminContentDeps,
+      admin.id,
+      productId.parse(formData.get("productId")),
+    );
   } catch (error) {
     return fail(error);
   }
@@ -47,7 +51,11 @@ export async function bulkDeleteProductsAction(formData: FormData): Promise<Acti
   const ids = z
     .array(productId)
     .min(1)
-    .parse(String(formData.get("ids") ?? "").split(",").filter(Boolean));
+    .parse(
+      String(formData.get("ids") ?? "")
+        .split(",")
+        .filter(Boolean),
+    );
   await deleteProductsBulk(adminContentDeps, admin.id, ids);
   revalidatePath("/products");
   return { ok: true };

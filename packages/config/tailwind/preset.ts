@@ -114,10 +114,13 @@ const preset = {
       // 20/40px gutter, not an ad-hoc max-w per page.
       maxWidth: {
         inner: "1200px",
+        /* Long-form marketing sits a notch in from the page so a headline and
+           a paragraph don't run the full width of the top bar above them. */
+        narrow: "1080px",
         /* The reading measure. A thread, a brief, an email — anything whose
            job is a column of prose — is unreadable at `inner`, and every
-           surface that needed one was inventing its own literal. Two named
-           measures with a reason beats three arbitrary numbers. */
+           surface that needed one was inventing its own literal. Three named
+           measures with a reason beats a different number on every screen. */
         reading: "760px",
       },
       transitionTimingFunction: {
@@ -128,13 +131,33 @@ const preset = {
       // in forty class strings is exactly the magic value §8 forbids — and
       // because the design changes them in one place, so we should too.
       fontSize: {
+        /* Below `micro` sit the two mono-uppercase tiers the design actually
+           uses — table heads, stat captions, eyebrows, badge meta. They were
+           living as `text-[10px]` / `text-[11px]` in fifty class strings; SI
+           prefixes descend the same way the scale does (pico < nano < micro).
+           Fill only — never body copy, which never goes below `label`. */
+        pico: ["0.625rem", { lineHeight: "1.4" }],
+        nano: ["0.6875rem", { lineHeight: "1.4" }],
         micro: ["0.75rem", { lineHeight: "1.4" }],
         label: ["0.8125rem", { lineHeight: "1.45" }],
         copy: ["0.9375rem", { lineHeight: "1.55" }],
         body: ["1.0625rem", { lineHeight: "1.5" }],
         title: ["1.375rem", { lineHeight: "1.2" }],
         name: ["1.5rem", { lineHeight: "1.05" }],
+        "name-md": ["1.75rem", { lineHeight: "1.05" }],
         "name-lg": ["2rem", { lineHeight: "1.05" }],
+        /* Fluid display steps. Headlines were carrying eight near-identical
+           hand-written clamps across the auth, marketing, explore and account
+           screens — the same magic value as `13px`, only harder to spot. Three
+           named steps cover every one of them; a genuinely one-off hero (the
+           landing wordmark line) still writes its own and says why. */
+        "display-sm": ["clamp(1.5rem,3vw,2rem)", { lineHeight: "1.1" }],
+        display: ["clamp(1.875rem,3.6vw,3rem)", { lineHeight: "1.05" }],
+        "display-lg": ["clamp(2rem,4vw,2.75rem)", { lineHeight: "1.05" }],
+        /* The two marketing heroes: a section-leading page headline, and the
+           landing wordmark line — the single biggest type on the site. */
+        "display-xl": ["clamp(2.25rem,5vw,3.5rem)", { lineHeight: "1.04" }],
+        "display-2xl": ["clamp(2.25rem,6.2vw,5rem)", { lineHeight: "1.02" }],
       },
       borderRadius: {
         sm: "0.5rem",

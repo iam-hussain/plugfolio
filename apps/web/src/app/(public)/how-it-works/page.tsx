@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   title: "How it works",
   description:
     "A creator tags what's in their post, you tap the tag, you land on the retailer. No account, no cart, no checkout — and we never see your card.",
+  alternates: { canonical: "/how-it-works" },
+  openGraph: { url: "/how-it-works" },
 };
 
 export default function Page() {

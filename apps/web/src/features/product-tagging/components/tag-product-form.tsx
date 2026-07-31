@@ -14,6 +14,21 @@ import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { tagProduct } from "../api";
+import { cva } from "class-variance-authority";
+
+/** Affiliate or own (ADR-0011) — a segmented radio wearing button clothes. */
+const kindOption = cva(
+  "flex h-9 cursor-pointer items-center justify-center rounded-sm text-label font-medium",
+  {
+    variants: {
+      selected: {
+        true: "bg-primary text-primary-foreground",
+        false: "text-muted-foreground hover:bg-muted",
+      },
+    },
+    defaultVariants: { selected: false },
+  },
+);
 
 /**
  * The core tool (lean journey + ADR-0011): paste any product URL — Plugfolio
@@ -36,9 +51,7 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
   const [inStoreNote, setInStoreNote] = useState("");
 
   // ADR-0011 channel rule: a link — or a coupon with an in-store note.
-  const hasChannel = affiliateUrl.trim()
-    ? true
-    : Boolean(couponCode.trim() && inStoreNote.trim());
+  const hasChannel = affiliateUrl.trim() ? true : Boolean(couponCode.trim() && inStoreNote.trim());
   const canSubmit = Boolean(url.trim()) && hasChannel;
 
   const submit = useMutation({
@@ -81,25 +94,23 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
           required
           placeholder="https://retailer.com/product"
         />
-        <p className="text-muted-foreground text-xs">We grab the title, image &amp; price.</p>
+        <p className="text-muted-foreground text-micro">We grab the title, image &amp; price.</p>
       </div>
 
       {/* Kind toggle (ADR-0011): a two-option segmented control, not a dropdown. */}
       <fieldset>
         <legend className="sr-only">Whose product is this?</legend>
-        <div className="border-border grid grid-cols-2 gap-1 rounded-md border p-1" role="presentation">
+        <div
+          className="border-border grid grid-cols-2 gap-1 rounded-md border p-1"
+          role="presentation"
+        >
           {(
             [
               ["affiliate", "Affiliate product"],
               ["own", "My own product"],
             ] as const
           ).map(([value, label]) => (
-            <label
-              key={value}
-              className={`flex h-9 cursor-pointer items-center justify-center rounded-sm text-sm font-medium ${
-                kind === value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
-              }`}
-            >
+            <label key={value} className={kindOption({ selected: kind === value })}>
               <input
                 type="radio"
                 name="kind"
@@ -129,7 +140,7 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
       </div>
 
       <Collapsible>
-        <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm">
+        <CollapsibleTrigger className="text-muted-foreground hover:text-foreground text-copy flex items-center gap-1">
           <ChevronDown className="size-4" />
           Add a coupon
         </CollapsibleTrigger>
@@ -165,7 +176,7 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
                 maxLength={200}
                 placeholder="Show this code at the counter — Indiranagar store"
               />
-              <p className="text-muted-foreground text-xs">
+              <p className="text-muted-foreground text-micro">
                 A coupon needs the link above, an in-store note, or both.
               </p>
             </div>
@@ -174,7 +185,7 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
       </Collapsible>
 
       {submit.isError ? (
-        <p role="alert" className="text-destructive text-xs">
+        <p role="alert" className="text-destructive text-micro">
           {submit.error.message}
         </p>
       ) : null}

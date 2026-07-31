@@ -28,11 +28,11 @@ export function DeleteProfileButton({
   return (
     <div className="flex items-center justify-between gap-3">
       {remove.isError ? (
-        <p role="alert" className="text-destructive text-xs">
+        <p role="alert" className="text-destructive text-micro">
           {remove.error.message}
         </p>
       ) : (
-        <p className="text-muted-foreground text-xs">
+        <p className="text-muted-foreground text-micro">
           Deletes @{username} and everything on it. This frees a profile slot.
         </p>
       )}

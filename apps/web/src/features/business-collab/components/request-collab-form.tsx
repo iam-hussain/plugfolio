@@ -29,7 +29,7 @@ export function RequestCollabForm({ profileId }: RequestCollabFormProps) {
   });
 
   if (sent) {
-    return <p className="text-muted-foreground text-sm">Request sent — check your Collabs.</p>;
+    return <p className="text-muted-foreground text-copy">Request sent — check your Collabs.</p>;
   }
 
   return (
@@ -47,10 +47,15 @@ export function RequestCollabForm({ profileId }: RequestCollabFormProps) {
           onChange={(event) => setMessage(event.target.value)}
           maxLength={1000}
           placeholder="We'd love a reel featuring our product…"
-          className="border-border bg-background w-full rounded-md border p-2 text-sm"
+          className="border-border bg-background text-copy w-full rounded-md border p-2"
         />
       </label>
-      <Button type="submit" variant="outline" size="sm" disabled={submit.isPending || !message.trim()}>
+      <Button
+        type="submit"
+        variant="outline"
+        size="sm"
+        disabled={submit.isPending || !message.trim()}
+      >
         Request collab
       </Button>
     </form>

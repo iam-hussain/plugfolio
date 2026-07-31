@@ -31,7 +31,7 @@ export function ReplyToggle({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-primary text-xs underline"
+        className="text-primary text-micro underline"
       >
         Reply
       </button>
@@ -52,7 +52,7 @@ export function ReplyToggle({
       <button
         type="button"
         onClick={() => setOpen(false)}
-        className="text-muted-foreground pt-1 text-xs underline"
+        className="text-muted-foreground text-micro pt-1 underline"
       >
         Cancel
       </button>

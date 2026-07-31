@@ -9,11 +9,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const admin = await requireAdmin();
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value !== "false";
+  // Same cookie the root layout puts on <html> — seeding the toggle keeps it
+  // from rendering the wrong icon until hydration catches up.
+  const theme = cookieStore.get("admin-theme")?.value === "dark" ? "dark" : "light";
 
   return (
     <SidebarProvider
       defaultOpen={defaultOpen}
-      className="[--sidebar-width:244px] [--sidebar-width-icon:64px]"
+      className="[--sidebar-width-icon:64px] [--sidebar-width:244px]"
     >
       <AdminSidebar adminEmail={admin.email} />
       <SidebarInset className="min-w-0">
@@ -22,7 +25,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <SidebarTrigger className="text-muted-foreground" />
             <TopBarTitle />
           </div>
-          <ThemeToggle cookieName="admin-theme" />
+          <ThemeToggle cookieName="admin-theme" initialTheme={theme} />
         </header>
         <main className="flex-1 overflow-x-auto p-6">{children}</main>
       </SidebarInset>

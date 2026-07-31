@@ -90,7 +90,13 @@ function makeDeps(existingManagers = 0, options: { inviteePasswordless?: boolean
     now: () => new Date("2026-07-24"),
   } as unknown as AccountAuthDeps;
 
-  return { deps: { profiles, managers, users, auth }, added, removed, setPasswordMails, inviteMails };
+  return {
+    deps: { profiles, managers, users, auth },
+    added,
+    removed,
+    setPasswordMails,
+    inviteMails,
+  };
 }
 
 describe("inviteManager", () => {

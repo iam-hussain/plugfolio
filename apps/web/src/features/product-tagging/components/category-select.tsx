@@ -1,11 +1,12 @@
 "use client";
 
 import type { CategoryView } from "@plugfolio/core";
-import { NativeSelect, NativeSelectOption } from "@plugfolio/ui";
+import { NativeSelect } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { setPostCategory, setProductCategory } from "../api";
+import { ShelfOptions } from "./shelf-options";
 
 /**
  * The one category control (ADR-0010): a single-select of this profile's
@@ -13,7 +14,8 @@ import { setPostCategory, setProductCategory } from "../api";
  * required step — None is always first.
  */
 export type CategorySelectProps = {
-  target: { kind: "post"; postId: string; profileId: string } | { kind: "product"; productId: string };
+  target:
+    { kind: "post"; postId: string; profileId: string } | { kind: "product"; productId: string };
   categories: readonly CategoryView[];
   currentCategoryId: string | null;
 };
@@ -33,7 +35,7 @@ export function CategorySelect({ target, categories, currentCategoryId }: Catego
   if (categories.length === 0) return null;
 
   return (
-    <label className="text-muted-foreground flex items-center gap-2 text-xs">
+    <label className="text-muted-foreground text-micro flex items-center gap-2">
       Category
       <NativeSelect
         value={value}
@@ -43,15 +45,10 @@ export function CategorySelect({ target, categories, currentCategoryId }: Catego
           save.mutate(event.target.value || null);
         }}
       >
-        <NativeSelectOption value="">None</NativeSelectOption>
-        {categories.map((category) => (
-          <NativeSelectOption key={category.id} value={category.id}>
-            {category.title}
-          </NativeSelectOption>
-        ))}
+        <ShelfOptions categories={categories} />
       </NativeSelect>
       {save.isError ? (
-        <span role="alert" className="text-destructive text-xs">
+        <span role="alert" className="text-destructive text-micro">
           {save.error.message}
         </span>
       ) : null}

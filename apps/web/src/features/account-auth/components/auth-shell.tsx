@@ -38,7 +38,7 @@ export function AuthShell({
       <span aria-hidden className="bg-role-solid fixed inset-x-0 top-0 z-50 h-[5px]" />
 
       {/* ── pane one — the artefact ── */}
-      <aside className="bg-role-gradient relative grid content-center justify-items-center gap-4 overflow-hidden px-5 pt-6 pb-16 text-white lg:min-h-dvh lg:gap-7 lg:px-9 lg:pt-10 lg:pb-24">
+      <aside className="bg-role-gradient relative grid content-center justify-items-center gap-4 overflow-hidden px-5 pb-16 pt-6 text-white lg:min-h-dvh lg:gap-7 lg:px-9 lg:pb-24 lg:pt-10">
         <PlugMark
           tone="flat"
           aria-hidden
@@ -47,7 +47,7 @@ export function AuthShell({
         <Link
           href="/"
           aria-label="Plugfolio home"
-          className="relative z-10 justify-self-start lg:absolute lg:top-[30px] lg:left-[34px]"
+          className="relative z-10 justify-self-start lg:absolute lg:left-[34px] lg:top-[30px]"
         >
           <Logo layout="reversed" />
         </Link>
@@ -55,10 +55,10 @@ export function AuthShell({
       </aside>
 
       {/* ── pane two — the form (rides up over the pane on a sheet) ── */}
-      <main className="bg-background relative z-[2] -mt-8 grid content-center rounded-t-bay px-5 pt-8 pb-14 shadow-[0_-22px_44px_-24px_hsl(var(--brand-ink)/0.3)] lg:mt-0 lg:rounded-none lg:p-10 lg:shadow-none">
+      <main className="bg-background rounded-t-bay relative z-[2] -mt-8 grid content-center px-5 pb-14 pt-8 shadow-[0_-22px_44px_-24px_hsl(var(--brand-ink)/0.3)] lg:mt-0 lg:rounded-none lg:p-10 lg:shadow-none">
         <span
           aria-hidden
-          className="bg-border mx-auto -mt-2 mb-8 h-1 w-10 rounded-pill lg:hidden"
+          className="bg-border rounded-pill mx-auto -mt-2 mb-8 h-1 w-10 lg:hidden"
         />
         <div className="mx-auto w-full max-w-[380px]">{children}</div>
       </main>

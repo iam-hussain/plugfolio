@@ -1,6 +1,9 @@
 import type {
+  UploadKind,
   CreateCategoryInput,
   CreatePostInput,
+  CreateProductInput,
+  UpdatePostInput,
   SetPostCategoryInput,
   SetPostHiddenInput,
   SetProductCategoryInput,
@@ -17,7 +20,7 @@ import type {
  * Zod-inferred types the API validates, so client and server can't drift.
  */
 
-async function send(path: string, method: string, body?: unknown): Promise<void> {
+async function send<T = void>(path: string, method: string, body?: unknown): Promise<T> {
   const response = await fetch(path, {
     method,
     headers: { "content-type": "application/json" },
@@ -30,16 +33,49 @@ async function send(path: string, method: string, body?: unknown): Promise<void>
     } | null;
     throw new Error(problem?.error?.message ?? "Request failed");
   }
+  return (await response.json().catch(() => undefined)) as T;
+}
+
+/**
+ * Upload an image (ADR-0023) — multipart, so it can't use `send` (JSON). The
+ * API processes it (crop + watermark + WebP → S3) and returns the URL, which
+ * the caller saves onto their profile/post/product through the JSON routes.
+ */
+export async function uploadImage(kind: UploadKind, file: File): Promise<string> {
+  const form = new FormData();
+  form.append("file", file);
+  const response = await fetch(`/api/uploads/${kind}`, {
+    method: "POST",
+    body: form,
+    credentials: "same-origin",
+  });
+  if (!response.ok) {
+    const problem = (await response.json().catch(() => null)) as {
+      error?: { message?: string };
+    } | null;
+    throw new Error(problem?.error?.message ?? "Upload failed");
+  }
+  return ((await response.json()) as { url: string }).url;
 }
 
 export const createProfile = () => send("/api/profiles", "POST");
-export const createPost = (input: CreatePostInput) => send("/api/posts", "POST", input);
+export const createPost = (input: CreatePostInput) =>
+  send<{ post: { id: string } }>("/api/posts", "POST", input);
+export const updatePost = (postId: string, profileId: string, input: UpdatePostInput) =>
+  send(`/api/posts/${postId}`, "PATCH", { ...input, profileId });
+/** A product with no post — the library is a real place (§5.21). */
+export const createProduct = ({ profileId, ...body }: CreateProductInput) =>
+  send<{ product: { id: string } }>(`/api/profiles/${profileId}/products`, "POST", body);
+/** Connecting copies nothing: one product row, many posts. */
+export const connectProduct = (postId: string, productId: string) =>
+  send(`/api/posts/${postId}/products/connect`, "POST", { productId });
+export const disconnectProduct = (postId: string, productId: string) =>
+  send(`/api/posts/${postId}/products/${productId}`, "DELETE");
 export const tagProduct = ({ postId, ...body }: TagProductInput) =>
   send(`/api/posts/${postId}/products`, "POST", body);
 export const updateProduct = (productId: string, input: UpdateProductInput) =>
   send(`/api/products/${productId}`, "PATCH", input);
-export const removeProduct = (productId: string) =>
-  send(`/api/products/${productId}`, "DELETE");
+export const removeProduct = (productId: string) => send(`/api/products/${productId}`, "DELETE");
 export const setProductCoupon = (productId: string, input: SetProductCouponInput) =>
   send(`/api/products/${productId}/coupon`, "PATCH", input);
 

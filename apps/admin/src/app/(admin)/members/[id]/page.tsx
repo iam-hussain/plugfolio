@@ -1,11 +1,5 @@
 import { getMemberDetail, generateMemberHandle, NotFoundError } from "@plugfolio/core";
-import {
-  ActionForm,
-  Badge,
-  Button,
-  ConfirmDialog,
-  PromptDialog,
-} from "@plugfolio/ui";
+import { ActionForm, Badge, Button, ConfirmDialog, PromptDialog } from "@plugfolio/ui";
 import { AlertTriangle, ArrowLeft, Link2, Trash2 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -32,14 +26,10 @@ const PROVIDER_LABEL: Record<string, string> = {
 };
 
 function sectionTitle(text: string) {
-  return <h2 className="font-display mb-1.5 text-[15px] font-bold">{text}</h2>;
+  return <h2 className="font-display text-copy mb-1.5 font-bold">{text}</h2>;
 }
 
-export default async function MemberDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function MemberDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
   const { id } = await params;
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) notFound();
@@ -56,7 +46,7 @@ export default async function MemberDetailPage({
     <div className="max-w-[940px]">
       <Link
         href="/members"
-        className="font-mono text-muted-foreground mb-3.5 inline-flex items-center gap-[7px] text-xs"
+        className="text-muted-foreground text-micro mb-3.5 inline-flex items-center gap-[7px] font-mono"
       >
         <ArrowLeft aria-hidden className="size-4" /> Members / {member.email}
       </Link>
@@ -64,7 +54,7 @@ export default async function MemberDetailPage({
       {member.suspendedAt ? (
         <div className="bg-destructive/10 border-destructive/30 mb-4 flex items-start gap-[11px] rounded-[10px] border px-3.5 py-3">
           <AlertTriangle aria-hidden className="text-destructive mt-px size-[18px] shrink-0" />
-          <p className="text-[13px] font-semibold">
+          <p className="text-label font-semibold">
             This member is suspended — blocked from signing in, all owned profiles hidden.
           </p>
         </div>
@@ -72,23 +62,33 @@ export default async function MemberDetailPage({
 
       <Panel className="flex flex-wrap items-start justify-between gap-5 px-6 py-[22px]">
         <div>
-          <h1 className="font-display text-[22px] font-bold tracking-[-0.02em]">{member.email}</h1>
-          <p className="text-muted-foreground mt-1 text-[13.5px]">
+          <h1 className="font-display text-title font-bold tracking-[-0.02em]">{member.email}</h1>
+          <p className="text-muted-foreground text-label mt-1">
             {member.name ?? "—"} · <span className="font-mono">@{member.username}</span>
           </p>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {member.suspendedAt ? (
-              <Badge shape="square" variant="soft-destructive">Suspended</Badge>
+              <Badge shape="square" variant="soft-destructive">
+                Suspended
+              </Badge>
             ) : member.emailVerified ? (
-              <Badge shape="square" variant="outline-muted">Active</Badge>
+              <Badge shape="square" variant="outline-muted">
+                Active
+              </Badge>
             ) : (
-              <Badge shape="square" variant="outline-muted">Unverified</Badge>
+              <Badge shape="square" variant="outline-muted">
+                Unverified
+              </Badge>
             )}
             {member.profileCount > 0 ? (
-              <Badge shape="square" variant="soft-primary">Creator · {member.profileCount}</Badge>
+              <Badge shape="square" variant="soft-primary">
+                Creator · {member.profileCount}
+              </Badge>
             ) : null}
             {member.hasBusiness ? (
-              <Badge shape="square" variant="soft-primary">Business</Badge>
+              <Badge shape="square" variant="soft-primary">
+                Business
+              </Badge>
             ) : null}
           </div>
         </div>
@@ -114,7 +114,11 @@ export default async function MemberDetailPage({
             </Button>
           </ActionForm>
           <PromptDialog
-            trigger={<Button size="xs" variant="outline-strong">Reset @handle</Button>}
+            trigger={
+              <Button size="xs" variant="outline-strong">
+                Reset @handle
+              </Button>
+            }
             title="Reset handle"
             description={`Frees @${member.username} for reassignment — covers names grabbed before they were reserved. The account keeps everything; only the @handle changes. Recorded in the audit log.`}
             current={`@${member.username}`}
@@ -131,7 +135,11 @@ export default async function MemberDetailPage({
           />
           {member.suspendedAt ? (
             <ConfirmDialog
-              trigger={<Button size="xs" variant="outline-strong">Unsuspend</Button>}
+              trigger={
+                <Button size="xs" variant="outline-strong">
+                  Unsuspend
+                </Button>
+              }
               title="Unsuspend this member?"
               body="They regain access and their profiles return to shoppers. Recorded in the audit log."
               confirmLabel="Unsuspend"
@@ -142,7 +150,11 @@ export default async function MemberDetailPage({
             />
           ) : (
             <ConfirmDialog
-              trigger={<Button size="xs" variant="destructive-outline">Suspend</Button>}
+              trigger={
+                <Button size="xs" variant="destructive-outline">
+                  Suspend
+                </Button>
+              }
               title="Suspend member"
               body="They will be blocked from signing in and every profile they own is hidden from shoppers. Reversible — nothing is deleted. Recorded in the audit log."
               confirmLabel="Suspend"
@@ -154,7 +166,12 @@ export default async function MemberDetailPage({
           )}
           <ConfirmDialog
             trigger={
-              <Button size="icon-2xs" variant="ghost-muted" aria-label="Delete account" title="Delete account">
+              <Button
+                size="icon-2xs"
+                variant="ghost-muted"
+                aria-label="Delete account"
+                title="Delete account"
+              >
                 <Trash2 aria-hidden className="size-[15px]" />
               </Button>
             }
@@ -180,14 +197,16 @@ export default async function MemberDetailPage({
               key={profile.id}
               className="border-border flex items-center justify-between border-t py-[9px]"
             >
-              <Link href={`/profiles/${profile.id}`} className="font-mono text-[13px] font-bold">
+              <Link href={`/profiles/${profile.id}`} className="text-label font-mono font-bold">
                 /{profile.username}
               </Link>
-              <Badge shape="square" variant="soft-primary">{profile.role}</Badge>
+              <Badge shape="square" variant="soft-primary">
+                {profile.role}
+              </Badge>
             </div>
           ))}
           {member.profiles.length === 0 ? (
-            <p className="text-faint border-border border-t py-5 text-center text-[13px]">
+            <p className="text-faint border-border text-label border-t py-5 text-center">
               No profiles.
             </p>
           ) : null}
@@ -201,14 +220,14 @@ export default async function MemberDetailPage({
               className="border-border flex items-center gap-2.5 border-t py-[9px]"
             >
               <Link2 aria-hidden className="text-muted-foreground size-4 shrink-0" />
-              <span className="flex-1 text-[13px] font-medium">
+              <span className="text-label flex-1 font-medium">
                 {PROVIDER_LABEL[social.provider] ?? social.provider}
               </span>
-              <span className="text-faint text-[11px]">connected</span>
+              <span className="text-faint text-nano">connected</span>
             </div>
           ))}
           {member.socials.length === 0 ? (
-            <p className="text-faint border-border border-t py-5 text-center text-[13px]">
+            <p className="text-faint border-border text-label border-t py-5 text-center">
               Nothing connected.
             </p>
           ) : null}
@@ -216,24 +235,24 @@ export default async function MemberDetailPage({
 
         <Panel className="px-5 py-[18px]">
           <div className="mb-1.5 flex items-center justify-between">
-            <h2 className="font-display text-[15px] font-bold">Recent comments</h2>
+            <h2 className="font-display text-copy font-bold">Recent comments</h2>
             <Link
               href={`/comments?q=${encodeURIComponent(member.username)}`}
-              className="font-mono text-primary text-[11px]"
+              className="text-primary text-nano font-mono"
             >
               All →
             </Link>
           </div>
           {member.recentComments.map((comment, index) => (
             <div key={index} className="border-border border-t py-[9px]">
-              <p className="text-[13px]">{comment.body}</p>
-              <p className="font-mono text-muted-foreground mt-0.5 text-xs tabular-nums">
+              <p className="text-label">{comment.body}</p>
+              <p className="text-muted-foreground text-micro mt-0.5 font-mono tabular-nums">
                 {comment.createdAt.toISOString().slice(0, 10)}
               </p>
             </div>
           ))}
           {member.recentComments.length === 0 ? (
-            <p className="text-faint border-border border-t py-5 text-center text-[13px]">
+            <p className="text-faint border-border text-label border-t py-5 text-center">
               No comments.
             </p>
           ) : null}
@@ -241,15 +260,15 @@ export default async function MemberDetailPage({
 
         <Panel className="px-5 py-[18px]">
           {sectionTitle("Meta")}
-          <div className="border-border flex justify-between border-t py-[9px] text-[13px]">
+          <div className="border-border text-label flex justify-between border-t py-[9px]">
             <span className="text-muted-foreground">Joined</span>
             <span className="tabular-nums">{member.createdAt.toISOString().slice(0, 10)}</span>
           </div>
-          <div className="border-border flex justify-between border-t py-[9px] text-[13px]">
+          <div className="border-border text-label flex justify-between border-t py-[9px]">
             <span className="text-muted-foreground">Member id</span>
-            <span className="font-mono text-xs">{member.id}</span>
+            <span className="text-micro font-mono">{member.id}</span>
           </div>
-          <div className="border-border flex justify-between border-t py-[9px] text-[13px]">
+          <div className="border-border text-label flex justify-between border-t py-[9px]">
             <span className="text-muted-foreground">Following</span>
             <span className="tabular-nums">{member.followingCount}</span>
           </div>

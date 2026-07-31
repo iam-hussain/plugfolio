@@ -49,7 +49,7 @@ export function ProductTitle({ children }: { children: React.ReactNode }) {
 export function ProductPrice({ children }: { children?: string | null }) {
   if (!children) return null;
   return (
-    <p className="font-display text-name-lg m-0 mt-3.5 font-extrabold leading-none tracking-[-0.035em] tabular-nums">
+    <p className="font-display text-name-lg m-0 mt-3.5 font-extrabold tabular-nums leading-none tracking-[-0.035em]">
       {children}
     </p>
   );
@@ -58,7 +58,7 @@ export function ProductPrice({ children }: { children?: string | null }) {
 /** "**Affiliate pick** · opens Nykaa" — what tapping does, in words. */
 export function ProductWhere({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-muted-foreground text-copy m-0 mt-2.5 font-semibold [&_b]:text-foreground [&_b]:font-bold">
+    <p className="text-muted-foreground text-copy [&_b]:text-foreground m-0 mt-2.5 font-semibold [&_b]:font-bold">
       {children}
     </p>
   );
@@ -66,7 +66,9 @@ export function ProductWhere({ children }: { children: React.ReactNode }) {
 
 /** The one outbound action, full width — the page's whole point. */
 export function ProductBuy({ children }: { children: React.ReactNode }) {
-  return <div className="mt-[22px] [&>*]:w-full [&>*]:justify-center [&>*]:py-[17px]">{children}</div>;
+  return (
+    <div className="mt-[22px] [&>*]:w-full [&>*]:justify-center [&>*]:py-[17px]">{children}</div>
+  );
 }
 
 /**
@@ -117,7 +119,9 @@ export function ProductSource({
     >
       <Slottable>{children}</Slottable>
       {thumb ? (
-        <span className="rounded-image bg-active size-[58px] flex-none overflow-hidden">{thumb}</span>
+        <span className="rounded-image bg-active size-[58px] flex-none overflow-hidden">
+          {thumb}
+        </span>
       ) : null}
       <span className="min-w-0 flex-1">
         <span className="text-faint text-micro block font-bold uppercase tracking-[0.06em]">

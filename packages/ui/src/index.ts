@@ -90,6 +90,7 @@ export * from "./components/socials-row";
 export * from "./components/share-ways";
 export * from "./components/shelf-chips";
 export * from "./components/page-band";
+export * from "./components/measure";
 export * from "./components/empty-state";
 export * from "./components/comment";
 // Post + product views (DESIGN post.html / product.html) — the five components
@@ -120,3 +121,6 @@ export * from "./components/share-panel";
 export * from "./components/back-room";
 export * from "./components/dash-rows";
 export * from "./components/traffic";
+// The two editors (DESIGN post-edit.html / product-edit.html) — create and
+// edit are the same screen; what does not exist yet is absent, not disabled.
+export * from "./components/dash-editor";

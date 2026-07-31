@@ -1,7 +1,11 @@
 /** Public surface of the product-tagging feature (§5: import from here only). */
 export { NewProfileButton } from "./components/new-profile-button";
-export { NewPostForm, type NewPostFormProps } from "./components/new-post-form";
-export { AddPostDialog } from "./components/add-post-dialog";
+export { PostForm, type PostFormProps } from "./components/post-form";
+export {
+  ProductConnector,
+  DisconnectProductButton,
+  type ProductConnectorProps,
+} from "./components/product-connector";
 export { TagProductForm, type TagProductFormProps } from "./components/tag-product-form";
 export { ProductEditor, type ProductEditorProps } from "./components/product-editor";
 export { ManagerControls, type ManagerControlsProps } from "./components/manager-controls";

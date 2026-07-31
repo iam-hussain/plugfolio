@@ -39,14 +39,17 @@ export function CustomiseDrawer({ profileId, appearance, role }: CustomiseDrawer
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button size="sm" className="rounded-pill px-6">
+        {/* The creator's accent, like every committed action on their page
+            (DESIGN §.ch-act > .btn--accent) — not the ink pill, which is the
+            site's own voice rather than theirs. */}
+        <Button variant="action" className="px-6">
           <Sliders className="size-4" aria-hidden />
           Customise
         </Button>
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-[420px]">
         <SheetHeader className="border-border border-b">
-          <SheetTitle className="font-display text-lg font-bold tracking-[-0.02em]">
+          <SheetTitle className="font-display text-body font-bold tracking-[-0.02em]">
             Customise
           </SheetTitle>
           <SheetDescription>

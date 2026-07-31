@@ -24,10 +24,7 @@ export type AdminSupportTicketRow = NewSupportTicket & {
 
 export type AdminSupportRepository = {
   /** Open queue is oldest-first (triage order); others newest-first. */
-  list(
-    status: SupportTicketStatus | "all",
-    page: PageQuery,
-  ): Promise<Page<AdminSupportTicketRow>>;
+  list(status: SupportTicketStatus | "all", page: PageQuery): Promise<Page<AdminSupportTicketRow>>;
   setStatus(
     ticketId: string,
     status: SupportTicketStatus,
