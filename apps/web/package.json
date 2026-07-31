@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "WATCHPACK_POLLING=true next dev -p 7077",
-    "build": "next build && cp ../../packages/db/generated/client/libquery_engine-*.node .next/server/",
+    "build": "mkdir -p generated/client && cp ../../packages/db/generated/client/libquery_engine-*.node generated/client/ && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",

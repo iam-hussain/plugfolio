@@ -46,3 +46,6 @@ storybook-static/
 .ds-sync/
 ds-bundle/
 packages/ui/dist/
+
+# prisma engine copied in at build time (see build script)
+apps/*/generated/

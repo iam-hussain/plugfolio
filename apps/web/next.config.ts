@@ -7,6 +7,12 @@ const uploadHost = uploadBaseUrl ? new URL(uploadBaseUrl).hostname : null;
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // The Prisma query engine, forced into the serverless bundle. The build
+  // copies it to generated/client/ first (see this app's build script) because
+  // a lambda is assembled from the trace — a .node file nothing imports is
+  // dropped no matter which directory it sits in. This path is the first one
+  // Prisma searches at runtime (/var/task/apps/<app>/generated/client).
+  outputFileTracingIncludes: { "/**/*": ["./generated/client/*.node"] },
   ...(uploadHost
     ? { images: { remotePatterns: [{ protocol: "https", hostname: uploadHost }] } }
     : {}),
