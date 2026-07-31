@@ -3,16 +3,16 @@ import { expect, test } from "@playwright/test";
 /**
  * The no-login shopper surface (ADR-0002): these journeys assert a visitor can
  * shop with NO account and NO login wall — the core promise of §2.2. The
- * creator-page journeys read the seeded @lena data (CI migrates + seeds a
- * Postgres service before running these).
+ * creator-page journeys read the seeded @lena data (CI applies the schema and
+ * seeds a MongoDB replica set before running these).
  */
 test("home page renders the value prop without a login wall", async ({ page }) => {
   await page.goto("/");
 
-  // The value-prop headline leads and the no-login promise is explicit (copy per
+  // The value-prop headline leads and the no-account promise is explicit (copy per
   // the design-out landing); the shop entry is a plain link, never a wall.
-  await expect(page.getByRole("heading", { name: /buy what your favorites post/i })).toBeVisible();
-  await expect(page.getByText(/no login to shop/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: /the whole deck/i })).toBeVisible();
+  await expect(page.getByText(/no account needed to shop/i)).toBeVisible();
   await expect(page.getByRole("link", { name: /explore creators/i }).first()).toBeVisible();
 });
 
