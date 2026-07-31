@@ -37,7 +37,7 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
       env: {
-        DATABASE_URL: process.env.DATABASE_URL ?? "postgresql://user:pass@localhost:5432/plugfolio",
+        DATABASE_URL: process.env.DATABASE_URL ?? "mongodb://localhost:27017/plugfolio",
         DEVICE_TOKEN_SECRET:
           process.env.DEVICE_TOKEN_SECRET ?? "e2e-only-secret-at-least-thirty-two-chars",
         PORT: "3001",
@@ -52,7 +52,7 @@ export default defineConfig({
         // The shopper journey reads seeded data, so CI provides a real
         // DATABASE_URL (migrated + seeded); the placeholder keeps local
         // DB-less boots working for the pages that don't touch the DB.
-        DATABASE_URL: process.env.DATABASE_URL ?? "postgresql://user:pass@localhost:5432/plugfolio",
+        DATABASE_URL: process.env.DATABASE_URL ?? "mongodb://localhost:27017/plugfolio",
         DEVICE_TOKEN_SECRET:
           process.env.DEVICE_TOKEN_SECRET ?? "e2e-only-secret-at-least-thirty-two-chars",
         AUTH_SECRET: process.env.AUTH_SECRET ?? "e2e-only-auth-secret-at-least-32-chars!",

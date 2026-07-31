@@ -39,7 +39,9 @@ jobs:
         run: pnpm build
         env:
           # Build-time only; no real database is contacted (Prisma connects lazily at query time).
-          DATABASE_URL: postgresql://user:pass@localhost:5432/plugfolio
+          # Scheme still has to match the datasource provider — Prisma rejects a
+          # postgresql:// URL against a mongodb schema when the client is constructed.
+          DATABASE_URL: mongodb://localhost:27017/plugfolio
           # Build-time placeholders; the real secrets are provided at runtime.
           DEVICE_TOKEN_SECRET: ci-build-placeholder-secret-not-used-at-runtime
           AUTH_SECRET: ci-build-placeholder-secret-not-used-at-runtime
@@ -79,23 +81,9 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: plugfolio_e2e
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     env:
       # The shopper journey drives the real page → API → DB path (seeded @lena).
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/plugfolio_e2e?schema=public
+      DATABASE_URL: mongodb://localhost:27017/plugfolio_e2e?replicaSet=rs0
       DEVICE_TOKEN_SECRET: ci-e2e-secret-at-least-thirty-two-characters
       AUTH_SECRET: ci-e2e-auth-secret-at-least-thirty-two-chars
     steps:
@@ -106,14 +94,19 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
 
+      - name: Start MongoDB
+        run: .github/scripts/start-mongo.sh
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
         run: pnpm db:generate
 
-      - name: Apply migrations
-        run: pnpm --filter @plugfolio/db db:migrate:deploy
+      # Mongo has no migrations (ADR-0001 supersession) — db push applies the
+      # schema's indexes and constraints directly.
+      - name: Apply schema
+        run: pnpm --filter @plugfolio/db exec prisma db push --skip-generate
 
       - name: Seed shopper journey data
         run: pnpm --filter @plugfolio/db db:seed
@@ -126,23 +119,9 @@ jobs:
 
   db-integration:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: plugfolio_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/plugfolio_test?schema=public
-      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/plugfolio_test?schema=public
+      DATABASE_URL: mongodb://localhost:27017/plugfolio_test?replicaSet=rs0
+      TEST_DATABASE_URL: mongodb://localhost:27017/plugfolio_test?replicaSet=rs0
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -150,6 +129,9 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: pnpm
+
+      - name: Start MongoDB
+        run: .github/scripts/start-mongo.sh
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

@@ -4,10 +4,10 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createTapRepository } from "./tap-repository";
 
 /**
- * Integration test for the idempotency RACE (§6.8) against a real Postgres —
+ * Integration test for the idempotency RACE (§6.8) against a real MongoDB —
  * the unit test uses an in-memory fake and can't exercise the unique-constraint
  * violation path. Runs only when TEST_DATABASE_URL is set (CI provides a
- * Postgres service); skips locally so `pnpm test` stays DB-free.
+ * Mongo replica set); skips locally so `pnpm test` stays DB-free.
  *
  * Assumes the schema is already applied to TEST_DATABASE_URL (CI runs
  * `prisma db push` first).
