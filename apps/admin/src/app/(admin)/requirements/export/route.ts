@@ -10,6 +10,14 @@ export async function GET(request: NextRequest): Promise<Response> {
   return csvResponse(
     "requirements.csv",
     ["title", "brief", "business", "budget", "deadline", "approaches", "created"],
-    rows.map((r) => [r.title, r.brief, r.businessName, r.budget, r.deadline, r.collabCount, r.createdAt]),
+    rows.map((r) => [
+      r.title,
+      r.brief,
+      r.businessName,
+      r.budget,
+      r.deadline,
+      r.collabCount,
+      r.createdAt,
+    ]),
   );
 }

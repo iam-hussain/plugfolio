@@ -78,10 +78,7 @@ describe("feature flags", () => {
 
     await removeFeatureFlag(deps, "admin-1", "comments");
     expect(await isFeatureEnabled(deps, "comments", true)).toBe(true);
-    expect(recorded.map((r) => r.action)).toEqual([
-      "settings.featureFlag",
-      "settings.featureFlag",
-    ]);
+    expect(recorded.map((r) => r.action)).toEqual(["settings.featureFlag", "settings.featureFlag"]);
   });
 
   it("rejects flag names that are not kebab-case", async () => {

@@ -31,10 +31,16 @@ export type SiteFooterProps = {
 export function SiteFooter({ note }: SiteFooterProps = {}) {
   // The sign-off the design carries on every shopper surface. Year is read,
   // not written — a stale one is the kind of thing nobody notices in January.
-  const line = note === undefined ? `One link, everything shoppable · ${new Date().getFullYear()}` : note;
+  const line =
+    note === undefined ? `One link, everything shoppable · ${new Date().getFullYear()}` : note;
   return (
     <footer className="border-border border-t">
-      <div className={cn(measure(), "flex flex-wrap items-center justify-between gap-x-6 gap-y-1.5 pb-[clamp(14px,2vw,22px)] pt-[clamp(22px,3vw,32px)]")}>
+      <div
+        className={cn(
+          measure(),
+          "flex flex-wrap items-center justify-between gap-x-6 gap-y-1.5 pb-[clamp(14px,2vw,22px)] pt-[clamp(22px,3vw,32px)]",
+        )}
+      >
         <Link href="/" aria-label="Plugfolio home" className="flex items-center">
           <Logo layout="horizontal" tone="auto" />
         </Link>
@@ -43,13 +49,13 @@ export function SiteFooter({ note }: SiteFooterProps = {}) {
             <Link
               key={item.label}
               href={item.href}
-              className="text-muted-foreground hover:text-primary inline-flex min-h-11 items-center py-3 text-label font-semibold transition-colors"
+              className="text-muted-foreground hover:text-primary text-label inline-flex min-h-11 items-center py-3 font-semibold transition-colors"
             >
               {item.label}
             </Link>
           ))}
           {line ? (
-            <span className="text-faint font-sans text-micro font-semibold uppercase tracking-[0.06em]">
+            <span className="text-faint text-micro font-sans font-semibold uppercase tracking-[0.06em]">
               {line}
             </span>
           ) : null}

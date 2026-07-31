@@ -56,7 +56,11 @@ export default async function ProductsPage({
             name="status"
             defaultValue={params.status}
             label="Filter by coupon"
-            options={[["", "All products"], ["has-coupon", "Has coupon"], ["expired-coupon", "Expired coupon"]]}
+            options={[
+              ["", "All products"],
+              ["has-coupon", "Has coupon"],
+              ["expired-coupon", "Expired coupon"],
+            ]}
           />
           <SearchField
             name="q"
@@ -105,7 +109,7 @@ export default async function ProductsPage({
                 </TableCell>
                 <TableCell>
                   <span className="block font-medium">{product.title}</span>
-                  <span className="font-mono text-muted-foreground mt-0.5 block text-micro">
+                  <span className="text-muted-foreground text-micro mt-0.5 block font-mono">
                     {formatPrice(product.priceCents, product.currency)}
                     {product.affiliateUrl ? (
                       <>
@@ -122,7 +126,7 @@ export default async function ProductsPage({
                     ) : null}
                   </span>
                 </TableCell>
-                <TableCell className="font-mono text-muted-foreground text-micro">
+                <TableCell className="text-muted-foreground text-micro font-mono">
                   /{product.username}
                 </TableCell>
                 <TableCell>
@@ -150,7 +154,11 @@ export default async function ProductsPage({
                   <span className="flex justify-end gap-1.5">
                     {product.couponCode ? (
                       <ConfirmDialog
-                        trigger={<Button size="xs" variant="ghost-muted">Clear coupon</Button>}
+                        trigger={
+                          <Button size="xs" variant="ghost-muted">
+                            Clear coupon
+                          </Button>
+                        }
                         title="Clear this coupon?"
                         body="The code and offer are removed from the product. The product stays live. Recorded in the audit log."
                         confirmLabel="Clear coupon"
@@ -160,7 +168,11 @@ export default async function ProductsPage({
                       />
                     ) : null}
                     <ConfirmDialog
-                      trigger={<Button size="xs" variant="destructive-outline">Remove</Button>}
+                      trigger={
+                        <Button size="xs" variant="destructive-outline">
+                          Remove
+                        </Button>
+                      }
                       title="Remove this product?"
                       body="Removes the product and its recorded taps — the same cascade as a creator removing their own. This cannot be undone. Recorded in the audit log."
                       confirmLabel="Remove product"
@@ -182,7 +194,12 @@ export default async function ProductsPage({
           </TableBody>
         </Table>
       </Panel>
-      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/products", params)} />
+      <Pager
+        page={page.page}
+        pageSize={page.pageSize}
+        total={total}
+        hrefFor={pagedHref("/products", params)}
+      />
     </BulkSelect>
   );
 }

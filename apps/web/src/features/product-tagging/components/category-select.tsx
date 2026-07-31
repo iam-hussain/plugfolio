@@ -14,7 +14,8 @@ import { ShelfOptions } from "./shelf-options";
  * required step — None is always first.
  */
 export type CategorySelectProps = {
-  target: { kind: "post"; postId: string; profileId: string } | { kind: "product"; productId: string };
+  target:
+    { kind: "post"; postId: string; profileId: string } | { kind: "product"; productId: string };
   categories: readonly CategoryView[];
   currentCategoryId: string | null;
 };
@@ -34,7 +35,7 @@ export function CategorySelect({ target, categories, currentCategoryId }: Catego
   if (categories.length === 0) return null;
 
   return (
-    <label className="text-muted-foreground flex items-center gap-2 text-micro">
+    <label className="text-muted-foreground text-micro flex items-center gap-2">
       Category
       <NativeSelect
         value={value}

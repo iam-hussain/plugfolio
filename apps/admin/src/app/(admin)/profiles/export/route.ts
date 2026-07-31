@@ -9,7 +9,16 @@ export async function GET(request: NextRequest): Promise<Response> {
   const { rows } = await repositories.profiles.search(q, undefined, { page: 1, pageSize: 10_000 });
   return csvResponse(
     "profiles.csv",
-    ["username", "owner", "posts", "products", "followers", "suspended", "ownerSuspended", "created"],
+    [
+      "username",
+      "owner",
+      "posts",
+      "products",
+      "followers",
+      "suspended",
+      "ownerSuspended",
+      "created",
+    ],
     rows.map((r) => [
       `/${r.username}`,
       r.ownerEmail,

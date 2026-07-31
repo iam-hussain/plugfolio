@@ -44,12 +44,7 @@ export type ProductEditorProps = {
   libraryHref: Route;
 };
 
-export function ProductEditor({
-  profileId,
-  categories,
-  product,
-  libraryHref,
-}: ProductEditorProps) {
+export function ProductEditor({ profileId, categories, product, libraryHref }: ProductEditorProps) {
   const { fields, state, save, remove } = useProductEditor({ profileId, product, libraryHref });
 
   return (

@@ -13,10 +13,21 @@ import {
   DialogTitle,
   DialogTrigger,
   Textarea,
-  cn,
 } from "@plugfolio/ui";
 import { Flag } from "lucide-react";
 import { submitReport } from "../api";
+import { cva } from "class-variance-authority";
+
+/** Spam · Scam · Offensive · Impersonation · Other — pick exactly one. */
+const categoryChip = cva("rounded-pill border px-3 py-1.5 text-micro font-medium", {
+  variants: {
+    selected: {
+      true: "bg-primary text-primary-foreground border-primary",
+      false: "border-border text-muted-foreground",
+    },
+  },
+  defaultVariants: { selected: false },
+});
 
 /**
  * The quiet report affordance (admin queue inflow): flag icon → category +
@@ -76,7 +87,7 @@ export function ReportButton({ targetType, targetId, targetLabel, iconOnly }: Re
       </DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle className="font-display text-lg font-bold">
+          <DialogTitle className="font-display text-body font-bold">
             Report {targetLabel}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-label">
@@ -102,12 +113,7 @@ export function ReportButton({ targetType, targetId, targetLabel, iconOnly }: Re
                   role="radio"
                   aria-checked={category === option.value}
                   onClick={() => setCategory(option.value)}
-                  className={cn(
-                    "rounded-pill border px-3 py-1.5 text-micro font-medium",
-                    category === option.value
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border text-muted-foreground",
-                  )}
+                  className={categoryChip({ selected: category === option.value })}
                 >
                   {option.label}
                 </button>

@@ -85,16 +85,16 @@ export default function Error({
           }
         >
           <div className="mt-6 flex justify-center">
-            <span className="bg-card shadow-rest rounded-pill inline-flex items-center gap-2.5 px-[15px] py-2 text-micro font-semibold text-faint">
+            <span className="bg-card shadow-rest rounded-pill text-micro text-faint inline-flex items-center gap-2.5 px-[15px] py-2 font-semibold">
               Reference{" "}
-              <b className="text-muted-foreground font-bold tracking-[0.08em] tabular-nums">
+              <b className="text-muted-foreground font-bold tabular-nums tracking-[0.08em]">
                 {reference}
               </b>
               <button
                 type="button"
                 onClick={copyReference}
                 aria-label={copied ? "Reference copied" : "Copy the reference"}
-                className="hover:bg-active hover:text-primary grid size-6 place-items-center rounded-pill transition-colors"
+                className="hover:bg-active hover:text-primary rounded-pill grid size-6 place-items-center transition-colors"
               >
                 {copied ? (
                   <Check className="text-primary size-4" aria-hidden />
@@ -109,7 +109,8 @@ export default function Error({
               works stops someone concluding Plugfolio is down and leaving. */}
           <div className="mx-auto mt-[26px] grid max-w-[46ch] gap-2.5 text-left">
             <Reassurance title="Creator pages are unaffected.">
-              Anything you already have a link to still opens, and every Buy button on it still works.
+              Anything you already have a link to still opens, and every Buy button on it still
+              works.
             </Reassurance>
             <Reassurance title="Nothing was lost.">
               If you were part-way through saving something, it didn’t go through — so nothing was
@@ -127,7 +128,11 @@ export default function Error({
 function Reassurance({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <p className="bg-card shadow-rest rounded-tile text-copy text-muted-foreground flex items-start gap-[11px] px-[15px] py-[13px] leading-[1.55]">
-      <Check className="text-brand-violet-deep mt-[3px] size-4 shrink-0" strokeWidth={2.4} aria-hidden />
+      <Check
+        className="text-brand-violet-deep mt-[3px] size-4 shrink-0"
+        strokeWidth={2.4}
+        aria-hidden
+      />
       <span>
         <b className="text-foreground font-bold">{title}</b> {children}
       </span>

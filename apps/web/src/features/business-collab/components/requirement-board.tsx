@@ -37,10 +37,7 @@ export function RequirementBoard({ requirements, approachAsProfileId }: Requirem
             <CardContent className="flex flex-col gap-3">
               <p className="text-copy">{requirement.brief}</p>
               {approachAsProfileId ? (
-                <ApproachForm
-                  requirementId={requirement.id}
-                  profileId={approachAsProfileId}
-                />
+                <ApproachForm requirementId={requirement.id} profileId={approachAsProfileId} />
               ) : null}
             </CardContent>
           </Card>

@@ -45,7 +45,11 @@ export function CommentSection({
 /** Recent · Oldest · Most helpful. */
 export function CommentSort({ children }: { children: React.ReactNode }) {
   return (
-    <div role="group" aria-label="Sort comments" className="mt-4 flex flex-wrap items-center gap-1.5">
+    <div
+      role="group"
+      aria-label="Sort comments"
+      className="mt-4 flex flex-wrap items-center gap-1.5"
+    >
       {children}
     </div>
   );
@@ -61,8 +65,8 @@ export function SortButton({
       type="button"
       aria-pressed={selected}
       className={cn(
-        "border-border bg-card text-muted-foreground text-micro min-h-[38px] rounded-pill border px-3.5 py-2 font-bold",
-        "transition-colors duration-200 ease-design hover:border-primary hover:text-primary",
+        "border-border bg-card text-muted-foreground text-micro rounded-pill min-h-[38px] border px-3.5 py-2 font-bold",
+        "ease-design hover:border-primary hover:text-primary transition-colors duration-200",
         selected && "bg-foreground border-foreground text-background hover:text-background",
         className,
       )}
@@ -71,13 +75,19 @@ export function SortButton({
   );
 }
 
-export function CommentList({ children, className }: { children: React.ReactNode; className?: string }) {
+export function CommentList({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <ul
       className={cn(
         // The page's list separates its entries; a threaded list doesn't,
         // because the reply rail already carries the structure.
-        "mt-[18px] list-none p-0 [&>li+li]:border-t [&>li+li]:border-border",
+        "[&>li+li]:border-border mt-[18px] list-none p-0 [&>li+li]:border-t",
         className,
       )}
     >
@@ -99,7 +109,7 @@ export function CommentAvatar({
   return (
     <span
       className={cn(
-        "bg-active text-primary text-micro grid size-8 flex-none place-items-center overflow-hidden rounded-pill font-extrabold",
+        "bg-active text-primary text-micro rounded-pill grid size-8 flex-none place-items-center overflow-hidden font-extrabold",
         className,
       )}
     >

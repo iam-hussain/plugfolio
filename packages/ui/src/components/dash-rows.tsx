@@ -53,16 +53,7 @@ export function PostRow({
   children: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <li
-      className={cn(
-        postRow({ hidden }),
-        className,
-      )}
-    >
-      {children}
-    </li>
-  );
+  return <li className={cn(postRow({ hidden }), className)}>{children}</li>;
 }
 
 /** Thumbnail + title + meta, the whole of it a link into the editor. */
@@ -106,7 +97,7 @@ export function PostRowLink({
 /** "3 products" with its icon — a count, in words, where a grid showed none. */
 export function PostRowCount({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-muted-foreground text-micro inline-flex items-center gap-1.5 font-semibold [&_svg]:size-3 [&_svg]:text-primary">
+    <span className="text-muted-foreground text-micro [&_svg]:text-primary inline-flex items-center gap-1.5 font-semibold [&_svg]:size-3">
       {children}
     </span>
   );
@@ -250,9 +241,7 @@ export function CollabRow({
   closed?: boolean;
 }) {
   return (
-    <li
-      className={collabRow({ closed })}
-    >
+    <li className={collabRow({ closed })}>
       {avatar}
       <span data-slot="collab-body" className="min-w-0 flex-[1_1_260px]">
         <b className="text-label flex flex-wrap items-center gap-2 font-bold">

@@ -148,29 +148,29 @@
 
 (() => {
   const PAPER = {
-    letter: ['8.5in', '11in'],
-    a4: ['210mm', '297mm'],
-    legal: ['8.5in', '14in'],
+    letter: ["8.5in", "11in"],
+    a4: ["210mm", "297mm"],
+    legal: ["8.5in", "14in"],
   };
   const CSS_LENGTH = /^\d+(\.\d+)?(px|in|mm|cm|pt|pc)$/;
   // Unitless "0" is a valid CSS length and the natural way to write
   // margin="0"; normalise it to 0px so max()/calc() (which reject a bare
   // number) keep working.
   const safeLen = (v, fb) => {
-    v = (v || '').trim();
-    return v === '0' ? '0px' : CSS_LENGTH.test(v) ? v : fb;
+    v = (v || "").trim();
+    return v === "0" ? "0px" : CSS_LENGTH.test(v) ? v : fb;
   };
   // WebKit (Safari and every iOS browser shell) never repeats a table's
   // thead/tfoot on printed pages (WebKit bug 17205), so the spacer-borne
   // vertical margins of a FLOWING document reach only the first page
   // there. Engine check, not browser check: vendor is 'Apple Computer,
   // Inc.' exactly for WebKit and 'Google Inc.' for Blink.
-  const WK_PRINT = /apple/i.test(navigator.vendor || '');
+  const WK_PRINT = /apple/i.test(navigator.vendor || "");
   // CSS length → px number (CSS absolute units are exact: 1in = 96px).
   // Returns NaN for anything safeLen would reject — callers gate on it.
   const PX_PER = { px: 1, in: 96, mm: 96 / 25.4, cm: 96 / 2.54, pt: 96 / 72, pc: 16 };
   const toPx = (v) => {
-    const m = /^(\d+(?:\.\d+)?)(px|in|mm|cm|pt|pc)$/.exec((v || '').trim());
+    const m = /^(\d+(?:\.\d+)?)(px|in|mm|cm|pt|pc)$/.exec((v || "").trim());
     return m ? parseFloat(m[1]) * PX_PER[m[2]] : NaN;
   };
 
@@ -333,42 +333,54 @@
 
   class DocPage extends HTMLElement {
     static get observedAttributes() {
-      return ['size', 'width', 'height', 'margin', 'orientation', 'content-width', 'content-height'];
+      return [
+        "size",
+        "width",
+        "height",
+        "margin",
+        "orientation",
+        "content-width",
+        "content-height",
+      ];
     }
 
     constructor() {
       super();
-      this._root = this.attachShadow({ mode: 'open' });
-      this._mo = typeof MutationObserver === 'function'
-        ? new MutationObserver(() => this._scheduleMeasure())
-        : null;
+      this._root = this.attachShadow({ mode: "open" });
+      this._mo =
+        typeof MutationObserver === "function"
+          ? new MutationObserver(() => this._scheduleMeasure())
+          : null;
     }
 
     /** The named paper's [w, h], swapped when orientation="landscape".
      *  Only the named size swaps — explicit width/height are exact values
      *  the author already oriented. */
     _paperSize() {
-      const named = PAPER[(this.getAttribute('size') || '').toLowerCase()] || PAPER.letter;
+      const named = PAPER[(this.getAttribute("size") || "").toLowerCase()] || PAPER.letter;
       const landscape =
-        (this.getAttribute('orientation') || '').trim().toLowerCase() === 'landscape';
+        (this.getAttribute("orientation") || "").trim().toLowerCase() === "landscape";
       return landscape ? [named[1], named[0]] : named;
     }
     get pageWidth() {
-      return safeLen(this.getAttribute('width'), this._paperSize()[0]);
+      return safeLen(this.getAttribute("width"), this._paperSize()[0]);
     }
     get pageHeight() {
-      return safeLen(this.getAttribute('height'), this._paperSize()[1]);
+      return safeLen(this.getAttribute("height"), this._paperSize()[1]);
     }
-    get pageMargin() { return safeLen(this.getAttribute('margin'), '0.75in'); }
+    get pageMargin() {
+      return safeLen(this.getAttribute("margin"), "0.75in");
+    }
 
     /** Scaled-fit mode's content box [w, h] as CSS lengths, or null when
      *  the mode is off (either attribute missing/invalid/zero — a partial
      *  declaration falls back to normal flow rather than guessing). */
     _contentFit() {
-      const w = safeLen(this.getAttribute('content-width'), null);
-      const h = safeLen(this.getAttribute('content-height'), null);
+      const w = safeLen(this.getAttribute("content-width"), null);
+      const h = safeLen(this.getAttribute("content-height"), null);
       if (!w || !h) return null;
-      const wPx = toPx(w), hPx = toPx(h);
+      const wPx = toPx(w),
+        hPx = toPx(h);
       return wPx > 0 && hPx > 0 ? [w, h, wPx, hPx] : null;
     }
 
@@ -380,11 +392,15 @@
       this._ensureOwnsPrintMeta();
       this._syncFixedSizeMeta();
       this._syncPrintSizingMeta();
-      if (this._mo) this._mo.observe(this, {
-        subtree: true, childList: true, characterData: true, attributes: true,
-      });
+      if (this._mo)
+        this._mo.observe(this, {
+          subtree: true,
+          childList: true,
+          characterData: true,
+          attributes: true,
+        });
       this._onResize = () => this._scheduleMeasure();
-      window.addEventListener('resize', this._onResize);
+      window.addEventListener("resize", this._onResize);
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(() => this._scheduleMeasure());
       }
@@ -392,31 +408,40 @@
     }
 
     disconnectedCallback() {
-      window.removeEventListener('resize', this._onResize);
+      window.removeEventListener("resize", this._onResize);
       if (this._mo) this._mo.disconnect();
-      if (this._raf) { cancelAnimationFrame(this._raf); this._raf = null; }
+      if (this._raf) {
+        cancelAnimationFrame(this._raf);
+        this._raf = null;
+      }
       // Drop the head rules when the last doc-page leaves, so a deleted
       // document's @page geometry and text-wrap defaults can't apply to
       // whatever replaces it.
-      const survivor = document.querySelector('doc-page');
+      const survivor = document.querySelector("doc-page");
       if (!survivor) {
-        ['doc-page-print', 'doc-page-text-wrap', 'doc-page-owns-print', 'doc-page-fixed-size', 'doc-page-print-sizing'].forEach((id) => {
+        [
+          "doc-page-print",
+          "doc-page-text-wrap",
+          "doc-page-owns-print",
+          "doc-page-fixed-size",
+          "doc-page-print-sizing",
+        ].forEach((id) => {
           const tag = document.getElementById(id);
           if (tag) tag.remove();
         });
         // A live deck-stage deferred its own print-sizing meta to ours —
         // hand the page-global meta over so the deck isn't left unmarked.
-        const deck = document.querySelector('deck-stage');
-        if (deck && typeof deck._ensurePrintSizingMeta === 'function') {
+        const deck = document.querySelector("deck-stage");
+        if (deck && typeof deck._ensurePrintSizingMeta === "function") {
           deck._ensurePrintSizingMeta();
         }
       } else {
         // A departed owner hands each page-global meta to whatever
         // doc-page remains (or it's removed).
-        if (typeof survivor._syncFixedSizeMeta === 'function') {
+        if (typeof survivor._syncFixedSizeMeta === "function") {
           survivor._syncFixedSizeMeta();
         }
-        if (typeof survivor._syncPrintSizingMeta === 'function') {
+        if (typeof survivor._syncPrintSizingMeta === "function") {
           survivor._syncPrintSizingMeta();
         }
       }
@@ -442,8 +467,8 @@
             <tfoot><tr><td><div class="ftr-space"><slot name="footer"></slot></div></td></tr></tfoot>
           </table>
         </div>`;
-      this._sheet = this._root.querySelector('.sheet');
-      this._vars = this._root.getElementById('vars');
+      this._sheet = this._root.querySelector(".sheet");
+      this._vars = this._root.getElementById("vars");
     }
 
     /** Runtime sizing lives in a shadow <style> :host rule, never on the
@@ -456,7 +481,7 @@
       // allowed — print transforms are vector, so text and CSS stay crisp
       // (raster images soften, which the catalog bullet warns about).
       const fit = this._contentFit();
-      let fitVars = '';
+      let fitVars = "";
       if (fit) {
         const marginPx = toPx(this.pageMargin) || 0;
         const availW = toPx(this.pageWidth) - 2 * marginPx;
@@ -464,29 +489,52 @@
         const scale = Math.min(availW / fit[2], availH / fit[3]);
         if (scale > 0 && Number.isFinite(scale)) {
           fitVars =
-            '--doc-fit-w:' + fit[0] + ';' +
-            '--doc-fit-h:' + fit[1] + ';' +
-            '--doc-fit-scale:' + scale.toFixed(4) + ';';
+            "--doc-fit-w:" +
+            fit[0] +
+            ";" +
+            "--doc-fit-h:" +
+            fit[1] +
+            ";" +
+            "--doc-fit-scale:" +
+            scale.toFixed(4) +
+            ";";
         }
       }
-      this._sheet.classList.toggle('fit-mode', !!fitVars);
+      this._sheet.classList.toggle("fit-mode", !!fitVars);
       // Numeric w/h ratio for the paginated page cards' aspect-ratio —
       // aspect-ratio takes a number, not a length ratio, so compute it
       // here (CSS length division isn't portable). 6 decimals keeps the
       // shadow style stable across re-syncs.
       const arW = toPx(this.pageWidth);
       const arH = toPx(this.pageHeight);
-      const ar = arW > 0 && arH > 0 ? (arW / arH).toFixed(6) : '0.772727';
-      this._vars.textContent = ':host{' +
+      const ar = arW > 0 && arH > 0 ? (arW / arH).toFixed(6) : "0.772727";
+      this._vars.textContent =
+        ":host{" +
         fitVars +
-        '--doc-page-ar:' + ar + ';' +
-        '--doc-page-w:' + this.pageWidth + ';' +
-        '--doc-page-h:' + this.pageHeight + ';' +
-        '--doc-page-margin:' + this.pageMargin + ';' +
-        '--doc-hdr-h:' + (hdrH || 0) + 'px;' +
-        '--doc-ftr-h:' + (ftrH || 0) + 'px;' +
-        '--doc-hdr-pad:' + (hdrH ? '0.35in' : '0px') + ';' +
-        '--doc-ftr-pad:' + (ftrH ? '0.35in' : '0px') + '}';
+        "--doc-page-ar:" +
+        ar +
+        ";" +
+        "--doc-page-w:" +
+        this.pageWidth +
+        ";" +
+        "--doc-page-h:" +
+        this.pageHeight +
+        ";" +
+        "--doc-page-margin:" +
+        this.pageMargin +
+        ";" +
+        "--doc-hdr-h:" +
+        (hdrH || 0) +
+        "px;" +
+        "--doc-ftr-h:" +
+        (ftrH || 0) +
+        "px;" +
+        "--doc-hdr-pad:" +
+        (hdrH ? "0.35in" : "0px") +
+        ";" +
+        "--doc-ftr-pad:" +
+        (ftrH ? "0.35in" : "0px") +
+        "}";
     }
 
     /** @page is a no-op inside shadow DOM, so the rule lives in <head>.
@@ -507,10 +555,10 @@
      *  to draw its date/URL/page-count header in, and the visual margin
      *  lives on the sheet's own padding. */
     _syncPrintPageRule() {
-      const id = 'doc-page-print';
+      const id = "doc-page-print";
       let tag = document.getElementById(id);
       if (!tag) {
-        tag = document.createElement('style');
+        tag = document.createElement("style");
         tag.id = id;
       }
       document.head.appendChild(tag);
@@ -525,8 +573,7 @@
       //   descriptor is what carries orientation; without it a landscape
       //   document prints portrait whenever nothing injects a size.
       const landscape =
-        (this.getAttribute('orientation') || '').trim().toLowerCase() ===
-        'landscape';
+        (this.getAttribute("orientation") || "").trim().toLowerCase() === "landscape";
       // Explicit pagination pins the page box to the SAME values that
       // size the cards (the named size by default, the export path's
       // chosen paper when its later rule overrides both) — card and
@@ -534,16 +581,16 @@
       // shrinks-to-fit in the dialog instead of clipping a Letter card
       // on A4. Declared before the paginated read below so both derive
       // from one check.
-      const paginatedNow = this.querySelector(':scope > .page') !== null;
+      const paginatedNow = this.querySelector(":scope > .page") !== null;
       const sizeDescriptor = this._trueSizePx()
-        ? 'size: ' + this.pageWidth + ' ' + this.pageHeight + '; '
+        ? "size: " + this.pageWidth + " " + this.pageHeight + "; "
         : this._contentFit()
-          ? 'size: ' + this.pageWidth + ' ' + this.pageHeight + '; '
+          ? "size: " + this.pageWidth + " " + this.pageHeight + "; "
           : paginatedNow
-            ? 'size: ' + this.pageWidth + ' ' + this.pageHeight + '; '
+            ? "size: " + this.pageWidth + " " + this.pageHeight + "; "
             : landscape
-              ? 'size: landscape; '
-              : '';
+              ? "size: landscape; "
+              : "";
       // WebKit never repeats the thead/tfoot spacers that carry a flowing
       // document's vertical page margins (see WK_PRINT above), so pages
       // after the first print edge-to-edge there. Carry the VERTICAL
@@ -559,29 +606,29 @@
       // Safari guide teaches turning the setting off for flowing
       // documents. Explicitly paginated and fixed-size documents keep
       // margin: 0 everywhere: their pages ARE the sheet.
-      const wkFlowing =
-        WK_PRINT && !paginatedNow && !this._trueSizePx() && !this._contentFit();
-      const marginDescriptor = wkFlowing
-        ? 'margin: ' + this.pageMargin + ' 0; '
-        : 'margin: 0; ';
+      const wkFlowing = WK_PRINT && !paginatedNow && !this._trueSizePx() && !this._contentFit();
+      const marginDescriptor = wkFlowing ? "margin: " + this.pageMargin + " 0; " : "margin: 0; ";
       // Shadow-internal marker (never serialized), kept in lockstep with
       // the @page decision above: the print CSS trims the first-page
       // spacers ONLY while @page actually carries the margins — a
       // true-size or scaled-fit sheet keeps margin: 0 and must keep its
       // spacers too. Re-synced here so attribute changes and pagination
       // flips move both together.
-      if (this._sheet) this._sheet.classList.toggle('wk-print', wkFlowing);
+      if (this._sheet) this._sheet.classList.toggle("wk-print", wkFlowing);
       tag.textContent =
-        '@page { ' + sizeDescriptor + marginDescriptor + '} ' +
-        '@media print { html, body { margin: 0 !important; padding: 0 !important; background: none !important; height: auto !important; overflow: visible !important; } ' +
-        'h1,h2,h3,h4,h5,h6 { break-after: avoid; } ' +
-        'figure,pre,blockquote,img,svg,tr { break-inside: avoid; } ' +
-        'p,li { orphans: 3; widows: 3; } ' +
-        '* { -webkit-print-color-adjust: exact; print-color-adjust: exact; ' +
-        'backdrop-filter: none !important; -webkit-backdrop-filter: none !important; } ' +
-        '*, *::before, *::after { animation-delay: -99s !important; animation-duration: .001s !important; ' +
-        'animation-iteration-count: 1 !important; animation-fill-mode: both !important; ' +
-        'animation-play-state: running !important; transition-duration: 0s !important; } }';
+        "@page { " +
+        sizeDescriptor +
+        marginDescriptor +
+        "} " +
+        "@media print { html, body { margin: 0 !important; padding: 0 !important; background: none !important; height: auto !important; overflow: visible !important; } " +
+        "h1,h2,h3,h4,h5,h6 { break-after: avoid; } " +
+        "figure,pre,blockquote,img,svg,tr { break-inside: avoid; } " +
+        "p,li { orphans: 3; widows: 3; } " +
+        "* { -webkit-print-color-adjust: exact; print-color-adjust: exact; " +
+        "backdrop-filter: none !important; -webkit-backdrop-filter: none !important; } " +
+        "*, *::before, *::after { animation-delay: -99s !important; animation-duration: .001s !important; " +
+        "animation-iteration-count: 1 !important; animation-fill-mode: both !important; " +
+        "animation-play-state: running !important; transition-duration: 0s !important; } }";
     }
 
     /** Typographic defaults for document text: balance headings, avoid
@@ -592,13 +639,13 @@
      *  data-omelette-injected marks the tag for the host editor to strip
      *  at serialize, so it is never written back as authored source. */
     _ensureTextWrapDefaults() {
-      if (document.getElementById('doc-page-text-wrap')) return;
-      const tag = document.createElement('style');
-      tag.id = 'doc-page-text-wrap';
-      tag.setAttribute('data-omelette-injected', '');
+      if (document.getElementById("doc-page-text-wrap")) return;
+      const tag = document.createElement("style");
+      tag.id = "doc-page-text-wrap";
+      tag.setAttribute("data-omelette-injected", "");
       tag.textContent =
-        ':where(h1,h2,h3,h4,h5,h6){text-wrap:balance}' +
-        ':where(p,li,blockquote,figcaption){text-wrap:pretty}';
+        ":where(h1,h2,h3,h4,h5,h6){text-wrap:balance}" +
+        ":where(p,li,blockquote,figcaption){text-wrap:pretty}";
       document.head.appendChild(tag);
     }
 
@@ -608,22 +655,20 @@
      *  component's @page geometry is never overridden by a heuristic.
      *  data-omelette-injected keeps it out of serialized source. */
     _ensureOwnsPrintMeta() {
-      if (document.getElementById('doc-page-owns-print')) return;
-      const tag = document.createElement('meta');
-      tag.id = 'doc-page-owns-print';
-      tag.name = 'omelette-owns-print';
-      tag.content = 'true';
-      tag.setAttribute('data-omelette-injected', '');
+      if (document.getElementById("doc-page-owns-print")) return;
+      const tag = document.createElement("meta");
+      tag.id = "doc-page-owns-print";
+      tag.name = "omelette-owns-print";
+      tag.content = "true";
+      tag.setAttribute("data-omelette-injected", "");
       document.head.appendChild(tag);
     }
 
     /** This page's valid true-size page box (explicit width AND height)
      *  as [w, h] px ints, or null when the mode is off. */
     _trueSizePx() {
-      if (
-        !safeLen(this.getAttribute('width'), null) ||
-        !safeLen(this.getAttribute('height'), null)
-      ) return null;
+      if (!safeLen(this.getAttribute("width"), null) || !safeLen(this.getAttribute("height"), null))
+        return null;
       const w = Math.round(toPx(this.pageWidth));
       const h = Math.round(toPx(this.pageHeight));
       return w > 0 && h > 0 ? [w, h] : null;
@@ -641,27 +686,27 @@
      *  Removed when no true-size page remains (the owner's disconnect
      *  re-syncs via any survivor) or when an author-set meta exists. */
     _syncFixedSizeMeta() {
-      const id = 'doc-page-fixed-size';
+      const id = "doc-page-fixed-size";
       const own = document.getElementById(id);
       const authored = document.querySelector(
-        'meta[name="omelette-fixed-size"]:not([data-omelette-injected])'
+        'meta[name="omelette-fixed-size"]:not([data-omelette-injected])',
       );
       // The page-wide owner, not this instance: an upgraded true-size page
       // anywhere in the document keeps the meta alive and sized.
       let box = null;
-      for (const el of document.querySelectorAll('doc-page')) {
-        box = typeof el._trueSizePx === 'function' ? el._trueSizePx() : null;
+      for (const el of document.querySelectorAll("doc-page")) {
+        box = typeof el._trueSizePx === "function" ? el._trueSizePx() : null;
         if (box) break;
       }
       if (!box || authored) {
         if (own) own.remove();
         return;
       }
-      const tag = own || document.createElement('meta');
+      const tag = own || document.createElement("meta");
       tag.id = id;
-      tag.name = 'omelette-fixed-size';
-      tag.content = box[0] + ',' + box[1];
-      tag.setAttribute('data-omelette-injected', '');
+      tag.name = "omelette-fixed-size";
+      tag.content = box[0] + "," + box[1];
+      tag.setAttribute("data-omelette-injected", "");
       if (!own) document.head.appendChild(tag);
     }
 
@@ -669,11 +714,10 @@
      *  height are authored (the page is the design's own size), else the
      *  default paper in the authored orientation. */
     _printSizingMode() {
-      if (this._trueSizePx()) return 'fixed';
+      if (this._trueSizePx()) return "fixed";
       const landscape =
-        (this.getAttribute('orientation') || '').trim().toLowerCase() ===
-        'landscape';
-      return landscape ? 'default-landscape' : 'default-portrait';
+        (this.getAttribute("orientation") || "").trim().toLowerCase() === "landscape";
+      return landscape ? "default-landscape" : "default-portrait";
     }
 
     /** Announces the print-sizing mode to the host app:
@@ -686,19 +730,19 @@
      *  first connected doc-page owns it, an authored meta is never
      *  overridden, removed when no doc-page remains. */
     _syncPrintSizingMeta() {
-      const id = 'doc-page-print-sizing';
+      const id = "doc-page-print-sizing";
       const own = document.getElementById(id);
       const authored = document.querySelector(
-        'meta[name="omelette-print-sizing"]:not([data-omelette-injected])'
+        'meta[name="omelette-print-sizing"]:not([data-omelette-injected])',
       );
       // A fixed page wins outright (mirroring the fixed-size loop above,
       // so the two metas can never contradict each other in a mixed
       // multi-page document); otherwise the first page's mode holds.
       let mode = null;
-      for (const el of document.querySelectorAll('doc-page')) {
-        if (typeof el._printSizingMode !== 'function') continue;
+      for (const el of document.querySelectorAll("doc-page")) {
+        if (typeof el._printSizingMode !== "function") continue;
         const m = el._printSizingMode();
-        if (m === 'fixed') {
+        if (m === "fixed") {
           mode = m;
           break;
         }
@@ -712,19 +756,22 @@
       // defers to any existing one — take it over, or the document ends
       // up with two conflicting injected metas (a doc-page page is the
       // document; the deck re-ensures its meta if every doc-page leaves).
-      const deckMeta = document.getElementById('deck-stage-print-sizing');
+      const deckMeta = document.getElementById("deck-stage-print-sizing");
       if (deckMeta) deckMeta.remove();
-      const tag = own || document.createElement('meta');
+      const tag = own || document.createElement("meta");
       tag.id = id;
-      tag.name = 'omelette-print-sizing';
+      tag.name = "omelette-print-sizing";
       tag.content = mode;
-      tag.setAttribute('data-omelette-injected', '');
+      tag.setAttribute("data-omelette-injected", "");
       if (!own) document.head.appendChild(tag);
     }
 
     _scheduleMeasure() {
       if (this._raf) return;
-      this._raf = requestAnimationFrame(() => { this._raf = null; this._measure(); });
+      this._raf = requestAnimationFrame(() => {
+        this._raf = null;
+        this._measure();
+      });
     }
 
     /** Slot heights feed the print spacers (--doc-hdr-h / --doc-ftr-h), so
@@ -736,22 +783,19 @@
     _measure() {
       const hdr = this.querySelector(':scope > [slot="header"]');
       const ftr = this.querySelector(':scope > [slot="footer"]');
-      const wasPaginated = this._sheet.classList.contains('paginated');
-      this._sheet.classList.toggle(
-        'paginated',
-        this.querySelector(':scope > .page') !== null
-      );
+      const wasPaginated = this._sheet.classList.contains("paginated");
+      this._sheet.classList.toggle("paginated", this.querySelector(":scope > .page") !== null);
       // The WebKit @page margin is flowing-only, so a pagination flip
       // must re-emit the rule (content edits can add or remove .page
       // sections at any time).
-      if (this._sheet.classList.contains('paginated') !== wasPaginated) {
+      if (this._sheet.classList.contains("paginated") !== wasPaginated) {
         this._syncPrintPageRule();
       }
       this._syncSize(hdr ? hdr.offsetHeight : 0, ftr ? ftr.offsetHeight : 0);
     }
   }
 
-  if (!customElements.get('doc-page')) {
-    customElements.define('doc-page', DocPage);
+  if (!customElements.get("doc-page")) {
+    customElements.define("doc-page", DocPage);
   }
 })();

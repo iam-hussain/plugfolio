@@ -31,7 +31,6 @@ const authBanner = cva(
   },
 );
 
-
 /**
  * Login (brief 04, ADR-0012): email + password, one step, no email round-trip.
  * ONE generic banner for wrong email OR password (never a ring on one field —
@@ -78,14 +77,11 @@ export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenPro
   const resend = useMutation({ mutationFn: () => resendVerification({ email }) });
 
   return (
-    <AuthShell
-      role="generic"
-      artefact={<RoleArtefact role={role} />}
-    >
+    <AuthShell role="generic" artefact={<RoleArtefact role={role} />}>
       <h1 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
         Welcome back
       </h1>
-      <p className="text-muted-foreground mt-2.5 text-copy leading-[1.5]">
+      <p className="text-muted-foreground text-copy mt-2.5 leading-[1.5]">
         Email and password. That&apos;s the whole thing.
       </p>
 
@@ -150,7 +146,7 @@ export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenPro
         </Button>
       </form>
 
-      <div className="border-border mt-[22px] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t pt-5 text-center text-label">
+      <div className="border-border text-label mt-[22px] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t pt-5 text-center">
         <Link href="/forgot" className="text-muted-foreground hover:text-primary font-semibold">
           Forgot password?
         </Link>
@@ -173,10 +169,7 @@ export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenPro
 function AuthBanner({ tone, children }: { tone: "bad" | "info"; children: React.ReactNode }) {
   const Icon = tone === "bad" ? CircleAlert : Mail;
   return (
-    <div
-      role="alert"
-      className={authBanner({ tone })}
-    >
+    <div role="alert" className={authBanner({ tone })}>
       <Icon aria-hidden className="mt-0.5 size-[18px] shrink-0" />
       <span>{children}</span>
     </div>

@@ -62,7 +62,14 @@ export function SystemMark({ state, size, title, className, ...props }: SystemMa
       {state === "unplugged" ? (
         <>
           {/* The body stays exactly as the brand mark draws it. */}
-          <rect x="18" y="43" width="64" height="44" rx="13" className="fill-brand-violet stroke-brand-violet" />
+          <rect
+            x="18"
+            y="43"
+            width="64"
+            height="44"
+            rx="13"
+            className="fill-brand-violet stroke-brand-violet"
+          />
           {/* The sockets the prongs came out of — ink at low alpha, so they
               read as holes in the body, not as drawn marks. */}
           <rect x="35" y="50" width="9" height="13" rx="3" className="fill-foreground/40" />
@@ -74,7 +81,14 @@ export function SystemMark({ state, size, title, className, ...props }: SystemMa
         <>
           {/* Prongs seated — the connection was made; what failed is behind. */}
           <g>{PRONGS}</g>
-          <rect x="18" y="43" width="64" height="44" rx="13" className="fill-brand-violet stroke-brand-violet" />
+          <rect
+            x="18"
+            y="43"
+            width="64"
+            height="44"
+            rx="13"
+            className="fill-brand-violet stroke-brand-violet"
+          />
           {/* The split: a jag through the body in the canvas colour, so the
               shape reads as broken rather than as decorated. */}
           <path

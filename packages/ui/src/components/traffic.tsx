@@ -42,11 +42,16 @@ export function Stat({
   className?: string;
 }) {
   return (
-    <div className={cn("border-border bg-background rounded-tile border px-[17px] py-[15px]", className)}>
+    <div
+      className={cn(
+        "border-border bg-background rounded-tile border px-[17px] py-[15px]",
+        className,
+      )}
+    >
       <span className="text-faint text-micro block font-bold uppercase tracking-[0.07em]">
         {label}
       </span>
-      <b className="font-display text-name mt-1.5 mb-2 block font-extrabold leading-none tracking-[-0.035em] tabular-nums">
+      <b className="font-display text-name mb-2 mt-1.5 block font-extrabold tabular-nums leading-none tracking-[-0.035em]">
         {value}
       </b>
       {provenance}
@@ -59,6 +64,8 @@ export function Stat({
 
 /** The unit that rides inside a stat number ("6.3%") at half its size. */
 export function StatUnit({ children }: { children: React.ReactNode }) {
+  // Relative on purpose: this rides inside a number of any size and must stay
+  // half of whatever that number is, so it can't come off the fixed scale.
   return <i className="text-[0.5em] not-italic tracking-normal">{children}</i>;
 }
 
@@ -96,7 +103,13 @@ export function TrafficColumns({ children }: { children: React.ReactNode }) {
   return <div className="mt-[18px] grid gap-3.5 lg:grid-cols-2">{children}</div>;
 }
 
-export function RankList({ children, className }: { children: React.ReactNode; className?: string }) {
+export function RankList({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return <ul className={cn("m-0 mt-2.5 grid list-none gap-0.5 p-0", className)}>{children}</ul>;
 }
 
@@ -118,7 +131,7 @@ export function RankRow({
   gone?: boolean;
 }) {
   return (
-    <li className="rounded-image flex items-center gap-3 px-2.5 py-[9px] odd:bg-background">
+    <li className="rounded-image odd:bg-background flex items-center gap-3 px-2.5 py-[9px]">
       <span
         className={cn(
           "text-label min-w-0 flex-1 truncate font-semibold",

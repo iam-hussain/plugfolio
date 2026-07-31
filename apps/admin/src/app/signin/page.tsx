@@ -40,11 +40,11 @@ export default async function SignInPage({
         <div className="mb-[22px]">
           <Logo tone="auto" markSize="sm" />
         </div>
-        <p className="font-mono text-primary text-pico font-bold uppercase tracking-[0.1em]">
+        <p className="text-primary text-pico font-mono font-bold uppercase tracking-[0.1em]">
           Plugfolio
         </p>
-        <h1 className="font-display mt-1 text-name-md font-bold tracking-[-0.02em]">Admin</h1>
-        <p className="text-muted-foreground mt-2 text-label leading-[1.55]">
+        <h1 className="font-display text-name-md mt-1 font-bold tracking-[-0.02em]">Admin</h1>
+        <p className="text-muted-foreground text-label mt-2 leading-[1.55]">
           Operators only. Sign in with your admin credentials.
         </p>
 
@@ -70,7 +70,7 @@ export default async function SignInPage({
               required
               autoComplete="email"
               placeholder="you@plugfolio.com"
-              className="px-[13px] py-3 text-label"
+              className="text-label px-[13px] py-3"
             />
           </div>
           <div className="mt-3.5">
@@ -84,14 +84,14 @@ export default async function SignInPage({
               required
               autoComplete="current-password"
               placeholder="••••••••••"
-              className="px-[13px] py-3 text-label"
+              className="text-label px-[13px] py-3"
             />
           </div>
-          <Button type="submit" className="font-display mt-5 w-full p-3 text-copy">
+          <Button type="submit" className="font-display text-copy mt-5 w-full p-3">
             Sign in
           </Button>
         </form>
-        <p className="text-faint mt-4 text-center text-nano leading-normal">
+        <p className="text-faint text-nano mt-4 text-center leading-normal">
           Accounts are provisioned by an existing operator.
         </p>
       </Panel>

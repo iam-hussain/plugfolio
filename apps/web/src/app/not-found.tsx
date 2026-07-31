@@ -65,7 +65,7 @@ export default async function NotFound() {
                 <h2 className="text-title font-extrabold tracking-[-0.02em]">While you’re here</h2>
                 <Link
                   href="/explore"
-                  className="text-muted-foreground hover:text-primary ml-auto text-label font-semibold"
+                  className="text-muted-foreground hover:text-primary text-label ml-auto font-semibold"
                 >
                   See all creators
                 </Link>
@@ -90,19 +90,19 @@ export default async function NotFound() {
                         ) : null}
                       </span>
                       <span className="mt-2.5 flex items-center gap-2">
-                        <span className="bg-active text-brand-violet-deep grid size-6 shrink-0 place-items-center rounded-pill text-micro font-extrabold">
+                        <span className="bg-active text-brand-violet-deep rounded-pill text-micro grid size-6 shrink-0 place-items-center font-extrabold">
                           {creator.username.charAt(0).toUpperCase()}
                         </span>
-                        <b className="truncate text-label font-bold">@{creator.username}</b>
+                        <b className="text-label truncate font-bold">@{creator.username}</b>
                       </span>
-                      <span className="text-faint mt-[5px] block text-micro">
+                      <span className="text-faint text-micro mt-[5px] block">
                         {creator.postCount} posts · {creator.productCount} things
                       </span>
                     </Link>
                   </li>
                 ))}
               </ul>
-              <p className="text-muted-foreground mt-[18px] text-copy">
+              <p className="text-muted-foreground text-copy mt-[18px]">
                 Shopping never needs an account — tap anything.
               </p>
             </section>

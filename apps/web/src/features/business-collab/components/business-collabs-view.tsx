@@ -43,11 +43,7 @@ export type BusinessCollabsViewProps = {
   collabs: readonly CollabSummary[];
 };
 
-export function BusinessCollabsView({
-  business,
-  requirements,
-  collabs,
-}: BusinessCollabsViewProps) {
+export function BusinessCollabsView({ business, requirements, collabs }: BusinessCollabsViewProps) {
   const openCount = requirements.filter((requirement) => requirement.closedAt === null).length;
   const closedCount = requirements.length - openCount;
   const agreedCount = collabs.filter((collab) => collab.agreed).length;

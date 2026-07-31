@@ -46,10 +46,18 @@ export function TrafficSummaryView({ summary, pageHref }: TrafficSummaryViewProp
     return (
       <>
         <Stats className="md:grid-cols-2">
-          <Stat label="Views" value="0" provenance={<Provenance kind="tracked">Tracked</Provenance>} />
-          <Stat label="Taps" value="0" provenance={<Provenance kind="tracked">Tracked</Provenance>} />
+          <Stat
+            label="Views"
+            value="0"
+            provenance={<Provenance kind="tracked">Tracked</Provenance>}
+          />
+          <Stat
+            label="Taps"
+            value="0"
+            provenance={<Provenance kind="tracked">Tracked</Provenance>}
+          />
         </Stats>
-        <Hint className="mt-4 mb-0">
+        <Hint className="mb-0 mt-4">
           Share your link and both numbers start moving. Views count the moment someone opens your
           page; taps count when they leave for a shop.
         </Hint>
@@ -95,7 +103,7 @@ export function TrafficSummaryView({ summary, pageHref }: TrafficSummaryViewProp
         </Stat>
       </Stats>
 
-      <Hint className="mt-4 mb-0">
+      <Hint className="mb-0 mt-4">
         Both counts are measured directly. Nothing on this page is estimated, and none of it is
         money — Plugfolio never sees a sale, so it never guesses at one.
       </Hint>
@@ -107,7 +115,7 @@ export function TrafficSummaryView({ summary, pageHref }: TrafficSummaryViewProp
             <RankKey>views · taps</RankKey>
           </DashCardHead>
           {summary.byPost.length === 0 ? (
-            <Hint className="mt-2.5 mb-0">No post has been opened yet.</Hint>
+            <Hint className="mb-0 mt-2.5">No post has been opened yet.</Hint>
           ) : (
             <RankList>
               {summary.byPost.slice(0, 5).map((post) => (
@@ -128,7 +136,7 @@ export function TrafficSummaryView({ summary, pageHref }: TrafficSummaryViewProp
             <RankKey>views · taps</RankKey>
           </DashCardHead>
           {summary.byProduct.length === 0 ? (
-            <Hint className="mt-2.5 mb-0">No product has been opened yet.</Hint>
+            <Hint className="mb-0 mt-2.5">No product has been opened yet.</Hint>
           ) : (
             <RankList>
               {summary.byProduct.slice(0, 5).map((product) => (

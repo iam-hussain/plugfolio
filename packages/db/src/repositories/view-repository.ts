@@ -1,10 +1,5 @@
 import { Prisma } from "@prisma/client";
-import type {
-  NewView,
-  View,
-  ViewRepository,
-  ViewTargetRepository,
-} from "@plugfolio/core";
+import type { NewView, View, ViewRepository, ViewTargetRepository } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 
 const rowSelect = {

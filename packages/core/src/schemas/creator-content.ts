@@ -38,7 +38,10 @@ const videoNeedsALink = (input: {
   mediaKind?: PostMediaKind;
   embedUrl?: string | null;
   sourceUrl?: string | null;
-}) => input.mediaKind === undefined || input.mediaKind === "still" || Boolean(input.embedUrl ?? input.sourceUrl);
+}) =>
+  input.mediaKind === undefined ||
+  input.mediaKind === "still" ||
+  Boolean(input.embedUrl ?? input.sourceUrl);
 
 export const createPostInput = z
   .object({ profileId: z.string().uuid(), ...postMedia })

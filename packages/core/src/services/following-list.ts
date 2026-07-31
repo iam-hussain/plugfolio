@@ -81,9 +81,6 @@ export async function getFollowingList(
  * screen are measured against the PREVIOUS visit, which is the whole point of
  * the "last looked" line.
  */
-export async function markFollowingSeen(
-  deps: FollowingListDeps,
-  userId: string,
-): Promise<void> {
+export async function markFollowingSeen(deps: FollowingListDeps, userId: string): Promise<void> {
   await deps.follows.markFollowingSeen(userId, deps.now());
 }

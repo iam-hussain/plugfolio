@@ -13,11 +13,7 @@ import { cn } from "../lib/cn";
  * point — a sign-in that spans the measure reads as a form to fill in rather
  * than a door to walk through.
  */
-export function AuthForm({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"form">) {
+export function AuthForm({ children, className, ...props }: React.ComponentProps<"form">) {
   return (
     <form className={cn("mx-auto w-full max-w-[380px]", className)} {...props}>
       {children}
@@ -104,15 +100,18 @@ export function AuthAlternatives({ children }: { children: React.ReactNode }) {
   );
 }
 
-const notice = cva("rounded-image mt-5 flex items-start gap-[11px] border px-4 py-3.5 text-copy leading-[1.5]", {
-  variants: {
-    tone: {
-      bad: "bg-brand-coral/[0.16] border-brand-coral/50 text-foreground",
-      info: "bg-active border-transparent text-foreground",
+const notice = cva(
+  "rounded-image mt-5 flex items-start gap-[11px] border px-4 py-3.5 text-copy leading-[1.5]",
+  {
+    variants: {
+      tone: {
+        bad: "bg-brand-coral/[0.16] border-brand-coral/50 text-foreground",
+        info: "bg-active border-transparent text-foreground",
+      },
     },
+    defaultVariants: { tone: "info" },
   },
-  defaultVariants: { tone: "info" },
-});
+);
 
 /** A message the screen carries — an error, or a thing worth knowing. */
 export function AuthNotice({
@@ -157,7 +156,7 @@ export function AuthStatus({
 }) {
   return (
     <div className="text-center">
-      <span className="bg-active text-primary mx-auto mb-5 grid size-16 place-items-center rounded-pill [&_svg]:size-7">
+      <span className="bg-active text-primary rounded-pill mx-auto mb-5 grid size-16 place-items-center [&_svg]:size-7">
         {icon}
       </span>
       <h1 className="font-display text-name font-extrabold tracking-[-0.03em]">{title}</h1>

@@ -18,7 +18,11 @@ export type FollowButtonProps = {
   initiallyFollowing: boolean;
 };
 
-export function FollowButton({ profileId, isAuthenticated, initiallyFollowing }: FollowButtonProps) {
+export function FollowButton({
+  profileId,
+  isAuthenticated,
+  initiallyFollowing,
+}: FollowButtonProps) {
   const router = useRouter();
   const [claiming, setClaiming] = useState(false);
 

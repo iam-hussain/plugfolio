@@ -63,7 +63,12 @@ export function CategoryManager({ profileId, categories, counts }: CategoryManag
   // list don't earn a pointer-events implementation, and arrows work on a
   // phone and with a keyboard, which a drag handle does not.
   const reorder = useMutation({
-    mutationFn: async (move: { id: string; sortOrder: number; otherId: string; otherSortOrder: number }) => {
+    mutationFn: async (move: {
+      id: string;
+      sortOrder: number;
+      otherId: string;
+      otherSortOrder: number;
+    }) => {
       await updateCategory(move.id, { sortOrder: move.otherSortOrder });
       await updateCategory(move.otherId, { sortOrder: move.sortOrder });
     },

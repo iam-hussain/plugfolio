@@ -31,7 +31,7 @@ function CommentIdentity({ comment }: { comment: CommentView }) {
     return (
       <>
         <span className="font-medium">{comment.asProfile.username}</span>{" "}
-        <span className="bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 text-pico font-medium">
+        <span className="bg-primary text-primary-foreground text-pico rounded-full px-1.5 py-0.5 font-medium">
           Creator
         </span>
       </>
@@ -55,7 +55,12 @@ function CommentBody({ comment }: { comment: CommentView }) {
         <span className="text-muted-foreground">{comment.body}</span>
       </p>
       <span className="opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
-        <ReportButton targetType="comment" targetId={comment.id} targetLabel="this comment" iconOnly />
+        <ReportButton
+          targetType="comment"
+          targetId={comment.id}
+          targetLabel="this comment"
+          iconOnly
+        />
       </span>
     </div>
   );

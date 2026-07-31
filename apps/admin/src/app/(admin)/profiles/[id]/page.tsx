@@ -1,8 +1,4 @@
-import {
-  generateProfileUsername,
-  getProfileDetail,
-  NotFoundError,
-} from "@plugfolio/core";
+import { generateProfileUsername, getProfileDetail, NotFoundError } from "@plugfolio/core";
 import {
   Badge,
   Button,
@@ -32,20 +28,13 @@ import { releaseUsernameAction, suspendProfileAction, unsuspendProfileAction } f
 export const metadata: Metadata = { title: "Profile" };
 export const dynamic = "force-dynamic";
 
-export default async function ProfileDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function ProfileDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
   const { id } = await params;
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)) notFound();
   let profile;
   try {
-    profile = await getProfileDetail(
-      { profiles: repositories.profiles, now: clock.now },
-      id,
-    );
+    profile = await getProfileDetail({ profiles: repositories.profiles, now: clock.now }, id);
   } catch (error) {
     if (error instanceof NotFoundError) notFound();
     throw error;
@@ -57,7 +46,7 @@ export default async function ProfileDetailPage({
     <div className="max-w-[940px]">
       <Link
         href="/profiles"
-        className="font-mono text-muted-foreground mb-3.5 inline-flex items-center gap-[7px] text-micro"
+        className="text-muted-foreground text-micro mb-3.5 inline-flex items-center gap-[7px] font-mono"
       >
         <ArrowLeft aria-hidden className="size-4" /> Profiles / {profile.username}
       </Link>
@@ -71,10 +60,8 @@ export default async function ProfileDetailPage({
 
       <Panel className="flex flex-wrap items-start justify-between gap-5 px-6 py-[22px]">
         <div>
-          <h1 className="font-mono text-title font-bold tracking-[-0.01em]">
-            /{profile.username}
-          </h1>
-          <p className="text-muted-foreground mt-[5px] text-label">
+          <h1 className="text-title font-mono font-bold tracking-[-0.01em]">/{profile.username}</h1>
+          <p className="text-muted-foreground text-label mt-[5px]">
             {profile.ownerEmail}
             {profile.managerCount > 0 ? (
               <span className="text-faint"> · +{profile.managerCount} managers</span>
@@ -96,7 +83,11 @@ export default async function ProfileDetailPage({
             </Button>
           ) : null}
           <PromptDialog
-            trigger={<Button size="xs" variant="outline-strong">Release username</Button>}
+            trigger={
+              <Button size="xs" variant="outline-strong">
+                Release username
+              </Button>
+            }
             title="Release username"
             description={`Frees /${profile.username} for its rightful owner — the lever for impersonation, squatting, and handle disputes. The page stays live at the new address; nothing is deleted; the freed name is claimable immediately. Recorded in the audit log.`}
             current={`/${profile.username}`}
@@ -113,7 +104,11 @@ export default async function ProfileDetailPage({
           />
           {profile.suspendedAt ? (
             <ConfirmDialog
-              trigger={<Button size="xs" variant="outline-strong">Unsuspend</Button>}
+              trigger={
+                <Button size="xs" variant="outline-strong">
+                  Unsuspend
+                </Button>
+              }
               title="Unsuspend this page?"
               body="The page returns to shoppers at its current address. Recorded in the audit log."
               confirmLabel="Unsuspend"
@@ -124,7 +119,11 @@ export default async function ProfileDetailPage({
             />
           ) : (
             <ConfirmDialog
-              trigger={<Button size="xs" variant="destructive-outline">Suspend</Button>}
+              trigger={
+                <Button size="xs" variant="destructive-outline">
+                  Suspend
+                </Button>
+              }
               title="Suspend profile"
               body="Only this creator page goes dark for shoppers. The owner can still sign in and manage other pages. Reversible — nothing is deleted. Recorded in the audit log."
               confirmLabel="Suspend"
@@ -144,7 +143,7 @@ export default async function ProfileDetailPage({
       </div>
 
       <Panel className="mt-4 px-5 py-[18px]">
-        <h2 className="font-display mb-3 text-copy font-bold">Posts · 12 newest</h2>
+        <h2 className="font-display text-copy mb-3 font-bold">Posts · 12 newest</h2>
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
           {profile.posts.map((post) => (
             <div
@@ -165,7 +164,7 @@ export default async function ProfileDetailPage({
                   <Button
                     size="xs"
                     variant="destructive"
-                    className="absolute right-1 top-1 px-[7px] py-[3px] text-pico"
+                    className="text-pico absolute right-1 top-1 px-[7px] py-[3px]"
                   >
                     Remove
                   </Button>
@@ -180,13 +179,13 @@ export default async function ProfileDetailPage({
             </div>
           ))}
           {profile.posts.length === 0 ? (
-            <p className="text-faint col-span-full py-6 text-center text-label">No posts yet.</p>
+            <p className="text-faint text-label col-span-full py-6 text-center">No posts yet.</p>
           ) : null}
         </div>
       </Panel>
 
       <Panel className="mt-4 overflow-hidden px-5 py-[18px]">
-        <h2 className="font-display mb-2 text-copy font-bold">Products</h2>
+        <h2 className="font-display text-copy mb-2 font-bold">Products</h2>
         <Table variant="dense">
           <TableHeader>
             <TableRow>
@@ -206,7 +205,7 @@ export default async function ProfileDetailPage({
                     {product.kind === "own" ? "Own" : "Affiliate"}
                   </Badge>
                 </TableCell>
-                <TableCell className="font-mono text-muted-foreground text-micro">
+                <TableCell className="text-muted-foreground text-micro font-mono">
                   {product.couponCode ?? "—"}
                 </TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">
@@ -214,7 +213,11 @@ export default async function ProfileDetailPage({
                 </TableCell>
                 <TableCell className="text-right">
                   <ConfirmDialog
-                    trigger={<Button size="xs" variant="destructive-outline">Remove</Button>}
+                    trigger={
+                      <Button size="xs" variant="destructive-outline">
+                        Remove
+                      </Button>
+                    }
                     title="Remove this product?"
                     body="Removes the product and its recorded taps — the same cascade as a creator removing their own. This cannot be undone. Recorded in the audit log."
                     confirmLabel="Remove product"
@@ -238,11 +241,11 @@ export default async function ProfileDetailPage({
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <Panel className="px-5 py-[18px]">
-          <h2 className="font-display mb-1.5 text-copy font-bold">Managers</h2>
+          <h2 className="font-display text-copy mb-1.5 font-bold">Managers</h2>
           {profile.managers.map((manager) => (
             <div
               key={manager.email}
-              className="border-border flex justify-between border-t py-[9px] text-label"
+              className="border-border text-label flex justify-between border-t py-[9px]"
             >
               <span>{manager.email}</span>
               <span className="text-faint text-nano tabular-nums">
@@ -251,13 +254,13 @@ export default async function ProfileDetailPage({
             </div>
           ))}
           {profile.managers.length === 0 ? (
-            <p className="text-faint border-border border-t py-5 text-center text-label">
+            <p className="text-faint border-border text-label border-t py-5 text-center">
               No managers invited.
             </p>
           ) : null}
         </Panel>
         <Panel className="px-5 py-[18px]">
-          <h2 className="font-display mb-2.5 text-copy font-bold">Categories</h2>
+          <h2 className="font-display text-copy mb-2.5 font-bold">Categories</h2>
           <div className="flex flex-wrap gap-1.5">
             {profile.categories.map((category) => (
               <Badge key={category} shape="square" variant="outline-muted">

@@ -47,9 +47,7 @@ export const WentWrong: Story = {
         <Button variant="secondary">Go home</Button>
       </>
     ),
-    children: (
-      <p className="text-faint text-micro mt-6 font-mono">Reference 8f21c0</p>
-    ),
+    children: <p className="text-faint text-micro mt-6 font-mono">Reference 8f21c0</p>,
   },
 };
 

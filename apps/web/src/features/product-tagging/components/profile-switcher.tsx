@@ -123,7 +123,7 @@ export function ProfileSwitcher({
         </DropdownMenuContent>
       </DropdownMenu>
       {create.isError ? (
-        <p role="alert" className="text-destructive pt-1 text-micro">
+        <p role="alert" className="text-destructive text-micro pt-1">
           {create.error.message}
         </p>
       ) : null}

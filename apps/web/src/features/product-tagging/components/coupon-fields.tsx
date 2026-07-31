@@ -19,7 +19,11 @@ export function CouponFields({ fields }: { fields: ProductEditorFields }) {
       onToggle={() => fields.setCouponOpen((was) => !was)}
       title="Coupon"
     >
-      <DashField label="Code" htmlFor="coupon-code" note="Clearing the code removes the whole offer.">
+      <DashField
+        label="Code"
+        htmlFor="coupon-code"
+        note="Clearing the code removes the whole offer."
+      >
         <Input
           id="coupon-code"
           value={fields.couponCode}

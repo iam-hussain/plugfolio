@@ -30,7 +30,6 @@ const kindOption = cva(
   },
 );
 
-
 /**
  * The core tool (lean journey + ADR-0011): paste any product URL — Plugfolio
  * grabs the image, title, and price — add the link (affiliate, or your own
@@ -52,9 +51,7 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
   const [inStoreNote, setInStoreNote] = useState("");
 
   // ADR-0011 channel rule: a link — or a coupon with an in-store note.
-  const hasChannel = affiliateUrl.trim()
-    ? true
-    : Boolean(couponCode.trim() && inStoreNote.trim());
+  const hasChannel = affiliateUrl.trim() ? true : Boolean(couponCode.trim() && inStoreNote.trim());
   const canSubmit = Boolean(url.trim()) && hasChannel;
 
   const submit = useMutation({
@@ -103,17 +100,17 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
       {/* Kind toggle (ADR-0011): a two-option segmented control, not a dropdown. */}
       <fieldset>
         <legend className="sr-only">Whose product is this?</legend>
-        <div className="border-border grid grid-cols-2 gap-1 rounded-md border p-1" role="presentation">
+        <div
+          className="border-border grid grid-cols-2 gap-1 rounded-md border p-1"
+          role="presentation"
+        >
           {(
             [
               ["affiliate", "Affiliate product"],
               ["own", "My own product"],
             ] as const
           ).map(([value, label]) => (
-            <label
-              key={value}
-              className={kindOption({ selected: kind === value })}
-            >
+            <label key={value} className={kindOption({ selected: kind === value })}>
               <input
                 type="radio"
                 name="kind"
@@ -143,7 +140,7 @@ export function TagProductForm({ profileId, postId }: TagProductFormProps) {
       </div>
 
       <Collapsible>
-        <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-copy">
+        <CollapsibleTrigger className="text-muted-foreground hover:text-foreground text-copy flex items-center gap-1">
           <ChevronDown className="size-4" />
           Add a coupon
         </CollapsibleTrigger>

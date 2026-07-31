@@ -93,11 +93,7 @@ export function SocialConnections({
         name="Meta · Instagram"
         status="Coming next — no gateway yet"
         action={
-          <Button
-            variant="outline"
-            disabled
-            className="text-micro min-h-10 flex-none px-4 py-2.5"
-          >
+          <Button variant="outline" disabled className="text-micro min-h-10 flex-none px-4 py-2.5">
             Connect
           </Button>
         }

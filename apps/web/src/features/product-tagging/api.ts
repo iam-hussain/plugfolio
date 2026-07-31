@@ -52,8 +52,7 @@ export const tagProduct = ({ postId, ...body }: TagProductInput) =>
   send(`/api/posts/${postId}/products`, "POST", body);
 export const updateProduct = (productId: string, input: UpdateProductInput) =>
   send(`/api/products/${productId}`, "PATCH", input);
-export const removeProduct = (productId: string) =>
-  send(`/api/products/${productId}`, "DELETE");
+export const removeProduct = (productId: string) => send(`/api/products/${productId}`, "DELETE");
 export const setProductCoupon = (productId: string, input: SetProductCouponInput) =>
   send(`/api/products/${productId}/coupon`, "PATCH", input);
 

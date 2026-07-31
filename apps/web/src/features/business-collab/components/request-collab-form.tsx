@@ -47,10 +47,15 @@ export function RequestCollabForm({ profileId }: RequestCollabFormProps) {
           onChange={(event) => setMessage(event.target.value)}
           maxLength={1000}
           placeholder="We'd love a reel featuring our product…"
-          className="border-border bg-background w-full rounded-md border p-2 text-copy"
+          className="border-border bg-background text-copy w-full rounded-md border p-2"
         />
       </label>
-      <Button type="submit" variant="outline" size="sm" disabled={submit.isPending || !message.trim()}>
+      <Button
+        type="submit"
+        variant="outline"
+        size="sm"
+        disabled={submit.isPending || !message.trim()}
+      >
         Request collab
       </Button>
     </form>

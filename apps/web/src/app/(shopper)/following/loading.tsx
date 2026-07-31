@@ -7,10 +7,7 @@ import { cn, measure, Skeleton, SkeletonScreen } from "@plugfolio/ui";
  */
 export default function Loading() {
   return (
-    <SkeletonScreen
-      label="Loading the creators you follow"
-      className={cn(measure(), "py-8")}
-    >
+    <SkeletonScreen label="Loading the creators you follow" className={cn(measure(), "py-8")}>
       <Skeleton className="h-9 w-44" />
       <Skeleton className="rounded-pill mt-4 h-[54px] w-full max-w-[420px]" />
 

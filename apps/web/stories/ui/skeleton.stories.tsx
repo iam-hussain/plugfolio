@@ -35,7 +35,7 @@ export const CreatorPage: Story = {
     <SkeletonScreen label="Loading this creator's page" className="w-[min(720px,90vw)]">
       <Skeleton className="rounded-bay h-32 w-full" />
       <div className="mt-5 flex items-center gap-3.5">
-        <Skeleton className="size-16 shrink-0 rounded-pill" />
+        <Skeleton className="rounded-pill size-16 shrink-0" />
         <div className="min-w-0 flex-1">
           <Skeleton className="h-5 w-40" />
           <Skeleton className="mt-2 h-3.5 w-56" />
@@ -62,7 +62,7 @@ export const FollowingList: Story = {
     <SkeletonScreen label="Loading the creators you follow" className="w-[min(560px,90vw)]">
       {Array.from({ length: 5 }, (_, i) => (
         <div key={i} className="border-border flex items-center gap-3 border-b py-3.5">
-          <Skeleton className="size-11 shrink-0 rounded-pill" />
+          <Skeleton className="rounded-pill size-11 shrink-0" />
           <div className="min-w-0 flex-1">
             <Skeleton className="h-4 w-32" />
             <Skeleton className="mt-1.5 h-3 w-48" />
@@ -82,7 +82,7 @@ export const Generic: Story = {
   args: {},
   render: () => (
     <SkeletonScreen label="Loading" className="w-[min(560px,90vw)]">
-      <Skeleton className="size-12 rounded-pill" />
+      <Skeleton className="rounded-pill size-12" />
       <Skeleton className="mt-3 h-4 w-full" />
       <Skeleton className="mt-2 h-4 w-2/3" />
     </SkeletonScreen>

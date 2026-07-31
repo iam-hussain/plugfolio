@@ -3,10 +3,7 @@ export { PostGrid, type PostGridProps } from "./components/post-grid";
 export { SharePanel, type SharePanelProps } from "./components/share-panel";
 export { PageShare, type PageShareProps } from "./components/page-share";
 export { ShareButton, type ShareButtonProps } from "./components/share-button";
-export {
-  CreatorContextBar,
-  type CreatorContextBarProps,
-} from "./components/creator-context-bar";
+export { CreatorContextBar, type CreatorContextBarProps } from "./components/creator-context-bar";
 export { CategoryChips, type CategoryChipsProps } from "./components/category-chips";
 export { CustomiseDrawer, type CustomiseDrawerProps } from "./components/customise-drawer";
 export { TaggedProductCard, type TaggedProductCardProps } from "./components/tagged-product-card";

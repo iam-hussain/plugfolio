@@ -7,11 +7,7 @@
 export * from "./errors";
 
 // Anonymous shopper identity (§6.7, ADR-0002) — shared by both deployables
-export {
-  DEVICE_COOKIE,
-  verifyDeviceToken,
-  issueDeviceToken,
-} from "./auth/device-token";
+export { DEVICE_COOKIE, verifyDeviceToken, issueDeviceToken } from "./auth/device-token";
 
 // Domain
 export type { OutboundTap, NewOutboundTap, TapSource } from "./domain/tap";
@@ -142,10 +138,7 @@ export {
   commentSort,
   type CommentSort,
 } from "./schemas/comment-reaction";
-export {
-  createAdPlacementInput,
-  type CreateAdPlacementInput,
-} from "./schemas/ad-placement";
+export { createAdPlacementInput, type CreateAdPlacementInput } from "./schemas/ad-placement";
 export {
   getLiveAdPlacement,
   listAdPlacements,
@@ -204,10 +197,7 @@ export {
   setProductCategoryInput,
   type SetProductCategoryInput,
 } from "./schemas/creator-content";
-export {
-  updateMemberHandleInput,
-  type UpdateMemberHandleInput,
-} from "./schemas/member-handle";
+export { updateMemberHandleInput, type UpdateMemberHandleInput } from "./schemas/member-handle";
 export {
   socialPlatform,
   type SocialPlatform,
@@ -215,10 +205,7 @@ export {
   setProfileLinksInput,
   type SetProfileLinksInput,
 } from "./schemas/profile-links";
-export {
-  type ProfileLinkRepository,
-  type ProfileLinkView,
-} from "./ports/profile-link-repository";
+export { type ProfileLinkRepository, type ProfileLinkView } from "./ports/profile-link-repository";
 export {
   getProfileLinks,
   listMyProfileLinks,

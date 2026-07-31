@@ -21,11 +21,7 @@ import { FilterSelect } from "@/components/filter-select";
 import { Panel } from "@/components/panel";
 import { pagedHref, pageQuery, statusFilter, type ListParams } from "@/lib/list-params";
 import { repositories } from "@/server/container";
-import {
-  bulkSuspendMembersAction,
-  suspendMemberAction,
-  unsuspendMemberAction,
-} from "./actions";
+import { bulkSuspendMembersAction, suspendMemberAction, unsuspendMemberAction } from "./actions";
 
 export const metadata: Metadata = { title: "Members" };
 export const dynamic = "force-dynamic";
@@ -33,16 +29,26 @@ export const dynamic = "force-dynamic";
 const STATUSES = ["active", "unverified", "suspended"] as const;
 
 function statusBadge(member: { suspendedAt: Date | null; emailVerified: Date | null }) {
-  if (member.suspendedAt) return <Badge shape="square" variant="soft-destructive">Suspended</Badge>;
-  if (!member.emailVerified) return <Badge shape="square" variant="outline-muted">Unverified</Badge>;
-  return <Badge shape="square" variant="outline-muted">Active</Badge>;
+  if (member.suspendedAt)
+    return (
+      <Badge shape="square" variant="soft-destructive">
+        Suspended
+      </Badge>
+    );
+  if (!member.emailVerified)
+    return (
+      <Badge shape="square" variant="outline-muted">
+        Unverified
+      </Badge>
+    );
+  return (
+    <Badge shape="square" variant="outline-muted">
+      Active
+    </Badge>
+  );
 }
 
-export default async function MembersPage({
-  searchParams,
-}: {
-  searchParams: Promise<ListParams>;
-}) {
+export default async function MembersPage({ searchParams }: { searchParams: Promise<ListParams> }) {
   const params = await searchParams;
   const status = statusFilter<MemberStatusFilter>(params.status, STATUSES);
   const page = pageQuery(params);
@@ -61,7 +67,12 @@ export default async function MembersPage({
             name="status"
             defaultValue={params.status}
             label="Filter by status"
-            options={[["", "All statuses"], ["active", "Active"], ["unverified", "Unverified"], ["suspended", "Suspended"]]}
+            options={[
+              ["", "All statuses"],
+              ["active", "Active"],
+              ["unverified", "Unverified"],
+              ["suspended", "Suspended"],
+            ]}
           />
           <SearchField
             name="q"
@@ -114,13 +125,13 @@ export default async function MembersPage({
                   <Link href={`/members/${member.id}`} className="block">
                     <span className="block font-semibold">{member.email}</span>
                     {member.name ? (
-                      <span className="text-muted-foreground mt-0.5 block text-micro">
+                      <span className="text-muted-foreground text-micro mt-0.5 block">
                         {member.name}
                       </span>
                     ) : null}
                   </Link>
                 </TableCell>
-                <TableCell className="font-mono text-muted-foreground text-micro">
+                <TableCell className="text-muted-foreground text-micro font-mono">
                   {member.username ? `@${member.username}` : "—"}
                 </TableCell>
                 <TableCell>
@@ -144,7 +155,11 @@ export default async function MembersPage({
                 <TableCell className="text-right">
                   {member.suspendedAt ? (
                     <ConfirmDialog
-                      trigger={<Button size="xs" variant="outline-strong">Unsuspend</Button>}
+                      trigger={
+                        <Button size="xs" variant="outline-strong">
+                          Unsuspend
+                        </Button>
+                      }
                       title="Unsuspend this member?"
                       body="They regain access and their profiles return to shoppers. Recorded in the audit log."
                       confirmLabel="Unsuspend"
@@ -155,7 +170,11 @@ export default async function MembersPage({
                     />
                   ) : (
                     <ConfirmDialog
-                      trigger={<Button size="xs" variant="destructive-outline">Suspend</Button>}
+                      trigger={
+                        <Button size="xs" variant="destructive-outline">
+                          Suspend
+                        </Button>
+                      }
                       title="Suspend member"
                       body="They will be blocked from signing in and every profile they own is hidden from shoppers. Reversible — nothing is deleted. Recorded in the audit log."
                       confirmLabel="Suspend"
@@ -178,7 +197,12 @@ export default async function MembersPage({
           </TableBody>
         </Table>
       </Panel>
-      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/members", params)} />
+      <Pager
+        page={page.page}
+        pageSize={page.pageSize}
+        total={total}
+        hrefFor={pagedHref("/members", params)}
+      />
     </BulkSelect>
   );
 }

@@ -23,7 +23,10 @@ export async function createPlacementAction(formData: FormData): Promise<ActionR
     activeUntil: formData.get("activeUntil") || null,
   });
   if (!parsed.success) {
-    return { ok: false, error: "Check the link and image URL — both must be full https addresses." };
+    return {
+      ok: false,
+      error: "Check the link and image URL — both must be full https addresses.",
+    };
   }
   await createAdPlacement(adPlacementDeps, parsed.data);
   revalidatePath("/sponsored");

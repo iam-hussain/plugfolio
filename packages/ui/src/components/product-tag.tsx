@@ -43,7 +43,7 @@ export const ProductTag = React.forwardRef<HTMLElement, ProductTagProps>(
       <Comp
         ref={ref}
         className={cn(
-          "bg-card text-foreground shadow-tag inline-flex min-h-11 items-center gap-2 rounded-pill px-3 py-1.5 text-label font-semibold no-underline",
+          "bg-card text-foreground shadow-tag rounded-pill text-label inline-flex min-h-11 items-center gap-2 px-3 py-1.5 font-semibold no-underline",
           className,
         )}
         {...props}

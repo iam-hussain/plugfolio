@@ -20,7 +20,11 @@ export function CloseRequirementButton({ requirementId }: { requirementId: strin
       disabled={close.isPending}
       onClick={() => {
         // Existing threads keep going — closing only stops new approaches.
-        if (window.confirm("Close this requirement? It leaves the open board; existing threads continue.")) {
+        if (
+          window.confirm(
+            "Close this requirement? It leaves the open board; existing threads continue.",
+          )
+        ) {
           close.mutate();
         }
       }}

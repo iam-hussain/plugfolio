@@ -34,7 +34,13 @@ const photo = (hue: string) => (
 const meta: Meta = {
   title: "Product view/Detail",
   parameters: { layout: "padded" },
-  decorators: [(Story) => <div className="max-w-inner mx-auto"><Story /></div>],
+  decorators: [
+    (Story) => (
+      <div className="max-w-inner mx-auto">
+        <Story />
+      </div>
+    ),
+  ],
 };
 export default meta;
 type Story = StoryObj;

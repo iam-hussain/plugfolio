@@ -74,7 +74,12 @@ export function MediaSlot({
 
   if (kind === "still" || !embedUrl) {
     return (
-      <div className={cn("shadow-rest border-border rounded-bay bg-active overflow-hidden border", className)}>
+      <div
+        className={cn(
+          "shadow-rest border-border rounded-bay bg-active overflow-hidden border",
+          className,
+        )}
+      >
         {/* A plain <img>: this package is framework-free and never imports next/image. Apps pass an optimised element via the post view when they need one. */}
         <img src={poster} alt={alt} className="block max-h-[62vh] w-full object-cover" />
       </div>
@@ -104,7 +109,7 @@ export function MediaSlot({
             {/* Named before the press, not after: a shopper about to hand a
                 request to YouTube should be told it is YouTube while they can
                 still decide. */}
-            <span className="bg-brand-ink/45 text-micro absolute left-3 top-3 inline-flex items-center gap-[7px] rounded-pill px-[11px] py-1.5 font-bold uppercase tracking-[0.04em] text-white [&_svg]:size-3.5">
+            <span className="bg-brand-ink/45 text-micro rounded-pill absolute left-3 top-3 inline-flex items-center gap-[7px] px-[11px] py-1.5 font-bold uppercase tracking-[0.04em] text-white [&_svg]:size-3.5">
               <SocialGlyph platform={provider.glyph} />
               {provider.name}
             </span>
@@ -113,8 +118,13 @@ export function MediaSlot({
               onClick={() => setPlaying(true)}
               className="focus-visible:outline-accent absolute inset-0 grid w-full content-center justify-items-center gap-3.5 border-0 bg-transparent text-white focus-visible:outline focus-visible:outline-[3px] focus-visible:-outline-offset-[5px]"
             >
-              <span className="grid size-[72px] place-items-center rounded-pill bg-white/[0.16] ring-2 ring-inset ring-white transition-transform duration-200 ease-design group-hover:scale-105 motion-reduce:transition-none">
-                <Play className="ml-1 size-[26px]" fill="currentColor" strokeWidth={0} aria-hidden />
+              <span className="rounded-pill ease-design grid size-[72px] place-items-center bg-white/[0.16] ring-2 ring-inset ring-white transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none">
+                <Play
+                  className="ml-1 size-[26px]"
+                  fill="currentColor"
+                  strokeWidth={0}
+                  aria-hidden
+                />
               </span>
               <b className="text-label font-bold">Play on {provider.name}</b>
             </button>

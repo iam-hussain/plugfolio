@@ -42,7 +42,7 @@ export function VerifyScreen({ token }: VerifyScreenProps) {
     <AuthShell role="generic" artefact={artefact}>
       {!token ? (
         <AuthStatus icon={<Mail aria-hidden />} title="Incomplete link">
-          <p className="text-muted-foreground max-w-[38ch] text-copy leading-[1.5]">
+          <p className="text-muted-foreground text-copy max-w-[38ch] leading-[1.5]">
             Use the verification link from your email.
           </p>
           <Button asChild>
@@ -51,16 +51,14 @@ export function VerifyScreen({ token }: VerifyScreenProps) {
         </AuthStatus>
       ) : verify.isSuccess ? (
         <AuthStatus icon={<Check aria-hidden />} title="Email verified">
-          <p className="text-muted-foreground text-copy leading-[1.5]">
-            Taking you to sign-in…
-          </p>
+          <p className="text-muted-foreground text-copy leading-[1.5]">Taking you to sign-in…</p>
           <Button asChild>
             <Link href="/signin">Continue to sign in →</Link>
           </Button>
         </AuthStatus>
       ) : verify.isError ? (
         <AuthStatus icon={<Clock aria-hidden />} title="This link has expired">
-          <p className="text-muted-foreground max-w-[38ch] text-copy leading-[1.5]">
+          <p className="text-muted-foreground text-copy max-w-[38ch] leading-[1.5]">
             Links work once and last 24 hours. Sign in with your email — an unverified account
             offers a fresh link.
           </p>

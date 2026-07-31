@@ -34,7 +34,7 @@ const followBadge = cva(
  */
 export function LastLooked({ children }: { children: React.ReactNode }) {
   return (
-    <p className="bg-active text-primary text-micro inline-flex items-center gap-2.5 rounded-pill px-3.5 py-2 font-bold uppercase tracking-[0.04em]">
+    <p className="bg-active text-primary text-micro rounded-pill inline-flex items-center gap-2.5 px-3.5 py-2 font-bold uppercase tracking-[0.04em]">
       <Clock aria-hidden className="size-[15px] flex-none" />
       {children}
     </p>
@@ -160,11 +160,5 @@ export function FollowBadge({
   tone?: "new" | "quiet";
   children: React.ReactNode;
 }) {
-  return (
-    <span
-      className={followBadge({ tone })}
-    >
-      {children}
-    </span>
-  );
+  return <span className={followBadge({ tone })}>{children}</span>;
 }

@@ -15,11 +15,7 @@ import {
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/server/auth";
-import {
-  adminMembersDeps,
-  adminResetHandleDeps,
-  memberEmailDeps,
-} from "@/server/container";
+import { adminMembersDeps, adminResetHandleDeps, memberEmailDeps } from "@/server/container";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -70,7 +66,11 @@ export async function bulkSuspendMembersAction(formData: FormData): Promise<Acti
   const ids = z
     .array(userId)
     .min(1)
-    .parse(String(formData.get("ids") ?? "").split(",").filter(Boolean));
+    .parse(
+      String(formData.get("ids") ?? "")
+        .split(",")
+        .filter(Boolean),
+    );
   await suspendMembersBulk(adminMembersDeps, admin.id, ids, parsedReason.data);
   revalidatePath("/members");
   return { ok: true };

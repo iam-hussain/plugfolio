@@ -32,11 +32,7 @@ export default async function CommentsPage({
 }) {
   const params = await searchParams;
   const limit = Math.max(LOAD_STEP, Number.parseInt(params.limit ?? "", 10) || LOAD_STEP);
-  const { rows, total } = await searchComments(
-    { content: repositories.content },
-    params.q,
-    limit,
-  );
+  const { rows, total } = await searchComments({ content: repositories.content }, params.q, limit);
   const moreHref = `/comments?${new URLSearchParams({
     ...(params.q ? { q: params.q } : {}),
     limit: String(limit + LOAD_STEP),
@@ -94,7 +90,7 @@ export default async function CommentsPage({
                 <TableCell className="max-w-[420px]">
                   <span className="block truncate leading-[1.4]">{comment.body}</span>
                   {comment.replyCount > 0 ? (
-                    <span className="text-muted-foreground mt-0.5 block text-micro">
+                    <span className="text-muted-foreground text-micro mt-0.5 block">
                       {comment.replyCount} repl{comment.replyCount > 1 ? "ies" : "y"} (deleted with
                       it)
                     </span>
@@ -106,21 +102,25 @@ export default async function CommentsPage({
                       /{comment.asProfileUsername}
                     </Badge>
                   ) : (
-                    <span className="font-mono text-muted-foreground text-micro">
+                    <span className="text-muted-foreground text-micro font-mono">
                       @{comment.authorHandle}
                     </span>
                   )}
                 </TableCell>
-                <TableCell className="text-muted-foreground max-w-[200px] truncate text-micro">
+                <TableCell className="text-muted-foreground text-micro max-w-[200px] truncate">
                   /{comment.pageUsername}
                   {comment.productTitle ? ` · ${comment.productTitle}` : ""}
                 </TableCell>
-                <TableCell className="font-mono text-faint text-nano tabular-nums">
+                <TableCell className="text-faint text-nano font-mono tabular-nums">
                   {comment.createdAt.toISOString().replace("T", " ").slice(0, 16)}
                 </TableCell>
                 <TableCell className="text-right">
                   <ConfirmDialog
-                    trigger={<Button size="xs" variant="destructive-outline">Delete</Button>}
+                    trigger={
+                      <Button size="xs" variant="destructive-outline">
+                        Delete
+                      </Button>
+                    }
                     title="Delete this comment?"
                     body="The comment and all of its replies are permanently deleted. This cannot be undone. Recorded in the audit log."
                     confirmLabel="Delete"
@@ -148,7 +148,7 @@ export default async function CommentsPage({
               <a href={moreHref}>Load more</a>
             </Button>
           ) : null}
-          <span className="font-mono text-faint text-nano tabular-nums">
+          <span className="text-faint text-nano font-mono tabular-nums">
             Showing {rows.length.toLocaleString()} of {total.toLocaleString()}
           </span>
         </div>

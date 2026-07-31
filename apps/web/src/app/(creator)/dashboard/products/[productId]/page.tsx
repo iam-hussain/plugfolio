@@ -94,9 +94,7 @@ export default async function ProductEditPage({
         </PageHeadTitle>
         <PageHeadActions>
           <Button variant="outline" asChild>
-            <Link href={`/${active.username}/product/${product.id}` as Route}>
-              View as visitor
-            </Link>
+            <Link href={`/${active.username}/product/${product.id}` as Route}>View as visitor</Link>
           </Button>
         </PageHeadActions>
       </PageHead>
@@ -161,9 +159,7 @@ export default async function ProductEditPage({
           <DashCard>
             <DashCardHead>
               <DashCardTitle>On these posts</DashCardTitle>
-              <DashCardNote>
-                {usedOn.length} · editing here changes all of them
-              </DashCardNote>
+              <DashCardNote>{usedOn.length} · editing here changes all of them</DashCardNote>
             </DashCardHead>
             <UsesList>
               {usedOn.map((post) => (

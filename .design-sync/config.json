@@ -1,0 +1,8 @@
+{
+  "projectId": "acbe2039-06b0-4728-a52a-2b88125cad84",
+  "shape": "storybook",
+  "pkg": "@plugfolio/ui",
+  "globalName": "PlugfolioUI",
+  "storybookConfigDir": "apps/web/.storybook",
+  "storybookStatic": ".design-sync/sb-reference"
+}

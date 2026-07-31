@@ -18,8 +18,7 @@ export type ListYouTubeChannelsDeps = {
 };
 
 export type YouTubeConnectionView =
-  | { connected: false }
-  | { connected: true; channels: YouTubeChannel[] };
+  { connected: false } | { connected: true; channels: YouTubeChannel[] };
 
 // Refresh a minute early so a token never expires mid-request.
 const EXPIRY_SKEW_MS = 60_000;

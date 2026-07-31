@@ -38,11 +38,7 @@ export default async function AdminsPage() {
     <>
       <PageHeader title="Admins">
         <ConfirmDialog
-          trigger={
-            <Button size="xs">
-              Add admin
-            </Button>
-          }
+          trigger={<Button size="xs">Add admin</Button>}
           title="Add admin"
           body="The invite email sets their password. New admins get full operator access."
           confirmLabel="Send invite"
@@ -55,7 +51,13 @@ export default async function AdminsPage() {
             <label htmlFor="invite-email" className={monoLabel}>
               Email
             </label>
-            <Input id="invite-email" name="email" type="email" required placeholder="name@plugfolio.com" />
+            <Input
+              id="invite-email"
+              name="email"
+              type="email"
+              required
+              placeholder="name@plugfolio.com"
+            />
             <label htmlFor="invite-name" className={`${monoLabel} mt-3`}>
               Name
             </label>
@@ -81,7 +83,7 @@ export default async function AdminsPage() {
                 <TableRow key={operator.id}>
                   <TableCell>
                     <span className="block font-semibold">{operator.email}</span>
-                    <span className="text-muted-foreground mt-0.5 block text-micro">
+                    <span className="text-muted-foreground text-micro mt-0.5 block">
                       {self ? `${operator.name ?? "You"} (you)` : (operator.name ?? "—")}
                     </span>
                   </TableCell>
@@ -114,7 +116,11 @@ export default async function AdminsPage() {
                         </Button>
                       ) : (
                         <ConfirmDialog
-                          trigger={<Button size="xs" variant="destructive-outline">Remove</Button>}
+                          trigger={
+                            <Button size="xs" variant="destructive-outline">
+                              Remove
+                            </Button>
+                          }
                           title="Remove this admin?"
                           body="They lose all operator access immediately. Recorded in the audit log."
                           confirmLabel="Remove"
@@ -133,8 +139,8 @@ export default async function AdminsPage() {
       </Panel>
 
       <Panel className="mt-4 max-w-[440px] px-6 py-[22px]">
-        <h2 className="font-display text-base font-bold">Your account</h2>
-        <p className="text-muted-foreground mb-3.5 mt-1.5 text-label">Change your own password.</p>
+        <h2 className="font-display text-body font-bold">Your account</h2>
+        <p className="text-muted-foreground text-label mb-3.5 mt-1.5">Change your own password.</p>
         <ActionForm action={changeOwnPasswordAction} successToast="Password changed">
           <label htmlFor="current-password" className={monoLabel}>
             Current password

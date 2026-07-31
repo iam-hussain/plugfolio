@@ -16,7 +16,12 @@ export function NewProfileButton() {
 
   return (
     <div className="flex items-center gap-2">
-      <Button variant="outline" size="sm" onClick={() => create.mutate()} disabled={create.isPending}>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => create.mutate()}
+        disabled={create.isPending}
+      >
         {create.isPending ? "Creating…" : "New profile"}
       </Button>
       {create.isError ? (

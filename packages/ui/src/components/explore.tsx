@@ -82,9 +82,9 @@ export function CreatorCard({
     <Comp
       className={cn(
         "shadow-rest border-border bg-card rounded-card block flex-none border p-2 text-inherit no-underline",
-        "transition-[transform,box-shadow] duration-300 ease-design hover:z-[5] hover:-translate-y-2 hover:rotate-0 hover:shadow-lift focus-visible:z-[5] focus-visible:rotate-0",
+        "ease-design hover:shadow-lift transition-[transform,box-shadow] duration-300 hover:z-[5] hover:-translate-y-2 hover:rotate-0 focus-visible:z-[5] focus-visible:rotate-0",
         layout === "rail"
-          ? "w-[152px] snap-center [&:nth-child(even)]:z-[2] [&:nth-child(even)]:rotate-[1.8deg] [&:nth-child(odd)]:rotate-[-2deg] -mr-3.5"
+          ? "-mr-3.5 w-[152px] snap-center [&:nth-child(even)]:z-[2] [&:nth-child(even)]:rotate-[1.8deg] [&:nth-child(odd)]:rotate-[-2deg]"
           : "w-auto",
         className,
       )}
@@ -136,8 +136,8 @@ export function WallPost({
   return (
     <article
       className={cn(
-        "block transition-[transform,box-shadow] duration-300 ease-design",
-        "hover:shadow-lift hover:-translate-y-1.5 hover:rotate-0 focus-within:-translate-y-1.5 focus-within:rotate-0",
+        "ease-design block transition-[transform,box-shadow] duration-300",
+        "hover:shadow-lift focus-within:-translate-y-1.5 focus-within:rotate-0 hover:-translate-y-1.5 hover:rotate-0",
         "[&:nth-child(4n+1)]:rotate-[-1.5deg] [&:nth-child(4n+2)]:rotate-[1.4deg] [&:nth-child(4n+3)]:rotate-[-1deg] [&:nth-child(4n+4)]:rotate-[1.8deg]",
         // A single-column card would run to the full measure and dwarf the fan.
         "max-[559px]:mx-auto max-[559px]:max-w-[420px]",
@@ -197,7 +197,7 @@ export function ThingCard({
     <Comp
       className={cn(
         "border-border bg-card rounded-card flex flex-col border p-2.5 pb-3.5 text-inherit no-underline",
-        "transition-[transform,box-shadow] duration-[250ms] ease-design hover:-translate-y-1 hover:border-transparent hover:shadow-lift",
+        "ease-design hover:shadow-lift transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-1 hover:border-transparent",
         className,
       )}
       {...props}
@@ -205,13 +205,7 @@ export function ThingCard({
       <Slottable>{children}</Slottable>
       <div className="relative">
         <div className="rounded-image bg-active aspect-square w-full overflow-hidden">{image}</div>
-        {flag ? (
-          <span
-            className={productFlag({ tone: flag.tone })}
-          >
-            {flag.label}
-          </span>
-        ) : null}
+        {flag ? <span className={productFlag({ tone: flag.tone })}>{flag.label}</span> : null}
       </div>
       <b className="text-label mt-3 block font-bold leading-[1.3]">{title}</b>
       <span className="text-faint text-micro mt-[3px] block">{by}</span>

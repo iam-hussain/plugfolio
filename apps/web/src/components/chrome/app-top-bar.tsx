@@ -108,13 +108,13 @@ export async function AppTopBar() {
               </Button>
               <Link
                 href="/signin"
-                className="text-foreground hidden text-copy font-semibold lg:inline"
+                className="text-foreground text-copy hidden font-semibold lg:inline"
               >
                 Log in
               </Link>
               <Link
                 href="/explore"
-                className="bg-primary text-primary-foreground rounded-pill hidden px-[18px] py-[9px] text-copy font-semibold lg:inline-flex"
+                className="bg-primary text-primary-foreground rounded-pill text-copy hidden px-[18px] py-[9px] font-semibold lg:inline-flex"
               >
                 Explore creators
               </Link>

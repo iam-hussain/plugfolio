@@ -626,7 +626,7 @@ export const PostEditor: Story = {
     <EditorGrid>
       <div>
         <EditorMedia>
-          <span className="block aspect-[3/2] w-full bg-active" />
+          <span className="bg-active block aspect-[3/2] w-full" />
         </EditorMedia>
         <DashCard className="mt-3.5">
           <DashField

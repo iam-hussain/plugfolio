@@ -1,11 +1,34 @@
 "use client";
 
 import type { PageAccent, PageGridStyle, PageHeaderStyle } from "@plugfolio/core";
-import { Button, Input, Label, cn } from "@plugfolio/ui";
+import { Button, Input, Label } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { updateProfileIdentity } from "../api";
+import { cva } from "class-variance-authority";
+
+/** The accent picker's chips — the dot inside carries the colour, not this. */
+const accentChip = cva(
+  "rounded-pill inline-flex min-h-11 items-center gap-2 border px-3.5 text-label font-semibold transition-colors",
+  {
+    variants: {
+      selected: {
+        true: "border-foreground bg-active",
+        false: "border-border text-muted-foreground hover:border-primary",
+      },
+    },
+    defaultVariants: { selected: false },
+  },
+);
+
+/** Header-style and grid-style options: a card, held when it's the current one. */
+const layoutCard = cva("rounded-image border p-3 text-left transition-colors", {
+  variants: {
+    selected: { true: "border-primary bg-active", false: "border-border hover:border-primary" },
+  },
+  defaultVariants: { selected: false },
+});
 
 /**
  * How the creator's page looks (ADR-0017) — the whole surface, and it's meant
@@ -48,7 +71,11 @@ const ACCENTS: readonly { value: PageAccent; label: string }[] = [
 ];
 
 const HEADERS: readonly { value: PageHeaderStyle; label: string; note: string }[] = [
-  { value: "compact", label: "Compact", note: "Goods first. Everything tightens; nothing is dropped." },
+  {
+    value: "compact",
+    label: "Compact",
+    note: "Goods first. Everything tightens; nothing is dropped.",
+  },
   { value: "balanced", label: "Balanced", note: "Identity, then shelves, then posts." },
   { value: "centred", label: "Centred", note: "Big avatar, centred. Reads as a profile." },
 ];
@@ -106,14 +133,13 @@ export function PageAppearanceForm({ profileId, appearance, role }: PageAppearan
               type="button"
               onClick={() => setAccent(option.value)}
               aria-pressed={accent === option.value}
-              className={cn(
-                "rounded-pill inline-flex min-h-11 items-center gap-2 border px-3.5 text-label font-semibold transition-colors",
-                accent === option.value
-                  ? "border-foreground bg-active"
-                  : "border-border text-muted-foreground hover:border-primary",
-              )}
+              className={accentChip({ selected: accent === option.value })}
             >
-              <span aria-hidden data-accent={option.value} className="bg-primary size-3.5 rounded-pill" />
+              <span
+                aria-hidden
+                data-accent={option.value}
+                className="bg-primary rounded-pill size-3.5"
+              />
               {option.label}
             </button>
           ))}
@@ -142,7 +168,9 @@ export function PageAppearanceForm({ profileId, appearance, role }: PageAppearan
           maxLength={80}
           placeholder="Hey — glad you found me."
         />
-        <p className="text-muted-foreground text-micro">One line above your name. Leave it empty for none.</p>
+        <p className="text-muted-foreground text-micro">
+          One line above your name. Leave it empty for none.
+        </p>
       </div>
 
       {save.isError ? (
@@ -184,15 +212,10 @@ function Choice<T extends string>({
             type="button"
             onClick={() => onPick(option.value)}
             aria-pressed={value === option.value}
-            className={cn(
-              "rounded-image border p-3 text-left transition-colors",
-              value === option.value
-                ? "border-primary bg-active"
-                : "border-border hover:border-primary",
-            )}
+            className={layoutCard({ selected: value === option.value })}
           >
-            <b className="block text-label font-bold">{option.label}</b>
-            <span className="text-muted-foreground mt-1 block text-micro leading-[1.4]">
+            <b className="text-label block font-bold">{option.label}</b>
+            <span className="text-muted-foreground text-micro mt-1 block leading-[1.4]">
               {option.note}
             </span>
           </button>

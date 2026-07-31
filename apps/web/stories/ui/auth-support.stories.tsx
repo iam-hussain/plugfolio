@@ -65,7 +65,10 @@ export const Notices: Story = {
       <AuthNotice tone="bad" title="That email or password didn't match">
         Check the address first — it&apos;s the one people get wrong.
       </AuthNotice>
-      <AuthNotice title="Verify your email to finish" action={<Button size="sm">Resend the link</Button>}>
+      <AuthNotice
+        title="Verify your email to finish"
+        action={<Button size="sm">Resend the link</Button>}
+      >
         We sent it when you registered. It expires after an hour.
       </AuthNotice>
     </div>

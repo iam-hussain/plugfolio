@@ -42,7 +42,7 @@ export function EditorMedia({ children, dimmed }: { children: React.ReactNode; d
   return (
     <div
       className={cn(
-        "border-border rounded-tile overflow-hidden border bg-active",
+        "border-border rounded-tile bg-active overflow-hidden border",
         dimmed && "opacity-55",
       )}
     >
@@ -81,15 +81,18 @@ export function Segmented({ children, label }: { children: React.ReactNode; labe
   );
 }
 
-const segmentedOption = cva("rounded-nest text-micro min-h-10 flex-1 border-0 bg-transparent font-bold", {
-  variants: {
-    selected: {
-      true: "bg-foreground text-background",
-      false: "text-muted-foreground",
+const segmentedOption = cva(
+  "rounded-nest text-micro min-h-10 flex-1 border-0 bg-transparent font-bold",
+  {
+    variants: {
+      selected: {
+        true: "bg-foreground text-background",
+        false: "text-muted-foreground",
+      },
     },
+    defaultVariants: { selected: false },
   },
-  defaultVariants: { selected: false },
-});
+);
 
 export function SegmentedOption({
   selected,
@@ -107,15 +110,18 @@ export function SegmentedOption({
 }
 
 /** A connectable channel row — plain, then held once it's connected. */
-const connectRow = cva("rounded-image flex w-full items-center gap-3 border px-3 py-2.5 text-left", {
-  variants: {
-    done: {
-      true: "border-primary bg-active",
-      false: "border-border bg-background hover:border-primary",
+const connectRow = cva(
+  "rounded-image flex w-full items-center gap-3 border px-3 py-2.5 text-left",
+  {
+    variants: {
+      done: {
+        true: "border-primary bg-active",
+        false: "border-border bg-background hover:border-primary",
+      },
     },
+    defaultVariants: { done: false },
   },
-  defaultVariants: { done: false },
-});
+);
 
 /** The channel rule (§5.9): unmet reads as quiet copy, met reads as held. */
 const ruleLine = cva("rounded-image text-micro mt-3.5 flex gap-[9px] px-3.5 py-3 leading-[1.5]", {
@@ -162,7 +168,7 @@ export function Fold({
         <ChevronDown
           aria-hidden
           className={cn(
-            "text-faint ml-auto transition-transform duration-200 ease-design",
+            "text-faint ease-design ml-auto transition-transform duration-200",
             open && "rotate-180",
           )}
         />
@@ -198,14 +204,7 @@ export function PickRow({
   done?: boolean;
 }) {
   return (
-    <button
-      type="button"
-      className={cn(
-        connectRow({ done }),
-        className,
-      )}
-      {...props}
-    >
+    <button type="button" className={cn(connectRow({ done }), className)} {...props}>
       {image}
       <span className="min-w-0 flex-1">
         <b className="text-label block truncate font-bold">{title}</b>
@@ -224,10 +223,7 @@ export function PickRow({
 
 export function RuleLine({ ok, children }: { ok: boolean; children: React.ReactNode }) {
   return (
-    <p
-      role={ok ? undefined : "status"}
-      className={ruleLine({ ok })}
-    >
+    <p role={ok ? undefined : "status"} className={ruleLine({ ok })}>
       <CircleAlert className="mt-px size-[15px] flex-none" aria-hidden />
       {children}
     </p>
@@ -283,7 +279,7 @@ export function PreviewCard({
         {image}
         <p className="text-label mt-3 font-bold">{title}</p>
         {price ? (
-          <p className="font-display text-title mt-1.5 font-extrabold tracking-[-0.02em] tabular-nums">
+          <p className="font-display text-title mt-1.5 font-extrabold tabular-nums tracking-[-0.02em]">
             {price}
           </p>
         ) : null}

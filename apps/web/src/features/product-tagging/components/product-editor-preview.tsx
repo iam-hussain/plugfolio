@@ -61,9 +61,7 @@ export function ProductEditorPreview({
             />
           </span>
         ) : (
-          <PreviewNoImage>
-            The image is fetched from the product URL when you save.
-          </PreviewNoImage>
+          <PreviewNoImage>The image is fetched from the product URL when you save.</PreviewNoImage>
         )
       }
       title={

@@ -69,7 +69,7 @@ export function FollowingControls({ search, sort }: FollowingControlsProps) {
       <div className="flex items-center gap-2.5">
         <label
           htmlFor="following-sort"
-          className="text-muted-foreground whitespace-nowrap font-sans text-micro font-bold uppercase tracking-[0.06em]"
+          className="text-muted-foreground text-micro whitespace-nowrap font-sans font-bold uppercase tracking-[0.06em]"
         >
           Sort
         </label>
@@ -77,7 +77,7 @@ export function FollowingControls({ search, sort }: FollowingControlsProps) {
           id="following-sort"
           value={sort}
           onChange={(event) => push({ sort: event.target.value })}
-          className="border-border bg-card rounded-pill h-[54px] pl-[18px] pr-10 text-copy"
+          className="border-border bg-card rounded-pill text-copy h-[54px] pl-[18px] pr-10"
         >
           {SORTS.map((option) => (
             <NativeSelectOption key={option.value} value={option.value}>

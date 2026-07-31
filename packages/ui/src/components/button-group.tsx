@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { cva, type VariantProps } from "class-variance-authority"
-import { Slot } from "radix-ui"
+import { cva, type VariantProps } from "class-variance-authority";
+import { Slot } from "radix-ui";
 
-import { cn } from "@plugfolio/ui/lib/cn"
-import { Separator } from "@plugfolio/ui/components/separator"
+import { cn } from "@plugfolio/ui/lib/cn";
+import { Separator } from "@plugfolio/ui/components/separator";
 
 const buttonGroupVariants = cva(
   "flex w-fit items-stretch has-[>[data-slot=button-group]]:gap-2 [&>*]:focus-visible:relative [&>*]:focus-visible:z-10 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-md [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
@@ -20,8 +20,8 @@ const buttonGroupVariants = cva(
     defaultVariants: {
       orientation: "horizontal",
     },
-  }
-)
+  },
+);
 
 function ButtonGroup({
   className,
@@ -36,7 +36,7 @@ function ButtonGroup({
       className={cn(buttonGroupVariants({ orientation }), className)}
       {...props}
     />
-  )
+  );
 }
 
 function ButtonGroupText({
@@ -44,19 +44,19 @@ function ButtonGroupText({
   asChild = false,
   ...props
 }: React.ComponentProps<"div"> & {
-  asChild?: boolean
+  asChild?: boolean;
 }) {
-  const Comp = asChild ? Slot.Root : "div"
+  const Comp = asChild ? Slot.Root : "div";
 
   return (
     <Comp
       className={cn(
-        "flex items-center gap-2 rounded-md border bg-muted px-4 text-sm font-medium shadow-sm [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
-        className
+        "bg-muted flex items-center gap-2 rounded-md border px-4 text-sm font-medium shadow-sm [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none",
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function ButtonGroupSeparator({
@@ -69,17 +69,12 @@ function ButtonGroupSeparator({
       data-slot="button-group-separator"
       orientation={orientation}
       className={cn(
-        "relative !m-0 self-stretch bg-input data-[orientation=vertical]:h-auto",
-        className
+        "bg-input relative !m-0 self-stretch data-[orientation=vertical]:h-auto",
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
-export {
-  ButtonGroup,
-  ButtonGroupSeparator,
-  ButtonGroupText,
-  buttonGroupVariants,
-}
+export { ButtonGroup, ButtonGroupSeparator, ButtonGroupText, buttonGroupVariants };

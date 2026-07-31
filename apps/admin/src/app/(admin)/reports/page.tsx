@@ -25,7 +25,10 @@ import { dismissReportAction, resolveReportAction } from "./actions";
 export const metadata: Metadata = { title: "Reports" };
 export const dynamic = "force-dynamic";
 
-const TARGET_META: Record<ReportTargetType, { label: string; icon: React.ComponentType<{ className?: string }>; href: Route }> = {
+const TARGET_META: Record<
+  ReportTargetType,
+  { label: string; icon: React.ComponentType<{ className?: string }>; href: Route }
+> = {
   comment: { label: "Comment", icon: MessageSquare, href: "/comments" },
   product: { label: "Product", icon: ShoppingBag, href: "/products" },
   profile: { label: "Profile", icon: UserSquare, href: "/profiles" },
@@ -80,7 +83,12 @@ export default async function ReportsPage({
             name="status"
             defaultValue={status}
             label="Filter by status"
-            options={[["open", "Open"], ["resolved", "Resolved"], ["dismissed", "Dismissed"], ["all", "All"]]}
+            options={[
+              ["open", "Open"],
+              ["resolved", "Resolved"],
+              ["dismissed", "Dismissed"],
+              ["all", "All"],
+            ]}
           />
           <Button type="submit" size="xs" variant="outline-strong">
             Apply
@@ -112,12 +120,15 @@ export default async function ReportsPage({
                 <TableRow key={report.id}>
                   <TableCell className="max-w-[360px]">
                     <span className="flex items-start gap-[9px]">
-                      <meta.icon aria-hidden className="text-muted-foreground mt-px size-4 shrink-0" />
+                      <meta.icon
+                        aria-hidden
+                        className="text-muted-foreground mt-px size-4 shrink-0"
+                      />
                       <span className="min-w-0">
-                        <span className="font-mono text-faint block text-pico font-bold uppercase tracking-[0.09em]">
+                        <span className="text-faint text-pico block font-mono font-bold uppercase tracking-[0.09em]">
                           {meta.label}
                         </span>
-                        <span className="mt-0.5 block truncate text-label">{report.snippet}</span>
+                        <span className="text-label mt-0.5 block truncate">{report.snippet}</span>
                       </span>
                     </span>
                   </TableCell>
@@ -126,12 +137,12 @@ export default async function ReportsPage({
                       {CATEGORY_LABEL[report.category] ?? report.category}
                     </Badge>
                     {report.note ? (
-                      <span className="text-muted-foreground mt-0.5 block text-micro">
+                      <span className="text-muted-foreground text-micro mt-0.5 block">
                         {report.note}
                       </span>
                     ) : null}
                   </TableCell>
-                  <TableCell className="font-mono text-muted-foreground text-nano">
+                  <TableCell className="text-muted-foreground text-nano font-mono">
                     {report.reporterLabel}
                   </TableCell>
                   <TableCell className="text-muted-foreground tabular-nums">
@@ -139,7 +150,9 @@ export default async function ReportsPage({
                   </TableCell>
                   <TableCell>
                     {report.status === "open" ? (
-                      <Badge shape="square" variant="soft-primary">Open</Badge>
+                      <Badge shape="square" variant="soft-primary">
+                        Open
+                      </Badge>
                     ) : (
                       <Badge shape="square" variant="outline-muted">
                         {report.status === "resolved" ? "Resolved" : "Dismissed"}

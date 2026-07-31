@@ -21,11 +21,7 @@ import { ProfileStatusBadge } from "@/components/status-badges";
 import { Panel } from "@/components/panel";
 import { pagedHref, pageQuery, statusFilter, type ListParams } from "@/lib/list-params";
 import { repositories } from "@/server/container";
-import {
-  releaseUsernameAction,
-  suspendProfileAction,
-  unsuspendProfileAction,
-} from "./actions";
+import { releaseUsernameAction, suspendProfileAction, unsuspendProfileAction } from "./actions";
 
 export const metadata: Metadata = { title: "Profiles" };
 export const dynamic = "force-dynamic";
@@ -55,7 +51,12 @@ export default async function ProfilesPage({
             name="status"
             defaultValue={params.status}
             label="Filter by status"
-            options={[["", "All statuses"], ["live", "Live"], ["suspended", "Suspended"], ["owner-suspended", "Owner suspended"]]}
+            options={[
+              ["", "All statuses"],
+              ["live", "Live"],
+              ["suspended", "Suspended"],
+              ["owner-suspended", "Owner suspended"],
+            ]}
           />
           <SearchField
             name="q"
@@ -90,13 +91,13 @@ export default async function ProfilesPage({
               const suggested = generateProfileUsername();
               return (
                 <TableRow key={profile.id}>
-                  <TableCell className="font-mono text-label font-bold">
+                  <TableCell className="text-label font-mono font-bold">
                     <Link href={`/profiles/${profile.id}`}>/{profile.username}</Link>
                   </TableCell>
                   <TableCell>
                     <span className="block">{profile.ownerEmail}</span>
                     {profile.managerCount > 0 ? (
-                      <span className="text-muted-foreground mt-0.5 block text-micro">
+                      <span className="text-muted-foreground text-micro mt-0.5 block">
                         +{profile.managerCount} manager{profile.managerCount > 1 ? "s" : ""}
                       </span>
                     ) : null}
@@ -105,7 +106,12 @@ export default async function ProfilesPage({
                     {profile.postCount} posts · {profile.productCount} products ·{" "}
                     {profile.followerCount.toLocaleString()} followers
                   </TableCell>
-                  <TableCell><ProfileStatusBadge suspendedAt={profile.suspendedAt} ownerSuspendedAt={profile.ownerSuspendedAt} /></TableCell>
+                  <TableCell>
+                    <ProfileStatusBadge
+                      suspendedAt={profile.suspendedAt}
+                      ownerSuspendedAt={profile.ownerSuspendedAt}
+                    />
+                  </TableCell>
                   <TableCell className="text-right">
                     <span className="flex justify-end gap-1.5">
                       <PromptDialog
@@ -130,7 +136,11 @@ export default async function ProfilesPage({
                       />
                       {profile.suspendedAt ? (
                         <ConfirmDialog
-                          trigger={<Button size="xs" variant="outline-strong">Unsuspend</Button>}
+                          trigger={
+                            <Button size="xs" variant="outline-strong">
+                              Unsuspend
+                            </Button>
+                          }
                           title="Unsuspend this page?"
                           body="The page returns to shoppers at its current address. Recorded in the audit log."
                           confirmLabel="Unsuspend"
@@ -141,7 +151,11 @@ export default async function ProfilesPage({
                         />
                       ) : (
                         <ConfirmDialog
-                          trigger={<Button size="xs" variant="destructive-outline">Suspend</Button>}
+                          trigger={
+                            <Button size="xs" variant="destructive-outline">
+                              Suspend
+                            </Button>
+                          }
                           title="Suspend profile"
                           body="Only this creator page goes dark for shoppers. The owner can still sign in and manage other pages. Reversible — nothing is deleted. Recorded in the audit log."
                           confirmLabel="Suspend"
@@ -166,7 +180,12 @@ export default async function ProfilesPage({
           </TableBody>
         </Table>
       </Panel>
-      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/profiles", params)} />
+      <Pager
+        page={page.page}
+        pageSize={page.pageSize}
+        total={total}
+        hrefFor={pagedHref("/profiles", params)}
+      />
     </>
   );
 }

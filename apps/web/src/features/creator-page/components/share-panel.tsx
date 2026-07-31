@@ -109,7 +109,7 @@ export function SharePanel({
 
               <ShareCard
                 avatar={
-                  <span className="bg-active text-primary grid size-[34px] flex-none place-items-center overflow-hidden rounded-pill text-micro font-bold">
+                  <span className="bg-active text-primary rounded-pill text-micro grid size-[34px] flex-none place-items-center overflow-hidden font-bold">
                     {avatarUrl ? (
                       /* eslint-disable-next-line @next/next/no-img-element -- preview of an unfurl, not page content */
                       <img src={avatarUrl} alt="" className="size-full object-cover" />

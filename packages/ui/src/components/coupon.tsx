@@ -47,12 +47,8 @@ export function CouponBlock({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(couponPanel({ live }), className)}
-    >
-      <span className={couponChannel({ live })}>
-        {channel}
-      </span>
+    <div className={cn(couponPanel({ live }), className)}>
+      <span className={couponChannel({ live })}>{channel}</span>
       <div className="mt-[7px] flex flex-wrap items-center gap-2">{children}</div>
       {note ? <p className="text-muted-foreground text-micro mt-2">{note}</p> : null}
       {expires ? <p className="text-muted-foreground text-micro mt-1.5">{expires}</p> : null}
@@ -82,8 +78,8 @@ export function CodeButton({
       data-copied={copied ? "" : undefined}
       aria-label={`Copy code ${code}`}
       className={cn(
-        "border-border bg-card text-foreground text-label min-h-11 rounded-pill border px-4 py-[9px] font-bold",
-        "inline-flex items-center gap-[9px] transition-colors duration-200 ease-design",
+        "border-border bg-card text-foreground text-label rounded-pill min-h-11 border px-4 py-[9px] font-bold",
+        "ease-design inline-flex items-center gap-[9px] transition-colors duration-200",
         "hover:border-primary hover:text-primary data-[copied]:border-primary data-[copied]:text-primary",
         className,
       )}
@@ -91,7 +87,7 @@ export function CodeButton({
     >
       {/* Code first, then what pressing it does — the shopper is looking for
           the code, not for the verb (DESIGN §.code: `<b>SAVE30</b><em>Copy</em>`). */}
-      <b className="tracking-[0.04em] tabular-nums">{code}</b>
+      <b className="tabular-nums tracking-[0.04em]">{code}</b>
       <span className="text-micro text-muted-foreground font-bold uppercase tracking-[0.07em]">
         {copied ? "Copied" : label}
       </span>

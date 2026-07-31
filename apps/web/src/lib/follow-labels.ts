@@ -48,10 +48,7 @@ export function metaLine(creator: FollowedCreator, now: Date): string {
  * The badge is the point of the page: it answers "who should I look at" without
  * merging anyone's posts into a stream. Quiet rows say how long instead.
  */
-export function badgeFor(
-  creator: FollowedCreator,
-  now: Date,
-): { label: string; isNew: boolean } {
+export function badgeFor(creator: FollowedCreator, now: Date): { label: string; isNew: boolean } {
   if (creator.newPostCount > 0) {
     return { label: plural(creator.newPostCount, "new post"), isNew: true };
   }

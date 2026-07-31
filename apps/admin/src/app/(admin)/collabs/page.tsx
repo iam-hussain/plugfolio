@@ -22,11 +22,7 @@ import { repositories } from "@/server/container";
 export const metadata: Metadata = { title: "Collabs" };
 export const dynamic = "force-dynamic";
 
-export default async function CollabsPage({
-  searchParams,
-}: {
-  searchParams: Promise<ListParams>;
-}) {
+export default async function CollabsPage({ searchParams }: { searchParams: Promise<ListParams> }) {
   const params = await searchParams;
   const page = pageQuery(params);
   const { rows, total } = await listCollabs({ collabs: repositories.collabs }, params.q, page);
@@ -73,7 +69,7 @@ export default async function CollabsPage({
                   <Link href={`/collabs/${collab.id}`} className="block">
                     <span className="font-medium">{collab.businessName}</span>{" "}
                     <span className="text-faint">↔</span>{" "}
-                    <span className="font-mono text-muted-foreground text-micro">
+                    <span className="text-muted-foreground text-micro font-mono">
                       /{collab.profileUsername}
                     </span>
                   </Link>
@@ -105,7 +101,12 @@ export default async function CollabsPage({
           </TableBody>
         </Table>
       </Panel>
-      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/collabs", params)} />
+      <Pager
+        page={page.page}
+        pageSize={page.pageSize}
+        total={total}
+        hrefFor={pagedHref("/collabs", params)}
+      />
     </>
   );
 }

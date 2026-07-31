@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <SidebarProvider
       defaultOpen={defaultOpen}
-      className="[--sidebar-width:244px] [--sidebar-width-icon:64px]"
+      className="[--sidebar-width-icon:64px] [--sidebar-width:244px]"
     >
       <AdminSidebar adminEmail={admin.email} />
       <SidebarInset className="min-w-0">

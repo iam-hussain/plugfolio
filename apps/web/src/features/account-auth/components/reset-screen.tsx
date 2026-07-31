@@ -33,7 +33,7 @@ export function ResetScreen({ token }: ResetScreenProps) {
     return (
       <AuthShell role="generic" artefact={artefact}>
         <AuthStatus icon={<Check aria-hidden />} title="Password set">
-          <p className="text-muted-foreground max-w-[38ch] text-copy leading-[1.5]">
+          <p className="text-muted-foreground text-copy max-w-[38ch] leading-[1.5]">
             You&apos;re all set — sign in with your new password.
           </p>
           <Button asChild>
@@ -50,12 +50,12 @@ export function ResetScreen({ token }: ResetScreenProps) {
         Set a new password
       </h1>
       {token ? (
-        <div className="bg-active rounded-image mt-5 flex items-start gap-3 p-4 text-copy leading-[1.5]">
+        <div className="bg-active rounded-image text-copy mt-5 flex items-start gap-3 p-4 leading-[1.5]">
           <UserRound aria-hidden className="mt-0.5 size-[18px] shrink-0" />
           <span>Setting a password verifies your email and signs you in.</span>
         </div>
       ) : (
-        <p className="text-muted-foreground mt-2.5 text-copy leading-[1.5]">
+        <p className="text-muted-foreground text-copy mt-2.5 leading-[1.5]">
           This link is incomplete — use the one from your email, or{" "}
           <Link href="/forgot" className="text-brand-violet-deep font-bold">
             request a fresh link
@@ -79,7 +79,7 @@ export function ResetScreen({ token }: ResetScreenProps) {
             onChange={setPassword}
             autoComplete="new-password"
           />
-          <p className="text-muted-foreground mt-[7px] mb-3.5 text-micro">At least 8 characters.</p>
+          <p className="text-muted-foreground text-micro mb-3.5 mt-[7px]">At least 8 characters.</p>
           <FieldLabel htmlFor="reset-confirm">Confirm password</FieldLabel>
           <PasswordInput
             id="reset-confirm"
@@ -88,12 +88,12 @@ export function ResetScreen({ token }: ResetScreenProps) {
             autoComplete="new-password"
           />
           {mismatch ? (
-            <p role="alert" className="text-brand-coral mt-2.5 text-micro">
+            <p role="alert" className="text-brand-coral text-micro mt-2.5">
               Those don&apos;t match yet.
             </p>
           ) : null}
           {submit.isError ? (
-            <p role="alert" className="text-brand-coral mt-2.5 text-micro">
+            <p role="alert" className="text-brand-coral text-micro mt-2.5">
               {submit.error.message} —{" "}
               <Link href="/forgot" className="text-brand-violet-deep font-bold">
                 request a new link
@@ -107,7 +107,7 @@ export function ResetScreen({ token }: ResetScreenProps) {
           >
             {submit.isPending ? "Saving…" : "Save password"}
           </Button>
-          <p className="text-muted-foreground mt-3 text-center text-micro">
+          <p className="text-muted-foreground text-micro mt-3 text-center">
             You&apos;ll be signed in straight away.
           </p>
         </form>

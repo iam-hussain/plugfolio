@@ -135,7 +135,10 @@ export function createAdminAuditRepository(db: PrismaClient = prisma): AdminAudi
     },
 
     async admins(): Promise<readonly string[]> {
-      const rows = await db.adminUser.findMany({ select: { email: true }, orderBy: { email: "asc" } });
+      const rows = await db.adminUser.findMany({
+        select: { email: true },
+        orderBy: { email: "asc" },
+      });
       return rows.map((r) => r.email);
     },
   };
@@ -258,15 +261,7 @@ export function createAdminMemberRepository(db: PrismaClient = prisma): AdminMem
         },
       });
       if (!row) return null;
-      const {
-        profiles,
-        managedProfiles,
-        accounts,
-        comments,
-        _count,
-        business,
-        ...member
-      } = row;
+      const { profiles, managedProfiles, accounts, comments, _count, business, ...member } = row;
       return {
         ...member,
         profileCount: _count.profiles,

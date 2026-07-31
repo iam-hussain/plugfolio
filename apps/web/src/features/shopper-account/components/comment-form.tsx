@@ -66,12 +66,12 @@ export function CommentForm({
       }}
     >
       {identities.length > 0 ? (
-        <label className="text-muted-foreground flex items-center gap-2 text-micro">
+        <label className="text-muted-foreground text-micro flex items-center gap-2">
           Commenting as
           <select
             value={asProfileId}
             onChange={(event) => setAsProfileId(event.target.value)}
-            className="border-border bg-background rounded-md border p-1 text-micro"
+            className="border-border bg-background text-micro rounded-md border p-1"
           >
             <option value="">@{ownHandle} (you)</option>
             {identities.map((identity) => (
@@ -94,7 +94,7 @@ export function CommentForm({
         maxLength={500}
         rows={2}
         placeholder={placeholder}
-        className="border-border bg-background rounded-md border p-2 text-copy"
+        className="border-border bg-background text-copy rounded-md border p-2"
       />
       <div className="flex items-center justify-between">
         {submit.isError ? (

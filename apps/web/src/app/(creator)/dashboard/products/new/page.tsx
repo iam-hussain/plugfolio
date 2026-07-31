@@ -62,11 +62,7 @@ export default async function NewProductPage({
       </PageHead>
 
       <DashBody>
-        <ProductEditor
-          profileId={active.id}
-          categories={categories}
-          libraryHref={backHref}
-        />
+        <ProductEditor profileId={active.id} categories={categories} libraryHref={backHref} />
       </DashBody>
     </>
   );

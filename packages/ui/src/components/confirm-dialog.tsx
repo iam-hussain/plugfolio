@@ -29,18 +29,15 @@ import { cn } from "../lib/cn";
  */
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
-const iconBoxVariants = cva(
-  "flex size-[38px] shrink-0 items-center justify-center rounded-[9px]",
-  {
-    variants: {
-      tone: {
-        danger: "bg-destructive/10 text-destructive",
-        primary: "bg-active text-primary",
-      },
+const iconBoxVariants = cva("flex size-[38px] shrink-0 items-center justify-center rounded-[9px]", {
+  variants: {
+    tone: {
+      danger: "bg-destructive/10 text-destructive",
+      primary: "bg-active text-primary",
     },
-    defaultVariants: { tone: "danger" },
   },
-);
+  defaultVariants: { tone: "danger" },
+});
 
 export type ConfirmDialogProps = VariantProps<typeof iconBoxVariants> & {
   trigger: React.ReactNode;
@@ -84,8 +81,7 @@ export function ConfirmDialog({
   const matchId = React.useId();
 
   const blocked =
-    (requireReason && reason.trim().length === 0) ||
-    (requireMatch && typed !== requireMatch.value);
+    (requireReason && reason.trim().length === 0) || (requireMatch && typed !== requireMatch.value);
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -122,7 +118,7 @@ export function ConfirmDialog({
                 <DialogTitle className="font-display text-body font-bold tracking-[-0.01em]">
                   {title}
                 </DialogTitle>
-                <DialogDescription className="text-muted-foreground mt-1.5 text-label leading-[1.55]">
+                <DialogDescription className="text-muted-foreground text-label mt-1.5 leading-[1.55]">
                   {body}
                 </DialogDescription>
               </DialogHeader>
@@ -135,7 +131,7 @@ export function ConfirmDialog({
                 <div className="mt-3.5">
                   <label
                     htmlFor={reasonId}
-                    className="font-mono text-muted-foreground mb-1.5 block text-pico uppercase tracking-[0.08em]"
+                    className="text-muted-foreground text-pico mb-1.5 block font-mono uppercase tracking-[0.08em]"
                   >
                     Reason (required — recorded in the audit log)
                   </label>
@@ -163,7 +159,7 @@ export function ConfirmDialog({
                   ) : null}
                   <label
                     htmlFor={matchId}
-                    className="font-mono text-muted-foreground mb-1.5 mt-3.5 block text-pico uppercase tracking-[0.08em]"
+                    className="text-muted-foreground text-pico mb-1.5 mt-3.5 block font-mono uppercase tracking-[0.08em]"
                   >
                     Type <span className="text-destructive">{requireMatch.value}</span> to confirm
                   </label>

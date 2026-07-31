@@ -49,7 +49,7 @@ export function CustomiseDrawer({ profileId, appearance, role }: CustomiseDrawer
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-[420px]">
         <SheetHeader className="border-border border-b">
-          <SheetTitle className="font-display text-lg font-bold tracking-[-0.02em]">
+          <SheetTitle className="font-display text-body font-bold tracking-[-0.02em]">
             Customise
           </SheetTitle>
           <SheetDescription>

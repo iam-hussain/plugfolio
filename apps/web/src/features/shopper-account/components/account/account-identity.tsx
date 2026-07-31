@@ -34,10 +34,10 @@ export function AccountIdentity({ email, name, image, handle }: AccountIdentityP
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0">
-          <b className="font-display block text-title font-bold tracking-[-0.02em]">
+          <b className="font-display text-title block font-bold tracking-[-0.02em]">
             {name ?? `@${handle}`}
           </b>
-          <span className="text-muted-foreground mt-0.5 block truncate text-copy">
+          <span className="text-muted-foreground text-copy mt-0.5 block truncate">
             @{handle} · {email}
           </span>
         </div>

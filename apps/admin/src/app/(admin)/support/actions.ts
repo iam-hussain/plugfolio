@@ -13,7 +13,11 @@ const ticketId = z.string().uuid();
 export async function resolveSupportTicketAction(formData: FormData): Promise<ActionResult> {
   const admin = await requireAdmin();
   try {
-    await resolveSupportTicket(adminSupportDeps, admin.id, ticketId.parse(formData.get("ticketId")));
+    await resolveSupportTicket(
+      adminSupportDeps,
+      admin.id,
+      ticketId.parse(formData.get("ticketId")),
+    );
   } catch (error) {
     if (error instanceof NotFoundError) return { ok: false, error: error.message };
     throw error;
@@ -25,7 +29,11 @@ export async function resolveSupportTicketAction(formData: FormData): Promise<Ac
 export async function dismissSupportTicketAction(formData: FormData): Promise<ActionResult> {
   const admin = await requireAdmin();
   try {
-    await dismissSupportTicket(adminSupportDeps, admin.id, ticketId.parse(formData.get("ticketId")));
+    await dismissSupportTicket(
+      adminSupportDeps,
+      admin.id,
+      ticketId.parse(formData.get("ticketId")),
+    );
   } catch (error) {
     if (error instanceof NotFoundError) return { ok: false, error: error.message };
     throw error;

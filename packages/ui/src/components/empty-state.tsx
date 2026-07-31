@@ -24,7 +24,10 @@ export function EmptyState({
 }) {
   return (
     <div
-      className={cn("border-border rounded-tile border border-dashed px-6 py-10 text-center", className)}
+      className={cn(
+        "border-border rounded-tile border border-dashed px-6 py-10 text-center",
+        className,
+      )}
     >
       <b className="font-display text-title block font-extrabold tracking-[-0.02em]">{title}</b>
       {children ? (

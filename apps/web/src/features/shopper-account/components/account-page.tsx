@@ -63,10 +63,10 @@ export function AccountPage({
       <AccountNav sections={SECTIONS} />
 
       <div>
-        <p className="text-muted-foreground font-sans text-micro font-semibold uppercase tracking-[0.06em]">
+        <p className="text-muted-foreground text-micro font-sans font-semibold uppercase tracking-[0.06em]">
           Account
         </p>
-        <h1 className="font-display mt-2 text-display font-bold leading-[1.08] tracking-[-0.035em]">
+        <h1 className="font-display text-display mt-2 font-bold leading-[1.08] tracking-[-0.035em]">
           Your account
         </h1>
 

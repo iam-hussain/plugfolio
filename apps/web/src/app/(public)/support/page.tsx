@@ -10,7 +10,8 @@ import { repositories } from "@/server/container";
 // address and signs the ticket with the member's @handle.
 export const metadata: Metadata = {
   title: "Support",
-  description: "Contact Plugfolio support — account trouble, lost email, merges, and anything else.",
+  description:
+    "Contact Plugfolio support — account trouble, lost email, merges, and anything else.",
   alternates: { canonical: "/support" },
   openGraph: { url: "/support" },
 };
@@ -32,14 +33,14 @@ export default async function SupportPage({
     : null;
 
   return (
-    <main className="mx-auto w-full max-w-[680px] px-5 pt-[clamp(22px,4vw,40px)] pb-[clamp(48px,7vw,88px)]">
-      <p className="text-muted-foreground font-mono tracking-eyebrow text-nano font-semibold uppercase">
+    <main className="mx-auto w-full max-w-[680px] px-5 pb-[clamp(48px,7vw,88px)] pt-[clamp(22px,4vw,40px)]">
+      <p className="text-muted-foreground tracking-eyebrow text-nano font-mono font-semibold uppercase">
         Help
       </p>
-      <h1 className="font-display mt-2.5 text-display-lg font-extrabold tracking-[-0.035em]">
+      <h1 className="font-display text-display-lg mt-2.5 font-extrabold tracking-[-0.035em]">
         What can we help with?
       </h1>
-      <p className="text-muted-foreground mt-3 max-w-[50ch] text-copy leading-[1.5]">
+      <p className="text-muted-foreground text-copy mt-3 max-w-[50ch] leading-[1.5]">
         Pick the closest issue — a person reads every ticket and replies by email.
       </p>
       <SupportForm handle={handle} initialCategory={category} initialEmail={email} />

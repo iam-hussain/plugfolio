@@ -47,8 +47,12 @@ function makeDeps(
     productUrl?: string | null;
   } = {},
 ) {
-  const { connected = true, profileCount = 1, metadata = null, productUrl = "https://a.test/x" } =
-    options;
+  const {
+    connected = true,
+    profileCount = 1,
+    metadata = null,
+    productUrl = "https://a.test/x",
+  } = options;
   const created: { username: string }[] = [];
   const taggedRows: { title: string; imageUrl: string | null; priceCents: number | null }[] = [];
   const updates: string[] = [];
@@ -60,9 +64,7 @@ function makeDeps(
       return userId === USER ? [{ id: PROFILE_ID, username: "lena" }] : [];
     },
     async listAccessibleByUser(userId) {
-      return userId === USER
-        ? [{ id: PROFILE_ID, username: "lena", role: "admin" as const }]
-        : [];
+      return userId === USER ? [{ id: PROFILE_ID, username: "lena", role: "admin" as const }] : [];
     },
     async exists() {
       return true;
@@ -106,7 +108,13 @@ function makeDeps(
   const products: ProductReadRepository = {
     async findForAttribution(productId) {
       return productId === PRODUCT_ID
-        ? { id: PRODUCT_ID, profileId: PROFILE_ID, affiliateUrl: productUrl, couponCode: null, inStoreNote: null }
+        ? {
+            id: PRODUCT_ID,
+            profileId: PROFILE_ID,
+            affiliateUrl: productUrl,
+            couponCode: null,
+            inStoreNote: null,
+          }
         : null;
     },
     async isTaggedToPost() {
@@ -244,7 +252,12 @@ describe("createPost / tagProductToPost", () => {
 
   it("tags with grabbed metadata when the page is readable", async () => {
     const { deps, taggedRows } = makeDeps({
-      metadata: { title: "Everyday Tote", imageUrl: "https://x.test/t.jpg", priceCents: 4900, currency: "usd" },
+      metadata: {
+        title: "Everyday Tote",
+        imageUrl: "https://x.test/t.jpg",
+        priceCents: 4900,
+        currency: "usd",
+      },
     });
     await tagProductToPost(deps, USER, tagInput);
     expect(taggedRows[0]).toEqual({

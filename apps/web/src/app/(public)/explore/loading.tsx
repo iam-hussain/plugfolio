@@ -11,10 +11,7 @@ import { cn, measure, Skeleton, SkeletonScreen } from "@plugfolio/ui";
  */
 export default function Loading() {
   return (
-    <SkeletonScreen
-      label="Loading creators and products"
-      className={cn(measure(), "pb-14 pt-6")}
-    >
+    <SkeletonScreen label="Loading creators and products" className={cn(measure(), "pb-14 pt-6")}>
       <Skeleton className="h-9 w-40" />
 
       <div className="mt-5 flex flex-wrap gap-2.5">

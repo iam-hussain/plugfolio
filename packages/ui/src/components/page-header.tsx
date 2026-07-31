@@ -18,10 +18,8 @@ export function PageHeader({ title, subtitle, children, className }: PageHeaderP
   return (
     <div className={cn("mb-[18px] flex flex-wrap items-end justify-between gap-4", className)}>
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-[-0.02em]">{title}</h1>
-        {subtitle ? (
-          <p className="text-muted-foreground mt-1 text-micro">{subtitle}</p>
-        ) : null}
+        <h1 className="font-display text-name font-bold tracking-[-0.02em]">{title}</h1>
+        {subtitle ? <p className="text-muted-foreground text-micro mt-1">{subtitle}</p> : null}
       </div>
       {children ? <div className="flex flex-wrap items-center gap-2">{children}</div> : null}
     </div>

@@ -1,6 +1,22 @@
-import type { AdPlacement, DiscoveryCreator, DiscoveryPost, DiscoveryProduct } from "@plugfolio/core";
+import type {
+  AdPlacement,
+  DiscoveryCreator,
+  DiscoveryPost,
+  DiscoveryProduct,
+} from "@plugfolio/core";
 import { EXPLORE_PAGE_SIZE } from "@plugfolio/core";
-import { AdSlot, AdSlotWhy, Button, cn, CreatorFan, measure, PostWall, ThingsGrid, WallEnd, WallEndNote } from "@plugfolio/ui";
+import {
+  AdSlot,
+  AdSlotWhy,
+  Button,
+  cn,
+  CreatorFan,
+  measure,
+  PostWall,
+  ThingsGrid,
+  WallEnd,
+  WallEndNote,
+} from "@plugfolio/ui";
 import Image from "next/image";
 import type { Route } from "next";
 import { Search } from "lucide-react";
@@ -9,6 +25,12 @@ import { CreatorCard } from "./creator-card";
 import { PostWallCard } from "./post-wall-card";
 import { ProductCard } from "./product-card";
 import { cva } from "class-variance-authority";
+
+/** A results section takes a rule above it only when something precedes it. */
+const sectionHead = cva("flex items-baseline justify-between gap-4", {
+  variants: { divided: { true: "border-border border-t pt-[22px]", false: "" } },
+  defaultVariants: { divided: false },
+});
 
 /** The scope chips sit on the violet band, so their states are white-on-tint. */
 const scopeChip = cva(
@@ -23,7 +45,6 @@ const scopeChip = cva(
     defaultVariants: { active: false },
   },
 );
-
 
 /**
  * The Explore surface (DESIGN explore.html — "the tagged wall"): a mode-coloured
@@ -75,10 +96,10 @@ function Empty({
 }) {
   return (
     <div className="border-border bg-card rounded-bay my-8 border p-[clamp(34px,6vw,64px)] text-center">
-      <h2 className="font-display mx-auto max-w-[24ch] text-display-sm font-bold tracking-[-0.03em]">
+      <h2 className="font-display text-display-sm mx-auto max-w-[24ch] font-bold tracking-[-0.03em]">
         {title}
       </h2>
-      <p className="text-muted-foreground mx-auto mt-3 max-w-[44ch] text-copy leading-[1.6]">
+      <p className="text-muted-foreground text-copy mx-auto mt-3 max-w-[44ch] leading-[1.6]">
         {copy}
       </p>
       <Button variant={cta.primary ? "primary" : "secondary"} asChild className="mt-6">
@@ -91,7 +112,9 @@ function Empty({
 export function ExploreScreen({ tab, query, creators, posts, products, ad }: ExploreScreenProps) {
   // What the wall actually rendered, and whether the read hit its cap.
   const shown = creators.length + posts.length + products.length;
-  const atCap = [creators.length, posts.length, products.length].some((n) => n >= EXPLORE_PAGE_SIZE);
+  const atCap = [creators.length, posts.length, products.length].some(
+    (n) => n >= EXPLORE_PAGE_SIZE,
+  );
   const showCreators = tab === "all" || tab === "creators";
   const showPosts = tab === "all" || tab === "posts";
   const showProducts = tab === "all" || tab === "products";
@@ -107,12 +130,12 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
     <div className="bg-background min-h-[70vh]">
       {/* ── the gradient hero (shopper mode) ── */}
       <div data-role="shopper" className="bg-role-gradient text-white">
-        <div className={cn(measure(), "pt-8 pb-16")}>
+        <div className={cn(measure(), "pb-16 pt-8")}>
           <div className="flex flex-wrap items-baseline gap-4">
             <h1 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
               Explore
             </h1>
-            <p className="rounded-pill bg-white/15 px-3.5 py-1.5 font-mono text-nano font-bold tracking-[0.04em] uppercase">
+            <p className="rounded-pill text-nano bg-white/15 px-3.5 py-1.5 font-mono font-bold uppercase tracking-[0.04em]">
               {count}
             </p>
           </div>
@@ -123,7 +146,7 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
             role="search"
             className="mt-6 flex max-w-[640px] flex-wrap gap-2.5"
           >
-            <label className="flex min-h-[54px] flex-1 basis-[260px] items-center gap-2.5 rounded-pill border border-white/30 bg-white/15 px-4 focus-within:border-white">
+            <label className="rounded-pill flex min-h-[54px] flex-1 basis-[260px] items-center gap-2.5 border border-white/30 bg-white/15 px-4 focus-within:border-white">
               <Search aria-hidden className="size-5 shrink-0" />
               <span className="sr-only">Search posts, people and things</span>
               <input
@@ -138,7 +161,7 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
             </label>
             <button
               type="submit"
-              className="bg-card text-foreground rounded-pill min-h-[54px] px-6 text-copy font-semibold"
+              className="bg-card text-foreground rounded-pill text-copy min-h-[54px] px-6 font-semibold"
             >
               Search
             </button>
@@ -167,7 +190,7 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
 
       {/* ── the sheet (canvas) ── */}
       <div className="bg-background rounded-t-bay relative z-10 -mt-6">
-        <div className={cn(measure(), "pt-8 pb-16")}>
+        <div className={cn(measure(), "pb-16 pt-8")}>
           {!hasResults ? (
             query ? (
               <Empty
@@ -179,7 +202,11 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
               <Empty
                 title="Nothing here yet — creators are on their way."
                 copy="This is the only screen in Plugfolio where there is genuinely nothing to shop. If you make content, this is a good moment to claim your handle."
-                cta={{ label: "Create your page", href: "/join?as=creator" as Route, primary: true }}
+                cta={{
+                  label: "Create your page",
+                  href: "/join?as=creator" as Route,
+                  primary: true,
+                }}
               />
             )
           ) : (
@@ -187,13 +214,13 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
               {showCreators && creators.length > 0 ? (
                 <section>
                   <div className="flex items-baseline justify-between gap-4">
-                    <h2 className="font-display text-xl font-bold tracking-[-0.02em]">
+                    <h2 className="font-display text-title font-bold tracking-[-0.02em]">
                       {query ? `Creators · ${creators.length}` : "Creators"}
                     </h2>
                     {tab === "all" ? (
                       <Link
                         href={scopeHref("creators", query)}
-                        className="text-brand-violet-deep text-label font-bold whitespace-nowrap"
+                        className="text-brand-violet-deep text-label whitespace-nowrap font-bold"
                       >
                         See all creators →
                       </Link>
@@ -213,13 +240,9 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
 
               {showPosts && posts.length > 0 ? (
                 <section className={showCreators && creators.length > 0 ? "mt-2" : ""}>
-                  <div
-                    className={`flex items-baseline justify-between gap-4 ${
-                      showCreators && creators.length > 0 ? "border-border border-t pt-[22px]" : ""
-                    }`}
-                  >
+                  <div className={sectionHead({ divided: showCreators && creators.length > 0 })}>
                     <div className="flex items-baseline gap-3">
-                      <h2 className="font-display text-xl font-bold tracking-[-0.02em]">
+                      <h2 className="font-display text-title font-bold tracking-[-0.02em]">
                         {query ? `Posts · ${posts.length}` : "Latest posts"}
                       </h2>
                       <span className="text-muted-foreground text-label">
@@ -229,7 +252,7 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
                     {tab === "all" ? (
                       <Link
                         href={scopeHref("posts", query)}
-                        className="text-brand-violet-deep text-label font-bold whitespace-nowrap"
+                        className="text-brand-violet-deep text-label whitespace-nowrap font-bold"
                       >
                         See all posts →
                       </Link>
@@ -279,22 +302,25 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
                   }
                 >
                   <div
-                    className={`flex items-baseline justify-between gap-4 ${
-                      (showCreators && creators.length > 0) || (showPosts && posts.length > 0)
-                        ? "border-border border-t pt-[22px]"
-                        : ""
-                    }`}
+                    className={sectionHead({
+                      divided:
+                        (showCreators && creators.length > 0) || (showPosts && posts.length > 0),
+                    })}
                   >
                     <div className="flex items-baseline gap-3">
-                      <h2 className="font-display text-xl font-bold tracking-[-0.02em]">Products</h2>
+                      <h2 className="font-display text-title font-bold tracking-[-0.02em]">
+                        Products
+                      </h2>
                       <span className="text-muted-foreground text-label">
-                        {query ? `${products.length} match “${query}”` : `${products.length} tagged`}
+                        {query
+                          ? `${products.length} match “${query}”`
+                          : `${products.length} tagged`}
                       </span>
                     </div>
                     {tab === "all" ? (
                       <Link
                         href={scopeHref("products", query)}
-                        className="text-brand-violet-deep text-label font-bold whitespace-nowrap"
+                        className="text-brand-violet-deep text-label whitespace-nowrap font-bold"
                       >
                         See all products →
                       </Link>

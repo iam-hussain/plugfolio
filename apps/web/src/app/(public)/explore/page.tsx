@@ -14,8 +14,7 @@ import { adPlacementDeps, repositories } from "@/server/container";
 // read service directly (§6.11); search/tab arrive as URL params — never a wall.
 export const metadata: Metadata = {
   title: "Explore",
-  description:
-    "Browse creators and shop their tagged products — search freely, no account needed.",
+  description: "Browse creators and shop their tagged products — search freely, no account needed.",
   // Search/tab params (?q, ?tab) are the same page — canonicalize to the bare
   // route so engines don't split its authority across every query string.
   alternates: { canonical: "/explore" },

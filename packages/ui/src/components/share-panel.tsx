@@ -24,15 +24,18 @@ export function ShareModes({ children }: { children: React.ReactNode }) {
   );
 }
 
-const shareMode = cva("rounded-nest text-micro min-h-[38px] flex-1 border-0 bg-transparent font-bold", {
-  variants: {
-    selected: {
-      true: "bg-foreground text-background",
-      false: "text-muted-foreground",
+const shareMode = cva(
+  "rounded-nest text-micro min-h-[38px] flex-1 border-0 bg-transparent font-bold",
+  {
+    variants: {
+      selected: {
+        true: "bg-foreground text-background",
+        false: "text-muted-foreground",
+      },
     },
+    defaultVariants: { selected: false },
   },
-  defaultVariants: { selected: false },
-});
+);
 
 export function ShareMode({
   selected,
@@ -64,7 +67,7 @@ export function SharePlate({
   action: React.ReactNode;
 }) {
   return (
-    <div className="border-border bg-card flex items-center gap-2.5 rounded-pill border py-1.5 pl-4 pr-1.5">
+    <div className="border-border bg-card rounded-pill flex items-center gap-2.5 border py-1.5 pl-4 pr-1.5">
       <span className="text-label min-w-0 flex-1 truncate font-semibold tracking-[0.01em]">
         {prefix}
         <b className="text-primary font-bold">{handle}</b>
@@ -91,9 +94,7 @@ export function ShareCopy({
   className,
   ...props
 }: React.ComponentProps<"button"> & { done?: boolean }) {
-  return (
-    <button type="button" className={cn(shareCopy({ done }), className)} {...props} />
-  );
+  return <button type="button" className={cn(shareCopy({ done }), className)} {...props} />;
 }
 
 /**
@@ -170,9 +171,7 @@ export function ShareQr({ children, note }: { children: React.ReactNode; note?: 
   return (
     <div className="border-border rounded-tile grid justify-items-center gap-3 border border-dashed p-[22px]">
       <div className="rounded-image w-[min(220px,60vw)] bg-white p-2">{children}</div>
-      {note ? (
-        <p className="text-faint text-micro m-0 text-center">{note}</p>
-      ) : null}
+      {note ? <p className="text-faint text-micro m-0 text-center">{note}</p> : null}
     </div>
   );
 }

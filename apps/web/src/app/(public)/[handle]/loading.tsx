@@ -15,10 +15,7 @@ import { cn, measure, Skeleton, SkeletonScreen } from "@plugfolio/ui";
  */
 export default function Loading() {
   return (
-    <SkeletonScreen
-      label="Loading this creator's page"
-      className={cn(measure(), "pb-14")}
-    >
+    <SkeletonScreen label="Loading this creator's page" className={cn(measure(), "pb-14")}>
       {/* Cover — the tallest thing on the page and the one whose absence
           would move everything below it. */}
       <Skeleton className="rounded-tile h-[168px] w-full" />

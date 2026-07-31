@@ -42,7 +42,7 @@ export function ProposeTermsForm({ collabId }: { collabId: string }) {
 
   return (
     <Collapsible>
-      <CollapsibleTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-copy">
+      <CollapsibleTrigger className="text-muted-foreground hover:text-foreground text-copy flex items-center gap-1">
         <ChevronDown className="size-4" />
         Propose terms
       </CollapsibleTrigger>

@@ -113,7 +113,7 @@ export function CreatorByline({
 /** The 44px round avatar the byline uses. */
 export function BylineAvatar({ initial, src }: { initial: string; src?: string | null }) {
   return (
-    <span className="bg-active text-primary font-display grid size-11 flex-none place-items-center overflow-hidden rounded-pill text-lg font-extrabold">
+    <span className="bg-active text-primary font-display rounded-pill text-body grid size-11 flex-none place-items-center overflow-hidden font-extrabold">
       {src ? (
         // A plain <img>: this package is framework-free and never imports next/image.
         <img src={src} alt="" className="size-full object-cover" />
@@ -127,7 +127,7 @@ export function BylineAvatar({ initial, src }: { initial: string; src?: string |
 /** "their own product" — quiet, and the action word changes with it. */
 export function OwnBadge({ children = "their own product" }: { children?: React.ReactNode }) {
   return (
-    <span className="bg-active text-primary text-micro mb-1.5 inline-flex items-center gap-[5px] rounded-pill px-[9px] py-[3px] font-bold">
+    <span className="bg-active text-primary text-micro rounded-pill mb-1.5 inline-flex items-center gap-[5px] px-[9px] py-[3px] font-bold">
       <Check className="size-3" strokeWidth={2.6} aria-hidden />
       {children}
     </span>

@@ -88,7 +88,7 @@ export function SocialsRow({ links, className }: SocialsRowProps) {
             rel="noopener noreferrer me"
             aria-label={link.label}
             title={link.label}
-            className="border-border bg-card text-muted-foreground hover:border-primary hover:text-primary hover:bg-active grid size-10 place-items-center rounded-pill border transition-colors duration-200 ease-design"
+            className="border-border bg-card text-muted-foreground hover:border-primary hover:text-primary hover:bg-active rounded-pill ease-design grid size-10 place-items-center border transition-colors duration-200"
           >
             {ICONS[link.platform]}
           </a>

@@ -65,7 +65,7 @@ export function ManagerControls({ profileId, managers, maxManagers }: ManagerCon
                     {display.trim().charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="min-w-0 flex-1 truncate text-copy">{display}</span>
+                <span className="text-copy min-w-0 flex-1 truncate">{display}</span>
                 <Button
                   variant="ghost"
                   size="icon-sm"

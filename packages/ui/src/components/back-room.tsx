@@ -24,13 +24,28 @@ const dashFilter = cva(
     variants: {
       current: {
         true: "bg-foreground border-foreground text-background",
-        false: "border-border bg-card text-muted-foreground hover:border-primary hover:text-primary",
+        false:
+          "border-border bg-card text-muted-foreground hover:border-primary hover:text-primary",
       },
     },
     defaultVariants: { current: false },
   },
 );
 import { measure } from "./measure";
+
+/** The small secondary action in a card foot; danger only reddens on hover. */
+const miniButton = cva(
+  "border-border bg-background text-muted-foreground text-micro rounded-pill inline-flex min-h-9 items-center gap-1.5 border px-3 py-2 font-bold no-underline [&_svg]:size-3.5",
+  {
+    variants: {
+      danger: {
+        true: "hover:border-destructive hover:text-destructive",
+        false: "hover:border-primary hover:text-primary",
+      },
+    },
+    defaultVariants: { danger: false },
+  },
+);
 
 /**
  * THE BACK ROOM (DESIGN styles.css §"THE BACK ROOM", dashboard.html) — the
@@ -60,7 +75,9 @@ export function DashHeader({ children }: { children: React.ReactNode }) {
 
 /** The top row: mark hard left, profile switcher hard right. */
 export function DashTop({ children }: { children: React.ReactNode }) {
-  return <div className="flex items-center gap-3.5 py-3.5 [&>:first-child]:mr-auto">{children}</div>;
+  return (
+    <div className="flex items-center gap-3.5 py-3.5 [&>:first-child]:mr-auto">{children}</div>
+  );
 }
 
 /**
@@ -95,7 +112,13 @@ export function DashTab({
 }
 
 /** The centred column every back-room page body sits in. */
-export function DashPage({ children, className }: { children: React.ReactNode; className?: string }) {
+export function DashPage({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return <main className={cn(measure(), className)}>{children}</main>;
 }
 
@@ -133,15 +156,27 @@ export function PageHeadActions({ children }: { children: React.ReactNode }) {
 }
 
 /** The body below the header: generous top, generous bottom, nothing else. */
-export function DashBody({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("pt-6 pb-12 sm:pt-8 lg:pb-[88px]", className)}>{children}</div>;
+export function DashBody({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={cn("pb-12 pt-6 sm:pt-8 lg:pb-[88px]", className)}>{children}</div>;
 }
 
 /* ── Cards, the back room's unit ───────────────────────────────────────────
    Distinct from shadcn's Card: this one is the operate-mode panel — a white
    lift on the canvas with the tile radius, stacked with a 14px rhythm. */
 
-export function DashCard({ children, className }: { children: React.ReactNode; className?: string }) {
+export function DashCard({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <section
       className={cn(
@@ -230,10 +265,16 @@ export function ActiveProfile({
  * number rather than a general encouragement — an always-present nudge is
  * wallpaper.
  */
-export function Nudge({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) {
+export function Nudge({
+  children,
+  action,
+}: {
+  children: React.ReactNode;
+  action?: React.ReactNode;
+}) {
   return (
     <div className="border-primary bg-active rounded-tile mt-3.5 flex flex-wrap items-center gap-3 border px-4 py-3.5">
-      <p className="text-muted-foreground text-copy m-0 flex-[1_1_240px] [&_b]:text-foreground">
+      <p className="text-muted-foreground text-copy [&_b]:text-foreground m-0 flex-[1_1_240px]">
         {children}
       </p>
       {action}
@@ -308,7 +349,7 @@ export function Connection({
 }) {
   return (
     <div className="border-border bg-background rounded-tile flex flex-wrap items-center gap-3 border px-4 py-[15px]">
-      <span className="bg-card border-border text-muted-foreground grid size-10 flex-none place-items-center rounded-pill border [&_svg]:size-[19px]">
+      <span className="bg-card border-border text-muted-foreground rounded-pill grid size-10 flex-none place-items-center border [&_svg]:size-[19px]">
         {icon}
       </span>
       <span className="min-w-0 flex-[1_1_160px]">
@@ -340,7 +381,7 @@ export function ConnectionChannel({ children }: { children: React.ReactNode }) {
 export function ConnectedAs({ children }: { children: React.ReactNode }) {
   return (
     <span className="text-foreground text-micro inline-flex items-center gap-1.5 font-bold">
-      <span className="bg-accent size-2 flex-none rounded-pill" aria-hidden />
+      <span className="bg-accent rounded-pill size-2 flex-none" aria-hidden />
       {children}
     </span>
   );
@@ -465,13 +506,7 @@ export function MiniButton({
   return (
     <Comp
       type={asChild ? undefined : "button"}
-      className={cn(
-        "border-border bg-background text-muted-foreground text-micro rounded-pill inline-flex min-h-9 items-center gap-1.5 border px-3 py-2 font-bold no-underline [&_svg]:size-3.5",
-        danger
-          ? "hover:border-destructive hover:text-destructive"
-          : "hover:border-primary hover:text-primary",
-        className,
-      )}
+      className={cn(miniButton({ danger }), className)}
       {...props}
     />
   );
@@ -520,12 +555,14 @@ export function DashField({
  * field's own margin landed ON TOP of the gap, so two-column rows sat 28px
  * apart while single-column rows sat 14px.
  */
-export function DashFieldPair({ children, className }: { children: React.ReactNode; className?: string }) {
-  return (
-    <div className={cn("grid gap-3.5 md:grid-cols-2 [&>*]:mb-0", className)}>
-      {children}
-    </div>
-  );
+export function DashFieldPair({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={cn("grid gap-3.5 md:grid-cols-2 [&>*]:mb-0", className)}>{children}</div>;
 }
 
 /**
@@ -534,11 +571,7 @@ export function DashFieldPair({ children, className }: { children: React.ReactNo
  * are one; a nested `<form>` is invalid HTML and the browser silently drops it,
  * which shows up as a hydration mismatch rather than as anything readable.
  */
-export function DashFieldRow({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function DashFieldRow({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div className={cn("mt-3 flex flex-wrap gap-2", className)} {...props}>
       {children}
@@ -547,11 +580,7 @@ export function DashFieldRow({
 }
 
 /** The same row when it IS the form — a search box, an invite, an add. */
-export function DashFieldForm({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"form">) {
+export function DashFieldForm({ children, className, ...props }: React.ComponentProps<"form">) {
   return (
     <form className={cn("mt-3 flex flex-wrap gap-2", className)} {...props}>
       {children}
@@ -605,7 +634,7 @@ export function DangerZone({
   return (
     <div className="border-border rounded-tile border border-dashed px-5 py-[18px]">
       <b className="text-destructive text-label block font-bold">{title}</b>
-      <p className="text-muted-foreground text-copy mt-1.5 mb-3.5 max-w-[56ch]">{children}</p>
+      <p className="text-muted-foreground text-copy mb-3.5 mt-1.5 max-w-[56ch]">{children}</p>
       {action}
     </div>
   );

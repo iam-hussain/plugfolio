@@ -16,10 +16,7 @@ export type RecordViewDeps = {
   now: () => Date;
 };
 
-export async function recordView(
-  deps: RecordViewDeps,
-  command: RecordViewCommand,
-): Promise<View> {
+export async function recordView(deps: RecordViewDeps, command: RecordViewCommand): Promise<View> {
   const profileId =
     command.surface === "profile"
       ? await deps.viewTargets.profileIdForUsername(command.username)

@@ -49,11 +49,7 @@ export function SupportCategories({ children }: { children: React.ReactNode }) {
   return <div className="grid grid-cols-1 gap-2 min-[620px]:grid-cols-2">{children}</div>;
 }
 
-export function SupportCategory({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<"input">) {
+export function SupportCategory({ className, children, ...props }: React.ComponentProps<"input">) {
   return (
     <label className="relative block">
       {/* `peer` + sr-only rather than a hidden input plus a <style> tag: the
@@ -62,11 +58,11 @@ export function SupportCategory({
       <span
         className={cn(
           "border-border bg-card text-copy rounded-image flex min-h-[56px] cursor-pointer items-center gap-2.5 border px-4 py-3.5 font-semibold leading-[1.35]",
-          "transition-colors duration-150 ease-design hover:border-primary",
+          "ease-design hover:border-primary transition-colors duration-150",
           // The dot is drawn by the label, so there is no second hit target.
-          "before:border-border before:size-4 before:flex-none before:rounded-pill before:border-2 before:transition-[border-width,border-color] before:duration-150 before:content-['']",
+          "before:border-border before:rounded-pill before:size-4 before:flex-none before:border-2 before:transition-[border-width,border-color] before:duration-150 before:content-['']",
           "peer-checked:border-primary peer-checked:bg-active peer-checked:text-primary peer-checked:before:border-primary peer-checked:before:border-[5px]",
-          "peer-focus-visible:outline peer-focus-visible:outline-[3px] peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary",
+          "peer-focus-visible:outline-primary peer-focus-visible:outline peer-focus-visible:outline-[3px] peer-focus-visible:outline-offset-2",
           className,
         )}
       >
@@ -92,7 +88,7 @@ export function SupportHint({ children }: { children: React.ReactNode }) {
 /** Who the ticket will be signed by — stated before it's sent, not after. */
 export function SupportWho({ children }: { children: React.ReactNode }) {
   return (
-    <span className="bg-active text-primary text-micro mt-[18px] inline-flex items-center gap-[9px] rounded-pill px-4 py-2.5 font-bold uppercase tracking-[0.04em] [&_svg]:size-[15px] [&_svg]:flex-none">
+    <span className="bg-active text-primary text-micro rounded-pill mt-[18px] inline-flex items-center gap-[9px] px-4 py-2.5 font-bold uppercase tracking-[0.04em] [&_svg]:size-[15px] [&_svg]:flex-none">
       {children}
     </span>
   );
@@ -123,7 +119,7 @@ export function SupportNext({
 export function SupportStep({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <li className="flex gap-3.5">
-      <span className="bg-foreground text-background text-micro grid size-7 flex-none place-items-center rounded-pill font-bold tabular-nums">
+      <span className="bg-foreground text-background text-micro rounded-pill grid size-7 flex-none place-items-center font-bold tabular-nums">
         {n}
       </span>
       <span className="text-muted-foreground text-copy min-w-0 leading-[1.55]">{children}</span>

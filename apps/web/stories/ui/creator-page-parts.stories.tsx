@@ -45,7 +45,9 @@ export const Shelves: Story = {
         <ShelfChip href="#">Home</ShelfChip>
         <ShelfChip href="#">Under ₹1,000</ShelfChip>
       </ShelfChips>
-      <ShelfDescription>Everything on and around the desk, including the boring bits.</ShelfDescription>
+      <ShelfDescription>
+        Everything on and around the desk, including the boring bits.
+      </ShelfDescription>
     </div>
   ),
 };
@@ -87,10 +89,15 @@ export const Bands: Story = {
 export const Empty: Story = {
   render: () => (
     <div className="flex max-w-[720px] flex-col gap-4">
-      <EmptyState title="Nothing on this shelf yet" action={<Button variant="secondary">See everything</Button>}>
+      <EmptyState
+        title="Nothing on this shelf yet"
+        action={<Button variant="secondary">See everything</Button>}
+      >
         This shelf is empty — the rest of the page still has everything on it.
       </EmptyState>
-      <EmptyState title="No comments yet">Be the first to ask something about these posts.</EmptyState>
+      <EmptyState title="No comments yet">
+        Be the first to ask something about these posts.
+      </EmptyState>
     </div>
   ),
 };

@@ -85,12 +85,12 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
                     href={post.mediaUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="font-mono text-primary text-nano"
+                    className="text-primary text-nano font-mono"
                   >
                     View media ↗
                   </a>
                 </TableCell>
-                <TableCell className="font-mono text-muted-foreground text-micro">
+                <TableCell className="text-muted-foreground text-micro font-mono">
                   /{post.username}
                 </TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">
@@ -101,7 +101,11 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
                 </TableCell>
                 <TableCell className="text-right">
                   <ConfirmDialog
-                    trigger={<Button size="xs" variant="destructive-outline">Remove</Button>}
+                    trigger={
+                      <Button size="xs" variant="destructive-outline">
+                        Remove
+                      </Button>
+                    }
                     title="Remove this post?"
                     body="The post and its media come off Plugfolio. Tagged products stay live and recorded taps survive. This cannot be undone. Recorded in the audit log."
                     confirmLabel="Remove post"
@@ -122,7 +126,12 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
           </TableBody>
         </Table>
       </Panel>
-      <Pager page={page.page} pageSize={page.pageSize} total={total} hrefFor={pagedHref("/posts", params)} />
+      <Pager
+        page={page.page}
+        pageSize={page.pageSize}
+        total={total}
+        hrefFor={pagedHref("/posts", params)}
+      />
     </BulkSelect>
   );
 }

@@ -39,7 +39,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const Avatar = () => (
-  <span className="bg-active text-primary font-display grid size-8 flex-none place-items-center rounded-pill font-extrabold">
+  <span className="bg-active text-primary font-display rounded-pill grid size-8 flex-none place-items-center font-extrabold">
     M
   </span>
 );
@@ -51,7 +51,15 @@ const QrStandIn = () => (
       const x = i % 21;
       const y = Math.floor(i / 21);
       const finder = (fx: number, fy: number) =>
-        x >= fx && x < fx + 7 && y >= fy && y < fy + 7 && (x === fx || x === fx + 6 || y === fy || y === fy + 6 || (x > fx + 1 && x < fx + 5 && y > fy + 1 && y < fy + 5));
+        x >= fx &&
+        x < fx + 7 &&
+        y >= fy &&
+        y < fy + 7 &&
+        (x === fx ||
+          x === fx + 6 ||
+          y === fy ||
+          y === fy + 6 ||
+          (x > fx + 1 && x < fx + 5 && y > fy + 1 && y < fy + 5));
       const on = finder(0, 0) || finder(14, 0) || finder(0, 14) || (x * y) % 5 === 1;
       return on ? <rect key={i} x={x} y={y} width="1" height="1" fill="#12101C" /> : null;
     })}
@@ -82,11 +90,7 @@ export const Link: Story = {
           handle="mayamoves"
           action={<ShareCopy>Copy</ShareCopy>}
         />
-        <ShareCard
-          avatar={<Avatar />}
-          name="Maya Moves"
-          meta="24 posts · 41 things tagged"
-        />
+        <ShareCard avatar={<Avatar />} name="Maya Moves" meta="24 posts · 41 things tagged" />
         <ShareWaysGrid>
           <ShareWayTile icon={<SocialGlyph platform="instagram" />} label="Instagram bio" />
           <ShareWayTile icon={<MessageCircle aria-hidden />} label="Message" />

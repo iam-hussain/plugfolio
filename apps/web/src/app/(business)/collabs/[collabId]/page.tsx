@@ -83,7 +83,7 @@ export default async function CollabThreadPage({ params }: { params: Promise<Par
     : null;
 
   return (
-    <main className="mx-auto w-full max-w-reading px-5 pb-14">
+    <main className="max-w-reading mx-auto w-full px-5 pb-14">
       {/* Back goes where the viewer came from. Sending a creator to /collabs
           would land them on a business surface they cannot use. */}
       <nav className="py-4">

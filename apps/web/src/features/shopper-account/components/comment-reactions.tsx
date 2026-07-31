@@ -17,7 +17,6 @@ const reactionControl = cva(
   },
 );
 
-
 /**
  * Helpful / not helpful on a comment (lean journey). A creator page's comments
  * are mostly questions about the goods, and the useful answer needs to float
@@ -53,8 +52,7 @@ export function CommentReactions({
       const before = picked;
       setPicked(value);
       setCounts((current) => ({
-        helpful:
-          current.helpful + (value === "helpful" ? 1 : 0) - (before === "helpful" ? 1 : 0),
+        helpful: current.helpful + (value === "helpful" ? 1 : 0) - (before === "helpful" ? 1 : 0),
         unhelpful:
           current.unhelpful + (value === "unhelpful" ? 1 : 0) - (before === "unhelpful" ? 1 : 0),
       }));

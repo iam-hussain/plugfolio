@@ -27,7 +27,5 @@ export default async function BusinessCollabsPage() {
     listMyBusinessCollabs(businessCollabDeps, session.user.id),
   ]);
 
-  return (
-    <BusinessCollabsView business={business} requirements={requirements} collabs={collabs} />
-  );
+  return <BusinessCollabsView business={business} requirements={requirements} collabs={collabs} />;
 }

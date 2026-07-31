@@ -27,7 +27,7 @@ export function PostWallCard({ post, index }: { post: DiscoveryPost; index: numb
 
   return (
     <article
-      className={`${TILE_BG[index % TILE_BG.length]} ${TILT[index % TILT.length]} shadow-rest rounded-card p-2 transition-transform duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:rotate-0 hover:shadow-lift`}
+      className={`${TILE_BG[index % TILE_BG.length]} ${TILT[index % TILT.length]} shadow-rest rounded-card hover:shadow-lift p-2 transition-transform duration-300 ease-out hover:z-10 hover:-translate-y-1.5 hover:rotate-0`}
     >
       <div className="relative">
         <Link
@@ -61,7 +61,7 @@ export function PostWallCard({ post, index }: { post: DiscoveryPost; index: numb
         {more > 0 ? (
           <Link
             href={`/${post.username}/post/${post.id}`}
-            className="bg-foreground text-background shadow-tag rounded-pill absolute bottom-[8%] left-[16%] inline-flex min-h-11 items-center gap-1 px-3.5 text-label font-semibold no-underline"
+            className="bg-foreground text-background shadow-tag rounded-pill text-label absolute bottom-[8%] left-[16%] inline-flex min-h-11 items-center gap-1 px-3.5 font-semibold no-underline"
           >
             {more} more ›
           </Link>
@@ -69,13 +69,13 @@ export function PostWallCard({ post, index }: { post: DiscoveryPost; index: numb
       </div>
       <Link
         href={`/${post.username}`}
-        className="text-tile-foreground flex items-center gap-2 px-1.5 pt-3 pb-1 no-underline"
+        className="text-tile-foreground flex items-center gap-2 px-1.5 pb-1 pt-3 no-underline"
       >
-        <span className="bg-card text-foreground grid size-6 shrink-0 place-items-center rounded-pill text-pico font-bold">
+        <span className="bg-card text-foreground rounded-pill text-pico grid size-6 shrink-0 place-items-center font-bold">
           {post.username.charAt(0).toUpperCase()}
         </span>
-        <span className="truncate text-label font-semibold">@{post.username}</span>
-        <span className="ml-auto text-nano font-bold tabular-nums opacity-80">
+        <span className="text-label truncate font-semibold">@{post.username}</span>
+        <span className="text-nano ml-auto font-bold tabular-nums opacity-80">
           {post.productCount > 0
             ? `${post.productCount} thing${post.productCount === 1 ? "" : "s"}`
             : "Nothing tagged"}

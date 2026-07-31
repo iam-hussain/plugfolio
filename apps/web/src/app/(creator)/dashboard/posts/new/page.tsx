@@ -2,13 +2,7 @@ import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getMyProfiles, listMyCategories } from "@plugfolio/core";
-import {
-  DashBody,
-  EditorGrid,
-  EmptyState,
-  PageHead,
-  PageHeadTitle,
-} from "@plugfolio/ui";
+import { DashBody, EditorGrid, EmptyState, PageHead, PageHeadTitle } from "@plugfolio/ui";
 import { ChevronLeft } from "lucide-react";
 import { PostForm } from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
@@ -66,10 +60,7 @@ export default async function NewPostPage({
 
       <DashBody>
         <EditorGrid>
-          <PostForm
-            profileId={active.id}
-            categories={categories}
-          />
+          <PostForm profileId={active.id} categories={categories} />
 
           {/* A single line, not a disabled form: there is nothing to pin a
               product onto until the post exists. */}

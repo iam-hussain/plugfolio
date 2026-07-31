@@ -90,8 +90,7 @@ export function createCommentRepository(db: PrismaClient = prisma): CommentRepos
     const ordered = [...ids].sort((a, b) => {
       if (query.sort === "oldest") return a.createdAt.getTime() - b.createdAt.getTime();
       if (query.sort === "helpful") {
-        const helpful =
-          (counts.get(b.id)?.helpful ?? 0) - (counts.get(a.id)?.helpful ?? 0);
+        const helpful = (counts.get(b.id)?.helpful ?? 0) - (counts.get(a.id)?.helpful ?? 0);
         // Ties fall back to newest, so an unreacted thread still reads sanely.
         if (helpful !== 0) return helpful;
       }

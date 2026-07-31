@@ -17,7 +17,12 @@ export const WithLabel: Story = {
   render: () => (
     <div className="flex w-80 flex-col gap-2">
       <Label htmlFor="reserved">Reserved usernames</Label>
-      <Textarea id="reserved" rows={5} className="font-mono" defaultValue={"vip\nwinner\ngiveaway"} />
+      <Textarea
+        id="reserved"
+        rows={5}
+        className="font-mono"
+        defaultValue={"vip\nwinner\ngiveaway"}
+      />
     </div>
   ),
 };

@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { FOLLOWING_PAGE_SIZE, followingQuery, getFollowingList, markFollowingSeen } from "@plugfolio/core";
+import {
+  FOLLOWING_PAGE_SIZE,
+  followingQuery,
+  getFollowingList,
+  markFollowingSeen,
+} from "@plugfolio/core";
 import { FollowingPage } from "@/features/shopper-account";
 import { auth } from "@/server/auth";
 import { clock, repositories } from "@/server/container";

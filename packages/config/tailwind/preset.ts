@@ -154,6 +154,10 @@ const preset = {
         "display-sm": ["clamp(1.5rem,3vw,2rem)", { lineHeight: "1.1" }],
         display: ["clamp(1.875rem,3.6vw,3rem)", { lineHeight: "1.05" }],
         "display-lg": ["clamp(2rem,4vw,2.75rem)", { lineHeight: "1.05" }],
+        /* The two marketing heroes: a section-leading page headline, and the
+           landing wordmark line — the single biggest type on the site. */
+        "display-xl": ["clamp(2.25rem,5vw,3.5rem)", { lineHeight: "1.04" }],
+        "display-2xl": ["clamp(2.25rem,6.2vw,5rem)", { lineHeight: "1.02" }],
       },
       borderRadius: {
         sm: "0.5rem",

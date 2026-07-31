@@ -46,14 +46,14 @@ export function LoopStep({
   return (
     <div
       className={cn(
-        "[&_[data-artefact]]:transition-transform [&_[data-artefact]]:duration-300 [&_[data-artefact]]:ease-design",
+        "[&_[data-artefact]]:ease-design [&_[data-artefact]]:transition-transform [&_[data-artefact]]:duration-300",
         "[&:nth-child(1)_[data-artefact]]:rotate-[-1.6deg] [&:nth-child(2)_[data-artefact]]:rotate-[1.4deg] [&:nth-child(3)_[data-artefact]]:rotate-[-1deg]",
         "[&:hover_[data-artefact]]:-translate-y-1.5 [&:hover_[data-artefact]]:rotate-0",
       )}
     >
       {artefact}
       <div className="flex items-baseline gap-2.5 px-1.5 pb-0.5 pt-3">
-        <span className="bg-foreground text-background text-micro grid size-[26px] flex-none place-items-center rounded-pill font-bold">
+        <span className="bg-foreground text-background text-micro rounded-pill grid size-[26px] flex-none place-items-center font-bold">
           {n}
         </span>
         <div>
@@ -93,7 +93,7 @@ export function RetailerFrame({
         </div>
         {/* Their button, not ours — outlined and quiet, so it never reads as a
             Plugfolio action a shopper could take from this page. */}
-        <span className="border-border text-muted-foreground text-micro ml-auto whitespace-nowrap rounded-pill border px-3.5 py-[7px] font-bold">
+        <span className="border-border text-muted-foreground text-micro rounded-pill ml-auto whitespace-nowrap border px-3.5 py-[7px] font-bold">
           {buy}
         </span>
       </div>
@@ -141,7 +141,7 @@ export function HandleClaim({
   action: React.ReactNode;
 }) {
   return (
-    <div className="border-border bg-card mt-[clamp(20px,3vw,28px)] flex min-h-[62px] items-center gap-0.5 rounded-pill border py-1.5 pl-5 pr-2">
+    <div className="border-border bg-card rounded-pill mt-[clamp(20px,3vw,28px)] flex min-h-[62px] items-center gap-0.5 border py-1.5 pl-5 pr-2">
       <span className="text-faint text-copy whitespace-nowrap">{prefix}</span>
       <span className="text-copy text-foreground font-bold">{handle}</span>
       <span className="ml-auto whitespace-nowrap">{action}</span>
@@ -166,7 +166,7 @@ export function ProofRow({
     <div className="border-border bg-card rounded-tile mt-[clamp(20px,3vw,28px)] flex items-center gap-4 border p-4 pr-5">
       <span className="rounded-image bg-active size-16 flex-none overflow-hidden">{thumb}</span>
       <span className="min-w-0">
-        <b className="font-display text-title block font-bold tracking-[-0.02em] tabular-nums">
+        <b className="font-display text-title block font-bold tabular-nums tracking-[-0.02em]">
           {figure}
         </b>
         <span className="text-faint text-micro mt-0.5 block font-semibold uppercase tracking-[0.06em]">
@@ -174,7 +174,7 @@ export function ProofRow({
         </span>
       </span>
       {flag ? (
-        <span className="bg-accent text-accent-foreground text-micro ml-auto rounded-pill px-3 py-1.5 font-bold uppercase tracking-[0.06em]">
+        <span className="bg-accent text-accent-foreground text-micro rounded-pill ml-auto px-3 py-1.5 font-bold uppercase tracking-[0.06em]">
           {flag}
         </span>
       ) : null}
@@ -228,7 +228,9 @@ export function BriefCard({
       <b className="font-display text-title my-2 block font-bold tracking-[-0.02em]">{title}</b>
       <p className="text-muted-foreground text-copy m-0 leading-[1.55]">{children}</p>
       {meta ? (
-        <div className="border-border mt-[18px] flex items-center gap-2 border-t pt-3.5">{meta}</div>
+        <div className="border-border mt-[18px] flex items-center gap-2 border-t pt-3.5">
+          {meta}
+        </div>
       ) : null}
     </div>
   );
@@ -251,18 +253,12 @@ export function CollabBubble({
 }) {
   if (from === "deal") {
     return (
-      <p className="bg-accent text-accent-foreground text-copy m-0 justify-self-center rounded-pill px-[22px] py-[11px] text-center font-bold leading-[1.5]">
+      <p className="bg-accent text-accent-foreground text-copy rounded-pill m-0 justify-self-center px-[22px] py-[11px] text-center font-bold leading-[1.5]">
         {children}
       </p>
     );
   }
-  return (
-    <p
-      className={chatBubble({ from })}
-    >
-      {children}
-    </p>
-  );
+  return <p className={chatBubble({ from })}>{children}</p>;
 }
 
 /**

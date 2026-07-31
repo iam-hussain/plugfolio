@@ -17,7 +17,11 @@ type Story = StoryObj<typeof ConfirmButton>;
 export const Takedown: Story = {
   render: () => (
     <form onSubmit={(event) => event.preventDefault()} className="flex gap-2">
-      <ConfirmButton size="sm" variant="destructive" message="Delete this comment? This can't be undone.">
+      <ConfirmButton
+        size="sm"
+        variant="destructive"
+        message="Delete this comment? This can't be undone."
+      >
         Delete
       </ConfirmButton>
       <ConfirmButton size="sm" variant="ghost" message="Clear this product's coupon?">

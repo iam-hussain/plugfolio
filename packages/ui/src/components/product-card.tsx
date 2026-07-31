@@ -15,7 +15,13 @@ import { cn } from "../lib/cn";
  * question is whether that height sits inside the card or under it. Inside, so
  * the action is pushed to the foot and the Buy buttons line up across the row.
  */
-export function ProductList({ children, className }: { children: React.ReactNode; className?: string }) {
+export function ProductList({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <ul className={cn("mt-5 grid list-none gap-3.5 p-0 min-[900px]:grid-cols-2", className)}>
       {children}
@@ -65,7 +71,7 @@ export function ProductCard({
           {badge}
           <h3 className="text-label m-0 font-bold tracking-[-0.01em]">{title}</h3>
           {price ? (
-            <p className="text-name m-0 mt-1.5 font-extrabold tracking-[-0.02em] tabular-nums">
+            <p className="text-name m-0 mt-1.5 font-extrabold tabular-nums tracking-[-0.02em]">
               {price}
             </p>
           ) : null}

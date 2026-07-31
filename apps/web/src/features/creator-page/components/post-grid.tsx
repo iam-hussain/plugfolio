@@ -11,7 +11,6 @@ const cardCopy = cva("text-muted-foreground mt-1 overflow-hidden text-copy leadi
   defaultVariants: { layout: "stack" },
 });
 
-
 /**
  * The creator page's Shop wall (DESIGN creator.html §.grid): one grid holding
  * two kinds of tile — a **post** (photo + white product-count chip) and a
@@ -141,17 +140,11 @@ function Words({
   const isList = layout === "list";
   return (
     <div className={isList ? "min-w-0 flex-1" : "px-1 pt-2.5"}>
-      <b className="block truncate text-label font-bold leading-[1.35]">{title}</b>
-      {copy ? (
-        <p
-          className={cardCopy({ layout: isList ? "list" : "stack" })}
-        >
-          {copy}
-        </p>
-      ) : null}
-      <span className="text-primary mt-2 block text-label font-bold">{action}</span>
+      <b className="text-label block truncate font-bold leading-[1.35]">{title}</b>
+      {copy ? <p className={cardCopy({ layout: isList ? "list" : "stack" })}>{copy}</p> : null}
+      <span className="text-primary text-label mt-2 block font-bold">{action}</span>
       {note && !isList ? (
-        <span className="text-faint mt-1.5 block text-micro leading-[1.4]">{note}</span>
+        <span className="text-faint text-micro mt-1.5 block leading-[1.4]">{note}</span>
       ) : null}
     </div>
   );
@@ -212,7 +205,7 @@ function ProductTile({
         note={product.inStoreNote}
       />
       {layout === "list" && price ? (
-        <span className="text-foreground shrink-0 text-label font-extrabold tabular-nums">
+        <span className="text-foreground text-label shrink-0 font-extrabold tabular-nums">
           {price}
         </span>
       ) : null}
@@ -259,7 +252,7 @@ function PostTile({
         action="Open post →"
       />
       {layout === "list" && tagged > 0 ? (
-        <span className="text-muted-foreground shrink-0 text-micro font-bold tabular-nums">
+        <span className="text-muted-foreground text-micro shrink-0 font-bold tabular-nums">
           {tagged} tagged
         </span>
       ) : null}
@@ -269,7 +262,7 @@ function PostTile({
 
 export function PostGrid({ handle, posts, products = [], layout = "grid" }: PostGridProps) {
   if (posts.length === 0 && products.length === 0) {
-    return <p className="text-muted-foreground py-12 text-center text-copy">Nothing here yet.</p>;
+    return <p className="text-muted-foreground text-copy py-12 text-center">Nothing here yet.</p>;
   }
 
   return (

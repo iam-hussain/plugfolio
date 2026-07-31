@@ -55,7 +55,7 @@ export function AccountConnections({ youtube, connectAction }: AccountConnection
           status="unavailable"
         />
       </div>
-      <p className="text-muted-foreground mt-3.5 max-w-[58ch] text-copy leading-[1.55]">
+      <p className="text-muted-foreground text-copy mt-3.5 max-w-[58ch] leading-[1.55]">
         A connection can&apos;t be removed while a profile depends on it. Delete those profiles
         first, and we&apos;ll say which they are.
       </p>

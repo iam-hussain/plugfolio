@@ -12,7 +12,17 @@ export async function GET(request: NextRequest): Promise<Response> {
   });
   return csvResponse(
     "products.csv",
-    ["title", "profile", "kind", "priceCents", "currency", "coupon", "offerEndsAt", "outboundUrl", "created"],
+    [
+      "title",
+      "profile",
+      "kind",
+      "priceCents",
+      "currency",
+      "coupon",
+      "offerEndsAt",
+      "outboundUrl",
+      "created",
+    ],
     rows.map((r) => [
       r.title,
       `/${r.username}`,

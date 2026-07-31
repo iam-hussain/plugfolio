@@ -34,3 +34,13 @@ graphify-out/
 
 # storybook build output
 storybook-static/
+.design-sync/sb-reference/
+.design-sync/learnings/
+.design-sync/.cache/
+.design-sync/node_modules
+# Build artefacts of the design-sync tool (~38MB); config.json stays tracked.
+.design-sync/build.log
+.design-sync/previews/
+.design-sync/sb-reference/
+.ds-sync/
+ds-bundle/

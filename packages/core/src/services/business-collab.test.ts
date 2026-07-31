@@ -107,7 +107,9 @@ function makeDeps(
         termsDeadline: null,
         businessAgreedAt: null,
         creatorAgreedAt: null,
-        messages: [{ senderUserId: input.firstMessage.senderUserId, body: input.firstMessage.body }],
+        messages: [
+          { senderUserId: input.firstMessage.senderUserId, body: input.firstMessage.body },
+        ],
       });
       return id;
     },
@@ -269,9 +271,9 @@ describe("thread access and agreement", () => {
   it("outsiders get NotFound, not Forbidden — the thread stays invisible", async () => {
     const { deps } = makeDeps();
     const id = await openThread(deps);
-    await expect(sendCollabMessage(deps, OUTSIDER, id, { body: "let me in" })).rejects.toBeInstanceOf(
-      NotFoundError,
-    );
+    await expect(
+      sendCollabMessage(deps, OUTSIDER, id, { body: "let me in" }),
+    ).rejects.toBeInstanceOf(NotFoundError);
     await expect(getCollabThread(deps, OUTSIDER, id)).rejects.toBeInstanceOf(NotFoundError);
   });
 
@@ -331,9 +333,9 @@ describe("terms and requirement close (briefs 11–12)", () => {
   it("outsiders cannot propose — NotFound, not Forbidden", async () => {
     const { deps } = makeDeps();
     const id = await openThread(deps);
-    await expect(
-      proposeCollabTerms(deps, OUTSIDER, id, { content: "x" }),
-    ).rejects.toBeInstanceOf(NotFoundError);
+    await expect(proposeCollabTerms(deps, OUTSIDER, id, { content: "x" })).rejects.toBeInstanceOf(
+      NotFoundError,
+    );
   });
 
   it("approaching a closed requirement fails honestly", async () => {

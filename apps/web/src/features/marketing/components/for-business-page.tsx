@@ -58,11 +58,11 @@ export function ForBusinessPage() {
                 className="border-border bg-card shadow-rest rounded-card flex flex-col border p-6"
               >
                 <p className={mk.eyebrow}>{door.micro}</p>
-                <b className="font-display mt-2 mb-2 block text-xl font-bold tracking-[-0.02em]">
+                <b className="font-display text-title mb-2 mt-2 block font-bold tracking-[-0.02em]">
                   {door.title}
                 </b>
                 <p className="text-muted-foreground text-copy leading-[1.55]">{door.copy}</p>
-                <span className="text-muted-foreground mt-auto pt-5 text-label font-bold">
+                <span className="text-muted-foreground text-label mt-auto pt-5 font-bold">
                   {door.go}
                 </span>
               </div>
@@ -88,7 +88,7 @@ export function ForBusinessPage() {
         >
           <div className="bg-card shadow-rest rounded-paper max-w-[460px] rotate-[-1.2deg] p-6">
             <p className={mk.eyebrow}>Open brief</p>
-            <b className="font-display mt-2 mb-2 block text-xl font-bold tracking-[-0.02em]">
+            <b className="font-display text-title mb-2 mt-2 block font-bold tracking-[-0.02em]">
               Skincare creators for a spring launch
             </b>
             <p className="text-muted-foreground text-copy leading-[1.55]">
@@ -103,11 +103,11 @@ export function ForBusinessPage() {
                     alt=""
                     width={60}
                     height={60}
-                    className="ring-card -mr-3 size-[26px] rounded-pill object-cover ring-2"
+                    className="ring-card rounded-pill -mr-3 size-[26px] object-cover ring-2"
                   />
                 ))}
               </div>
-              <span className="text-muted-foreground ml-4 text-copy">creators replying</span>
+              <span className="text-muted-foreground text-copy ml-4">creators replying</span>
             </div>
           </div>
         </SplitBand>

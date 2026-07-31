@@ -31,13 +31,11 @@ export type StatTileProps = React.HTMLAttributes<HTMLDivElement> &
 export function StatTile({ label, value, delta, interactive, className, ...props }: StatTileProps) {
   return (
     <div className={cn(statTileVariants({ interactive }), className)} {...props}>
-      <p className="font-mono text-faint text-pico font-bold uppercase tracking-[0.1em]">
-        {label}
-      </p>
-      <p className="font-display mt-2 text-name-md font-bold leading-none tracking-[-0.02em] tabular-nums">
+      <p className="text-faint text-pico font-mono font-bold uppercase tracking-[0.1em]">{label}</p>
+      <p className="font-display text-name-md mt-2 font-bold tabular-nums leading-none tracking-[-0.02em]">
         {value}
       </p>
-      {delta ? <p className="text-muted-foreground mt-1.5 text-micro">{delta}</p> : null}
+      {delta ? <p className="text-muted-foreground text-micro mt-1.5">{delta}</p> : null}
     </div>
   );
 }

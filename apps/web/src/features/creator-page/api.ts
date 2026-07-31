@@ -1,8 +1,4 @@
-import type {
-  RecordCodeCopyInput,
-  RecordOutboundTapInput,
-  RecordViewInput,
-} from "@plugfolio/core";
+import type { RecordCodeCopyInput, RecordOutboundTapInput, RecordViewInput } from "@plugfolio/core";
 
 /**
  * Client-side calls into the backend for this feature (§5: components don't
