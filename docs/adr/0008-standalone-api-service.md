@@ -11,7 +11,19 @@ ADR-0005 committed to one deployable (`apps/web`) with the REST API served by Ne
 - **Session verification without Auth.js on the API**: sessions are database rows (ADR-0007), so the API resolves the `authjs.session-token` cookie against the `Session` table (`createSessionRepository` in `@plugfolio/db`).
 - **Shared identity code moved to core**: the signed device-token helpers (§6.7, ADR-0002) now live in `@plugfolio/core/auth/device-token` with the secret as a parameter, so both deployables verify the same tokens; `DEVICE_TOKEN_SECRET` must match across both.
 - Public RSC pages in `apps/web` continue to call services directly — no HTTP hop was introduced for server-rendered reads (§6.11 unchanged).
-- The API runs via `tsx` (dev and current prod); a real build pipeline lands when the deploy target is chosen.
+- The API runs via `tsx` — no build step. The deploy target (below) is a plain Node host, not a bundler-constrained platform, so `tsx` costs about a second of boot and nothing else; a build pipeline earns its place only if boot time or memory becomes a problem.
+
+## Deployment (added 2026-08-01)
+
+Non-prod `apps/api` runs on a **single Amazon Lightsail instance, Ubuntu 24.04 "OS Only"** — not a Bitnami blueprint, which ships its own Node/Apache layout to undo. `apps/web` and `apps/admin` stay on Vercel; only the API left.
+
+- **Process**: systemd unit `plugfolio-api.service`, `ExecStart` the workspace's own `node_modules/.bin/tsx`, `Restart=always`.
+- **TLS**: Caddy reverse-proxies `127.0.0.1:3001` and obtains its own certificate. Port 3001 is never exposed; 80 stays open for ACME.
+- **Config**: `/etc/plugfolio-api.env` (root, 600) read via `EnvironmentFile`. A repo `.env` is ignored — the `start` script has no `--env-file`, unlike `dev`.
+- **Install**: `pnpm install --filter @plugfolio/api...` limits the box to core/db/config; `next` and the design system never land on it.
+- **Deploy**: the CI `deploy-api` job SSHes in on every push to `main` whose `verify` job passes — pull, install, `db:generate`, `systemctl restart`, then assert `/api/health`. Gated on `verify` rather than the whole workflow so unrelated job failures can't block a release.
+
+`API_URL` on the web project points at this host. It is read by `rewrites()` at **build** time and baked into `routes-manifest.json`, so changing it requires a redeploy, not just a redeploy of config.
 
 ## Consequences
 
@@ -22,4 +34,4 @@ ADR-0005 committed to one deployable (`apps/web`) with the REST API served by Ne
 
 ## Status
 
-Accepted (2026-07-20). Amends ADR-0005 (now two deployables) and ADR-0006 (same REST contract, now served by a dedicated service).
+Accepted (2026-07-20). Amends ADR-0005 (now two deployables) and ADR-0006 (same REST contract, now served by a dedicated service). Deployment section added 2026-08-01 when the target was chosen; amends ADR-0001's "Hosting: Vercel", which now covers the web apps only.
