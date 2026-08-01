@@ -421,6 +421,7 @@ export {
   type AdminSupportDeps,
 } from "./services/support";
 export { createResendMailer, type ResendMailerConfig } from "./adapters/resend-mailer";
+export { createTwilioMailer, type TwilioMailerConfig } from "./adapters/twilio-mailer";
 export {
   verificationEmail,
   passwordResetEmail,

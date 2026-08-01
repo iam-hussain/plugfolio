@@ -1,4 +1,4 @@
-import { createResendMailer, type AuthMailer } from "@plugfolio/core";
+import { createResendMailer, createTwilioMailer, type AuthMailer } from "@plugfolio/core";
 import {
   createAppSettingsRepository,
   createReportWriteRepository,
@@ -134,10 +134,17 @@ const consoleMailer: AuthMailer = {
 };
 
 // Real transport when configured (ADR-0015); links log to the console in dev.
-export const mailer: AuthMailer =
-  env.RESEND_API_KEY && env.EMAIL_FROM
-    ? createResendMailer({ apiKey: env.RESEND_API_KEY, from: env.EMAIL_FROM })
-    : consoleMailer;
+export const mailer: AuthMailer = !env.EMAIL_FROM
+  ? consoleMailer
+  : env.TWILIO_API_KEY_SID && env.TWILIO_API_KEY_SECRET
+    ? createTwilioMailer({
+        apiKeySid: env.TWILIO_API_KEY_SID,
+        apiKeySecret: env.TWILIO_API_KEY_SECRET,
+        from: env.EMAIL_FROM,
+      })
+    : env.RESEND_API_KEY
+      ? createResendMailer({ apiKey: env.RESEND_API_KEY, from: env.EMAIL_FROM })
+      : consoleMailer;
 
 export const accountAuthDeps = {
   accounts: createAuthAccountRepository(),
