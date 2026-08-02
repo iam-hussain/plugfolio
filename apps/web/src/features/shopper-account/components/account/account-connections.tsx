@@ -1,5 +1,5 @@
 import type { YouTubeConnectionView } from "@plugfolio/core";
-import { AccountSection, Button, ConnectionRow, SocialGlyph } from "@plugfolio/ui";
+import { Button, ConnectionRow, SocialGlyph } from "@plugfolio/ui";
 
 /**
  * "Connected accounts" — what proves a handle is really yours.
@@ -21,11 +21,7 @@ export function AccountConnections({ youtube, connectAction }: AccountConnection
   const channels = youtube?.connected ? youtube.channels : [];
 
   return (
-    <AccountSection
-      id="connections"
-      title="Connected accounts"
-      lead="Connecting proves who you are so a handle can't be squatted. It is not a login — you'll still sign in with your email and password."
-    >
+    <>
       <div className="border-border bg-card rounded-tile divide-border divide-y overflow-hidden border">
         <ConnectionRow
           glyph={<SocialGlyph platform="youtube" />}
@@ -59,6 +55,6 @@ export function AccountConnections({ youtube, connectAction }: AccountConnection
         A connection can&apos;t be removed while a profile depends on it. Delete those profiles
         first, and we&apos;ll say which they are.
       </p>
-    </AccountSection>
+    </>
   );
 }

@@ -1,38 +1,183 @@
 import * as React from "react";
+import { ChevronRight } from "lucide-react";
+import { cva, type VariantProps } from "class-variance-authority";
 import { Slot, Slottable } from "@radix-ui/react-slot";
 import { Badge } from "./badge";
+import { Tile } from "./tile";
 import { cn } from "../lib/cn";
 
 /**
- * The vocabulary of /account (DESIGN account.html) — a settings page every
- * role shares. Four shapes, reused for every section: a section rail, a
- * label/value/action row, a role block, a connection row.
+ * The vocabulary of /account — a settings page every role shares.
+ *
+ * The page is **one destination at a time**, not one long scroll: a hero that
+ * says who you are, an index of destinations each carrying its own current
+ * value, and the panel you chose. On a phone the index and the panel take
+ * turns; from 900px the index becomes a rail beside the panel.
+ *
+ * Why the index shows values: a settings list whose rows are only nouns makes
+ * you open all five to learn anything. "Connections › Google connected" answers
+ * the question from the index, and the tap becomes a decision instead of a
+ * search.
  *
  * All colour, radius and type come from tokens; every state that varies is a
  * named variant, never a string built at render time.
  */
 
-/** Section links — a snap rail on phones, a sticky column from 900px. */
-export function AccountNav({ sections }: { sections: readonly { id: string; label: string }[] }) {
+/** The account's own hue sequence — assigned by POSITION, never by meaning. */
+export const ACCOUNT_TONES = ["lavender", "sky", "butter", "mint", "coral"] as const;
+export type AccountTone = (typeof ACCOUNT_TONES)[number];
+
+const toneDot = cva("rounded-pill size-2.5 flex-none", {
+  variants: {
+    tone: {
+      lavender: "bg-tile-lavender",
+      sky: "bg-tile-sky",
+      butter: "bg-tile-butter",
+      mint: "bg-tile-mint",
+      coral: "bg-tile-coral",
+      blush: "bg-tile-blush",
+    },
+  },
+  defaultVariants: { tone: "lavender" },
+});
+
+/**
+ * The hero — the page's one saturated moment (§7 tile-carries-colour), and the
+ * only place the account is stated whole. The role rides on a white pill with a
+ * dot, which is the product tag's move borrowed for a person: the same shape
+ * that names a price on a photograph names what this account is.
+ */
+export function AccountHero({
+  avatar,
+  handle,
+  name,
+  email,
+  role,
+}: {
+  avatar: React.ReactNode;
+  handle: string;
+  name?: string | null;
+  email: string;
+  /** "Shopper", "Creator" — what this account IS, on the tag pill. */
+  role: string;
+}) {
   return (
-    <nav
-      aria-label="Account sections"
-      className="-mx-5 flex snap-x snap-proximity gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] min-[900px]:sticky min-[900px]:top-[78px] min-[900px]:mx-0 min-[900px]:flex-col min-[900px]:gap-0.5 min-[900px]:overflow-visible min-[900px]:px-0"
+    <Tile
+      tone="lavender"
+      className="rounded-bay flex flex-wrap items-center gap-x-5 gap-y-4 px-5 py-6 sm:px-7"
     >
-      {sections.map((section) => (
-        <a
-          key={section.id}
-          href={`#${section.id}`}
-          className="border-border bg-card text-muted-foreground rounded-pill hover:border-primary hover:text-primary text-label min-[900px]:rounded-image min-[900px]:hover:bg-active inline-flex min-h-11 flex-none snap-start items-center whitespace-nowrap border px-4 py-2.5 font-semibold no-underline transition-colors min-[900px]:w-full min-[900px]:border-0 min-[900px]:bg-transparent min-[900px]:px-3.5 min-[900px]:py-2.5 min-[900px]:hover:border-0"
-        >
-          {section.label}
-        </a>
-      ))}
-    </nav>
+      {avatar}
+      <div className="min-w-0 flex-1 basis-[min(100%,220px)]">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <b className="font-display text-name font-extrabold leading-none tracking-[-0.035em]">
+            @{handle}
+          </b>
+          <span className="bg-card shadow-tag rounded-pill text-micro inline-flex items-center gap-1.5 px-2.5 py-1 font-bold">
+            <span aria-hidden className="bg-primary rounded-pill size-1.5" />
+            {role}
+          </span>
+        </div>
+        <span className="text-copy mt-1.5 block truncate opacity-75">
+          {name ? `${name} · ` : null}
+          {email}
+        </span>
+      </div>
+    </Tile>
   );
 }
 
-/** A settings section: heading, one line of why, then its payload. */
+const indexRow = cva(
+  "group/row rounded-tile flex w-full min-h-14 items-center gap-3 border border-transparent px-4 py-3 text-left transition-colors min-[900px]:min-h-12 min-[900px]:gap-2.5 min-[900px]:px-3 min-[900px]:py-2.5",
+  {
+    variants: {
+      state: {
+        idle: "hover:bg-active hover:border-border/60",
+        // Only from 900px does "selected" mean anything — on a phone the panel
+        // has replaced the index by the time it would show.
+        active: "min-[900px]:bg-active min-[900px]:text-brand-violet-deep hover:bg-active",
+      },
+    },
+    defaultVariants: { state: "idle" },
+  },
+);
+
+/**
+ * One destination in the index: hue dot, name, the value it currently holds,
+ * and the way in. The value drops under the name on a phone so a long email
+ * never squeezes the label to one word per line.
+ */
+export type AccountIndexRowProps = React.ComponentProps<"button"> & {
+  tone: AccountTone;
+  label: string;
+  /** The live fact — "3 of 5 profiles", "Google connected". */
+  value?: React.ReactNode;
+  active?: boolean;
+};
+
+export function AccountIndexRow({
+  tone,
+  label,
+  value,
+  active,
+  className,
+  ...props
+}: AccountIndexRowProps) {
+  return (
+    <button
+      type="button"
+      className={cn(indexRow({ state: active ? "active" : "idle" }), className)}
+      {...props}
+    >
+      <span aria-hidden className={toneDot({ tone })} />
+      <span className="min-w-0 flex-1">
+        <span className="text-body min-[900px]:text-copy block font-bold leading-tight">
+          {label}
+        </span>
+        {value ? (
+          <span className="text-muted-foreground text-label mt-0.5 block truncate font-medium min-[900px]:hidden">
+            {value}
+          </span>
+        ) : null}
+      </span>
+      <ChevronRight
+        aria-hidden
+        className="text-faint group-hover/row:text-primary size-4 flex-none transition-colors min-[900px]:hidden"
+      />
+    </button>
+  );
+}
+
+/** The head of an open panel: the same dot the index row carried, so the two
+ *  read as one place seen twice. */
+export function AccountPanelHead({
+  tone,
+  title,
+  lead,
+  back,
+}: {
+  tone: AccountTone;
+  title: string;
+  lead?: React.ReactNode;
+  /** The phone's way back to the index; absent from 900px, where both show. */
+  back?: React.ReactNode;
+}) {
+  return (
+    <header className="mb-5">
+      {back ? <div className="mb-2 min-[900px]:hidden">{back}</div> : null}
+      <div className="flex items-center gap-2.5">
+        <span aria-hidden className={toneDot({ tone })} />
+        <h2 className="font-display text-name font-extrabold leading-[1.1] tracking-[-0.035em]">
+          {title}
+        </h2>
+      </div>
+      {lead ? (
+        <p className="text-muted-foreground text-copy mt-2 max-w-[58ch] leading-[1.55]">{lead}</p>
+      ) : null}
+    </header>
+  );
+}
+
+/** A block inside a panel — a sub-heading and its payload. */
 export function AccountSection({
   id,
   title,
@@ -40,19 +185,21 @@ export function AccountSection({
   children,
 }: {
   id?: string;
-  title: string;
+  title?: string;
   lead?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-24 pt-[clamp(30px,4vw,46px)]">
-      <h2 className="font-display text-title font-bold leading-[1.2] tracking-[-0.02em]">
-        {title}
-      </h2>
+    <section id={id} className="[&+&]:mt-8">
+      {title ? (
+        <h3 className="font-display text-title font-bold leading-[1.2] tracking-[-0.02em]">
+          {title}
+        </h3>
+      ) : null}
       {lead ? (
         <p className="text-muted-foreground text-copy mt-1 max-w-[58ch] leading-[1.55]">{lead}</p>
       ) : null}
-      <div className="mt-4">{children}</div>
+      <div className={cn(title || lead ? "mt-4" : null)}>{children}</div>
     </section>
   );
 }

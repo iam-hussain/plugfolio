@@ -1,6 +1,5 @@
 import type { AccessibleProfile } from "@plugfolio/core";
 import {
-  AccountSection,
   Button,
   Prerequisite,
   ProfileNewRow,
@@ -39,11 +38,7 @@ export function AccountRoles({
   const remaining = Math.max(0, maxProfiles - owned);
 
   return (
-    <AccountSection
-      id="roles"
-      title="Your roles"
-      lead="One account, as many hats as you want. These aren't separate logins or separate plans — they're things this same email can do."
-    >
+    <>
       <RoleBlock
         role="shopper"
         title="Shopping"
@@ -154,6 +149,6 @@ export function AccountRoles({
           </div>
         </RoleBlock>
       )}
-    </AccountSection>
+    </>
   );
 }

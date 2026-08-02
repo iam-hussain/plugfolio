@@ -25,6 +25,7 @@ export const createHash = unavailable("createHash");
 export const timingSafeEqual = unavailable("timingSafeEqual");
 export const randomBytes = unavailable("randomBytes");
 export const scryptSync = unavailable("scryptSync");
+export const randomInt = unavailable("randomInt");
 
 /** The one that's safe to answer honestly — the browser has it natively. */
 export function randomUUID(): string {
@@ -37,5 +38,6 @@ export default {
   timingSafeEqual,
   randomBytes,
   scryptSync,
+  randomInt,
   randomUUID,
 };

@@ -1,4 +1,4 @@
-import { AccountSection, Button } from "@plugfolio/ui";
+import { Button } from "@plugfolio/ui";
 import Link from "next/link";
 
 /**
@@ -11,8 +11,8 @@ import Link from "next/link";
  */
 export function AccountLeaving() {
   return (
-    <AccountSection id="leaving" title="Leaving">
-      <div className="border-border flex flex-wrap items-center gap-3 border-t pt-6">
+    <>
+      <div className="border-border bg-card rounded-tile flex flex-wrap items-center gap-3 border px-5 py-5">
         <p className="text-muted-foreground text-copy m-0 flex-1 basis-[320px] leading-[1.55]">
           Signing out ends this session on this device. Nothing is removed.
         </p>
@@ -20,7 +20,7 @@ export function AccountLeaving() {
           <Link href="/api/auth/signout">Sign out</Link>
         </Button>
       </div>
-      <div className="mt-3 flex flex-wrap items-center gap-3">
+      <div className="border-border bg-card rounded-tile mt-3 flex flex-wrap items-center gap-3 border px-5 py-5">
         <p className="text-muted-foreground text-copy m-0 flex-1 basis-[320px] leading-[1.55]">
           Deleting your account and its data is handled by a person, not a button — so we can
           confirm it&apos;s really you and tell you exactly what goes.
@@ -31,6 +31,6 @@ export function AccountLeaving() {
           </Link>
         </Button>
       </div>
-    </AccountSection>
+    </>
   );
 }
