@@ -13,11 +13,9 @@ const schema = z.object({
   PORT: z.coerce.number().int().positive().default(3001),
   /** Where auth email links land (verify/reset pages live in apps/web). */
   WEB_ORIGIN: z.string().url().default("http://localhost:7077"),
-  // Real mail transport (ADR-0015) — console fallback when absent. Twilio
-  // wins when both providers are configured.
+  // Real mail transport (ADR-0015) — console fallback when absent.
   TWILIO_API_KEY_SID: z.string().optional(),
   TWILIO_API_KEY_SECRET: z.string().optional(),
-  RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
   // Image uploads (ADR-0023) — all three present enables the /uploads route;
   // absent, it returns a clear "not configured" error. AWS credentials come

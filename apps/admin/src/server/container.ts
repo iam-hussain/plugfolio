@@ -1,4 +1,4 @@
-import { createResendMailer, createTwilioMailer, type AuthMailer } from "@plugfolio/core";
+import { createTwilioMailer, type AuthMailer } from "@plugfolio/core";
 import {
   createAdminAnalyticsRepository,
   createAdminAuditRepository,
@@ -71,9 +71,7 @@ export const mailer: AuthMailer = !env.EMAIL_FROM
         apiKeySecret: env.TWILIO_API_KEY_SECRET,
         from: env.EMAIL_FROM,
       })
-    : env.RESEND_API_KEY
-      ? createResendMailer({ apiKey: env.RESEND_API_KEY, from: env.EMAIL_FROM })
-      : consoleMailer;
+    : consoleMailer;
 
 /** The member-moderation dependency bundle, wired once. */
 export const adminMembersDeps = {

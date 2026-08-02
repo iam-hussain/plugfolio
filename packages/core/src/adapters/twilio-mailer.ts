@@ -8,8 +8,8 @@ import type { AuthMailer } from "../ports/auth-account-repository";
 
 /**
  * Real mail transport (ADR-0015): Twilio's Email API via plain fetch — no SDK.
- * Same shape as the Resend adapter, wired env-gated in each composition root;
- * the console mailer stays the fallback when no credentials are configured.
+ * Wired env-gated in each composition root; the console mailer stays the
+ * fallback when no credentials are configured.
  * The body copy/markup lives in email-templates.ts — this file is only the
  * transport.
  */

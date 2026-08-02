@@ -72,5 +72,5 @@ flags have real readers** — `comments` (kill switch for the composer + POST
 **admin auth is hardened** — login rate limit (5 fails / 15 min per email)
 and revocable sessions (`AdminUser.sessionVersion` rides the JWT; password
 change/reset or removal kills outstanding sessions on their next request);
-and **mail is real** (ADR-0015: Resend HTTP API, env-gated, console
+and **mail is real** (ADR-0015: Twilio Email API, env-gated, console
 fallback) for member verification/reset and operator invites.

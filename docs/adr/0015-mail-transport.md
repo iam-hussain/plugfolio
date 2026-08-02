@@ -1,4 +1,4 @@
-# ADR-0015 — Mail transport: Twilio Email or Resend HTTP API, env-gated, console fallback
+# ADR-0015 — Mail transport: Twilio Email API, env-gated, console fallback
 
 ## Context
 
@@ -10,32 +10,35 @@ apps/admin) can share without new heavy dependencies.
 
 ## Decision
 
-**Resend via its plain HTTP API** — `createResendMailer` in
-`@plugfolio/core/adapters` uses `fetch` against `api.resend.com/emails`,
-so no SDK or SMTP dependency enters the tree. Each composition root wires
-it **env-gated**: when `RESEND_API_KEY` + `EMAIL_FROM` are set the real
-transport sends; otherwise the console mailer keeps logging links (dev
-default). Send failures throw loudly — auth links are the account
-lifeline, silent drops are worse than errors.
+**Twilio's Email API via its plain HTTP endpoint** — `createTwilioMailer`
+in `@plugfolio/core/adapters` uses `fetch` against
+`comms.twilio.com/v1/Emails`, so no SDK or SMTP dependency enters the tree.
+Basic auth rides a **REST API key** (`SK…` + secret) rather than the account
+auth token: scoped, revocable, and Twilio's own advice — verified against
+the live endpoint, not assumed.
 
-**Amended August 2026 — Twilio Email alongside Resend.** Same shape:
-`createTwilioMailer` posts to `comms.twilio.com/v1/Emails` with plain
-`fetch`, no SDK, Basic auth on a REST API key (`SK…` + secret, not the
-account auth token — scoped and revocable, per Twilio). Each
-composition root now picks in order — Twilio → Resend → console — all gated
-on `EMAIL_FROM` being set. The `AuthMailer` port is unchanged, so
-verification, reset and manager-invite mail all switch with two env vars.
-`EMAIL_FROM` keeps the `"Name <addr>"` form; the adapter splits it into the
-`{address, name}` object that API wants. The send is asynchronous (202 +
-an operation id); we don't poll it — blocking registration on that
-round-trip buys nothing a bounce report can't tell us.
+Each composition root wires it **env-gated**: when `TWILIO_API_KEY_SID` +
+`TWILIO_API_KEY_SECRET` + `EMAIL_FROM` are set the real transport sends;
+otherwise the console mailer keeps logging links (dev default). Send
+failures throw loudly — auth links are the account lifeline, silent drops
+are worse than errors. `EMAIL_FROM` carries the `"Name <addr>"` form and
+the adapter splits it into the `{address, name}` object the API wants. The
+send is asynchronous (202 + an operation id); we don't poll it — blocking
+registration on that round-trip buys nothing a bounce report can't tell us.
+
+**Superseded July→August 2026: Resend.** The original decision here was
+Resend's HTTP API, on the same `AuthMailer` port. Twilio is the account we
+actually have, so `createResendMailer` and `RESEND_API_KEY` were removed
+rather than left as a second unconfigured path — one transport, one set of
+credentials, one thing to keep working. The port is still the seam, so
+bringing another provider back is one adapter.
 
 **Rejected: Twilio Verify.** Verify would own verification end to end
 (it mints the code, sends the mail, rules on the answer), but it costs a
 second port, an `email` on the verify link so a check can name the address,
 and — because its email channel is itself SendGrid — the verification email
 would live as a Dynamic Template in the Twilio console, out of the repo's
-sight and free to drift from `emails.html` §1. The Email API sends our own
+sight and free to drift from `emails.html` §7. The Email API sends our own
 template over our own one-time link, so none of that is needed. Verification
 stays exactly as ADR-0012 describes it.
 
@@ -45,9 +48,12 @@ stays exactly as ADR-0012 describes it.
   `AuthMailer` port stays the seam, so swapping providers later is one
   adapter.
 - Dev behavior is unchanged (links in the server log).
-- Deliverability concerns (domain verification, DKIM) live in the provider's
+- The sending domain must be authorized in Twilio (Console → Senders; the
+  API exposes it read-only). Until it is, every send fails 403 — loudly,
+  which is the point.
+- Deliverability concerns (domain authentication, DKIM) live in the Twilio
   dashboard, not in code.
 
 ## Status
 
-Accepted — July 2026; amended August 2026 (Twilio Email transport).
+Accepted — July 2026; transport changed to Twilio August 2026 (Resend removed).
