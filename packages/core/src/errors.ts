@@ -4,7 +4,13 @@
  */
 
 export type AppErrorCode =
-  "VALIDATION" | "NOT_FOUND" | "CONFLICT" | "FORBIDDEN" | "UNAUTHORIZED" | "INTERNAL";
+  | "VALIDATION"
+  | "NOT_FOUND"
+  | "CONFLICT"
+  | "FORBIDDEN"
+  | "UNAUTHORIZED"
+  | "RATE_LIMITED"
+  | "INTERNAL";
 
 export class AppError extends Error {
   readonly code: AppErrorCode;
@@ -43,5 +49,13 @@ export class ForbiddenError extends AppError {
   constructor(message = "Not allowed", details?: unknown) {
     super("FORBIDDEN", message, details);
     this.name = "ForbiddenError";
+  }
+}
+
+/** Too many tries in the window — the guessable-secret guard (ADR-0024). */
+export class RateLimitedError extends AppError {
+  constructor(message = "Too many attempts — try again later", details?: unknown) {
+    super("RATE_LIMITED", message, details);
+    this.name = "RateLimitedError";
   }
 }

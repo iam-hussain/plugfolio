@@ -43,7 +43,9 @@ verification (ADR-0024).
 ## API surface (`apps/api` — NOT under `/api/auth`, which belongs to Auth.js)
 
 `POST /api/account` (register, 201) · `/account/verify` (token **or** email+code, plus the
-username) · `/account/resend-verification` (email or handle) ·
+username; the code path is rate-limited — 10 wrong codes per address / 15 min → **429**,
+`createFailureLimit`, and only `NOT_FOUND` counts so a taken handle is free) ·
+`/account/resend-verification` (email or handle) ·
 `/account/reset-request` (always 200) · `/account/reset`. Links land on the web app;
 base URL from `WEB_ORIGIN` (env, defaults to localhost). Mailer is console-logged
 (`accountAuthDeps` in the container) until a transport lands.
@@ -101,6 +103,8 @@ the action is deferred (needs a pending-action store).
 
 ## Verification
 
+- Unit (3 in `auth/rate-limit.test.ts`): allowance then block, per-key isolation, a success
+  wipes the slate, the window reopens.
 - Unit (13 in `account-auth.test.ts`): full register→verify→login lifecycle, duplicate 409,
   generic invalid, unverified gate, token single-use, intent isolation, expiry,
   reset-verifies (invited-Manager case), reset never an oracle — plus the ADR-0024 four:

@@ -1,10 +1,9 @@
-import { adminCredentialsInput, verifyAdminCredentials } from "@plugfolio/core";
+import { adminCredentialsInput, createFailureLimit, verifyAdminCredentials } from "@plugfolio/core";
 import NextAuth, { type DefaultSession, type NextAuthResult } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { redirect } from "next/navigation";
 import { env } from "@/env";
 import { repositories } from "./container";
-import { clearFailures, isRateLimited, recordFailure } from "./rate-limit";
 
 /**
  * Admin sign-in (ADR-0014): credentials against the AdminUser table — never
@@ -23,6 +22,9 @@ declare module "next-auth" {
 }
 
 const SESSION_MAX_AGE_S = 12 * 60 * 60; // one working day, not a month
+
+/** 5 failures / 15 min per email, then the same silent generic no. */
+const loginLimit = createFailureLimit({ windowMs: 15 * 60 * 1000, maxFailures: 5 });
 
 const nextAuth = NextAuth({
   secret: env.AUTH_SECRET,
@@ -47,16 +49,16 @@ const nextAuth = NextAuth({
         const parsed = adminCredentialsInput.safeParse(raw);
         if (!parsed.success) return null;
         // Rate limit BEFORE touching credentials; limited = same generic no.
-        if (isRateLimited(parsed.data.email)) return null;
+        if (loginLimit.isLimited(parsed.data.email)) return null;
         const result = await verifyAdminCredentials(
           { admins: repositories.admins, now: () => new Date() },
           parsed.data,
         );
         if (!result.ok) {
-          recordFailure(parsed.data.email);
+          loginLimit.recordFailure(parsed.data.email);
           return null; // one generic failure — no admin oracle
         }
-        clearFailures(parsed.data.email);
+        loginLimit.clear(parsed.data.email);
         return {
           id: result.adminId,
           email: result.email,

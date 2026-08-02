@@ -44,10 +44,14 @@ known email addresses, which are just as public in any breach corpus.
   auto-generation survives only as the pre-verification placeholder.
 - `AuthAccount` now carries `email` (a lookup by handle still has to know where to mail), and
   `AuthTokenRepository` gains `peek` — read without spending, so the handle check runs first.
-- **The 15-minute window is the only brute-force defence on the code today** (1M
-  possibilities). Before real traffic, add per-email attempt throttling at the API edge — the
-  admin app's `isRateLimited` is the pattern to lift. Marked `ponytail:` in
-  `services/account-auth.ts`.
+- The code's brute-force defence is two-part: the 15-minute TTL, and **ten wrong codes per
+  address per 15 minutes** on `POST /account/verify` (`RateLimitedError` → **429**). Only a
+  bad code counts — a taken handle is the person getting the *proof* right and must not spend
+  their allowance; a success clears the key. The link path is deliberately unlimited (a
+  256-bit token is not a threat model). The counter is `createFailureLimit` in
+  `@plugfolio/core`, lifted out of the admin app so both sign-in and verification share one
+  implementation; it is in-memory, so a second API node doubles the allowance (`ponytail:`
+  noted at the source).
 - The invited-Manager path (a reset link that verifies, ADR-0012 point 5) does **not** ask for
   a handle — they keep the placeholder until they change it in settings. Worth folding in when
   invite mails get their own screen.

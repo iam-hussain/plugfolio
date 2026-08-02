@@ -11,11 +11,12 @@ const statusByCode: Record<AppErrorCode, number> = {
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   CONFLICT: 409,
+  RATE_LIMITED: 429,
   INTERNAL: 500,
 };
 
 export type ErrorShape = {
-  status: 400 | 401 | 403 | 404 | 409 | 500;
+  status: 400 | 401 | 403 | 404 | 409 | 429 | 500;
   body: { error: { code: string; message: string; details?: unknown } };
 };
 

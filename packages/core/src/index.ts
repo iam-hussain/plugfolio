@@ -8,6 +8,8 @@ export * from "./errors";
 
 // Anonymous shopper identity (§6.7, ADR-0002) — shared by both deployables
 export { DEVICE_COOKIE, verifyDeviceToken, issueDeviceToken } from "./auth/device-token";
+// The guessable-secret guard: admin sign-in (ADR-0014), verify codes (ADR-0024)
+export { createFailureLimit, type FailureLimit } from "./auth/rate-limit";
 
 // Domain
 export type { OutboundTap, NewOutboundTap, TapSource } from "./domain/tap";

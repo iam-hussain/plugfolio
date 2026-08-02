@@ -91,7 +91,8 @@ carries the **role** so the app routes correctly afterward.
   resend button) · rate-limited.
 - **Verify:** default (username; plus email + code when there's no link) · submitting ·
   **handle taken/reserved** (inline — the link is still good, try another) · wrong or
-  expired code/link (offer a fresh email) · success (auto-forward).
+  expired code/link (offer a fresh email) · **rate-limited** (after 10 wrong codes: wait 15
+  minutes or ask for a fresh email) · success (auto-forward).
 - **Reset:** link sent · new-password form · expired link · success (signed in).
 - **Edge cases:** shopper who abandons the sheet (Follow/Comment simply doesn't persist —
   no nagging); verification link opened on a different device (works — it verifies the

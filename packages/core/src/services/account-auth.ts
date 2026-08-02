@@ -36,8 +36,8 @@ export type VerifyEmailDeps = AccountAuthDeps & MemberHandleDeps;
 
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 /** The code is short enough to type, so it lives far shorter than the link.
- * ponytail: that window IS the brute-force defence for six digits — add
- * per-email attempt throttling at the API edge before this sees real traffic. */
+ * The other half of the brute-force defence is the per-address attempt limit
+ * on POST /account/verify (createFailureLimit, ADR-0024). */
 const CODE_TTL_MS = 15 * 60 * 1000;
 
 const EXPIRED = "That link or code has expired or was already used";
