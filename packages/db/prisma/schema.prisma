@@ -56,6 +56,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   follows       Follow[]
+  watches       Watch[]
   comments      Comment[]
   commentReactions CommentReaction[]
   business      Business?
@@ -258,6 +259,25 @@ model Follow {
 
   @@unique([userId, profileId])
   @@index([profileId])
+}
+
+/// A shopper saving a post or a product for later — the same door as Follow
+/// (§2.2: an account, never required to shop). Polymorphic like Report, not a
+/// pair of nullable FKs: Mongo indexes a missing field as null, so a
+/// `@@unique([userId, postId])` would collide across every product row and
+/// lose the idempotency a double-fired save needs (§6.8). The price is no
+/// referential integrity — a deleted post leaves a row the read drops.
+model Watch {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// "post" | "product" — the Zod enum at the boundary is the contract.
+  kind      String
+  targetId  String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, kind, targetId])
+  @@index([userId, createdAt])
 }
 
 /// A comment on a creator's page — the second social action behind the

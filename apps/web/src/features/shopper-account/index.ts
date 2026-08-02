@@ -14,6 +14,8 @@ export { HandleForm, type HandleFormProps } from "./components/handle-form";
 export { AccountPage, type AccountPageProps } from "./components/account-page";
 export { FollowingPage, type FollowingPageProps } from "./components/following-page";
 export { FollowRow, type FollowRowProps } from "./components/follow-row";
+export { WatchButton, type WatchButtonProps } from "./components/watch-button";
+export { WatchlistPage, type WatchlistPageProps } from "./components/watchlist-page";
 export { CommentClaim } from "./components/comment-claim";
 export { CommentReactions, type CommentReactionsProps } from "./components/comment-reactions";
 export { CommentSortChips } from "./components/comment-sort";

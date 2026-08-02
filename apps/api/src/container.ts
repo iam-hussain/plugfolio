@@ -25,6 +25,7 @@ import {
   createUserRepository,
   createViewRepository,
   createViewTargetRepository,
+  createWatchlistRepository,
 } from "@plugfolio/db";
 import { createOgMetadataGateway } from "./gateways/og-metadata";
 import { createSharpImageProcessor } from "./gateways/sharp-image-processor";
@@ -44,6 +45,7 @@ export const repositories = {
   products: createProductRepository(),
   profiles: createProfileRepository(),
   follows: createFollowRepository(),
+  watchlist: createWatchlistRepository(),
   comments: createCommentRepository(),
   categories: createCategoryRepository(),
   profileLinks: createProfileLinkRepository(),
@@ -70,6 +72,8 @@ export const shopperSocialDeps = {
   profiles: repositories.profiles,
   products: repositories.products,
 };
+
+export const watchlistDeps = { watchlist: repositories.watchlist };
 
 export const businessCollabDeps = {
   businesses: repositories.businesses,

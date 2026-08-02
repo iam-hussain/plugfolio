@@ -5,11 +5,11 @@ import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cva } from "class-variance-authority";
-import { GridIcon, HeartIcon, HomeIcon, UserIcon } from "./icons";
+import { BookmarkIcon, GridIcon, HeartIcon, HomeIcon, UserIcon } from "./icons";
 
 /**
  * Shopper bottom tab bar (Dev Spec §03 persistent chrome): HOME / SHOP /
- * FOLLOWING / ACCOUNT — Space Mono ~9px uppercase, 20px line icons. The active
+ * FOLLOWING / SAVED / ACCOUNT — Space Mono ~9px uppercase, 20px line icons. The active
  * tab renders in the page accent (primary). Every color comes from tokens.
  */
 type Tab = {
@@ -39,6 +39,13 @@ const TABS: Tab[] = [
     match: (p) => p.startsWith("/following"),
   },
   {
+    key: "watchlist",
+    label: "Saved",
+    href: "/watchlist",
+    icon: BookmarkIcon,
+    match: (p) => p.startsWith("/watchlist"),
+  },
+  {
     key: "account",
     label: "Account",
     href: "/account",
@@ -49,7 +56,16 @@ const TABS: Tab[] = [
 
 // A creator surface is /[handle] and its post/product children — but not the
 // reserved top-level shopper routes.
-const RESERVED = ["/", "/explore", "/following", "/account", "/signin", "/dashboard", "/collabs"];
+const RESERVED = [
+  "/",
+  "/explore",
+  "/following",
+  "/watchlist",
+  "/account",
+  "/signin",
+  "/dashboard",
+  "/collabs",
+];
 function isCreatorSurface(pathname: string): boolean {
   if (RESERVED.includes(pathname)) return false;
   return /^\/[^/]+(\/(post|product)\/[^/]+)?$/.test(pathname);

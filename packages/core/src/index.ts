@@ -86,6 +86,7 @@ export type {
   YouTubeGateway,
 } from "./ports/social-connection-repository";
 export type { FollowRepository, FollowedCreator } from "./ports/follow-repository";
+export type { WatchlistRepository, WatchlistItem } from "./ports/watchlist-repository";
 export type { AdPlacement, AdPlacementRepository } from "./ports/ad-placement-repository";
 export type {
   CommentRepository,
@@ -164,6 +165,12 @@ export {
   followingQuery,
   type FollowingQuery,
 } from "./schemas/following";
+export {
+  watchKind,
+  type WatchKind,
+  watchTargetInput,
+  type WatchTargetInput,
+} from "./schemas/watchlist";
 export {
   createBusinessInput,
   type CreateBusinessInput,
@@ -511,6 +518,13 @@ export {
   type FollowingList,
   type FollowingListDeps,
 } from "./services/following-list";
+export {
+  watchTarget,
+  unwatchTarget,
+  isWatched,
+  getWatchlist,
+  type WatchlistDeps,
+} from "./services/watchlist";
 export {
   createBusiness,
   getMyBusiness,

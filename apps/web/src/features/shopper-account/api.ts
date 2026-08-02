@@ -3,6 +3,7 @@ import type {
   FollowProfileInput,
   ReactToCommentInput,
   UpdateMemberHandleInput,
+  WatchTargetInput,
 } from "@plugfolio/core";
 
 /**
@@ -30,6 +31,24 @@ export async function followProfile(input: FollowProfileInput): Promise<void> {
 
 export async function unfollowProfile(input: FollowProfileInput): Promise<void> {
   const response = await fetch(`/api/follows/${input.profileId}`, {
+    method: "DELETE",
+    credentials: "same-origin",
+  });
+  if (!response.ok) throw await parseError(response);
+}
+
+export async function saveToWatchlist(input: WatchTargetInput): Promise<void> {
+  const response = await fetch("/api/watchlist", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+    credentials: "same-origin",
+  });
+  if (!response.ok) throw await parseError(response);
+}
+
+export async function removeFromWatchlist(input: WatchTargetInput): Promise<void> {
+  const response = await fetch(`/api/watchlist/${input.kind}/${input.targetId}`, {
     method: "DELETE",
     credentials: "same-origin",
   });

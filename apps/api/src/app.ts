@@ -44,6 +44,10 @@ import {
   inviteManagerInput,
   followProfile,
   followProfileInput,
+  watchTarget,
+  unwatchTarget,
+  watchTargetInput,
+  watchKind,
   postRequirement,
   postRequirementInput,
   closeRequirement,
@@ -105,6 +109,7 @@ import {
   repositories,
   shopperSocialDeps,
   verifyEmailDeps,
+  watchlistDeps,
 } from "./container";
 import { toErrorShape } from "./http/error-response";
 
@@ -259,6 +264,25 @@ app.delete("/follows/:profileId", async (c) => {
   const profileId = uuidParam.parse(c.req.param("profileId"));
   await unfollowProfile(shopperSocialDeps, userId, profileId);
   return c.json({ following: false });
+});
+
+// The watchlist (shopper-account.md): save a post or a product for later. Same
+// door as follow — an account, never a wall on buying (§2.2).
+app.post("/watchlist", async (c) => {
+  const userId = await requireUserId(c);
+  const input = watchTargetInput.parse(await c.req.json());
+  await watchTarget(watchlistDeps, userId, input);
+  return c.json({ watched: true }, 201);
+});
+
+app.delete("/watchlist/:kind/:targetId", async (c) => {
+  const userId = await requireUserId(c);
+  const input = watchTargetInput.parse({
+    kind: watchKind.parse(c.req.param("kind")),
+    targetId: uuidParam.parse(c.req.param("targetId")),
+  });
+  await unwatchTarget(watchlistDeps, userId, input);
+  return c.json({ watched: false });
 });
 
 app.post("/comments", async (c) => {

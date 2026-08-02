@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Heart, House, LayoutGrid, Search, User } from "lucide-react";
+import { Bookmark, Heart, House, LayoutGrid, Search, User } from "lucide-react";
 import { cn } from "@plugfolio/ui";
 
 /**
@@ -19,5 +19,6 @@ function chrome(Glyph: React.ComponentType<React.SVGProps<SVGSVGElement>>) {
 export const HomeIcon = chrome(House);
 export const GridIcon = chrome(LayoutGrid);
 export const HeartIcon = chrome(Heart);
+export const BookmarkIcon = chrome(Bookmark);
 export const UserIcon = chrome(User);
 export const SearchIcon = chrome(Search);

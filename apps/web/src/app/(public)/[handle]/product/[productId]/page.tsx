@@ -7,6 +7,7 @@ import {
   commentSort,
   getShopperProduct,
   getTraffic,
+  isWatched,
 } from "@plugfolio/core";
 import { ProductPageView } from "@/features/creator-page";
 import { formatPrice } from "@/lib/format-price";
@@ -81,7 +82,7 @@ export default async function ProductPage({
     "comments",
     true,
   );
-  const [comments, ownHandle, memberships] = await Promise.all([
+  const [comments, ownHandle, memberships, watched] = await Promise.all([
     getProductComments({ comments: repositories.comments }, product.id, {
       sort: activeSort,
       page: commentPage,
@@ -93,6 +94,9 @@ export default async function ProductPage({
     session?.user
       ? repositories.profiles.listAccessibleByUser(session.user.id)
       : Promise.resolve([]),
+    session?.user
+      ? isWatched({ watchlist: repositories.watchlist }, session.user.id, "product", product.id)
+      : Promise.resolve(false),
   ]);
 
   const identities = memberships.map(({ id, username }) => ({ id, username }));
@@ -148,7 +152,7 @@ export default async function ProductPage({
         pageNumber: commentPage,
         enabled: commentsEnabled,
       }}
-      viewer={{ signedIn: !!session?.user, ownHandle, identities }}
+      viewer={{ signedIn: !!session?.user, watched, ownHandle, identities }}
       structuredData={[productLd, crumbs]}
     />
   );

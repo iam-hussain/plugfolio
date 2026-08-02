@@ -1,6 +1,6 @@
 # Shopper account — follow and comment
 
-**Journey served:** "the one optional account" in [`plugfolio-lean-journey.md`](../../plugfolio-lean-journey.md) — a shopper signs in (email, same Auth.js flow as everyone, [ADR-0007](../adr/0007-authjs-identity-tables.md)) **only** to follow a creator or comment on their page. Buying never asks. Follow and comment are the *only* things behind this door in v1 (§2.2).
+**Journey served:** "the one optional account" in [`plugfolio-lean-journey.md`](../../plugfolio-lean-journey.md) — a shopper signs in (email, same Auth.js flow as everyone, [ADR-0007](../adr/0007-authjs-identity-tables.md)) **only** to follow a creator, save something for later, or comment on their page. Buying never asks. Follow, save and comment are the *only* things behind this door in v1 (§2.2). The watchlist has its own note: [`watchlist.md`](./watchlist.md).
 
 ## Data model
 

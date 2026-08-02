@@ -16,7 +16,7 @@ import {
   ProductList,
 } from "@plugfolio/ui";
 import Link from "next/link";
-import { FollowButton } from "@/features/shopper-account";
+import { FollowButton, WatchButton } from "@/features/shopper-account";
 import { JsonLd } from "@/components/json-ld";
 import { ShareButton } from "./share-button";
 import { TaggedProductCard } from "./tagged-product-card";
@@ -35,7 +35,7 @@ export type PostPageViewProps = {
   isOwner: boolean;
   /** The owner's tap count for this post; null for everyone else. */
   taps: number | null;
-  viewer: { signedIn: boolean; following: boolean };
+  viewer: { signedIn: boolean; following: boolean; watched: boolean };
   /** Breadcrumb JSON-LD, built by the route from public facts. */
   structuredData: Record<string, unknown>;
 };
@@ -87,11 +87,19 @@ export function PostPageView({
               </Button>
             </>
           ) : (
-            <FollowButton
-              profileId={page.id}
-              isAuthenticated={viewer.signedIn}
-              initiallyFollowing={viewer.following}
-            />
+            <>
+              <WatchButton
+                kind="post"
+                targetId={post.id}
+                isAuthenticated={viewer.signedIn}
+                initiallyWatched={viewer.watched}
+              />
+              <FollowButton
+                profileId={page.id}
+                isAuthenticated={viewer.signedIn}
+                initiallyFollowing={viewer.following}
+              />
+            </>
           )
         }
       >

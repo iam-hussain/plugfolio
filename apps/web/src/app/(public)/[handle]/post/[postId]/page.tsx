@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getCreatorPage, getTraffic, getShopperPost, isFollowingProfile } from "@plugfolio/core";
+import {
+  getCreatorPage,
+  getTraffic,
+  getShopperPost,
+  isFollowingProfile,
+  isWatched,
+} from "@plugfolio/core";
 import { PostPageView } from "@/features/creator-page";
 import { breadcrumbList } from "@/lib/structured-data";
 import { SITE_NAME } from "@/lib/site";
@@ -42,12 +48,15 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
   if (!page || !post || post.hiddenAt !== null) notFound();
 
   const session = await auth();
-  const [memberships, following] = await Promise.all([
+  const [memberships, following, watched] = await Promise.all([
     session?.user
       ? repositories.profiles.listAccessibleByUser(session.user.id)
       : Promise.resolve([]),
     session?.user
       ? isFollowingProfile({ follows: repositories.follows }, session.user.id, page.id)
+      : Promise.resolve(false),
+    session?.user
+      ? isWatched({ watchlist: repositories.watchlist }, session.user.id, "post", post.id)
       : Promise.resolve(false),
   ]);
   const isOwner = memberships.some((membership) => membership.id === page.id);
@@ -72,7 +81,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
       post={post}
       isOwner={isOwner}
       taps={taps}
-      viewer={{ signedIn: !!session?.user, following }}
+      viewer={{ signedIn: !!session?.user, following, watched }}
       structuredData={crumbs}
     />
   );

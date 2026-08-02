@@ -28,7 +28,7 @@ import {
 } from "@plugfolio/ui";
 import Image from "next/image";
 import Link from "next/link";
-import { CommentsSection } from "@/features/shopper-account";
+import { CommentsSection, WatchButton } from "@/features/shopper-account";
 import { JsonLd } from "@/components/json-ld";
 import { formatPrice } from "@/lib/format-price";
 import { retailerName } from "@/lib/retailer-name";
@@ -60,6 +60,8 @@ export type ProductPageViewProps = {
   };
   viewer: {
     signedIn: boolean;
+    /** Whether this product is already on the viewer's watchlist. */
+    watched: boolean;
     ownHandle: string;
     identities: readonly { id: string; username: string }[];
   };
@@ -115,7 +117,14 @@ export function ProductPageView({
                 Edit product
               </Link>
             </Button>
-          ) : null
+          ) : (
+            <WatchButton
+              kind="product"
+              targetId={product.id}
+              isAuthenticated={viewer.signedIn}
+              initiallyWatched={viewer.watched}
+            />
+          )
         }
       />
 

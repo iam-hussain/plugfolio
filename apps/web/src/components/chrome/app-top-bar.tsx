@@ -17,7 +17,7 @@ import { PAGE_CONTEXT_SLOT } from "./page-context-slot";
  * Signed out (a prospect): the full marketing nav (Explore · How it works · For
  * creators · For business) with Log in + the "Explore creators" CTA on desktop.
  *
- * Signed in: Explore · Following, and the account menu (DESIGN chrome.js) — the
+ * Signed in: Explore · Following · Watchlist, and the account menu (DESIGN chrome.js) — the
  * avatar + mode pill that opens the roles/profiles dropdown. Server Component so
  * the session and the profile list resolve without a client round-trip; nothing
  * here ever walls the buy path.
@@ -32,6 +32,7 @@ const MARKETING_NAV: readonly { label: string; href: Route }[] = [
 const SIGNED_IN_NAV: readonly { label: string; href: Route }[] = [
   { label: "Explore", href: "/explore" as Route },
   { label: "Following", href: "/following" as Route },
+  { label: "Watchlist", href: "/watchlist" as Route },
 ];
 
 export async function AppTopBar() {

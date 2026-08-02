@@ -52,6 +52,18 @@ test("follow and comment are gated; reading them is not", async ({ page, request
   expect(comment.status()).toBe(401);
 });
 
+test("the watchlist is gated; saving refuses anonymous callers", async ({ page, request }) => {
+  // Saving is an "act as yourself" action like follow — the page is behind
+  // sign-in, and the buy path on the way there never is.
+  await page.goto("/watchlist");
+  await page.waitForURL("**/signin**");
+
+  const save = await request.post("/api/watchlist", {
+    data: { kind: "product", targetId: "00000000-0000-0000-0000-0000000000c1" },
+  });
+  expect(save.status()).toBe(401);
+});
+
 test("the business surface is gated; its write APIs refuse anonymous callers", async ({
   page,
   request,

@@ -26,7 +26,13 @@ export type ClaimSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** What they were trying to do — sets the heading. */
-  action: "follow" | "comment";
+  action: "follow" | "comment" | "save";
+};
+
+const HEADING: Record<ClaimSheetProps["action"], string> = {
+  follow: "Follow with a free account",
+  comment: "Comment with a free account",
+  save: "Save with a free account",
 };
 
 export function ClaimSheet({ open, onOpenChange, action }: ClaimSheetProps) {
@@ -69,9 +75,7 @@ export function ClaimSheet({ open, onOpenChange, action }: ClaimSheetProps) {
         ) : (
           <>
             <SheetHeader>
-              <SheetTitle>
-                {action === "follow" ? "Follow with a free account" : "Comment with a free account"}
-              </SheetTitle>
+              <SheetTitle>{HEADING[action]}</SheetTitle>
               <SheetDescription>
                 One email link to verify, then you sign in with your password. Shopping never needs
                 an account.

@@ -17,6 +17,7 @@ import {
   createRequirementRepository,
   createSocialConnectionRepository,
   createUserRepository,
+  createWatchlistRepository,
 } from "@plugfolio/db";
 import { createYouTubeGateway } from "./youtube";
 
@@ -31,6 +32,7 @@ export const repositories = {
   traffic: createTrafficRepository(),
   profiles: createProfileRepository(),
   follows: createFollowRepository(),
+  watchlist: createWatchlistRepository(),
   ads: createAdPlacementRepository(),
   comments: createCommentRepository(),
   categories: createCategoryRepository(),

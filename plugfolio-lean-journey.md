@@ -19,11 +19,11 @@ That's the whole product for v1. If a feature doesn't serve that sentence, it's 
 | | **Shopper** | **Creator** | **Business** |
 |---|---|---|---|
 | Account to shop / browse? | No | — | — |
-| Account for anything else? | Only to **follow or comment** | Yes | Yes |
+| Account for anything else? | Only to **follow, save or comment** | Yes | Yes |
 | Wants | Buy the thing they just saw | Turn content into sales | Find creators to work with |
 | Does | Taps a post, buys | Builds shoppable profiles from their socials | Posts a requirement, negotiates a collab |
 
-**The one clean rule: an account is never the price of shopping.** You buy with no account, ever. You only sign in when you want to *act as yourself* — follow a creator, leave a comment, or operate as a business. That's the whole identity model:
+**The one clean rule: an account is never the price of shopping.** You buy with no account, ever. You only sign in when you want to *act as yourself* — follow a creator, save something for later, leave a comment, or operate as a business. That's the whole identity model:
 
 > **Shop → no account.  Follow / comment → shopper account.  Sell → creator account.  Hire → business account.**
 
@@ -49,9 +49,11 @@ flowchart LR
 3. **See the product.** Photo, price, the post it came from, one Buy button — plus the code to copy when the product carries an offer.
 4. **Buy.** The button sends them out — to the retailer through the creator's affiliate link, or to the creator's own store. The network credits the creator directly — Plugfolio just measures the tap. The shopper just shops.
 
-No popup. No signup wall. No wishlist to manage, no rewards to understand, no feed to build. If it isn't "tap, see, buy," it isn't here yet.
+No popup. No signup wall. Nothing to manage on the way through, no rewards to understand, no feed to build. If it isn't "tap, see, buy," it isn't here yet.
 
-**The one optional account.** If a shopper wants to **follow** a creator (so their new posts show up later) or **comment** — on a creator's page or on one of their products — *then* they create a lightweight shopper account — email + password, one verification step where they pick their `@handle`, nothing more. Buying never asks for it; only these two social actions do. Follow and comment are the *only* things behind that door in v1. Comments thread **one level deep**: anyone can reply to a comment (the creator's answer speaks as the profile, per the rule below), but replies to replies wait.
+**The one optional account.** If a shopper wants to **follow** a creator (so their new posts show up later), **save** a post or a product for later, or **comment** — on a creator's page or on one of their products — *then* they create a lightweight shopper account — email + password, one verification step where they pick their `@handle`, nothing more. Buying never asks for it; only these three actions do. Follow, save and comment are the *only* things behind that door in v1. Comments thread **one level deep**: anyone can reply to a comment (the creator's answer speaks as the profile, per the rule below), but replies to replies wait.
+
+**Save is a shelf, not a cart.** The **watchlist** (`/watchlist`, in the top bar and the bottom tab bar) holds the posts and products a shopper bookmarked, newest first, each one still carrying the creator who tagged it — because "who showed me this" is half of why it was saved. It holds no price, reserves nothing and buys nothing: every card routes to that post or product's own page, where the outbound tap happens exactly as it would have the first time. Same line as the following list — a list, never a feed.
 
 **A comment can be agreed with.** Each comment carries a **helpful / not helpful** pair with counts. It exists for one reason: a creator page's comments are mostly *questions about the goods* ("does this ship to Pune?", "is the code still live?"), and the useful answer needs to float without a moderator sorting it. One reaction per account per comment, changeable, and it needs the same shopper account follow and comment do — reading the counts never does. Deliberately **not** a rating: it scores a comment, never a product or a creator, so it can't quietly become the star-rating trust layer that's still deferred below.
 
@@ -214,7 +216,7 @@ Cutting these is the point. Each is a real feature — just not part of the firs
 | Deferred | Why it waits |
 |---|---|
 | Referral / share-to-earn rewards | Powerful, but adds an economy to explain before the core loop is even proven. |
-| Anonymous wishlist + price alerts | Needs device identity and notification plumbing; not on the buy path. |
+| Anonymous wishlist + price alerts | Saving *with an account* is in v1 (the watchlist — see the shopper account). Saving **anonymously** needs the device identity to carry a shelf, and alerts need price watching plus notification plumbing; neither is on the buy path. |
 | Aggregated "My Creators" feed + Instagram follow-list import | Following a creator is in v1 (see the shopper account); the *payoff* is a followed-creators **list** — searchable, sortable, and marked with "N new since you last looked" per creator. That count is a fact about a row, not a feed: no post is ever merged into a stream you scroll and buy from, and every route out goes to that creator's own page. The rich aggregated feed and the five-step JSON-import stay deferred. |
 | Tracked in-store redemption (card-linked offers, verified redemptions) | The *untracked* in-store coupon channel is in v1 — show the code at the counter. *Measuring* redemption means card/bank integrations; wait for local density. |
 | Ratings + "actually uses this" badge | Commenting is in v1 (behind the shopper account), and so is **helpful / not helpful on a comment** — that scores an *answer*, never a product or a creator. Star ratings on products and the authenticity badge are the deferred trust layer, and the distinction is the point: one helps a shopper find the reply that answers their question, the other is a reputation system. |

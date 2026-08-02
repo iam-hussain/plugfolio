@@ -12,6 +12,7 @@ export {
   createProfileIdentityRepository,
 } from "./repositories/profile-repository";
 export { createFollowRepository } from "./repositories/follow-repository";
+export { createWatchlistRepository } from "./repositories/watchlist-repository";
 export { createAdPlacementRepository } from "./repositories/ad-placement-repository";
 export { createCommentRepository } from "./repositories/comment-repository";
 export { createCategoryRepository } from "./repositories/category-repository";
