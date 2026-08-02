@@ -120,7 +120,8 @@ export function FollowIdentity({
 }: React.ComponentProps<"a"> & {
   avatar: React.ReactNode;
   name: React.ReactNode;
-  handle: React.ReactNode;
+  /** Omitted when the name IS the handle — two identical lines is not identity. */
+  handle?: React.ReactNode;
   meta: React.ReactNode;
   dimmed?: boolean;
   asChild?: boolean;
@@ -142,7 +143,9 @@ export function FollowIdentity({
       {avatar}
       <span className="min-w-0">
         <b className="text-label block truncate font-bold">{name}</b>
-        <span className="text-muted-foreground text-copy mt-0.5 block truncate">{handle}</span>
+        {handle ? (
+          <span className="text-muted-foreground text-copy mt-0.5 block truncate">{handle}</span>
+        ) : null}
         <span className="text-faint text-micro mt-0.5 block truncate">{meta}</span>
       </span>
     </Comp>

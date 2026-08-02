@@ -119,7 +119,8 @@ type Story = StoryObj<typeof FollowingPage>;
 /** The normal case — grouped into new, then everyone else. */
 export const SomeNew: Story = {};
 
-/** Nothing new: the "all caught up" line replaces an empty section header. */
+/** Nothing new: one group titled "Everyone you follow", and no panel saying
+ *  so — the title and the per-row badges already do. */
 export const AllCaughtUp: Story = {
   args: { rows: QUIET, total: 3, followedTotal: 3 },
 };

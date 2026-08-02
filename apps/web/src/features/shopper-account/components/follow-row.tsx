@@ -37,7 +37,10 @@ export type FollowRowProps = {
 export function FollowRow({ creator, meta, badge }: FollowRowProps) {
   const [gone, setGone] = useState(false);
   const [failed, setFailed] = useState(false);
+  // No display name means the handle IS the name — printing it as both lines
+  // stacked "@lena" on top of "@lena".
   const name = creator.displayName ?? `@${creator.username}`;
+  const handle = creator.displayName ? `@${creator.username}` : null;
 
   const toggle = useMutation({
     mutationFn: (unfollow: boolean) =>
@@ -68,7 +71,7 @@ export function FollowRow({ creator, meta, badge }: FollowRowProps) {
           </Avatar>
         }
         name={name}
-        handle={`@${creator.username}`}
+        handle={handle}
         meta={meta}
       >
         <Link href={`/${creator.username}`} />

@@ -1,5 +1,5 @@
 import type { FollowedCreator, FollowSort } from "@plugfolio/core";
-import { Button, EmptyState, FollowGroup } from "@plugfolio/ui";
+import { Button, FollowGroup } from "@plugfolio/ui";
 import Link from "next/link";
 import { badgeFor, metaLine, plural } from "@/lib/follow-labels";
 import { FollowRow } from "./follow-row";
@@ -48,25 +48,16 @@ export function FollowingList({
 
   return (
     <div id="list">
+      {/* No "you're all caught up" panel when nothing is new. It said nothing
+          the list beneath it wasn't already saying — the group is titled
+          "Everyone you follow" precisely because there is no new group, and
+          every row carries its own "Nothing new" badge. A block of chrome
+          announcing an absence is worse than the absence. */}
       {fresh.length > 0 ? (
         <FollowGroup title="New since you last looked" count={plural(fresh.length, "creator")}>
           {fresh.map(row)}
         </FollowGroup>
-      ) : (
-        // An "all caught up" line is worth more than an empty header.
-        <div className="mt-[26px]">
-          <EmptyState
-            title="Nothing new since you last looked."
-            action={
-              <Button variant="secondary" asChild>
-                <Link href="/explore">Find someone new</Link>
-              </Button>
-            }
-          >
-            Everyone you follow has been quiet. Their pages are all still here.
-          </EmptyState>
-        </div>
-      )}
+      ) : null}
 
       {rest.length > 0 ? (
         <FollowGroup
