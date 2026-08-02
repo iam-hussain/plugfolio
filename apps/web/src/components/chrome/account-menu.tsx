@@ -135,7 +135,9 @@ export function AccountMenu({
             </>
           ) : null}
 
-          <hr className="border-border my-1.5" />
+          {/* Only when something sat between it and the header — otherwise
+              this and the header's own rule stack into a double line. */}
+          {profiles.length > 0 ? <hr className="border-border my-1.5" /> : null}
 
           {/* Only when it exists. There is deliberately no "create one" twin:
               a business account is asked for through Support (category

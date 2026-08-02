@@ -136,14 +136,17 @@ export function AccountRoles({
           </RoleCopy>
         </RoleBlock>
       ) : (
-        <RoleBlock role="business" title="Business" note="Not set up">
+        <RoleBlock role="business" title="Business" note="Ask for one">
           <RoleCopy>
             Hiring creators rather than being one? A business lets you post briefs and negotiate in
-            one thread. One business per account.
+            one thread. One business per account. Tell us who you are and what you&apos;d hire for —
+            a person reads it and sets it up.
           </RoleCopy>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <Button asChild>
-              <Link href="/collabs">Create a business</Link>
+              <Link href={{ pathname: "/support", query: { category: "business_account" } }}>
+                Request a business account
+              </Link>
             </Button>
             <Button variant="secondary" asChild>
               <Link href="/for-business">What businesses get</Link>
