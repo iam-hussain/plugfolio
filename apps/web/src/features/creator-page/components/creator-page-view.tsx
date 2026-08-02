@@ -123,8 +123,9 @@ export function CreatorPageView({
   );
 
   // The header's action slot. The context bar below carries its own Follow —
-  // safe to duplicate because Follow renders from the server's answer and
-  // refreshes it on success, so both copies re-render from one truth.
+  // safe to duplicate because each renders from the server's answer and
+  // refreshes it on success, so both copies land back on one truth. The tapped
+  // one flips instantly; the other catches up on that refresh.
   const headerAction = membership ? (
     // The owner's two tools sit where a visitor's Follow sits (DESIGN
     // §.ch-act > .owner-tools). They used to live in a band under the header
