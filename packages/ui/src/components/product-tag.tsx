@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../lib/cn";
 
@@ -37,7 +37,7 @@ export type ProductTagProps = React.HTMLAttributes<HTMLElement> &
   };
 
 export const ProductTag = React.forwardRef<HTMLElement, ProductTagProps>(
-  ({ className, tone, name, price, asChild = false, ...props }, ref) => {
+  ({ className, tone, name, price, asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "span";
     return (
       <Comp
@@ -48,6 +48,12 @@ export const ProductTag = React.forwardRef<HTMLElement, ProductTagProps>(
         )}
         {...props}
       >
+        {/* Slot clones ONE child, so the dot/name/price beside it are three
+            children too many — `asChild` threw for every caller until this.
+            `Slottable` marks which child becomes the element; the rest become
+            its contents, i.e. the caller's <Link> ends up wearing the pill and
+            carrying the tag inside it. Same pattern as ProfileRow/BackLink. */}
+        <Slottable>{children}</Slottable>
         <span className={cn(dotVariants({ tone }))} aria-hidden />
         {name ? <span className="truncate">{name}</span> : null}
         <span className="text-muted-foreground tabular-nums">{price}</span>
