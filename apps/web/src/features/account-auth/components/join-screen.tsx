@@ -42,17 +42,27 @@ export function JoinScreen({ initialRole }: JoinScreenProps) {
     mutationFn: () => registerAccount({ email, password }),
     onSuccess: () => writeStoredRole(role),
   });
-  const resend = useMutation({ mutationFn: () => resendVerification({ email }) });
+  const resend = useMutation({ mutationFn: () => resendVerification({ identifier: email }) });
 
   if (submit.isSuccess) {
     return (
       <AuthShell role={role} artefact={<RoleArtefact role={role} />}>
         <AuthStatus icon={<Mail aria-hidden />} title="Check your email">
           <p className="text-muted-foreground text-copy max-w-[38ch] leading-[1.5]">
-            We sent a verification link to <b className="text-foreground">{email}</b>. It works
-            once, and it works on any device.
+            We sent a verification link to <b className="text-foreground">{email}</b>, and a
+            six-digit code with it. Either one takes you to picking your username.
           </p>
-          <Button variant="secondary" onClick={() => resend.mutate()} disabled={resend.isPending}>
+          {/* The code path exists for exactly this moment: leaving an in-app
+              browser for the mail app often loses the tab you came from. */}
+          <Button asChild variant="secondary">
+            <Link href="/verify">Enter the code instead →</Link>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => resend.mutate()}
+            disabled={resend.isPending}
+          >
             {resend.isPending ? "Sending…" : resend.isSuccess ? "Sent again ✓" : "Resend email"}
           </Button>
           <Button variant="ghost" size="sm" onClick={() => submit.reset()}>

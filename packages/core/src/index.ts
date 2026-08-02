@@ -67,12 +67,7 @@ export type {
   ProductMetadata,
   ProductMetadataGateway,
 } from "./ports/creator-content-repository";
-export type {
-  ImageSpec,
-  ProcessedImage,
-  ImageProcessor,
-  ImageStore,
-} from "./ports/image-storage";
+export type { ImageSpec, ProcessedImage, ImageProcessor, ImageStore } from "./ports/image-storage";
 export {
   uploadKind,
   type UploadKind,
@@ -246,8 +241,12 @@ export {
   type RegisterInput,
   credentialsInput,
   type CredentialsInput,
+  adminCredentialsInput,
+  type AdminCredentialsInput,
   emailOnlyInput,
   type EmailOnlyInput,
+  identifierInput,
+  type IdentifierInput,
   verifyEmailInput,
   type VerifyEmailInput,
   resetPasswordInput,
@@ -326,6 +325,7 @@ export {
   verifyCredentials,
   sendSetPasswordLink,
   type AccountAuthDeps,
+  type VerifyEmailDeps,
   type CredentialsResult,
 } from "./services/account-auth";
 export { hashPassword } from "./auth/password";

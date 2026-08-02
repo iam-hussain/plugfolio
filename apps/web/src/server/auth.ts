@@ -91,7 +91,8 @@ const nextAuth = NextAuth({
   providers: [
     ...oauthProviders,
     Credentials({
-      credentials: { email: {}, password: {} },
+      // `identifier` is an email OR a member handle (ADR-0024).
+      credentials: { identifier: {}, password: {} },
       async authorize(raw) {
         const parsed = credentialsInput.safeParse(raw);
         if (!parsed.success) return null;
@@ -99,9 +100,10 @@ const nextAuth = NextAuth({
         if (!result.ok) {
           if (result.reason === "unverified") throw new UnverifiedEmailError();
           if (result.reason === "suspended") throw new SuspendedAccountError();
-          return null; // one generic failure for wrong email OR password
+          return null; // one generic failure for wrong identifier OR password
         }
-        return { id: result.userId, email: parsed.data.email };
+        // Id only — the session callback reads the row, so nothing else is needed.
+        return { id: result.userId };
       },
     }),
   ],

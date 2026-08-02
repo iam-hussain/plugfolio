@@ -1,6 +1,6 @@
 # ADR-0012 — Password login; the email link is for verification only
 
-**Status:** Accepted (2026-07-22) — amends [ADR-0007](./0007-authjs-identity-tables.md)
+**Status:** Accepted (2026-07-22) — amends [ADR-0007](./0007-authjs-identity-tables.md); points 1 and 4 amended by [ADR-0024](./0024-username-at-verification-and-as-a-login.md)
 
 ## Context
 
@@ -17,6 +17,8 @@ decision: verification belongs to **registration**, not to every login.
    **scrypt** hash (`node:crypto`, per-user salt — no new dependency), send **one
    verification link** (the existing Auth.js `VerificationToken` plumbing). The account
    can't sign in until the link is clicked.
+   *(ADR-0024: the generated handle is now only a placeholder — verification asks for the
+   real one, and the same email also carries a six-digit code.)*
 2. **Login = email + password.** Auth.js **Credentials** provider; sessions **stay
    database sessions** (the adapter's session table — the credentials flow creates them
    explicitly). An unverified email is refused with a **resend-verification** offer, not a
@@ -24,9 +26,10 @@ decision: verification belongs to **registration**, not to every login.
 3. **Forgot password = email reset link** — the same token plumbing pointed at a
    set-new-password page. This ships **with** password login, not after it: passwords
    without reset are permanent lockouts.
-4. **The username is never a credential.** Login is by email only. The member handle is
-   public (on every comment) — accepting it as a login identifier would hand attackers a
-   public username list for credential stuffing. ADR-0009 stands unchanged.
+4. ~~**The username is never a credential.** Login is by email only.~~ **Reversed by
+   [ADR-0024](./0024-username-at-verification-and-as-a-login.md)**: login takes the email
+   **or** the member handle, same password. The stuffing risk that motivated this is a
+   rate-limiting problem, and applies equally to email addresses.
 5. **Passwordless users exist and are fine.** A Manager invited by email (ADR-0004) has a
    `User` row with **no password**; the invite email carries a verification-style link
    that lands on set-password. `passwordHash` is therefore nullable.

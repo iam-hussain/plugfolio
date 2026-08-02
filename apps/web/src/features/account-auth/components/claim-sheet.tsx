@@ -34,7 +34,7 @@ export function ClaimSheet({ open, onOpenChange, action }: ClaimSheetProps) {
   const [password, setPassword] = useState("");
 
   const submit = useMutation({ mutationFn: () => registerAccount({ email, password }) });
-  const resend = useMutation({ mutationFn: () => resendVerification({ email }) });
+  const resend = useMutation({ mutationFn: () => resendVerification({ identifier: email }) });
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>

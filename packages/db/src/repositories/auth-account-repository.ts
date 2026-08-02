@@ -4,12 +4,26 @@ import { prisma, type PrismaClient } from "../client";
 
 /** Prisma implementations of the password-auth ports (ADR-0012). */
 
+const ACCOUNT_SELECT = {
+  id: true,
+  email: true,
+  passwordHash: true,
+  emailVerified: true,
+  suspendedAt: true,
+} as const;
+
 export function createAuthAccountRepository(db: PrismaClient = prisma): AuthAccountRepository {
   return {
     async findByEmail(email: string): Promise<AuthAccount | null> {
-      return db.user.findUnique({
-        where: { email },
-        select: { id: true, passwordHash: true, emailVerified: true, suspendedAt: true },
+      return db.user.findUnique({ where: { email }, select: ACCOUNT_SELECT });
+    },
+
+    async findByIdentifier(identifier: string): Promise<AuthAccount | null> {
+      // Both columns are stored lower-cased, and the schemas normalize input —
+      // so one plain OR covers "email or username" (ADR-0024).
+      return db.user.findFirst({
+        where: { OR: [{ email: identifier }, { username: identifier }] },
+        select: ACCOUNT_SELECT,
       });
     },
 
@@ -44,6 +58,13 @@ export function createAuthTokenRepository(db: PrismaClient = prisma): AuthTokenR
   return {
     async create(identifier: string, tokenHash: string, expires: Date): Promise<void> {
       await db.verificationToken.create({ data: { identifier, token: tokenHash, expires } });
+    },
+
+    async peek(tokenHash: string): Promise<{ identifier: string } | null> {
+      return db.verificationToken.findFirst({
+        where: { token: tokenHash, expires: { gt: new Date() } },
+        select: { identifier: true },
+      });
     },
 
     async consume(tokenHash: string): Promise<{ identifier: string } | null> {

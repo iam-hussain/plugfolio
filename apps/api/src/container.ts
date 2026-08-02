@@ -120,8 +120,8 @@ export const imageUploadDeps =
     : null;
 
 const consoleMailer: AuthMailer = {
-  async sendVerification(email, url) {
-    console.log(`[auth] verification link for ${email}: ${url}`);
+  async sendVerification(email, url, code) {
+    console.log(`[auth] verification for ${email}: ${url} (code ${code})`);
   },
   async sendPasswordReset(email, url) {
     console.log(`[auth] password-reset link for ${email}: ${url}`);
@@ -150,4 +150,11 @@ export const accountAuthDeps = {
   mailer,
   webOrigin: env.WEB_ORIGIN,
   now: clock.now,
+};
+
+/** Verification claims the handle too (ADR-0024), so it needs those repos. */
+export const verifyEmailDeps = {
+  ...accountAuthDeps,
+  users: repositories.users,
+  settings: repositories.settings,
 };

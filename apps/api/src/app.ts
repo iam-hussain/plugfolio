@@ -21,6 +21,7 @@ import {
   connectProductToPost,
   createCategory,
   emailOnlyInput,
+  identifierInput,
   registerAccount,
   registerInput,
   requestPasswordReset,
@@ -100,6 +101,7 @@ import {
   profileManagerDeps,
   repositories,
   shopperSocialDeps,
+  verifyEmailDeps,
 } from "./container";
 import { toErrorShape } from "./http/error-response";
 
@@ -132,12 +134,13 @@ app.post("/account", async (c) => {
 
 app.post("/account/verify", async (c) => {
   const input = verifyEmailInput.parse(await c.req.json());
-  await verifyEmail(accountAuthDeps, input);
+  await verifyEmail(verifyEmailDeps, input);
   return c.json({ verified: true });
 });
 
 app.post("/account/resend-verification", async (c) => {
-  const input = emailOnlyInput.parse(await c.req.json());
+  // Email or username — the sign-in screen may only know what was typed there.
+  const input = identifierInput.parse(await c.req.json());
   await resendVerification(accountAuthDeps, input);
   return c.json({ sent: true });
 });
@@ -429,7 +432,8 @@ app.post("/uploads/:kind", async (c) => {
   if (!imageUploadDeps) throw new AppError("INTERNAL", "Image uploads are not configured");
   const kind = uploadKind.parse(c.req.param("kind"));
   const file = (await c.req.parseBody()).file;
-  if (!(file instanceof File)) throw new AppError("VALIDATION", "Expected a file field named 'file'");
+  if (!(file instanceof File))
+    throw new AppError("VALIDATION", "Expected a file field named 'file'");
   if (file.size > MAX_UPLOAD_BYTES) throw new AppError("VALIDATION", "Image too large");
   const bytes = new Uint8Array(await file.arrayBuffer());
   const uploaded = await uploadImage(imageUploadDeps, kind, { bytes });

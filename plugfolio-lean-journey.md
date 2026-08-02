@@ -27,7 +27,7 @@ That's the whole product for v1. If a feature doesn't serve that sentence, it's 
 
 > **Shop → no account.  Follow / comment → shopper account.  Sell → creator account.  Hire → business account.**
 
-**How each account signs in:** everyone registers with **email + password** — creators, shoppers, and businesses alike. Registration sends **one verification link** to prove the email; after that click, every login is just email + password — no link, no round-trip (the thing in-app browsers are worst at). Forgot password → an email **reset link**. **No username is ever a login**: a creator's *profile* username is a public URL drawn from their connected YouTube/Instagram (one account runs several profiles, so it can't be the login — see below), and the member `@handle` is public on every comment, so using it as a credential would invite stuffing. Email stays the one private identifier.
+**How each account signs in:** everyone registers with **email + password** — creators, shoppers, and businesses alike. Registration sends **one verification email** carrying two ways to prove the address: a **link**, and a **six-digit code** to type on `/verify` for anyone whose in-app browser loses the tab on the way to their mail app. Verifying is also where the account **picks its username** — it is never assigned. After that, every login is just email **or username** + password — no link, no round-trip (the thing in-app browsers are worst at). Forgot password → an email **reset link**. A creator's *profile* username stays a separate thing: a public URL drawn from their connected YouTube/Instagram, and never a login (one account runs several profiles — see below).
 
 **Every account also gets a member handle.** Whatever the role, each account carries one globally unique **`@handle`** — auto-generated at first sign-in so sign-up stays one step, changeable later in settings. It's how a person appears when they follow or comment (the email is **never** shown), and it is *not* a login either. Member handles are a separate namespace from profile usernames: a profile username is a URL and social-verified; a member handle is display-only, with no public page in v1 — so it can be free-form without inviting squatting.
 
@@ -51,7 +51,7 @@ flowchart LR
 
 No popup. No signup wall. No wishlist to manage, no rewards to understand, no feed to build. If it isn't "tap, see, buy," it isn't here yet.
 
-**The one optional account.** If a shopper wants to **follow** a creator (so their new posts show up later) or **comment** — on a creator's page or on one of their products — *then* they create a lightweight shopper account — email + password, one verification click, nothing more. Buying never asks for it; only these two social actions do. Follow and comment are the *only* things behind that door in v1. Comments thread **one level deep**: anyone can reply to a comment (the creator's answer speaks as the profile, per the rule below), but replies to replies wait.
+**The one optional account.** If a shopper wants to **follow** a creator (so their new posts show up later) or **comment** — on a creator's page or on one of their products — *then* they create a lightweight shopper account — email + password, one verification step where they pick their `@handle`, nothing more. Buying never asks for it; only these two social actions do. Follow and comment are the *only* things behind that door in v1. Comments thread **one level deep**: anyone can reply to a comment (the creator's answer speaks as the profile, per the rule below), but replies to replies wait.
 
 **A comment can be agreed with.** Each comment carries a **helpful / not helpful** pair with counts. It exists for one reason: a creator page's comments are mostly *questions about the goods* ("does this ship to Pune?", "is the code still live?"), and the useful answer needs to float without a moderator sorting it. One reaction per account per comment, changeable, and it needs the same shopper account follow and comment do — reading the counts never does. Deliberately **not** a rating: it scores a comment, never a product or a creator, so it can't quietly become the star-rating trust layer that's still deferred below.
 
@@ -75,7 +75,7 @@ flowchart LR
     D --> E[Tag products + publish]
 ```
 
-1. **Sign up with email + password.** One verification click and the account is live — **nothing connected yet, no username asked for.** The profile username belongs to profiles, not the account (see below).
+1. **Sign up with email + password.** Verify the email — by link or by the six-digit code — **pick a username there**, and the account is live with **nothing connected yet**. That username is the member `@handle` and a login; the *profile* username is a different thing, and belongs to profiles (see below).
 2. **Connect your socials (whenever you're ready).** After the account exists, the **Admin connects one Google (YouTube) and one Meta (Instagram)** — not required at sign-up, done at the point you want to build a profile. At least one connection is needed to create a profile, and because you can only connect accounts you own, it doubles as proof of the identity behind every username.
 3. **Create a profile (up to 5).** From the channels and handles those connections expose, spin up a shoppable profile. Posts import automatically. A **random username** is assigned right away so the page works instantly.
 4. **Pick your username.** In profile settings, choose the public handle **from the usernames you actually have on the connected YouTube/Instagram** — nothing else is offered. That becomes `plugfolio.com/<username>`. No follower minimum, no approval.
@@ -90,7 +90,7 @@ The moment that sells them: **seeing their own reel become shoppable.** Onboardi
 
 Three words, kept straight:
 
-- **Account** — the login (**email + password**, email verified once at registration). Created on that alone; connects to **one Google and one Meta** any time afterward, and holds **up to 5 profiles**.
+- **Account** — the login (**email or member `@handle`, plus password**; email verified once at registration, where the handle is chosen). Created on that alone; connects to **one Google and one Meta** any time afterward, and holds **up to 5 profiles**.
 - **Profile** — one shoppable page with one username (drawn from a connected handle). It's what a shopper sees at `plugfolio.com/<username>`. One account, many profiles — which is exactly why the username can't be the login.
 - **Connected socials** — the YouTube channel and Instagram account a profile is built on (at most one of each).
 

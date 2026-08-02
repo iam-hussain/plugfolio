@@ -32,9 +32,10 @@ const authBanner = cva(
 );
 
 /**
- * Login (brief 04, ADR-0012): email + password, one step, no email round-trip.
- * ONE generic banner for wrong email OR password (never a ring on one field —
- * that's an existence oracle); a distinct unverified state carrying resend.
+ * Login (brief 04, ADR-0012/ADR-0024): email OR username + password, one step,
+ * no email round-trip. ONE generic banner for a wrong identifier OR password
+ * (never a ring on one field — that's an existence oracle); a distinct
+ * unverified state carrying resend.
  * No role picker — the account already holds whatever roles it holds; the pane
  * only reflects the role the visitor arrived as.
  */
@@ -51,7 +52,7 @@ export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenPro
   // the last-used role from the cache, else shopper. No picker here — login is
   // role-agnostic; this only decides which artefact the pane shows.
   const [role, setRole] = useState<AuthRole>(initialRole ?? DEFAULT_ROLE);
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [state, setState] = useState<LoginState>("idle");
 
@@ -61,7 +62,7 @@ export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenPro
 
   const submit = useMutation({
     mutationFn: async () => {
-      const result = await signIn("credentials", { email, password, redirect: false });
+      const result = await signIn("credentials", { identifier, password, redirect: false });
       if (result?.error) {
         setState(
           result.code === "unverified" || result.code === "suspended" ? result.code : "invalid",
@@ -74,7 +75,7 @@ export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenPro
       router.refresh();
     },
   });
-  const resend = useMutation({ mutationFn: () => resendVerification({ email }) });
+  const resend = useMutation({ mutationFn: () => resendVerification({ identifier }) });
 
   return (
     <AuthShell role="generic" artefact={<RoleArtefact role={role} />}>
@@ -82,12 +83,12 @@ export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenPro
         Welcome back
       </h1>
       <p className="text-muted-foreground text-copy mt-2.5 leading-[1.5]">
-        Email and password. That&apos;s the whole thing.
+        Email or username, and your password. That&apos;s the whole thing.
       </p>
 
       {state === "invalid" ? (
         <AuthBanner tone="bad">
-          <b className="block font-semibold">Email or password is incorrect.</b>
+          <b className="block font-semibold">Those details don&apos;t match an account.</b>
           Check both and try again.
         </AuthBanner>
       ) : null}
@@ -120,18 +121,18 @@ export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenPro
         className="mt-[18px] flex flex-col"
         onSubmit={(event) => {
           event.preventDefault();
-          if (email.trim() && password) submit.mutate();
+          if (identifier.trim() && password) submit.mutate();
         }}
       >
-        <FieldLabel htmlFor="login-email">Email</FieldLabel>
+        <FieldLabel htmlFor="login-identifier">Email or username</FieldLabel>
         <TextField
-          id="login-email"
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          id="login-identifier"
+          type="text"
+          value={identifier}
+          onChange={(event) => setIdentifier(event.target.value)}
           required
-          autoComplete="email"
-          placeholder="you@email.com"
+          autoComplete="username"
+          placeholder="you@email.com or mayamakes"
           className="mb-3.5"
         />
         <FieldLabel htmlFor="login-password">Password</FieldLabel>

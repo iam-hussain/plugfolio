@@ -58,6 +58,9 @@ type Layout = {
   readonly paragraphs: readonly string[];
   readonly ctaLabel: string;
   readonly url: string;
+  /** A six-digit code shown under the button — the way in for a reader whose
+   * in-app browser makes leaving and coming back a lost session (ADR-0024). */
+  readonly code?: string;
   /** The expiry + single-use line (bordered, sits under the printed URL). */
   readonly metaLine: string;
   /** The "didn't ask for this" line — always present. */
@@ -77,6 +80,12 @@ function renderHtml(layout: Layout): string {
     .map((p) => `<p style="margin:0 0 14px;">${p}</p>`)
     .join("\n            ");
   const footer = layout.footLines.map(escapeHtml).join("<br>\n            ");
+  const code = layout.code
+    ? `<p style="margin:14px 0 0;padding:14px;border:1px solid ${LINE};border-radius:8px;text-align:center;font-size:13px;color:${MUTED};">` +
+      `Or type this code into the verification screen:<br>` +
+      `<strong style="display:inline-block;margin-top:6px;font-family:${MONO};font-size:26px;letter-spacing:0.18em;color:${INK};">${escapeHtml(layout.code)}</strong>` +
+      `</p>`
+    : "";
 
   return `<!doctype html>
 <html lang="en">
@@ -97,6 +106,7 @@ function renderHtml(layout: Layout): string {
               <a href="${href}" style="display:inline-block;padding:13px 24px;border-radius:8px;background-color:${VIOLET};color:#FFFFFF;text-decoration:none;font-weight:700;font-size:15px;">${layout.ctaLabel}</a>
             </p>
             <p style="margin:14px 0 0;padding:11px 13px;border-radius:8px;background-color:${CANVAS};font-family:${MONO};font-size:12px;line-height:1.5;color:${MUTED};word-break:break-all;">${href}</p>
+            ${code}
             <p style="margin:18px 0 0;padding-top:16px;border-top:1px solid ${LINE};font-size:13px;color:${MUTED};">${layout.metaLine}</p>
             <p style="margin:8px 0 0;padding-top:8px;font-size:13px;color:${MUTED};">${layout.disclaimerLine}</p>
           </td>
@@ -126,21 +136,23 @@ const REPLY_LINE = "Plugfolio · Reply to this email and a person reads it.";
    Sent once at registration. The account cannot sign in until the link is
    used, so it says that plainly — a reader who thinks it optional will try to
    log in, fail, and blame the password. */
-export function verificationEmail(url: string): EmailContent {
+export function verificationEmail(url: string, code: string): EmailContent {
   return {
-    subject: "Confirm your email to finish signing up",
+    subject: `Confirm your email to finish signing up (${code})`,
     html: renderHtml({
       heading: "One tap and you&rsquo;re in.",
       paragraphs: [
-        "You created a Plugfolio account with this address. Confirm it and you can sign in.",
+        "You created a Plugfolio account with this address. Confirm it, pick your username, and " +
+          "you can sign in.",
       ],
       ctaLabel: "Confirm my email",
       url,
+      code,
       metaLine:
         `This link works <strong style="color:${INK};">once</strong> and expires in ` +
-        `<strong style="color:${INK};">24 hours</strong>. You can&rsquo;t sign in until it&rsquo;s ` +
-        "used &mdash; if it runs out, start a new sign-up with the same address and we&rsquo;ll " +
-        "send a fresh one.",
+        `<strong style="color:${INK};">24 hours</strong>; the code lasts ` +
+        `<strong style="color:${INK};">15 minutes</strong>. You can&rsquo;t sign in until one of ` +
+        "them is used &mdash; if they run out, ask for a fresh email from the sign-in screen.",
       disclaimerLine:
         "Didn&rsquo;t sign up? Someone typed this address by mistake. Ignore this and nothing " +
         "happens &mdash; no account is created without this link.",
@@ -148,10 +160,12 @@ export function verificationEmail(url: string): EmailContent {
     }),
     text: renderText([
       "One tap and you're in.",
-      "You created a Plugfolio account with this address. Confirm it and you can sign in.",
+      "You created a Plugfolio account with this address. Confirm it, pick your username, and you " +
+        "can sign in.",
       `Confirm your email:\n${url}`,
-      "This link works once and expires in 24 hours. You can't sign in until it's used — if it " +
-        "runs out, start a new sign-up with the same address and we'll send a fresh one.",
+      `Or type this code into the verification screen: ${code}`,
+      "This link works once and expires in 24 hours; the code lasts 15 minutes. You can't sign in " +
+        "until one of them is used — if they run out, ask for a fresh email from the sign-in screen.",
       "Didn't sign up? Someone typed this address by mistake. Ignore this and nothing happens — " +
         "no account is created without this link.",
       REPLY_LINE,

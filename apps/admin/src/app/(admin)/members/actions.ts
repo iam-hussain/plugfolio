@@ -79,7 +79,7 @@ export async function bulkSuspendMembersAction(formData: FormData): Promise<Acti
 export async function resendMemberVerificationAction(formData: FormData): Promise<ActionResult> {
   await requireAdmin();
   const email = z.string().email().parse(formData.get("email"));
-  await resendVerification(memberEmailDeps, { email });
+  await resendVerification(memberEmailDeps, { identifier: email });
   return { ok: true };
 }
 

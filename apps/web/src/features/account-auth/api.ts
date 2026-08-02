@@ -1,5 +1,6 @@
 import type {
   EmailOnlyInput,
+  IdentifierInput,
   RegisterInput,
   ResetPasswordInput,
   VerifyEmailInput,
@@ -28,7 +29,7 @@ async function send(path: string, body: unknown): Promise<void> {
 
 export const registerAccount = (input: RegisterInput) => send("/api/account", input);
 export const verifyEmail = (input: VerifyEmailInput) => send("/api/account/verify", input);
-export const resendVerification = (input: EmailOnlyInput) =>
+export const resendVerification = (input: IdentifierInput) =>
   send("/api/account/resend-verification", input);
 export const requestPasswordReset = (input: EmailOnlyInput) =>
   send("/api/account/reset-request", input);

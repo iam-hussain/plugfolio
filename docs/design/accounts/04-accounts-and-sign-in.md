@@ -19,15 +19,16 @@ needs none of it.
 
 | Moment | What happens | Email involved? |
 |---|---|---|
-| **Register** | email + password → account created, **verification link sent** | ✅ once |
-| **Verify** | tap the link → account active → continue to role's next step | (is the email) |
-| **Login** | email + password → in | ❌ never |
+| **Register** | email + password → account created, **verification email sent (link + 6-digit code)** | ✅ once |
+| **Verify** | tap the link *or* type the code → **pick a username** → account active → continue to role's next step | (is the email) |
+| **Login** | email **or username** + password → in | ❌ never |
 | **Forgot password** | email → **reset link** → set new password | ✅ only here |
 
-**No username anywhere in auth.** The member `@handle` is auto-generated and edited later
-in `/account`; the profile username comes from connected socials (brief 06). Neither is
-ever a login — email is the one private identifier. Don't design a username field on any
-of these screens.
+**One username field, and it lives on Verify** (ADR-0024). Register still never asks —
+that screen stays email + password. The member `@handle` is chosen at verification (still
+editable later in `/account`) and **is** a login, alongside the email. The *profile*
+username is a different thing, comes from connected socials (brief 06), and is never a
+login. Don't put a username field on Register, Login, Forgot or Reset.
 
 ## The three entries (same pattern, different context)
 
@@ -65,15 +66,18 @@ of these screens.
 ## Content & data
 
 Email, password (min 8 chars — show the rule up front, not as a post-submit error);
-verification state; for business: name, category, logo (after verification). Session
+verification state; on Verify: the six-digit code and the chosen username (3–30, letters,
+numbers, dots, dashes — the rule shown under the field, not after submit); for business: name, category, logo (after verification). Session
 carries the **role** so the app routes correctly afterward.
 
 ## Actions
 
 - **Register:** Create account → "check your email" state → (from email) Verify → role's
-  next step. Secondary: resend link, change email, go to sign-in.
+  next step. Secondary: **enter the code instead**, resend email, change email, go to sign-in.
 - **Login:** Sign in → straight in. Secondary: forgot password, go to register.
-- **Verify page:** confirms + forwards automatically; an expired/used link offers resend.
+- **Verify page:** a form, not an auto-confirm. Arriving on the link, it asks only for the
+  username; arriving bare (`/verify`), it asks for email + the six-digit code as well.
+  Submitting verifies and claims the handle together, then forwards.
 - **Forgot/Reset:** email → "check your email" → (from email) new password + confirm →
   signed in.
 
@@ -82,11 +86,12 @@ carries the **role** so the app routes correctly afterward.
 - **Register:** default · submitting · **"check your email"** (with resend + change-email)
   · email already registered (offer sign-in / forgot — do NOT leak whether the email
   exists beyond this standard flow) · weak password (inline, live rule) · rate-limited.
-- **Login:** default · submitting · wrong email/password (one generic message — never say
-  which was wrong) · **unverified email** (distinct state: "verify your email first" +
+- **Login:** default · submitting · wrong identifier/password (one generic message — never
+  say which was wrong) · **unverified email** (distinct state: "verify your email first" +
   resend button) · rate-limited.
-- **Verify:** success (auto-forward) · expired/used link (resend) · already verified (just
-  forward to sign-in).
+- **Verify:** default (username; plus email + code when there's no link) · submitting ·
+  **handle taken/reserved** (inline — the link is still good, try another) · wrong or
+  expired code/link (offer a fresh email) · success (auto-forward).
 - **Reset:** link sent · new-password form · expired link · success (signed in).
 - **Edge cases:** shopper who abandons the sheet (Follow/Comment simply doesn't persist —
   no nagging); verification link opened on a different device (works — it verifies the

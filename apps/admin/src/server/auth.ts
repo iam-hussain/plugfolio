@@ -1,4 +1,4 @@
-import { credentialsInput, verifyAdminCredentials } from "@plugfolio/core";
+import { adminCredentialsInput, verifyAdminCredentials } from "@plugfolio/core";
 import NextAuth, { type DefaultSession, type NextAuthResult } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { redirect } from "next/navigation";
@@ -44,7 +44,7 @@ const nextAuth = NextAuth({
     Credentials({
       credentials: { email: {}, password: {} },
       async authorize(raw) {
-        const parsed = credentialsInput.safeParse(raw);
+        const parsed = adminCredentialsInput.safeParse(raw);
         if (!parsed.success) return null;
         // Rate limit BEFORE touching credentials; limited = same generic no.
         if (isRateLimited(parsed.data.email)) return null;

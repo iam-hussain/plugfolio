@@ -1,6 +1,6 @@
 # ADR-0009 — Member handles (`@handle`) for every account & comment identity
 
-**Status:** Accepted (2026-07-21) — amends [ADR-0004](./0004-creator-account-profiles-identity.md) and [ADR-0007](./0007-authjs-identity-tables.md)
+**Status:** Accepted (2026-07-21) — amends [ADR-0004](./0004-creator-account-profiles-identity.md) and [ADR-0007](./0007-authjs-identity-tables.md); decision 1 amended by [ADR-0024](./0024-username-at-verification-and-as-a-login.md)
 
 ## Context
 
@@ -18,7 +18,10 @@ social verification (ADR-0004) — a scheme too heavy to impose on shoppers.
 1. **`User.username` — the member handle.** Globally unique, lowercase slug,
    **auto-generated at first sign-in** (same move as profile random usernames, so sign-up
    stays one step), changeable in settings. It is public identity only: **never a login,
-   and the email is never rendered.**
+   never a URL** — and the email is never rendered.
+   *(**[ADR-0024](./0024-username-at-verification-and-as-a-login.md)** amends both halves:
+   the generated handle now lasts only until email verification, where the person picks
+   their own — and the handle **is** a login, alongside the email, same password.)*
 2. **Separate namespace from profile usernames.** Member handles get **no public URL in
    v1** — always rendered as `@handle` in comment/follow contexts. No page behind a handle
    means no squatting value, so free-form handles need no verification. Profile usernames

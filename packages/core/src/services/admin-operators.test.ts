@@ -69,6 +69,9 @@ function makeDeps() {
     async create(identifier, tokenHash, expires) {
       tokens.set(tokenHash, { identifier, expires });
     },
+    async peek(tokenHash) {
+      return tokens.get(tokenHash) ?? null;
+    },
     async consume(tokenHash) {
       const row = tokens.get(tokenHash);
       if (!row) return null;

@@ -56,8 +56,8 @@ async function send(config: TwilioMailerConfig, to: string, email: EmailContent)
 
 export function createTwilioMailer(config: TwilioMailerConfig): AuthMailer {
   return {
-    async sendVerification(email, url) {
-      await send(config, email, verificationEmail(url));
+    async sendVerification(email, url, code) {
+      await send(config, email, verificationEmail(url, code));
     },
     async sendPasswordReset(email, url) {
       await send(config, email, passwordResetEmail(url));

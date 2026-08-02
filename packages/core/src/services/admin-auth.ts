@@ -1,6 +1,6 @@
 import { verifyPassword } from "../auth/password";
 import type { AdminUserRepository } from "../ports/admin-repository";
-import type { CredentialsInput } from "../schemas/account-auth";
+import type { AdminCredentialsInput } from "../schemas/account-auth";
 
 /**
  * Admin sign-in (docs/implementation/admin-app.md): email + password against
@@ -26,7 +26,7 @@ export type AdminCredentialsResult =
 
 export async function verifyAdminCredentials(
   deps: AdminAuthDeps,
-  input: CredentialsInput,
+  input: AdminCredentialsInput,
 ): Promise<AdminCredentialsResult> {
   const admin = await deps.admins.findByEmail(input.email);
   // One generic failure for wrong email OR wrong password — no admin oracle.

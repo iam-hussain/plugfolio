@@ -32,9 +32,10 @@ datasource db {
 model User {
   id            String    @id @default(uuid()) @map("_id")
   email         String    @unique
-  /// The member handle (ADR-0009): every account's public identity for
-  /// follow/comment, shown as @handle. Auto-generated at first sign-in,
-  /// changeable in settings. NEVER a login and never a URL in v1 — a separate
+  /// The member handle (ADR-0009, ADR-0024): every account's public identity
+  /// for follow/comment, shown as @handle. A generated placeholder until the
+  /// person picks one at email verification; changeable in settings. It IS a
+  /// login (email or handle, same password) but never a URL in v1 — a separate
   /// namespace from Profile.username.
   username      String    @unique
   /// scrypt `salt:hash` (ADR-0012). Null = passwordless (an invited Manager
