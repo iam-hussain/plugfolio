@@ -87,7 +87,13 @@ export function AccountNavTrack({ label, children }: { label: string; children: 
         // The strip keeps the page's gutter and scrolls INSIDE itself: a chip
         // cut off by the track's own rounded end says "more this way", where a
         // strip bled off the viewport just looks like a cropped screenshot.
-        "bg-active rounded-pill flex snap-x snap-proximity gap-1 overflow-x-auto p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        //
+        // `p-2` is the lifted chip's clearance, not decoration: at the ends a
+        // pill inside a pill needs room for the curve to read, and `shadow-tag`
+        // throws ~10px that `overflow-x-auto` clips flat against a tighter
+        // inset. `scroll-px-2` keeps that inset when a chip snaps, so the first
+        // and last stop where the others sit rather than flush to the end.
+        "bg-active rounded-pill flex snap-x snap-proximity scroll-px-2 gap-1 overflow-x-auto p-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
         // …then stops being a strip entirely.
         "min-[900px]:sticky min-[900px]:top-[78px] min-[900px]:flex-col min-[900px]:gap-1 min-[900px]:overflow-visible min-[900px]:rounded-none min-[900px]:bg-transparent min-[900px]:p-0",
       )}
