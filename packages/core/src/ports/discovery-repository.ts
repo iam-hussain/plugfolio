@@ -8,6 +8,9 @@ import type { ShopperProduct } from "./creator-page-repository";
 export type DiscoveryCreator = {
   readonly id: string;
   readonly username: string;
+  /** The public name (brief 10); null = the card leads with the @handle. */
+  readonly displayName: string | null;
+  readonly avatarUrl: string | null;
   readonly followerCount: number;
   readonly postCount: number;
   readonly productCount: number;
@@ -18,6 +21,8 @@ export type DiscoveryCreator = {
 export type DiscoveryProduct = ShopperProduct & {
   /** The creator it belongs to — "by @username" + the card's link target. */
   readonly username: string;
+  /** That creator's avatar, for the card byline. */
+  readonly avatarUrl: string | null;
 };
 
 /** One tagged product pinned on a wall post — name, price and the anchor tone. */
@@ -34,7 +39,11 @@ export type DiscoveryPostTag = {
 export type DiscoveryPost = {
   readonly id: string;
   readonly username: string;
+  /** The creator's avatar, for the card byline. */
+  readonly avatarUrl: string | null;
   readonly mediaUrl: string;
+  /** The post's own words — the card's title. Null = it never had a caption. */
+  readonly caption: string | null;
   /** Up to 3 tags shown on the tile; the rest collapse into a "+N" pill. */
   readonly tags: readonly DiscoveryPostTag[];
   readonly productCount: number;

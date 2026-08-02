@@ -10,10 +10,9 @@ import {
   AdSlotWhy,
   Button,
   cn,
-  CreatorFan,
+  DiscoveryGrid,
+  DiscoveryRail,
   measure,
-  PostWall,
-  ThingsGrid,
   WallEnd,
   WallEndNote,
 } from "@plugfolio/ui";
@@ -22,13 +21,13 @@ import type { Route } from "next";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { CreatorCard } from "./creator-card";
-import { PostWallCard } from "./post-wall-card";
+import { PostCard } from "./post-card";
 import { ProductCard } from "./product-card";
 import { cva } from "class-variance-authority";
 
 /** A results section takes a rule above it only when something precedes it. */
 const sectionHead = cva("flex items-baseline justify-between gap-4", {
-  variants: { divided: { true: "border-border border-t pt-[22px]", false: "" } },
+  variants: { divided: { true: "border-border mt-9 border-t pt-[26px]", false: "" } },
   defaultVariants: { divided: false },
 });
 
@@ -49,13 +48,16 @@ const scopeChip = cva(
 /**
  * The Explore surface (DESIGN explore.html — "the tagged wall"): a mode-coloured
  * gradient hero carrying the search and the scope chips, then a canvas sheet
- * with the creator fan and the products grid. Fully server-rendered — search is
- * a plain GET form, the chips are links, no login anywhere (§2.2). The hero's
- * colour follows the shopper MODE, never a creator's page.
+ * with the results. Fully server-rendered — search is a plain GET form, the
+ * chips are links, no login anywhere (§2.2). The hero's colour follows the
+ * shopper MODE, never a creator's page.
  *
- * The prototype's posts wall (tiles with tags pinned by coordinate) and the
- * Following feed aren't here yet: neither tag positions nor a following-feed
- * read exists in the data model. Creators + products are what discovery serves.
+ * **Every section is the same card on the same grid** (`DiscoveryCard`): a
+ * creator, a post and a thing differ in what they say, never in how they are
+ * built, so the columns line up the whole way down the page. The one exception
+ * is the creator deck on the All tab, a rail that says "there is more of this
+ * sideways" — scoped to Creators it drops into the same grid as everything
+ * else, because a result set has to say "this is the set".
  */
 export type ExploreTab = "all" | "creators" | "posts" | "products";
 
@@ -84,6 +86,42 @@ const SHELVES: readonly { label: string; tab: ExploreTab }[] = [
   { label: "Posts", tab: "posts" },
   { label: "Products", tab: "products" },
 ];
+
+/** "1 creator", "4 creators" — a count pill that reads "1 creators" is a typo. */
+function plural(count: number, noun: string): string {
+  return `${count} ${noun}${count === 1 ? "" : "s"}`;
+}
+
+/** One header shape for all three sections: name, count, and the way out. */
+function SectionHead({
+  title,
+  meta,
+  href,
+  divided,
+}: {
+  title: string;
+  meta: string;
+  /** The "see all" link — only on the All tab, where a section is a teaser. */
+  href?: Route;
+  divided: boolean;
+}) {
+  return (
+    <div className={sectionHead({ divided })}>
+      <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h2 className="font-display text-title font-bold tracking-[-0.02em]">{title}</h2>
+        <span className="text-muted-foreground text-label font-semibold">{meta}</span>
+      </div>
+      {href ? (
+        <Link
+          href={href}
+          className="text-brand-violet-deep text-label whitespace-nowrap font-bold hover:underline"
+        >
+          See all →
+        </Link>
+      ) : null}
+    </div>
+  );
+}
 
 function Empty({
   title,
@@ -115,16 +153,22 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
   const atCap = [creators.length, posts.length, products.length].some(
     (n) => n >= EXPLORE_PAGE_SIZE,
   );
-  const showCreators = tab === "all" || tab === "creators";
-  const showPosts = tab === "all" || tab === "posts";
-  const showProducts = tab === "all" || tab === "products";
-  const hasResults =
-    (showCreators && creators.length > 0) ||
-    (showPosts && posts.length > 0) ||
-    (showProducts && products.length > 0);
+  const showCreators = (tab === "all" || tab === "creators") && creators.length > 0;
+  const showPosts = (tab === "all" || tab === "posts") && posts.length > 0;
+  const showProducts = (tab === "all" || tab === "products") && products.length > 0;
+  const hasResults = showCreators || showPosts || showProducts;
+  const teaser = tab === "all";
+  // The pill counts what the page is actually showing. Scoped to Posts it used
+  // to read "2 posts · 0 things" — a zero for something nobody asked to see.
   const count = query
     ? `Results for “${query}”`
-    : `${posts.length} posts · ${products.length} things`;
+    : tab === "creators"
+      ? plural(creators.length, "creator")
+      : tab === "posts"
+        ? plural(posts.length, "post")
+        : tab === "products"
+          ? plural(products.length, "thing")
+          : `${plural(posts.length, "post")} · ${plural(products.length, "thing")}`;
 
   return (
     <div className="bg-background min-h-[70vh]">
@@ -211,53 +255,49 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
             )
           ) : (
             <>
-              {showCreators && creators.length > 0 ? (
+              {showCreators ? (
                 <section>
-                  <div className="flex items-baseline justify-between gap-4">
-                    <h2 className="font-display text-title font-bold tracking-[-0.02em]">
-                      {query ? `Creators · ${creators.length}` : "Creators"}
-                    </h2>
-                    {tab === "all" ? (
-                      <Link
-                        href={scopeHref("creators", query)}
-                        className="text-brand-violet-deep text-label whitespace-nowrap font-bold"
-                      >
-                        See all creators →
-                      </Link>
-                    ) : null}
-                  </div>
-                  <CreatorFan layout={tab === "creators" ? "grid" : "rail"}>
-                    {creators.map((creator) => (
-                      <CreatorCard
-                        key={creator.id}
-                        creator={creator}
-                        layout={tab === "creators" ? "grid" : "fan"}
-                      />
-                    ))}
-                  </CreatorFan>
+                  <SectionHead
+                    title="Creators"
+                    meta={plural(creators.length, "page")}
+                    href={teaser ? scopeHref("creators", query) : undefined}
+                    divided={false}
+                  />
+                  {/* The deck on All, the shared grid once this IS the result. */}
+                  {teaser ? (
+                    <DiscoveryRail>
+                      {creators.map((creator, index) => (
+                        <CreatorCard
+                          key={creator.id}
+                          creator={creator}
+                          index={index}
+                          layout="rail"
+                        />
+                      ))}
+                    </DiscoveryRail>
+                  ) : (
+                    <DiscoveryGrid>
+                      {creators.map((creator, index) => (
+                        <CreatorCard
+                          key={creator.id}
+                          creator={creator}
+                          index={index}
+                          layout="grid"
+                        />
+                      ))}
+                    </DiscoveryGrid>
+                  )}
                 </section>
               ) : null}
 
-              {showPosts && posts.length > 0 ? (
-                <section className={showCreators && creators.length > 0 ? "mt-2" : ""}>
-                  <div className={sectionHead({ divided: showCreators && creators.length > 0 })}>
-                    <div className="flex items-baseline gap-3">
-                      <h2 className="font-display text-title font-bold tracking-[-0.02em]">
-                        {query ? `Posts · ${posts.length}` : "Latest posts"}
-                      </h2>
-                      <span className="text-muted-foreground text-label">
-                        {query ? `${posts.length} match “${query}”` : `${posts.length} posts`}
-                      </span>
-                    </div>
-                    {tab === "all" ? (
-                      <Link
-                        href={scopeHref("posts", query)}
-                        className="text-brand-violet-deep text-label whitespace-nowrap font-bold"
-                      >
-                        See all posts →
-                      </Link>
-                    ) : null}
-                  </div>
+              {showPosts ? (
+                <section>
+                  <SectionHead
+                    title={query ? "Posts" : "Latest posts"}
+                    meta={plural(posts.length, "post")}
+                    href={teaser ? scopeHref("posts", query) : undefined}
+                    divided={showCreators}
+                  />
                   {ad ? (
                     <AdSlot
                       href={ad.url}
@@ -285,54 +325,30 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
                       }
                     />
                   ) : null}
-                  <PostWall>
+                  <DiscoveryGrid>
                     {posts.map((post, index) => (
-                      <PostWallCard key={post.id} post={post} index={index} />
+                      <PostCard key={post.id} post={post} index={index} />
                     ))}
-                  </PostWall>
+                  </DiscoveryGrid>
                 </section>
               ) : null}
 
-              {showProducts && products.length > 0 ? (
-                <section
-                  className={
-                    (showCreators && creators.length > 0) || (showPosts && posts.length > 0)
-                      ? "mt-2"
-                      : ""
-                  }
-                >
-                  <div
-                    className={sectionHead({
-                      divided:
-                        (showCreators && creators.length > 0) || (showPosts && posts.length > 0),
-                    })}
-                  >
-                    <div className="flex items-baseline gap-3">
-                      <h2 className="font-display text-title font-bold tracking-[-0.02em]">
-                        Products
-                      </h2>
-                      <span className="text-muted-foreground text-label">
-                        {query
-                          ? `${products.length} match “${query}”`
-                          : `${products.length} tagged`}
-                      </span>
-                    </div>
-                    {tab === "all" ? (
-                      <Link
-                        href={scopeHref("products", query)}
-                        className="text-brand-violet-deep text-label whitespace-nowrap font-bold"
-                      >
-                        See all products →
-                      </Link>
-                    ) : null}
-                  </div>
-                  <ThingsGrid>
-                    {products.map((product) => (
-                      <ProductCard key={product.id} product={product} />
+              {showProducts ? (
+                <section>
+                  <SectionHead
+                    title="Things"
+                    meta={`${plural(products.length, "thing")} tagged`}
+                    href={teaser ? scopeHref("products", query) : undefined}
+                    divided={showCreators || showPosts}
+                  />
+                  <DiscoveryGrid>
+                    {products.map((product, index) => (
+                      <ProductCard key={product.id} product={product} index={index} />
                     ))}
-                  </ThingsGrid>
+                  </DiscoveryGrid>
                 </section>
               ) : null}
+
               {/* A list that simply stops reads as a list that broke, so the
                   wall always says which end it reached. The read is capped at
                   PAGE_SIZE with no paging yet — saying "that's everything"

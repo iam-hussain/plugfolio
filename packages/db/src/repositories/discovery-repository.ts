@@ -34,6 +34,8 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
         select: {
           id: true,
           username: true,
+          displayName: true,
+          avatarUrl: true,
           _count: { select: { followers: true, posts: true, products: true } },
           posts: {
             orderBy: { createdAt: "desc" },
@@ -45,6 +47,8 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
       return rows.map((row) => ({
         id: row.id,
         username: row.username,
+        displayName: row.displayName,
+        avatarUrl: row.avatarUrl,
         followerCount: row._count.followers,
         postCount: row._count.posts,
         productCount: row._count.products,
@@ -72,10 +76,14 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
           offerEndsAt: true,
           inStoreNote: true,
           categoryId: true,
-          profile: { select: { username: true } },
+          profile: { select: { username: true, avatarUrl: true } },
         },
       });
-      return rows.map(({ profile, ...product }) => ({ ...product, username: profile.username }));
+      return rows.map(({ profile, ...product }) => ({
+        ...product,
+        username: profile.username,
+        avatarUrl: profile.avatarUrl,
+      }));
     },
 
     async listPosts(query: string, limit: number): Promise<readonly DiscoveryPost[]> {
@@ -97,7 +105,8 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
         select: {
           id: true,
           mediaUrl: true,
-          profile: { select: { username: true } },
+          caption: true,
+          profile: { select: { username: true, avatarUrl: true } },
           products: {
             select: {
               id: true,
@@ -115,7 +124,9 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
       return rows.map((row) => ({
         id: row.id,
         username: row.profile.username,
+        avatarUrl: row.profile.avatarUrl,
         mediaUrl: row.mediaUrl,
+        caption: row.caption,
         productCount: row.products.length,
         // Only the first three ride the tile; the rest collapse into a "+N" pill.
         tags: row.products.slice(0, 3).map((product) => ({

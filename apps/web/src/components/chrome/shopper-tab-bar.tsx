@@ -5,12 +5,15 @@ import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cva } from "class-variance-authority";
-import { BookmarkIcon, GridIcon, HeartIcon, HomeIcon, UserIcon } from "./icons";
+import { BookmarkIcon, GridIcon, HeartIcon } from "./icons";
 
 /**
- * Shopper bottom tab bar (Dev Spec §03 persistent chrome): HOME / SHOP /
- * FOLLOWING / SAVED / ACCOUNT — Space Mono ~9px uppercase, 20px line icons. The active
- * tab renders in the page accent (primary). Every color comes from tokens.
+ * Shopper bottom tab bar (Dev Spec §03 persistent chrome): EXPLORE / FOLLOWING /
+ * SAVED — Space Mono ~9px uppercase, 20px line icons. The active tab renders in
+ * the page accent (primary). Every color comes from tokens.
+ *
+ * No Home (the marketing landing is a static page reached from the logo when
+ * signed out) and no Account (the top bar's avatar menu owns it, on mobile too).
  */
 type Tab = {
   key: string;
@@ -22,13 +25,12 @@ type Tab = {
 };
 
 const TABS: Tab[] = [
-  { key: "home", label: "Home", href: "/", icon: HomeIcon, match: (p) => p === "/" },
   {
-    key: "shop",
-    label: "Shop",
+    key: "explore",
+    label: "Explore",
     href: "/explore",
     icon: GridIcon,
-    // Creator page, post, product and explore are all "shopping".
+    // Creator page, post, product and explore are all "exploring".
     match: (p) => p.startsWith("/explore") || isCreatorSurface(p),
   },
   {
@@ -39,18 +41,11 @@ const TABS: Tab[] = [
     match: (p) => p.startsWith("/following"),
   },
   {
-    key: "watchlist",
+    key: "saved",
     label: "Saved",
-    href: "/watchlist",
+    href: "/saved",
     icon: BookmarkIcon,
-    match: (p) => p.startsWith("/watchlist"),
-  },
-  {
-    key: "account",
-    label: "Account",
-    href: "/account",
-    icon: UserIcon,
-    match: (p) => p.startsWith("/account") || p.startsWith("/signin"),
+    match: (p) => p.startsWith("/saved"),
   },
 ];
 
@@ -60,7 +55,7 @@ const RESERVED = [
   "/",
   "/explore",
   "/following",
-  "/watchlist",
+  "/saved",
   "/account",
   "/signin",
   "/dashboard",

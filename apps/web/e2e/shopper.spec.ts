@@ -55,7 +55,7 @@ test("follow and comment are gated; reading them is not", async ({ page, request
 test("the watchlist is gated; saving refuses anonymous callers", async ({ page, request }) => {
   // Saving is an "act as yourself" action like follow — the page is behind
   // sign-in, and the buy path on the way there never is.
-  await page.goto("/watchlist");
+  await page.goto("/saved");
   await page.waitForURL("**/signin**");
 
   const save = await request.post("/api/watchlist", {

@@ -3,171 +3,209 @@ import {
   AdSlot,
   AdSlotWhy,
   Button,
-  CreatorCard,
-  CreatorFan,
-  PostWall,
+  DiscoveryAvatar,
+  DiscoveryCard,
+  DiscoveryGrid,
+  DiscoveryPinMore,
+  DiscoveryRail,
+  discoveryTone,
   ProductTag,
-  ThingCard,
-  ThingsGrid,
-  Tile,
   WallEnd,
   WallEndNote,
-  WallPost,
 } from "@plugfolio/ui";
 
 /**
- * Explore (DESIGN explore.html — "the tagged wall"). A search result and a
- * browse are the same page in two states, so the fan and the wall are the
- * result groups too; only the labelling changes.
+ * Discovery — one card, three contents.
+ *
+ * A creator, a post and a thing are the same chassis: same width, same 4:5
+ * photo in its colour mat, same byline, same footer rule. Only what the card is
+ * *about* changes. Compare the stories below at one viewport: the columns line
+ * up, and nothing has to be relearned between sections.
  */
-const swatch = (hue: string, w = 400, h = 500) =>
+const swatch = (hue: string, w = 480, h = 600) =>
   "data:image/svg+xml," +
   encodeURIComponent(
     `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'><rect width='${w}' height='${h}' fill='${hue}'/></svg>`,
   );
 
-const img = (hue: string) => <img src={swatch(hue)} alt="" className="size-full object-cover" />;
+const img = (fill: string) => <img src={swatch(fill)} alt="" className="size-full object-cover" />;
+
+const HUES = ["#C9B6FF", "#A9D8FF", "#FFD84D", "#96E6BC", "#FFC9DE", "#FF8A73"];
+const hue = (i: number) => HUES[i % HUES.length] as string;
 
 const CREATORS = [
-  { handle: "@mayamoves", meta: "18 posts · 42 things", hue: "#FFD84D" },
-  { handle: "@arjunbuilds", meta: "24 posts · 51 things", hue: "#A9D8FF" },
-  { handle: "@rheamakes", meta: "11 posts · 20 things", hue: "#96E6BC" },
-  { handle: "@studiolane", meta: "9 posts · 14 things", hue: "#C9B6FF" },
-  { handle: "@foldandco", meta: "3 posts · 4 things", hue: "#FFC9DE" },
+  { handle: "mayamoves", name: "Maya Iyer", posts: 18, things: 42 },
+  { handle: "arjunbuilds", name: null, posts: 24, things: 51 },
+  { handle: "rheamakes", name: "Rhea Makes", posts: 11, things: 20 },
+  { handle: "studiolane", name: "Studio Lane", posts: 9, things: 14 },
+  { handle: "foldandco", name: "Fold & Co", posts: 3, things: 4 },
 ];
 
-const meta: Meta = { title: "Explore/Wall", parameters: { layout: "padded" } };
+function creatorCards(layout: "rail" | "grid") {
+  return CREATORS.map((creator, index) => (
+    <DiscoveryCard
+      key={creator.handle}
+      layout={layout}
+      tone={discoveryTone(index)}
+      avatar={<DiscoveryAvatar initial={creator.handle.charAt(0).toUpperCase()} />}
+      handle={creator.name ?? "Creator"}
+      title={<a href="#">{creator.name ?? `@${creator.handle}`}</a>}
+      stat={`${creator.posts} posts · ${creator.things} things`}
+      action="View page →"
+      media={img(hue(index))}
+    />
+  ));
+}
+
+const meta: Meta = { title: "Explore/Discovery", parameters: { layout: "padded" } };
 export default meta;
 type Story = StoryObj;
 
-/** The rail: cards overlap and tilt at rest, straighten on hover. */
+/** The deck: the All tab's creator rail, the one place the resting tilt lives. */
 export const CreatorRail: Story = {
-  render: () => (
-    <CreatorFan>
-      {CREATORS.map((c) => (
-        <CreatorCard
-          key={c.handle}
-          href="#"
-          handle={c.handle}
-          meta={c.meta}
-          cover={img(c.hue)}
-          avatar={
-            <span className="bg-active text-primary rounded-pill grid size-6 place-items-center text-[11px] font-bold">
-              {c.handle.charAt(1).toUpperCase()}
-            </span>
-          }
-        />
-      ))}
-    </CreatorFan>
-  ),
+  render: () => <DiscoveryRail>{creatorCards("rail")}</DiscoveryRail>,
 };
 
 /**
- * Scoped to Creators the fan becomes the result set — a grid that wraps, no
- * overlap, no tilt. A rail says "there is more sideways"; a results page has
- * to say "this is the set".
+ * Scoped to Creators the deck becomes the result set — the shared grid, no
+ * tilt. A rail says "there is more sideways"; a results page has to say "this
+ * is the set".
  */
 export const CreatorResults: Story = {
-  render: () => (
-    <CreatorFan layout="grid">
-      {CREATORS.map((c) => (
-        <CreatorCard
-          key={c.handle}
-          layout="grid"
-          href="#"
-          handle={c.handle}
-          meta={c.meta}
-          cover={img(c.hue)}
-          avatar={
-            <span className="bg-active text-primary rounded-pill grid size-6 place-items-center text-[11px] font-bold">
-              {c.handle.charAt(1).toUpperCase()}
-            </span>
-          }
-        />
-      ))}
-    </CreatorFan>
-  ),
+  render: () => <DiscoveryGrid>{creatorCards("grid")}</DiscoveryGrid>,
 };
 
-/** The wall — a grid, not columns, so an odd count leaves no hole. */
-export const Wall: Story = {
+/** Posts: the same card, wearing the signature — one tag pinned on the photo. */
+export const Posts: Story = {
   render: () => (
-    <PostWall>
-      {["#C9B6FF", "#A9D8FF", "#FFD84D", "#FFC9DE", "#96E6BC"].map((hue, i) => (
-        <WallPost
-          key={hue}
-          media={
-            <Tile tone="lavender" className="rounded-card shadow-rest p-2">
-              <div className="relative">
-                <div className="rounded-image overflow-hidden">
-                  <img
-                    src={swatch(hue)}
-                    alt=""
-                    className="block aspect-[4/5] w-full object-cover"
-                  />
-                </div>
-                <ProductTag name="Desk lamp" price="$48" className="absolute left-[8%] top-[24%]" />
-                {i % 2 === 0 ? (
-                  <ProductTag
-                    tone="offer"
-                    name="Serum"
-                    price="₹1,299"
-                    className="absolute left-[40%] top-[64%]"
-                  />
+    <DiscoveryGrid>
+      {[
+        { caption: "The desk reset that actually stuck", things: 3, tone: "affiliate" as const },
+        { caption: "Everything in the Sunday bag", things: 5, tone: "offer" as const },
+        { caption: null, things: 1, tone: "own" as const },
+        { caption: "One frame, one lens, one week", things: 0, tone: "affiliate" as const },
+      ].map((post, index) => (
+        <DiscoveryCard
+          key={post.caption ?? "untitled"}
+          tone={discoveryTone(index)}
+          avatar={<DiscoveryAvatar initial="M" />}
+          handle="@mayamoves"
+          title={<a href="#">{post.caption ?? "See what's tagged"}</a>}
+          stat={post.things > 0 ? `${post.things} things` : "Nothing tagged"}
+          action="Open →"
+          media={img(hue(index))}
+          pins={
+            post.things > 0 ? (
+              <>
+                <ProductTag
+                  asChild
+                  tone={post.tone}
+                  name="Brightening serum"
+                  price="₹1,299"
+                  className="min-w-0 max-w-full"
+                >
+                  <a href="#" aria-label="Brightening serum — ₹1,299" />
+                </ProductTag>
+                {post.things > 1 ? (
+                  <DiscoveryPinMore asChild>
+                    <a href="#">+{post.things - 1}</a>
+                  </DiscoveryPinMore>
                 ) : null}
-              </div>
-            </Tile>
+              </>
+            ) : null
           }
-          by={<span className="text-label font-semibold">@mayamoves</span>}
-          count="3 things"
         />
       ))}
-    </PostWall>
+    </DiscoveryGrid>
   ),
 };
 
-/** Things is its own view — a scope control that doesn't scope is worse than none. */
+/** Things: the same card again — the price is where every card carries its number. */
 export const Things: Story = {
   render: () => (
-    <ThingsGrid>
-      <ThingCard
-        href="#"
-        title="Brightening serum"
-        by="by @mayamoves"
-        price="₹1,299"
+    <DiscoveryGrid>
+      {[
+        { title: "Brightening serum", price: "₹1,299", flag: "offer" as const, go: "Buy →" },
+        { title: "Court trainers", price: "$32.00", flag: "own" as const, go: "Shop →" },
+        { title: "Desk lamp", price: "$48.00", flag: null, go: "Buy →" },
+        {
+          title: "Brass task lamp with a name long enough to wrap onto two lines and stop",
+          price: "See price",
+          flag: null,
+          go: "Buy →",
+        },
+      ].map((thing, index) => (
+        <DiscoveryCard
+          key={thing.title}
+          tone={discoveryTone(index)}
+          avatar={<DiscoveryAvatar initial="A" />}
+          handle="@arjunbuilds"
+          title={<a href="#">{thing.title}</a>}
+          stat={thing.price}
+          action={thing.go}
+          flag={
+            thing.flag === "offer"
+              ? { label: "Code SAVE30", tone: "offer" }
+              : thing.flag === "own"
+                ? { label: "Their own", tone: "own" }
+                : null
+          }
+          media={img(hue(index))}
+        />
+      ))}
+    </DiscoveryGrid>
+  ),
+};
+
+/** All three kinds in one row — the point of the redesign, at a glance. */
+export const OneChassisThreeContents: Story = {
+  render: () => (
+    <DiscoveryGrid>
+      <DiscoveryCard
+        tone="lavender"
+        avatar={<DiscoveryAvatar initial="M" />}
+        handle="Maya Iyer"
+        title={<a href="#">Maya Iyer</a>}
+        stat="18 posts · 42 things"
+        action="View page →"
+        media={img(hue(0))}
+      />
+      <DiscoveryCard
+        tone="sky"
+        avatar={<DiscoveryAvatar initial="M" />}
+        handle="@mayamoves"
+        title={<a href="#">The desk reset that actually stuck</a>}
+        stat="3 things"
+        action="Open →"
+        media={img(hue(1))}
+        pins={
+          <>
+            <ProductTag asChild name="Desk lamp" price="$48" className="min-w-0 max-w-full">
+              <a href="#" aria-label="Desk lamp — $48" />
+            </ProductTag>
+            <DiscoveryPinMore asChild>
+              <a href="#">+2</a>
+            </DiscoveryPinMore>
+          </>
+        }
+      />
+      <DiscoveryCard
+        tone="butter"
+        avatar={<DiscoveryAvatar initial="M" />}
+        handle="@mayamoves"
+        title={<a href="#">Brightening serum</a>}
+        stat="₹1,299"
+        action="Buy →"
         flag={{ label: "Code SAVE30", tone: "offer" }}
-        image={img("#FFC9DE")}
+        media={img(hue(2))}
       />
-      <ThingCard
-        href="#"
-        title="Court trainers"
-        by="by @mayamoves"
-        price="$32.00"
-        flag={{ label: "Their own", tone: "own" }}
-        go="Shop →"
-        image={img("#A9D8FF")}
-      />
-      <ThingCard
-        href="#"
-        title="Desk lamp"
-        by="by @arjunbuilds"
-        price="$48.00"
-        image={img("#FFD84D")}
-      />
-      <ThingCard
-        href="#"
-        title="Brass task lamp — price unknown"
-        by="by @studiolane"
-        price={null}
-        image={img("#96E6BC")}
-      />
-    </ThingsGrid>
+    </DiscoveryGrid>
   ),
 };
 
 /**
- * The sponsored slot is deliberately **not** a wall tile: full-width, no tilt,
- * no tag pill, no price, no Buy label — every one of those belongs to a
+ * The sponsored slot is deliberately **not** a discovery card: full-width, no
+ * mat, no tag pill, no price, no Buy label — every one of those belongs to a
  * creator's recommendation, and an ad wearing them is claiming to be one.
  */
 export const Sponsored: Story = {

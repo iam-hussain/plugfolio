@@ -26,6 +26,7 @@ import {
   ProductTitle,
   ProductWhere,
 } from "@plugfolio/ui";
+import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { CommentsSection, WatchButton } from "@/features/shopper-account";
@@ -33,6 +34,7 @@ import { JsonLd } from "@/components/json-ld";
 import { formatPrice } from "@/lib/format-price";
 import { retailerName } from "@/lib/retailer-name";
 import { CouponBlock } from "./coupon-block";
+import { CreatorContextBar } from "./creator-context-bar";
 import { ProductTapButton } from "./product-tap-button";
 import { ViewBeacon } from "./view-beacon";
 
@@ -93,6 +95,16 @@ export function ProductPageView({
         <JsonLd key={index} data={data} />
       ))}
       <ViewBeacon surface="product" productId={product.id} />
+      {/* Scroll past the byline and the shared top bar becomes the creator's;
+          tapping it goes back to their page. Their byline sits high, so it
+          hands over sooner than on the creator page's tall cover. */}
+      <CreatorContextBar
+        handle={page.username}
+        displayName={page.displayName}
+        avatarUrl={page.avatarUrl}
+        href={`/${page.username}` as Route}
+        revealAfter={120}
+      />
       <BackLink asChild>
         <Link href={`/${page.username}`}>
           <BackLinkIcon />

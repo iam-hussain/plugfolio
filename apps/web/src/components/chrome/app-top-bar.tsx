@@ -17,7 +17,7 @@ import { PAGE_CONTEXT_SLOT } from "./page-context-slot";
  * Signed out (a prospect): the full marketing nav (Explore · How it works · For
  * creators · For business) with Log in + the "Explore creators" CTA on desktop.
  *
- * Signed in: Explore · Following · Watchlist, and the account menu (DESIGN chrome.js) — the
+ * Signed in: Explore · Following · Saved, and the account menu (DESIGN chrome.js) — the
  * avatar + mode pill that opens the roles/profiles dropdown. Server Component so
  * the session and the profile list resolve without a client round-trip; nothing
  * here ever walls the buy path.
@@ -32,7 +32,7 @@ const MARKETING_NAV: readonly { label: string; href: Route }[] = [
 const SIGNED_IN_NAV: readonly { label: string; href: Route }[] = [
   { label: "Explore", href: "/explore" as Route },
   { label: "Following", href: "/following" as Route },
-  { label: "Watchlist", href: "/watchlist" as Route },
+  { label: "Saved", href: "/saved" as Route },
 ];
 
 export async function AppTopBar() {
@@ -69,7 +69,13 @@ export async function AppTopBar() {
   return (
     <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
       <div className={cn(measure(), "flex h-14 items-center justify-between gap-4 lg:h-[62px]")}>
-        <Link href="/" aria-label="Plugfolio home" className="flex items-center">
+        {/* Signed in, the logo goes to Explore (their real home); signed out it
+            goes to the marketing landing. */}
+        <Link
+          href={user ? "/explore" : "/"}
+          aria-label={user ? "Explore creators" : "Plugfolio home"}
+          className="flex items-center"
+        >
           <Logo layout="horizontal" tone="auto" />
         </Link>
 
@@ -78,9 +84,11 @@ export async function AppTopBar() {
             here once you have scrolled past their header, so past that point
             the bar stops being Plugfolio's and becomes theirs. Adopting the
             shared chrome never costs a page its one bespoke affordance. */}
-        {/* No `flex-1`: an empty slot must take no room at all, or every page
-            without one gets its nav shoved to the right. */}
-        <div id={PAGE_CONTEXT_SLOT} className="flex min-w-0 items-center empty:hidden" />
+        {/* `flex-1` so the slot always fills the gap between the logo and the
+            nav — empty or not, the nav (Explore · Following · Saved) then
+            sits hard right on every page, not centered on the ones without a
+            context bar. */}
+        <div id={PAGE_CONTEXT_SLOT} className="flex min-w-0 flex-1 items-center" />
 
         <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
           {(user ? SIGNED_IN_NAV : MARKETING_NAV).map((item) => (

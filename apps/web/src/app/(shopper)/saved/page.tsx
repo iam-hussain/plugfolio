@@ -8,7 +8,7 @@ import { repositories } from "@/server/container";
 // The shopper's own shelf: the posts and products they saved, each still
 // carrying the creator who tagged it. Gated like /following — saving is an
 // "act as yourself" action; shopping never routes here (§2.2).
-export const metadata: Metadata = { title: "Watchlist" };
+export const metadata: Metadata = { title: "Saved" };
 
 export default async function WatchlistRoute() {
   const session = await auth();

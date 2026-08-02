@@ -1,155 +1,219 @@
 import * as React from "react";
-import { Slot, Slottable } from "@radix-ui/react-slot";
+import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
 
 /**
- * The corner flag on a product tile. Lime means "there is an offer here" and
- * nothing else (§7 lime-means-offer) — it prints the code so a shopper knows
- * what they're getting before the tap.
+ * Discovery — one card, three contents (DESIGN explore.html, redesigned).
+ *
+ * Explore used to carry three card languages on one page: a 152px tilted
+ * creator stamp, a full-bleed colour tile for a post, and a white commerce card
+ * for a product. Three widths, three aspect ratios, three ways of writing
+ * "@lena" — the sections read as three different websites stacked.
+ *
+ * They are now **one chassis**: same width, same 4:5 photo, same byline, same
+ * footer rule, on one grid that runs the length of the page. What differs is
+ * only what the card is *about* — a person, a post, a thing.
+ *
+ * The signature survives the tidy-up rather than being thrown out with it:
+ *   · **the mat** — every photo sits in a colour passe-partout, so the tile
+ *     hues still carry the page's colour, assigned by POSITION and never by
+ *     meaning (§7), without a saturated block dwarfing everything beside it;
+ *   · **the pinned tag** — a post still wears its `ProductTag` on the
+ *     photograph, but pinned at one deterministic spot instead of scattered
+ *     across the frame;
+ *   · **the tilt** — kept in exactly one place, the creator rail, which is
+ *     read as a deck. A grid of results must not look like a deck (§7's
+ *     straighten-on-hover, applied where it means something).
  */
-const productFlag = cva(
-  "text-micro absolute left-2 top-2 rounded-pill px-2.5 py-1 font-bold uppercase tracking-[0.04em]",
+
+/** The hue sequence. Assigned by position in a list, never by category. */
+export const DISCOVERY_TONES = ["lavender", "sky", "butter", "mint", "blush", "coral"] as const;
+export type DiscoveryTone = (typeof DISCOVERY_TONES)[number];
+
+/** Pick the hue for the nth card — the one place the rotation is defined. */
+export function discoveryTone(index: number): DiscoveryTone {
+  return DISCOVERY_TONES[index % DISCOVERY_TONES.length]!;
+}
+
+/* ── The grid ──────────────────────────────────────────────────────────────
+   One grid for creators, posts and things. Two up on a phone (the density a
+   shopper expects from a marketplace), four up on a desktop — and because it
+   is the *same* grid in all three sections, the columns line up the whole way
+   down the page. That single fact does most of the work of "consistent". */
+export function DiscoveryGrid({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "mt-[18px] grid grid-cols-2 gap-3 pb-2 min-[560px]:grid-cols-3 min-[560px]:gap-[18px] min-[900px]:grid-cols-4",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ── The rail ──────────────────────────────────────────────────────────────
+   The creator deck on the "All" tab: the same cards, sideways, tilted. A rail
+   says "there is more of this in that direction"; scoped to Creators it becomes
+   the grid above, because a result set has to say "this is the set". */
+export function DiscoveryRail({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="-mx-1 flex snap-x snap-proximity gap-3.5 overflow-x-auto px-1 pb-3 pt-[18px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {children}
+    </div>
+  );
+}
+
+const cardShell = cva(
+  [
+    "group/card border-border bg-card rounded-card ease-design relative flex flex-col border p-2 text-inherit no-underline",
+    "transition-[transform,box-shadow,border-color] duration-300",
+    "hover:shadow-lift hover:-translate-y-1 hover:border-transparent",
+    "focus-within:shadow-lift focus-within:-translate-y-1",
+  ],
   {
     variants: {
-      tone: { offer: "bg-accent text-accent-foreground", own: "bg-active text-primary" },
+      layout: {
+        grid: "w-full",
+        // The one place the resting tilt lives — see the note at the top.
+        rail: [
+          "w-[190px] flex-none snap-start min-[560px]:w-[212px]",
+          "[&:nth-child(odd)]:-rotate-[1.2deg] [&:nth-child(even)]:rotate-[1.2deg]",
+          "hover:rotate-0 focus-within:rotate-0",
+        ],
+      },
     },
+    defaultVariants: { layout: "grid" },
+  },
+);
+
+/** The colour mat the photo is mounted on. */
+const cardMat = cva("rounded-tile relative overflow-hidden p-2", {
+  variants: {
+    tone: {
+      lavender: "bg-tile-lavender",
+      sky: "bg-tile-sky",
+      butter: "bg-tile-butter",
+      mint: "bg-tile-mint",
+      blush: "bg-tile-blush",
+      coral: "bg-tile-coral",
+    },
+  },
+  defaultVariants: { tone: "lavender" },
+});
+
+/**
+ * The flag in the photo's top-left corner. Lime means "there is a live offer
+ * here" and nothing else (§7 lime-means-offer) — it prints the code, so a
+ * shopper knows what they are getting before the tap. Violet marks a creator's
+ * own product.
+ */
+const cardFlag = cva(
+  "text-pico rounded-pill absolute left-2 top-2 z-10 max-w-[calc(100%-1rem)] truncate px-2.5 py-1 font-bold uppercase tracking-[0.06em]",
+  {
+    variants: { tone: { offer: "bg-accent text-accent-foreground", own: "bg-card text-primary" } },
     defaultVariants: { tone: "own" },
   },
 );
 
-/**
- * Explore (DESIGN explore.html) — the fan of creators, the wall of posts, and
- * the grid of things.
- *
- * The page's one idea: a search result and a browse are the **same page in two
- * states**, not two layouts to keep in step. The fan and the wall are the
- * result groups too; only the labelling changes.
- */
-
-/* ── The fan ───────────────────────────────────────────────────────────────
-   A rail of tilted creator cards. Scoped to creators it stops being a teaser
-   and becomes the result list — a grid that wraps, no overlap, no tilt: a rail
-   says "there is more sideways", a results page has to say "this is the set". */
-export function CreatorFan({
-  layout = "rail",
-  children,
-}: {
-  layout?: "rail" | "grid";
-  children: React.ReactNode;
-}) {
-  if (layout === "grid") {
-    return (
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-[18px] pt-[18px]">
-        {children}
-      </div>
-    );
-  }
-  return (
-    <div className="flex snap-x snap-proximity overflow-x-auto py-5 pb-[26px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      {children}
-    </div>
-  );
-}
-
-export type CreatorCardProps = React.ComponentProps<"a"> & {
-  cover: React.ReactNode;
-  avatar: React.ReactNode;
-  handle: string;
-  meta: string;
-  layout?: "rail" | "grid";
-  asChild?: boolean;
+export type DiscoveryCardProps = {
+  /** The mat hue — from `discoveryTone(index)`, never from what the card is. */
+  tone?: DiscoveryTone;
+  layout?: "grid" | "rail";
+  /** The photograph. Absent leaves the mat showing, which is a fine card. */
+  media?: React.ReactNode;
+  /** "Code SPRING20" (a live offer) or "Their own". */
+  flag?: { label: string; tone: "offer" | "own" } | null;
+  /**
+   * Tag pills pinned on the photo — real links, and the one thing allowed to
+   * sit above the card's own link. Pass at most one tag plus a "+N".
+   */
+  pins?: React.ReactNode;
+  /** The round mark left of the handle. */
+  avatar?: React.ReactNode;
+  /** "@lena" — who this is by, written the same way on all three card kinds. */
+  handle?: React.ReactNode;
+  /**
+   * The card's one link: an `<a>`/`<Link>` **wrapping the title text**. It is
+   * stretched over the whole card, so the accessible name is the title and the
+   * hit target is the card — the pattern a marketplace card needs, without an
+   * empty overlay anchor that reads as "link, link, link" to a screen reader.
+   */
+  title: React.ReactNode;
+  /** Left of the footer rule: a price, "3 things", "18 posts". */
+  stat?: React.ReactNode;
+  /** Right of the footer rule: "Buy →", "Open →", "View page →". */
+  action?: React.ReactNode;
+  className?: string;
 };
 
-/**
- * One creator in the fan. The cards overlap and tilt at rest and straighten on
- * hover — the Straighten-On-Hover rule (§7). In grid layout they sit square,
- * because a result set shouldn't look like a deck.
- */
-export function CreatorCard({
-  cover,
+export function DiscoveryCard({
+  tone,
+  layout,
+  media,
+  flag,
+  pins,
   avatar,
   handle,
-  meta,
-  layout = "rail",
-  asChild,
+  title,
+  stat,
+  action,
   className,
-  children,
-  ...props
-}: CreatorCardProps) {
-  const Comp = asChild ? Slot : "a";
+}: DiscoveryCardProps) {
   return (
-    <Comp
-      className={cn(
-        "shadow-rest border-border bg-card rounded-card block flex-none border p-2 text-inherit no-underline",
-        "ease-design hover:shadow-lift transition-[transform,box-shadow] duration-300 hover:z-[5] hover:-translate-y-2 hover:rotate-0 focus-visible:z-[5] focus-visible:rotate-0",
-        layout === "rail"
-          ? "-mr-3.5 w-[152px] snap-center [&:nth-child(even)]:z-[2] [&:nth-child(even)]:rotate-[1.8deg] [&:nth-child(odd)]:rotate-[-2deg]"
-          : "w-auto",
-        className,
-      )}
-      {...props}
-    >
-      <Slottable>{children}</Slottable>
-      <div className="rounded-image bg-active h-[108px] w-full overflow-hidden">{cover}</div>
-      <div className="flex items-center gap-2 px-1 pb-[3px] pt-2.5">
-        {avatar}
-        <span className="text-label truncate font-bold">{handle}</span>
+    <article className={cn(cardShell({ layout }), className)}>
+      <div className={cardMat({ tone })}>
+        <div className="rounded-image bg-active relative aspect-[4/5] w-full overflow-hidden">
+          {/* One authored moment: the photo eases in past its own frame while
+              the card lifts. Slower than the lift, so it reads as depth. */}
+          <div className="ease-design size-full transition-transform duration-500 group-hover/card:scale-[1.04]">
+            {media}
+          </div>
+          {/* One row, never wrapped: a "+2" that drops onto its own line stops
+              reading as part of the tag it belongs to. The tag shrinks (its
+              name truncates) and the counter keeps its size. */}
+          {pins ? (
+            <div className="absolute inset-x-2 bottom-2 z-10 flex items-center gap-1.5 [&>:first-child]:min-w-0 [&>:first-child]:shrink [&>:last-child]:shrink-0">
+              {pins}
+            </div>
+          ) : null}
+        </div>
+        {flag ? <span className={cardFlag({ tone: flag.tone })}>{flag.label}</span> : null}
       </div>
-      <span className="text-faint text-micro block px-1 pb-1 font-semibold">{meta}</span>
-    </Comp>
-  );
-}
 
-/* ── The wall ──────────────────────────────────────────────────────────────
-   A grid, not CSS columns. Columns balance their heights, so an odd count (5
-   cards across 3 columns) puts one card in the first column and leaves a hole
-   the size of a card underneath it. A grid places row-wise: no hole, and the
-   reading order finally matches the DOM order.
+      <div className="mb-3.5 mt-3 px-1">
+        {handle ? (
+          <span className="text-muted-foreground text-micro flex min-w-0 items-center gap-1.5 font-semibold">
+            {avatar}
+            <span className="truncate">{handle}</span>
+          </span>
+        ) : null}
+        {/* The stretched link: the anchor is the title, the target is the card.
+            `after` sits below the pins' z-10, so a tag stays tappable. */}
+        <h3
+          className={cn(
+            "text-label mt-1 line-clamp-2 font-bold leading-[1.3] tracking-[-0.01em]",
+            "[&>a]:after:rounded-card [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0",
+            "[&>a]:focus-visible:after:ring-ring [&>a]:focus-visible:outline-none [&>a]:focus-visible:after:ring-2 [&>a]:focus-visible:after:ring-offset-2",
+          )}
+        >
+          {title}
+        </h3>
+      </div>
 
-   One column on a phone — at two columns the photo lands at ~135px, and a tag
-   pill carrying a name and a price needs 90–140px, so every tag would overflow
-   its own photograph. */
-export function PostWall({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mt-5 grid grid-cols-1 items-start gap-[22px] pb-5 min-[560px]:grid-cols-2 min-[560px]:gap-[18px] min-[820px]:grid-cols-3 min-[1180px]:grid-cols-4">
-      {children}
-    </div>
-  );
-}
-
-/** One post on the wall — the tilt is the resting personality (§7). */
-export function WallPost({
-  media,
-  by,
-  count,
-  className,
-}: {
-  /** The photo with its `ProductTag`s pinned on. */
-  media: React.ReactNode;
-  /** The creator line under the photo. */
-  by: React.ReactNode;
-  /** "3 things" — right of the creator line. */
-  count?: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <article
-      className={cn(
-        "ease-design block transition-[transform,box-shadow] duration-300",
-        "hover:shadow-lift focus-within:-translate-y-1.5 focus-within:rotate-0 hover:-translate-y-1.5 hover:rotate-0",
-        "[&:nth-child(4n+1)]:rotate-[-1.5deg] [&:nth-child(4n+2)]:rotate-[1.4deg] [&:nth-child(4n+3)]:rotate-[-1deg] [&:nth-child(4n+4)]:rotate-[1.8deg]",
-        // A single-column card would run to the full measure and dwarf the fan.
-        "max-[559px]:mx-auto max-[559px]:max-w-[420px]",
-        className,
-      )}
-    >
-      {media}
-      <div className="flex items-center gap-[9px] px-1.5 pb-1 pt-3">
-        {by}
-        {count ? (
-          <span className="text-muted-foreground text-micro ml-auto whitespace-nowrap font-bold tabular-nums">
-            {count}
+      <div className="border-border mx-1 mt-auto flex items-center justify-between gap-2 border-t pb-0.5 pt-3">
+        <span className="text-copy min-w-0 truncate font-bold tabular-nums">{stat}</span>
+        {action ? (
+          <span className="text-muted-foreground text-label group-hover/card:text-primary whitespace-nowrap font-bold transition-colors">
+            {action}
           </span>
         ) : null}
       </div>
@@ -157,62 +221,43 @@ export function WallPost({
   );
 }
 
-/* ── The things grid ───────────────────────────────────────────────────────
-   Things is its own view, not the posts wall relabelled: a scope control that
-   doesn't scope is worse than no control. */
-export function ThingsGrid({ children }: { children: React.ReactNode }) {
+/**
+ * The mark beside the handle in a card byline — one size, one shape, on all
+ * three card kinds. Small on purpose: it identifies, it doesn't headline.
+ */
+export function DiscoveryAvatar({ initial, src }: { initial: string; src?: string | null }) {
   return (
-    <div className="mt-5 grid grid-cols-2 gap-3.5 pb-5 min-[720px]:grid-cols-3 min-[1080px]:grid-cols-4">
-      {children}
-    </div>
+    <span className="bg-active text-primary rounded-pill text-pico grid size-5 flex-none place-items-center overflow-hidden font-bold">
+      {src ? (
+        // A plain <img>: this package is framework-free and never imports next/image.
+        <img src={src} alt="" className="size-full object-cover" />
+      ) : (
+        initial
+      )}
+    </span>
   );
 }
 
-export type ThingCardProps = React.ComponentProps<"a"> & {
-  image: React.ReactNode;
-  title: React.ReactNode;
-  by: React.ReactNode;
-  /** Absent when unknown — never a zero. */
-  price?: string | null;
-  /** "Code SPRING20" (lime, a real offer) or "Their own" (violet). */
-  flag?: { label: string; tone: "offer" | "own" } | null;
-  go?: React.ReactNode;
-  asChild?: boolean;
-};
-
-export function ThingCard({
-  image,
-  title,
-  by,
-  price,
-  flag,
-  go = "Buy →",
+/**
+ * The "+3 more" pill beside a pinned tag. A real link like the tag it follows —
+ * it goes to the post, where the rest of them are.
+ */
+export function DiscoveryPinMore({
+  children,
   asChild,
   className,
-  children,
   ...props
-}: ThingCardProps) {
+}: React.ComponentProps<"a"> & { asChild?: boolean }) {
   const Comp = asChild ? Slot : "a";
   return (
     <Comp
       className={cn(
-        "border-border bg-card rounded-card flex flex-col border p-2.5 pb-3.5 text-inherit no-underline",
-        "ease-design hover:shadow-lift transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-1 hover:border-transparent",
+        "bg-foreground text-background shadow-tag rounded-pill text-micro inline-flex min-h-11 items-center px-3 font-bold no-underline",
         className,
       )}
       {...props}
     >
-      <Slottable>{children}</Slottable>
-      <div className="relative">
-        <div className="rounded-image bg-active aspect-square w-full overflow-hidden">{image}</div>
-        {flag ? <span className={productFlag({ tone: flag.tone })}>{flag.label}</span> : null}
-      </div>
-      <b className="text-label mt-3 block font-bold leading-[1.3]">{title}</b>
-      <span className="text-faint text-micro mt-[3px] block">{by}</span>
-      <div className="mt-auto flex items-center justify-between gap-2.5 pt-3">
-        {price ? <span className="text-copy font-bold tabular-nums">{price}</span> : <span />}
-        <span className="text-muted-foreground text-label font-bold">{go}</span>
-      </div>
+      {children}
     </Comp>
   );
 }

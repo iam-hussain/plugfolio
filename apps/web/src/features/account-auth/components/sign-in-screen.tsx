@@ -46,7 +46,7 @@ export type SignInScreenProps = {
 
 type LoginState = "idle" | "invalid" | "unverified" | "suspended";
 
-export function SignInScreen({ callbackUrl = "/", initialRole }: SignInScreenProps) {
+export function SignInScreen({ callbackUrl = "/explore", initialRole }: SignInScreenProps) {
   const router = useRouter();
   // The pane's artefact reflects the arriving role: an explicit ?as= wins, else
   // the last-used role from the cache, else shopper. No picker here — login is

@@ -92,7 +92,7 @@ BUSINESS
 
 **Navigation model (this replaces the old "no global nav" model):**
 
-- **Public + shopper-account screens** are wrapped in a persistent **shopper chrome**: a top bar (brand → home, an Explore/search affordance, an account slot) and a mobile **bottom tab bar** with four tabs — **HOME / SHOP / FOLLOWING / ACCOUNT**. Neither ever walls the buy path. (See §5.1.) The landing page uses its own nav/footer, not this chrome.
+- **Public + shopper-account screens** are wrapped in a persistent **shopper chrome**: a top bar (brand → home, an Explore/search affordance, an account slot) and a mobile **bottom tab bar** with three tabs — **EXPLORE / FOLLOWING / SAVED** (Home lives on the logo, Account in the top-bar avatar menu). Neither ever walls the buy path. (See §5.1.) The landing page uses its own nav/footer, not this chrome.
 - **The creator dashboard** has its own persistent shell: brand top bar, a **profile-switcher** dropdown, and a section-tab row (Home · Posts · Products · Categories · Collabs · Settings). Switching profile re-scopes every tab (an active `?profile=` id carries through dashboard URLs).
 - **The business surface** has a light chrome (brand → home + Sign out).
 - Every sub-page carries a back affordance to its parent.

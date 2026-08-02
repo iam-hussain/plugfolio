@@ -1,5 +1,7 @@
 "use client";
 
+import type { Route } from "next";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { PAGE_CONTEXT_SLOT } from "@/components/chrome/page-context-slot";
@@ -22,6 +24,15 @@ export type CreatorContextBarProps = {
   avatarUrl?: string | null;
   /** Follow for a visitor, Customise for the owner — the header's action. */
   action?: React.ReactNode;
+  /**
+   * Where the name jumps to. On a product/post page pass the creator's page so
+   * the name takes you there; on the creator page itself omit it — you're
+   * already there, so the name scrolls back to the top instead.
+   */
+  href?: Route;
+  /** Scroll distance (px) that hands the bar over. Default clears the creator
+   * cover band; a detail page's byline sits higher, so it passes less. */
+  revealAfter?: number;
 };
 
 export function CreatorContextBar({
@@ -29,6 +40,8 @@ export function CreatorContextBar({
   displayName,
   avatarUrl,
   action,
+  href,
+  revealAfter = 190,
 }: CreatorContextBarProps) {
   const [slot, setSlot] = useState<HTMLElement | null>(null);
   const [past, setPast] = useState(false);
@@ -38,16 +51,61 @@ export function CreatorContextBar({
   useEffect(() => {
     // A scroll offset, not an observer on the header: the header is the thing
     // being replaced, and watching it makes the bar flicker while the header
-    // is half on screen. 190px clears the cover band on every treatment.
-    const onScroll = () => setPast(window.scrollY > 190);
+    // is half on screen.
+    const onScroll = () => setPast(window.scrollY > revealAfter);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [revealAfter]);
 
   if (!slot) return null;
 
   const name = displayName ?? `@${handle}`;
+
+  const identity = (
+    <>
+      {avatarUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element -- an avatar already fetched by the header below; Image would re-request it
+        <img src={avatarUrl} alt="" className="rounded-pill size-[30px] shrink-0 object-cover" />
+      ) : (
+        <span className="bg-active text-primary rounded-pill text-micro grid size-[30px] shrink-0 place-items-center font-extrabold">
+          {name.replace("@", "").charAt(0).toUpperCase()}
+        </span>
+      )}
+      <span className="grid min-w-0 text-left leading-[1.15]">
+        <b className="text-micro lg:text-label truncate font-bold">{name}</b>
+        {displayName ? (
+          <i className="text-muted-foreground text-micro truncate font-semibold not-italic">
+            @{handle}
+          </i>
+        ) : null}
+      </span>
+    </>
+  );
+
+  // Off the creator page the name links to it; on it, there's nowhere to go —
+  // scroll back to the top (respecting reduced-motion).
+  const clickable = "flex min-w-0 items-center gap-2 lg:gap-2.5";
+  const target = href ? (
+    <Link href={href} className={clickable}>
+      {identity}
+    </Link>
+  ) : (
+    <button
+      type="button"
+      className={clickable}
+      onClick={() =>
+        window.scrollTo({
+          top: 0,
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "auto"
+            : "smooth",
+        })
+      }
+    >
+      {identity}
+    </button>
+  );
 
   return createPortal(
     <div
@@ -57,22 +115,7 @@ export function CreatorContextBar({
       aria-hidden={past ? undefined : "true"}
       inert={past ? undefined : true}
     >
-      {avatarUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element -- an avatar already fetched by the header below; Image would re-request it
-        <img src={avatarUrl} alt="" className="rounded-pill size-[30px] shrink-0 object-cover" />
-      ) : (
-        <span className="bg-active text-primary rounded-pill text-micro grid size-[30px] shrink-0 place-items-center font-extrabold">
-          {name.replace("@", "").charAt(0).toUpperCase()}
-        </span>
-      )}
-      <span className="grid min-w-0 leading-[1.15]">
-        <b className="text-micro lg:text-label truncate font-bold">{name}</b>
-        {displayName ? (
-          <i className="text-muted-foreground text-micro truncate font-semibold not-italic">
-            @{handle}
-          </i>
-        ) : null}
-      </span>
+      {target}
       {action}
     </div>,
     slot,

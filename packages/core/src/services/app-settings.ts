@@ -42,7 +42,7 @@ export const BASELINE_RESERVED_USERNAMES: readonly string[] = [
   "collabs",
   "shop",
   "following",
-  "watchlist",
+  "saved",
   "home",
   "homepage",
 ];
