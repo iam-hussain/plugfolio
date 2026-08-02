@@ -140,24 +140,35 @@ const preset = {
         nano: ["0.6875rem", { lineHeight: "1.4" }],
         micro: ["0.75rem", { lineHeight: "1.4" }],
         label: ["0.8125rem", { lineHeight: "1.45" }],
-        copy: ["0.9375rem", { lineHeight: "1.55" }],
-        body: ["1.0625rem", { lineHeight: "1.5" }],
-        title: ["1.375rem", { lineHeight: "1.2" }],
-        name: ["1.5rem", { lineHeight: "1.05" }],
-        "name-md": ["1.75rem", { lineHeight: "1.05" }],
-        "name-lg": ["2rem", { lineHeight: "1.05" }],
+        /* From `copy` up, every step is FLUID: it interpolates between a phone
+           (360px) and a laptop (900px) and stops at both ends. A 17px body and
+           a 32px name were drawn for a desktop column and shipped unchanged to
+           a 360px screen, where they eat the line and force two words a line.
+           The alternative — a `sm:` size on every heading — is the second scale
+           §7 forbids, written a hundred times. One clamp per step, here, and
+           every screen in the product gets it at once.
+
+           The four tiers below `copy` stay FIXED: they are labels, not reading
+           text, and they are already at the floor — shrinking 13px on the
+           screen held closest to the face is the wrong direction. */
+        copy: ["clamp(0.875rem, calc(0.8333rem + 0.185vw), 0.9375rem)", { lineHeight: "1.55" }],
+        body: ["clamp(0.9375rem, calc(0.854rem + 0.37vw), 1.0625rem)", { lineHeight: "1.5" }],
+        title: ["clamp(1.1875rem, calc(1.0625rem + 0.556vw), 1.375rem)", { lineHeight: "1.2" }],
+        name: ["clamp(1.25rem, calc(1.0833rem + 0.741vw), 1.5rem)", { lineHeight: "1.08" }],
+        "name-md": ["clamp(1.375rem, calc(1.125rem + 1.111vw), 1.75rem)", { lineHeight: "1.06" }],
+        "name-lg": ["clamp(1.5rem, calc(1.1667rem + 1.481vw), 2rem)", { lineHeight: "1.05" }],
         /* Fluid display steps. Headlines were carrying eight near-identical
            hand-written clamps across the auth, marketing, explore and account
            screens — the same magic value as `13px`, only harder to spot. Three
            named steps cover every one of them; a genuinely one-off hero (the
-           landing wordmark line) still writes its own and says why. */
-        "display-sm": ["clamp(1.5rem,3vw,2rem)", { lineHeight: "1.1" }],
-        display: ["clamp(1.875rem,3.6vw,3rem)", { lineHeight: "1.05" }],
-        "display-lg": ["clamp(2rem,4vw,2.75rem)", { lineHeight: "1.05" }],
-        /* The two marketing heroes: a section-leading page headline, and the
-           landing wordmark line — the single biggest type on the site. */
-        "display-xl": ["clamp(2.25rem,5vw,3.5rem)", { lineHeight: "1.04" }],
-        "display-2xl": ["clamp(2.25rem,6.2vw,5rem)", { lineHeight: "1.02" }],
+           landing wordmark line) still writes its own and says why. The floors
+           came down with the rest of the scale: a 30px h1 on a 360px phone is
+           a headline that has to break to fit. */
+        "display-sm": ["clamp(1.375rem,3vw,2rem)", { lineHeight: "1.12" }],
+        display: ["clamp(1.5rem,3.6vw,3rem)", { lineHeight: "1.06" }],
+        "display-lg": ["clamp(1.625rem,4vw,2.75rem)", { lineHeight: "1.06" }],
+        "display-xl": ["clamp(1.75rem,5vw,3.5rem)", { lineHeight: "1.04" }],
+        "display-2xl": ["clamp(2rem,6.2vw,5rem)", { lineHeight: "1.02" }],
       },
       borderRadius: {
         sm: "0.5rem",

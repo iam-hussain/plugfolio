@@ -34,7 +34,18 @@ exports the thing being written.
 **1. One type scale, and it is closed.** `pico 10 · nano 11 · micro 12 ·
 label 13 · copy 15 · body 17 · title 22 · name 24 · name-md 28 · name-lg 32`,
 plus fluid `display-sm · display · display-lg · display-xl · display-2xl` for
-headlines. Arbitrary sizes and Tailwind's default scale are both out of bounds
+headlines.
+
+*Amended 2026-08-02: every step from `copy` up is now **fluid**, clamping
+between a 360px phone and a 900px laptop — the numbers above are the desktop
+ends, and a phone gets `copy 14 · body 15 · title 19 · name 20 · name-md 22 ·
+name-lg 24`. Sizes drawn for a desktop column were shipping unchanged to a
+360px screen, and the only alternatives were a `sm:` size on every heading
+(the second scale this ADR exists to prevent, written a hundred times) or a
+page-by-page fix. One clamp per step in the preset does it everywhere at once.
+The four tiers below `copy` stay fixed: they are labels, they are already at
+the floor, and the screen held closest to the face is the wrong place to
+shrink 13px. Display floors came down with the rest.* Arbitrary sizes and Tailwind's default scale are both out of bounds
 in our code. A size the scale hasn't got is added to the preset with a reason —
 not inlined. The generated shadcn primitives keep the `text-sm` they shipped
 with, so `shadcn add` stays diffable; the boundary is "did we write it".

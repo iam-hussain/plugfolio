@@ -1,51 +1,36 @@
 import * as React from "react";
-import { ChevronRight } from "lucide-react";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 import { Slot, Slottable } from "@radix-ui/react-slot";
 import { Badge } from "./badge";
-import { Tile } from "./tile";
 import { cn } from "../lib/cn";
 
 /**
  * The vocabulary of /account — a settings page every role shares.
  *
- * The page is **one destination at a time**, not one long scroll: a hero that
- * says who you are, an index of destinations each carrying its own current
- * value, and the panel you chose. On a phone the index and the panel take
- * turns; from 900px the index becomes a rail beside the panel.
+ * The page is **one destination at a time**, not one long scroll: a card that
+ * states the account, a nav of destinations each carrying its own current
+ * value, and the panel you chose. The nav is a scrolling row of chips above the
+ * panel on a phone and a rail beside it from 900px — either way it stays on
+ * screen, so switching destinations is one tap from anywhere and never a trip
+ * back to an index.
  *
- * Why the index shows values: a settings list whose rows are only nouns makes
- * you open all five to learn anything. "Connections › Google connected" answers
- * the question from the index, and the tap becomes a decision instead of a
- * search.
+ * Why the nav shows values: a settings list whose rows are only nouns makes you
+ * open all five to learn anything. "Connections · Google connected" answers the
+ * question without the tap.
+ *
+ * Deliberately colourless. A settings page is somewhere you go to change one
+ * thing and leave; a hue per section and a tinted header made five decorated
+ * places out of one quiet list, and decoration is not orientation. Colour on
+ * this page is the selected chip and nothing else.
  *
  * All colour, radius and type come from tokens; every state that varies is a
  * named variant, never a string built at render time.
  */
 
-/** The account's own hue sequence — assigned by POSITION, never by meaning. */
-export const ACCOUNT_TONES = ["lavender", "sky", "butter", "mint", "coral"] as const;
-export type AccountTone = (typeof ACCOUNT_TONES)[number];
-
-const toneDot = cva("rounded-pill size-2.5 flex-none", {
-  variants: {
-    tone: {
-      lavender: "bg-tile-lavender",
-      sky: "bg-tile-sky",
-      butter: "bg-tile-butter",
-      mint: "bg-tile-mint",
-      coral: "bg-tile-coral",
-      blush: "bg-tile-blush",
-    },
-  },
-  defaultVariants: { tone: "lavender" },
-});
-
 /**
- * The hero — the page's one saturated moment (§7 tile-carries-colour), and the
- * only place the account is stated whole. The role rides on a white pill with a
- * dot, which is the product tag's move borrowed for a person: the same shape
- * that names a price on a photograph names what this account is.
+ * The account, stated once: avatar, handle, what this account is, and the
+ * address behind it. A plain raised card — white is the lift, the page is the
+ * ground (§7).
  */
 export function AccountHero({
   avatar,
@@ -58,43 +43,39 @@ export function AccountHero({
   handle: string;
   name?: string | null;
   email: string;
-  /** "Shopper", "Creator" — what this account IS, on the tag pill. */
+  /** "Shopper", "Creator" — what this account IS. */
   role: string;
 }) {
   return (
-    <Tile
-      tone="lavender"
-      className="rounded-bay flex flex-wrap items-center gap-x-5 gap-y-4 px-5 py-6 sm:px-7"
-    >
+    <div className="border-border bg-card rounded-card flex items-center gap-4 border px-4 py-4 sm:px-5">
       {avatar}
-      <div className="min-w-0 flex-1 basis-[min(100%,220px)]">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <b className="font-display text-name font-extrabold leading-none tracking-[-0.035em]">
-            @{handle}
-          </b>
-          <span className="bg-card shadow-tag rounded-pill text-micro inline-flex items-center gap-1.5 px-2.5 py-1 font-bold">
-            <span aria-hidden className="bg-primary rounded-pill size-1.5" />
-            {role}
-          </span>
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+          <b className="font-display text-title font-bold tracking-[-0.02em]">@{handle}</b>
+          <Badge variant="soft-primary">{role}</Badge>
         </div>
-        <span className="text-copy mt-1.5 block truncate opacity-75">
+        <span className="text-muted-foreground text-label mt-1 block truncate">
           {name ? `${name} · ` : null}
           {email}
         </span>
       </div>
-    </Tile>
+    </div>
   );
 }
 
-const indexRow = cva(
-  "group/row rounded-tile flex w-full min-h-14 items-center gap-3 border border-transparent px-4 py-3 text-left transition-colors min-[900px]:min-h-12 min-[900px]:gap-2.5 min-[900px]:px-3 min-[900px]:py-2.5",
+const navItem = cva(
+  "rounded-pill border text-left transition-colors whitespace-nowrap flex-none px-3.5 py-2 min-h-11 flex flex-col justify-center " +
+    // From 900px the same control is a full-width rail row: left-aligned, two
+    // lines, square-ish. One element, two shapes — a second component would be
+    // a second thing to keep in step.
+    "min-[900px]:rounded-image min-[900px]:w-full min-[900px]:whitespace-normal min-[900px]:px-3 min-[900px]:py-2.5",
   {
     variants: {
       state: {
-        idle: "hover:bg-active hover:border-border/60",
-        // Only from 900px does "selected" mean anything — on a phone the panel
-        // has replaced the index by the time it would show.
-        active: "min-[900px]:bg-active min-[900px]:text-brand-violet-deep hover:bg-active",
+        idle: "border-border bg-card text-muted-foreground hover:text-foreground hover:border-foreground/25 min-[900px]:border-transparent min-[900px]:bg-transparent min-[900px]:hover:bg-active min-[900px]:hover:border-transparent",
+        // The selected chip is the one piece of colour on the page.
+        active:
+          "border-transparent bg-foreground text-background min-[900px]:bg-active min-[900px]:text-foreground",
       },
     },
     defaultVariants: { state: "idle" },
@@ -102,76 +83,45 @@ const indexRow = cva(
 );
 
 /**
- * One destination in the index: hue dot, name, the value it currently holds,
- * and the way in. The value drops under the name on a phone so a long email
- * never squeezes the label to one word per line.
+ * One destination: its name, and the value it currently holds. The value is a
+ * second line on the rail and is dropped from the phone chip, where a row of
+ * two-line chips would be a wall rather than a nav.
  */
-export type AccountIndexRowProps = React.ComponentProps<"button"> & {
-  tone: AccountTone;
+export type AccountNavItemProps = React.ComponentProps<"button"> & {
   label: string;
   /** The live fact — "3 of 5 profiles", "Google connected". */
   value?: React.ReactNode;
   active?: boolean;
 };
 
-export function AccountIndexRow({
-  tone,
-  label,
-  value,
-  active,
-  className,
-  ...props
-}: AccountIndexRowProps) {
+export function AccountNavItem({ label, value, active, className, ...props }: AccountNavItemProps) {
   return (
     <button
       type="button"
-      className={cn(indexRow({ state: active ? "active" : "idle" }), className)}
+      className={cn(navItem({ state: active ? "active" : "idle" }), className)}
       {...props}
     >
-      <span aria-hidden className={toneDot({ tone })} />
-      <span className="min-w-0 flex-1">
-        <span className="text-body min-[900px]:text-copy block font-bold leading-tight">
-          {label}
-        </span>
-        {value ? (
-          <span className="text-muted-foreground text-label mt-0.5 block truncate font-medium min-[900px]:hidden">
-            {value}
-          </span>
-        ) : null}
+      <span className="text-label min-[900px]:text-copy block font-bold leading-tight">
+        {label}
       </span>
-      <ChevronRight
-        aria-hidden
-        className="text-faint group-hover/row:text-primary size-4 flex-none transition-colors min-[900px]:hidden"
-      />
+      {value ? (
+        <span className="text-muted-foreground text-micro mt-0.5 hidden truncate font-medium min-[900px]:block">
+          {value}
+        </span>
+      ) : null}
     </button>
   );
 }
 
-/** The head of an open panel: the same dot the index row carried, so the two
- *  read as one place seen twice. */
-export function AccountPanelHead({
-  tone,
-  title,
-  lead,
-  back,
-}: {
-  tone: AccountTone;
-  title: string;
-  lead?: React.ReactNode;
-  /** The phone's way back to the index; absent from 900px, where both show. */
-  back?: React.ReactNode;
-}) {
+/** The head of the open panel — the title the nav chip carries, said in full. */
+export function AccountPanelHead({ title, lead }: { title: string; lead?: React.ReactNode }) {
   return (
-    <header className="mb-5">
-      {back ? <div className="mb-2 min-[900px]:hidden">{back}</div> : null}
-      <div className="flex items-center gap-2.5">
-        <span aria-hidden className={toneDot({ tone })} />
-        <h2 className="font-display text-name font-extrabold leading-[1.1] tracking-[-0.035em]">
-          {title}
-        </h2>
-      </div>
+    <header className="mb-4">
+      <h2 className="font-display text-title font-bold leading-[1.2] tracking-[-0.02em]">
+        {title}
+      </h2>
       {lead ? (
-        <p className="text-muted-foreground text-copy mt-2 max-w-[58ch] leading-[1.55]">{lead}</p>
+        <p className="text-muted-foreground text-copy mt-1.5 max-w-[58ch] leading-[1.55]">{lead}</p>
       ) : null}
     </header>
   );
@@ -278,7 +228,9 @@ export function RoleBlock({
         <span className="text-faint text-micro font-sans font-semibold uppercase tracking-[0.06em]">
           {note}
         </span>
-        {action ? <div className="ml-auto">{action}</div> : null}
+        {/* `ml-auto` only once the row actually fits on one line — pushed right
+            after wrapping, the button lands alone in a gap it opened itself. */}
+        {action ? <div className="sm:ml-auto">{action}</div> : null}
       </div>
       {children}
     </div>
@@ -420,7 +372,7 @@ export function ConnectionRow({
         <span className="text-faint text-label block">{detail}</span>
       </span>
       <Badge variant={badge.variant}>{badge.label}</Badge>
-      {action ? <div className="ml-auto">{action}</div> : null}
+      {action ? <div className="sm:ml-auto">{action}</div> : null}
     </div>
   );
 }

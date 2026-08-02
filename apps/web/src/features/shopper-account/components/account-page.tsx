@@ -63,7 +63,6 @@ export function AccountPage({
       label: "You",
       lead: "How you appear when you act as yourself — following a creator, or leaving a comment.",
       value: `@${handle}`,
-      tone: "lavender",
       panel: <AccountIdentity name={name} image={image} handle={handle} />,
     },
     {
@@ -71,7 +70,6 @@ export function AccountPage({
       label: "Signing in",
       lead: "Your email is your login — with your username as a second way in, and one password behind both.",
       value: email,
-      tone: "sky",
       panel: <AccountSignIn email={email} handle={handle} />,
     },
     {
@@ -85,7 +83,6 @@ export function AccountPage({
       ]
         .filter(Boolean)
         .join(" · "),
-      tone: "butter",
       panel: (
         <AccountRoles
           handle={handle}
@@ -102,7 +99,6 @@ export function AccountPage({
       lead: "Connecting proves who you are so a handle can't be squatted. It is not a login — you'll still sign in with your email and password.",
       value:
         youtube === null ? "Not configured" : connected ? "Google connected" : "Nothing connected",
-      tone: "mint",
       panel: <AccountConnections youtube={youtube} connectAction={connectAction} />,
     },
     {
@@ -110,7 +106,6 @@ export function AccountPage({
       label: "Leaving",
       lead: "Signing out ends this session. Deleting the account is handled by a person, not a button.",
       value: "Sign out · delete",
-      tone: "coral",
       panel: <AccountLeaving />,
     },
   ];
@@ -120,20 +115,20 @@ export function AccountPage({
       <p className="text-muted-foreground text-micro font-sans font-semibold uppercase tracking-[0.06em]">
         Account
       </p>
-      <h1 className="font-display text-display mt-2 font-bold leading-[1.08] tracking-[-0.035em]">
+      <h1 className="font-display text-display-sm mt-1.5 font-bold leading-[1.1] tracking-[-0.035em]">
         Your account
       </h1>
 
-      <div className="mt-5">
+      <div className="mt-4">
         <AccountHero
           handle={handle}
           name={name}
           email={email}
           role={role}
           avatar={
-            <Avatar className="ring-card size-[72px] flex-none ring-4">
+            <Avatar className="size-12 flex-none sm:size-14">
               {image ? <AvatarImage src={image} alt="" /> : null}
-              <AvatarFallback className="bg-card text-primary font-display text-name font-extrabold">
+              <AvatarFallback className="bg-active text-primary font-display text-title font-bold">
                 {(handle || email || "?").trim().charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>

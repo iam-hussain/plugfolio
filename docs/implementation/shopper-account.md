@@ -32,7 +32,34 @@ Migration `20260720100000_follows_and_comments`:
   business **if one exists**. There is deliberately **no "Create a business"**: wanting one is
   `/support?category=business_account` — the **one** door to setting one up, here and on
   `/account`, so an operator reads who is hiring before a Business row exists.
-- `/account` — the one settings page every role shares (DESIGN `account.html`): a section rail (sticky column from 900px, snap chips below), the identity card, then **You** (name · member handle, edited inline via `HandleForm` · photo), **Signing in** (email → `/support?category=change_email`; password → `/forgot`, the ADR-0012 email-link reset; locked out → `/support?category=lost_email_access`), **Your roles** (one block per role, held or offered — Shopping always on; Creator listing profiles with the 5-profile cap stated, or the invitation that names the connected-social prerequisite; Business linking `/collabs`, or — with none — pointing at `/support?category=business_account`, the one door to setting one up), **Connections** (Google · YouTube live, Meta · Instagram not available yet), and **Leaving** (sign out; deletion → `/support?category=delete_account`, a person not a button).
+- `/account` — the one settings page every role shares, rebuilt as **one destination at a time**
+  (it used to be five sections in a single scroll, which on a phone meant travelling past
+  everything you weren't there for). Three parts: a **hero** — the account's one saturated
+  moment, a lavender `Tile` carrying the avatar, `@handle`, the role on a white tag pill
+  (the product tag's shape borrowed for a person) and name · email; an **index** of the five
+  destinations, each with a hue dot and **the value it currently holds** (`@handle`, the
+  email, "1 of 5 profiles · Acme", "Google connected"); and the **panel** you opened.
+  - **Two shapes, one tree** (`AccountShell`, the only client part): on a phone the header +
+    index and the panel take turns — opening one hands it the whole screen, "All settings"
+    brings the index back; from 900px the index is a sticky rail beside the panel and the
+    header always shows. No duplicated markup, so no duplicate ids and no second copy of a form.
+  - Selection is **local state, not the URL** — switching is instant, no round-trip. The cost
+    is deep links to a section; `ponytail:` marked at the source.
+  - Panels are server-rendered and passed in as props (one carries a server action), so the
+    shell only decides what is on screen. Each panel is still its own file under `account/`
+    and now renders its payload only — the title and lead moved to the destination list, so
+    the index row and the panel head can't drift apart.
+  - Hues come from `ACCOUNT_TONES`, assigned **by position** (§7's tile rule), which gives the
+    page a stable spatial memory: Connections is always mint, Leaving always coral.
+  - Sections: **You** (name · member handle, edited inline via `HandleForm` · photo),
+    **Signing in** (email → `/support?category=change_email`; **username**, which since
+    ADR-0024 is a second way in; password → `/forgot`; locked out →
+    `/support?category=lost_email_access`), **Your roles** (Shopping always on; Creator with
+    the 5-profile cap stated or the connected-social prerequisite; Business linking
+    `/collabs`, or — with none — `/support?category=business_account`, the one door to setting
+    one up), **Connections** (Google · YouTube live, Meta · Instagram not available yet), and
+    **Leaving** (sign out; deletion → `/support?category=delete_account`, a person not a
+    button).
   - Account-level only. A profile's public details, links and Managers stay at `/dashboard/settings`, Admin-gated per profile.
   - Name and photo are read-only in v1 — they arrive from the connected social, and an uploader waits on media storage. Everything else on the page is a real action.
   - The "Connected" chip is violet-wash, not lime: lime is offer-only (§7), so the design's lime pill would break the rule.

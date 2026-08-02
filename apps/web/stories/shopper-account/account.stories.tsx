@@ -4,10 +4,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AccountPage } from "@/features/shopper-account";
 
 /**
- * /account (DESIGN account.html) — the one settings page every role shares.
- * The sections are identical for everyone; what changes is which role blocks
- * have content and which offer a way in. These stories are the four states
- * that reshape the page: shopper-only, creator, business, and no connection.
+ * /account — the one settings page every role shares, as a hero, an index of
+ * destinations, and the one you opened.
+ *
+ * Two shapes from one tree: on a phone the index and the panel take turns
+ * (open one, the header and index step aside; "All settings" brings them
+ * back); from 900px the index is a rail beside the panel. Resize the preview
+ * across 900px — that is the state that reshapes this page most.
+ *
+ * The rest of the stories are the role combinations, because what changes per
+ * account is which index rows carry what value and which role blocks have
+ * content: shopper-only, creator, all three, and no connection.
  *
  * The top and bottom chrome come from `ShopperShell` in the route, so the
  * stories render the page body alone.
@@ -63,6 +70,12 @@ type Story = StoryObj<typeof AccountPage>;
 
 /** A shopper: no profiles, no business, nothing connected — both roles invite. */
 export const ShopperOnly: Story = {};
+
+/** The phone: the hero, then the index — every destination with its value. Tap
+ *  one and it takes the whole screen. */
+export const Phone: Story = {
+  parameters: { viewport: { defaultViewport: "mobile2" } },
+};
 
 /** No social connected: the creator block states the prerequisite, not an error. */
 export const NeedsAConnection: Story = {
