@@ -1,6 +1,6 @@
 "use client";
 
-import { AccountNavItem, AccountPanelHead } from "@plugfolio/ui";
+import { AccountNavItem, AccountNavTrack, AccountPanelHead } from "@plugfolio/ui";
 import { useState } from "react";
 
 /**
@@ -46,13 +46,7 @@ export function AccountShell({ destinations }: { destinations: readonly AccountD
 
   return (
     <div className="mt-6 grid items-start gap-x-[clamp(28px,4vw,56px)] gap-y-4 min-[900px]:grid-cols-[minmax(0,232px)_minmax(0,1fr)]">
-      <nav
-        aria-label="Account sections"
-        // Bleeds to the viewport edge on a phone so the row scrolls out of the
-        // gutter rather than stopping short of it — the standard tell that
-        // there is more to the right.
-        className="-mx-5 flex snap-x snap-proximity gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] min-[900px]:sticky min-[900px]:top-[78px] min-[900px]:mx-0 min-[900px]:flex-col min-[900px]:gap-1 min-[900px]:overflow-visible min-[900px]:px-0 min-[900px]:pb-0 [&::-webkit-scrollbar]:hidden"
-      >
+      <AccountNavTrack label="Account sections">
         {destinations.map((item) => (
           <AccountNavItem
             key={item.id}
@@ -60,11 +54,10 @@ export function AccountShell({ destinations }: { destinations: readonly AccountD
             value={item.value}
             active={item.id === open.id}
             aria-current={item.id === open.id ? "page" : undefined}
-            className="snap-start"
             onClick={() => setOpenId(item.id)}
           />
         ))}
-      </nav>
+      </AccountNavTrack>
 
       <div>
         <AccountPanelHead title={open.label} lead={open.lead} />

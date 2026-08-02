@@ -34,23 +34,31 @@ Migration `20260720100000_follows_and_comments`:
   `/account`, so an operator reads who is hiring before a Business row exists.
 - `/account` — the one settings page every role shares, rebuilt as **one destination at a time**
   (it used to be five sections in a single scroll, which on a phone meant travelling past
-  everything you weren't there for). Three parts: a **hero** — the account's one saturated
-  moment, a lavender `Tile` carrying the avatar, `@handle`, the role on a white tag pill
-  (the product tag's shape borrowed for a person) and name · email; an **index** of the five
-  destinations, each with a hue dot and **the value it currently holds** (`@handle`, the
-  email, "1 of 5 profiles · Acme", "Google connected"); and the **panel** you opened.
-  - **Two shapes, one tree** (`AccountShell`, the only client part): on a phone the header +
-    index and the panel take turns — opening one hands it the whole screen, "All settings"
-    brings the index back; from 900px the index is a sticky rail beside the panel and the
-    header always shows. No duplicated markup, so no duplicate ids and no second copy of a form.
+  everything you weren't there for). Three parts: a **hero** card stating the account once
+  (avatar, `@handle`, a role badge, name · email); a **nav** of the five destinations, each
+  carrying **the value it currently holds** (`@handle`, the email, "1 of 5 profiles · Acme",
+  "Google connected"); and the **panel** you opened.
+  - **Two shapes, one tree** (`AccountShell`, the only client part; `AccountNavTrack` +
+    `AccountNavItem` in `@plugfolio/ui` own the appearance). On a phone the nav is a
+    scrolling **track**: a violet-wash strip with the chips inside it and the selected one
+    lifted out in white with `shadow-tag` — the system's white-pill-on-colour move (ADR-0016)
+    instead of a heavy fill, so the group reads as one control rather than five loose
+    buttons. It sits directly above the panel and never leaves the screen, so switching is
+    one tap. From 900px the track dissolves into a plain sticky rail beside the panel, wide
+    enough for each destination's value on a second line.
+  - The two widths are written as **mutually exclusive ranges** (`max-[899px]:` /
+    `min-[900px]:`), not a base plus an override: same property, equal specificity, so which
+    won came down to the order Tailwind emitted them in — and the phone's fill won on the
+    rail until this.
   - Selection is **local state, not the URL** — switching is instant, no round-trip. The cost
     is deep links to a section; `ponytail:` marked at the source.
   - Panels are server-rendered and passed in as props (one carries a server action), so the
     shell only decides what is on screen. Each panel is still its own file under `account/`
     and now renders its payload only — the title and lead moved to the destination list, so
-    the index row and the panel head can't drift apart.
-  - Hues come from `ACCOUNT_TONES`, assigned **by position** (§7's tile rule), which gives the
-    page a stable spatial memory: Connections is always mint, Leaving always coral.
+    the nav chip and the panel head can't drift apart.
+  - **Colourless on purpose.** An earlier pass gave each section a tile hue (dot + tinted
+    hero); it made five decorated places out of one quiet list, and decoration is not
+    orientation. The only colour is the selected chip.
   - Sections: **You** (name · member handle, edited inline via `HandleForm` · photo),
     **Signing in** (email → `/support?category=change_email`; **username**, which since
     ADR-0024 is a second way in; password → `/forgot`; locked out →
