@@ -57,6 +57,13 @@ const CATEGORIES: readonly { key: SupportCategory; label: string; hint: string }
     hint: "Which platform, and what the connect screen shows.",
   },
   {
+    // The only door to a business account (account-menu.tsx): asking here means
+    // an operator sees who is hiring before a business row exists.
+    key: "business_account",
+    label: "I want a business account",
+    hint: "Tell us the company and what you'd hire creators for — we set it up and reply.",
+  },
+  {
     key: "collab_dispute",
     label: "Collab dispute",
     hint: "Link or describe the thread — we can see both sides of it.",

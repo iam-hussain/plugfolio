@@ -34,6 +34,7 @@ const CATEGORY_LABEL: Record<SupportCategory, string> = {
   password_trouble: "Password / sign-in",
   username_conflict: "Username / impersonation",
   connection_trouble: "Connection trouble",
+  business_account: "Business account request",
   collab_dispute: "Collab dispute",
   delete_account: "Delete account",
   other: "Something else",

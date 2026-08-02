@@ -13,6 +13,7 @@ export const supportCategory = z.enum([
   "password_trouble",
   "username_conflict",
   "connection_trouble",
+  "business_account",
   "collab_dispute",
   "delete_account",
   "other",

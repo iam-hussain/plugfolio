@@ -55,7 +55,7 @@ export async function AppTopBar() {
         }));
         const resolvedHandle = handle ?? user.email?.split("@")[0] ?? "you";
         return {
-          name: user.name ?? `@${resolvedHandle}`,
+          name: user.name ?? null,
           handle: resolvedHandle,
           email: user.email ?? "",
           avatarUrl: user.image ?? null,

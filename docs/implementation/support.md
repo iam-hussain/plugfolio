@@ -2,8 +2,8 @@
 
 **Journey served:** any of the three roles (creator, shopper, business) — **and completely
 signed-out visitors** — contact the operators about a known issue (lost email, change email,
-merge accounts, password trouble, username/impersonation, connection trouble, collab dispute,
-delete account) or anything else. Deliberately account-free: the top issue is "I lost access
+merge accounts, password trouble, username/impersonation, connection trouble, **business
+account request**, collab dispute, delete account) or anything else. Deliberately account-free: the top issue is "I lost access
 to my email", which means the person *cannot sign in*. Replies happen by email; there are no
 in-app threads in v1.
 
@@ -14,7 +14,9 @@ Migration `20260724…_support_tickets`: `SupportTicket` — `category` (enum), 
 what's broken), `requesterLabel` (denormalized `@handle` or "Anonymous visitor", like
 `Report.reporterLabel` — the queue never joins a deletable account), `status` (open →
 resolved/dismissed), `createdAt`/`resolvedAt`. Indexed `(status, createdAt)`. Append-only
-inflow, no threading. `SupportTicketCategory` / `SupportTicketStatus` enums.
+inflow, no threading. `SupportTicketCategory` / `SupportTicketStatus` enums. Migration
+`20260802120000_support_business_account` adds `business_account` — the account menu no longer
+offers "Create a business", so wanting one is a request an operator sees (below).
 
 ## Services (`support.ts`)
 
@@ -41,7 +43,9 @@ go direct via `@plugfolio/core` (ADR-0014), no admin endpoints.
   "What happens next" trio. Success state confirms which address we'll reply to.
 - **Entry points:** the sign-in page ("Can't access your email?" → `?category=lost_email_access`),
   the forgot-password page ("Lost the inbox itself?"), the shopper Account page, the business
-  home chrome, and the landing footer.
+  home chrome, and the landing footer. **A shopper wanting a business account arrives here too**
+  (`business_account`) — the top-bar menu deliberately has no "Create a business" item, so a
+  business is only ever set up after an operator has read who is asking and what for.
 - **Admin `/support`**: the triage queue (mirrors `/reports`) — category badge + message,
   a `mailto:` contact link, requester label, age, status filter, Resolve / Dismiss. Operators
   act using the existing member/profile/collab tools and **reply by email**.

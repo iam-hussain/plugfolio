@@ -7,16 +7,21 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 /**
- * The signed-in account menu (DESIGN chrome.js §acctmenu): the avatar + mode
- * pill in the top bar opens a dropdown that names the account, then lists the
- * hats it actually holds — the shopping context, each creator profile with its
- * role (Dashboard = owner, Manager = invited helper), the business door, and
- * the way out. A hat the account doesn't hold is absent, never greyed.
+ * The signed-in account menu (DESIGN chrome.js §acctmenu). The pill carries the
+ * account's own **handle** — "Shopping" named a mode nobody had chosen, on a
+ * bar where the one thing a person wants confirmed is *who they are signed in
+ * as*. The dropdown opens on that same identity (handle · Shopper · name ·
+ * email) and then lists only the hats the account actually holds: each creator
+ * profile with its role (Dashboard = owner, Manager = invited helper), and a
+ * business if there is one. A hat it doesn't hold is absent, never greyed —
+ * and never an invitation: becoming a business is a request through Support,
+ * not a menu item that quietly creates one.
  */
 export type AccountMenuProfile = { username: string; role: "Dashboard" | "Manager" };
 
 export type AccountMenuProps = {
-  name: string;
+  /** Null when the account has never set one — the handle carries the header. */
+  name: string | null;
   handle: string;
   email: string;
   avatarUrl: string | null;
@@ -80,9 +85,8 @@ export function AccountMenu({
             {initial}
           </AvatarFallback>
         </Avatar>
-        <span className="hidden items-center gap-1.5 sm:inline-flex">
-          <span className="bg-primary rounded-pill size-2 shrink-0" aria-hidden />
-          Shopping
+        <span className="hidden max-w-[14ch] items-center gap-1.5 sm:inline-flex">
+          <span className="truncate">@{handle}</span>
           <span aria-hidden className="text-pico">
             ▾
           </span>
@@ -96,23 +100,19 @@ export function AccountMenu({
           className="border-border bg-card shadow-lift rounded-tile absolute right-0 top-[calc(100%+8px)] z-50 w-[min(300px,calc(100vw-32px))] border p-2"
         >
           <div className="border-border mb-1.5 border-b px-3 pb-3 pt-2.5">
-            <b className="text-foreground text-copy block font-bold">{name}</b>
-            <span className="text-muted-foreground text-micro mt-0.5 block">
-              @{handle} · {email}
-            </span>
+            <div className="flex items-center gap-2">
+              <b className="text-foreground text-copy truncate font-bold">@{handle}</b>
+              {/* Every account shops — it is the one hat that is never absent
+                  (§2.2), so it reads as a tag on the identity, not a mode. */}
+              <span className="bg-active text-brand-violet-deep rounded-pill text-nano ml-auto shrink-0 px-2 py-0.5 font-bold uppercase tracking-[0.06em]">
+                Shopper
+              </span>
+            </div>
+            {name ? (
+              <span className="text-foreground text-micro mt-1 block truncate">{name}</span>
+            ) : null}
+            <span className="text-muted-foreground text-micro block truncate">{email}</span>
           </div>
-
-          <p className={sectionClass}>You are here</p>
-          <Link
-            role="menuitem"
-            href="/following"
-            className={itemClass}
-            onClick={() => setOpen(false)}
-          >
-            <span className="bg-primary rounded-pill size-2.5 shrink-0" aria-hidden />
-            Shopping
-            <span className={subClass}>Following</span>
-          </Link>
 
           {profiles.length > 0 ? (
             <>
@@ -137,6 +137,9 @@ export function AccountMenu({
 
           <hr className="border-border my-1.5" />
 
+          {/* Only when it exists. There is deliberately no "create one" twin:
+              a business account is asked for through Support (category
+              `business_account`), so an operator sees who is hiring. */}
           {hasBusiness ? (
             <Link
               role="menuitem"
@@ -147,17 +150,7 @@ export function AccountMenu({
               <span className="bg-tile-mint rounded-pill size-2.5 shrink-0" aria-hidden />
               Your business
             </Link>
-          ) : (
-            <Link
-              role="menuitem"
-              href={"/join?as=business" as Route}
-              className={itemClass}
-              onClick={() => setOpen(false)}
-            >
-              <span className="bg-tile-mint rounded-pill size-2.5 shrink-0" aria-hidden />
-              Create a business
-            </Link>
-          )}
+          ) : null}
           <Link
             role="menuitem"
             href="/account"

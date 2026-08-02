@@ -553,6 +553,9 @@ enum SupportTicketCategory {
   password_trouble
   username_conflict
   connection_trouble
+  /// The only door to a business account: asked for here so an operator sees
+  /// who is hiring before a Business row exists (no self-serve create).
+  business_account
   collab_dispute
   delete_account
   other
