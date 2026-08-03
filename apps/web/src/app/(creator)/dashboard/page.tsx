@@ -1,3 +1,4 @@
+import { cva } from "class-variance-authority";
 import type { Metadata, Route } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -40,6 +41,17 @@ import { repositories, youtubeDeps } from "@/server/container";
 export const metadata: Metadata = { title: "Dashboard" };
 
 type SearchParams = { profile?: string };
+
+/** The quick-add cards; the lead verb (a post) keeps the accent edge. */
+const addCard = cva(
+  "bg-card rounded-tile block border p-[18px] transition-[transform,border-color] duration-150 hover:-translate-y-0.5",
+  {
+    variants: {
+      lead: { true: "border-primary", false: "border-border hover:border-primary" },
+    },
+    defaultVariants: { lead: false },
+  },
+);
 
 export default async function DashboardPage({
   searchParams,
@@ -135,11 +147,7 @@ export default async function DashboardPage({
                   <Link
                     key={card.title}
                     href={card.href}
-                    className={
-                      card.lead
-                        ? "border-primary bg-card rounded-tile block border p-[18px] transition-transform duration-150 hover:-translate-y-0.5"
-                        : "border-border bg-card rounded-tile hover:border-primary block border p-[18px] transition-[transform,border-color] duration-150 hover:-translate-y-0.5"
-                    }
+                    className={addCard({ lead: card.lead })}
                   >
                     <span className="font-display text-body block font-semibold tracking-[-0.02em]">
                       {card.title}
