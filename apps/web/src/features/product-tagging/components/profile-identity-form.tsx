@@ -38,6 +38,10 @@ export function ProfileIdentityForm({
   const router = useRouter();
   const [displayName, setDisplayName] = useState(identity.displayName ?? "");
   const [avatarUrl, setAvatarUrl] = useState(identity.avatarUrl ?? "");
+  // The paste fallback's own field: it never echoes the stored value, so an
+  // uploaded photo's storage URL stays out of sight (it's plumbing, not
+  // identity — the preview beside it is the truth).
+  const [pastedUrl, setPastedUrl] = useState("");
   const [coverUrl, setCoverUrl] = useState(identity.coverUrl ?? "");
   const [bio, setBio] = useState(identity.bio ?? "");
   const isAdmin = role === "admin";
@@ -73,15 +77,40 @@ export function ProfileIdentityForm({
         <DashField
           label="Picture"
           htmlFor="identity-avatar"
-          note="Upload a photo — cropped, watermarked and stored — or paste an image URL."
+          note="Upload a photo — you frame it, we store it — or paste an image URL."
         >
           <div className="flex flex-col gap-2">
-            <ImageCropUpload kind="avatar" onUploaded={setAvatarUrl} label="Upload photo" />
+            <div className="flex flex-wrap items-center gap-2">
+              <ImageCropUpload
+                kind="avatar"
+                onUploaded={(url) => {
+                  setAvatarUrl(url);
+                  setPastedUrl("");
+                }}
+                label="Upload photo"
+              />
+              {avatarUrl.trim() ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setAvatarUrl("");
+                    setPastedUrl("");
+                  }}
+                >
+                  Remove
+                </Button>
+              ) : null}
+            </div>
             <Input
               id="identity-avatar"
               type="url"
-              value={avatarUrl}
-              onChange={(event) => setAvatarUrl(event.target.value)}
+              value={pastedUrl}
+              onChange={(event) => {
+                setPastedUrl(event.target.value);
+                setAvatarUrl(event.target.value);
+              }}
               placeholder="…or paste https://…/you.jpg"
             />
           </div>

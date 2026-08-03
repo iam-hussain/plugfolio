@@ -52,8 +52,10 @@
      is the SUNK inset fill for inputs and quiet wells (#F1EFF7).
      `--surface-veil` is the blur wash behind the sticky top bar. */
   --surface: 0 0% 100%; /* #FFFFFF Canvas — the page */
-  --surface-muted: 252 29% 97%; /* #F8F7FB cards, sheets, panels */
-  --surface-active: 255 25% 95%; /* #F1EFF7 inputs, inset fields */
+  /* Lightened from the drawn #F8F7FB/#F1EFF7 by product decision (Aug 2026):
+     the violet-grey read as leaden. Same cool family, a step brighter. */
+  --surface-muted: 240 33% 99%; /* #FBFBFD cards, sheets, panels */
+  --surface-active: 240 25% 97%; /* #F5F5F9 inputs, inset fields */
   --surface-veil: 0 0% 100% / 0.9; /* top-bar backdrop wash */
 
   --text: 250 27% 9%; /* #12101C */
