@@ -40,6 +40,7 @@ export function ProfileIdentityForm({
   const [avatarUrl, setAvatarUrl] = useState(identity.avatarUrl ?? "");
   const [coverUrl, setCoverUrl] = useState(identity.coverUrl ?? "");
   const [bio, setBio] = useState(identity.bio ?? "");
+  const [greeting, setGreeting] = useState(identity.greeting ?? "");
   const isAdmin = role === "admin";
 
   const save = useMutation({
@@ -51,6 +52,7 @@ export function ProfileIdentityForm({
           ? {
               displayName: displayName.trim() || null,
               bio: bio.trim() || null,
+              greeting: greeting.trim() || null,
               coverUrl: coverUrl.trim() || null,
             }
           : {}),
@@ -136,6 +138,22 @@ export function ProfileIdentityForm({
           onChange={(event) => setDisplayName(event.target.value)}
           maxLength={80}
           placeholder={`@${username}`}
+          disabled={!isAdmin}
+        />
+      </DashField>
+
+      <DashField
+        label="Greeting line"
+        hint={isAdmin ? "· optional" : "· Admin only"}
+        htmlFor="identity-greeting"
+        note="One line above your name — leave it empty for none."
+      >
+        <Input
+          id="identity-greeting"
+          value={greeting}
+          onChange={(event) => setGreeting(event.target.value)}
+          maxLength={80}
+          placeholder="Everything I wear, linked."
           disabled={!isAdmin}
         />
       </DashField>

@@ -5,7 +5,6 @@ export { PageShare, type PageShareProps } from "./components/page-share";
 export { ShareButton, type ShareButtonProps } from "./components/share-button";
 export { CreatorContextBar, type CreatorContextBarProps } from "./components/creator-context-bar";
 export { CategoryChips, type CategoryChipsProps } from "./components/category-chips";
-export { CustomiseDrawer, type CustomiseDrawerProps } from "./components/customise-drawer";
 export { TaggedProductCard, type TaggedProductCardProps } from "./components/tagged-product-card";
 export { ProductTapButton, type ProductTapButtonProps } from "./components/product-tap-button";
 export { CouponBlock, type CouponBlockProps } from "./components/coupon-block";

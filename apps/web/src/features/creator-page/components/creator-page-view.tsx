@@ -221,7 +221,6 @@ export function CreatorPageView({
               coverStyle: page.coverStyle,
               linkMode: page.linkMode,
             }}
-            links={links}
           />
         ) : null}
         {!viewer.signedIn ? (

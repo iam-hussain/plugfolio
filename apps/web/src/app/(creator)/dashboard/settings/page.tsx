@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
-  PAGE_APPEARANCE_DEFAULTS,
-  resolveCoverStyle,
   getMyProfileIdentity,
   getMyProfiles,
   listManagers,
@@ -27,7 +25,6 @@ import {
   DashboardPageHeader,
   DeleteProfileButton,
   ManagerControls,
-  PageAppearanceForm,
   ProfileIdentityForm,
   ProfileLinksForm,
 } from "@/features/product-tagging";
@@ -41,13 +38,16 @@ import {
   youtubeDeps,
 } from "@/server/container";
 
-// Profile settings (DESIGN dashboard.html §5.23): public identity, how the
-// page looks, links, connections, Managers, and the one destructive action.
+// Profile settings (v2 §dSettings) — the profile's DATA, one card each, in
+// the order a person needs them: who the page is (identity), where it points
+// (links), what feeds it (connections), who helps (Managers), and the one
+// destructive action last. How the page LOOKS is deliberately not here: the
+// look is edited on the live page itself ("Change the look"), where every
+// pick lands exactly where visitors see it — two editors for one setting is
+// how they drift apart.
 //
-// A Manager gets ONLY the picture control. Everything else is Admin-only
-// (ADR-0004) and the boundary is SHOWN, never silently hidden — a Manager sees
-// the field, sees the label saying it is Admin-only, and sees it disabled.
-// Hiding it would leave them wondering what they are missing.
+// A Manager gets ONLY the picture control (ADR-0004), and the boundary is
+// SHOWN, never silently hidden.
 export const metadata: Metadata = { title: "Settings" };
 
 type SearchParams = { profile?: string };
@@ -86,15 +86,15 @@ export default async function SettingsPage({
       />
 
       <DashBody>
-        {/* Both roles see this card. Only the picture is a Manager's to change. */}
+        {/* ── 1 · Identity — who this page is ── */}
         <DashCard>
           <DashCardHead>
-            <DashCardTitle>Public profile</DashCardTitle>
+            <DashCardTitle>Identity</DashCardTitle>
           </DashCardHead>
           <Hint>
-            Your page lives at <b>plugfolio.com/{active.username}</b>. The username is fixed for now
-            — choosing and renaming it lands with the social APIs, because a username is only yours
-            if you can prove you own the handle.
+            Your page lives at <b>plugfolio.com/{active.username}</b>. The username is fixed for
+            now — choosing and renaming it lands with the social APIs, because a username is only
+            yours if you can prove you own the handle.
           </Hint>
           <ProfileIdentityForm
             profileId={active.id}
@@ -104,54 +104,53 @@ export default async function SettingsPage({
           />
         </DashCard>
 
+        {/* ── 2 · The look — a pointer, not a second editor ── */}
         <DashCard>
           <DashCardHead>
             <DashCardTitle>How it looks</DashCardTitle>
           </DashCardHead>
-          <Hint>
-            A small, closed set on purpose (ADR-0017) — accent, header, post layout and the greeting
-            line. No setting here can make your Buy button hard to read.
+          <Hint className="mb-3">
+            Accent, header, cover treatment, wall layout and the link row are edited{" "}
+            <b>on the live page</b>, where every pick lands exactly where visitors see it. Nothing
+            there can make your Buy button hard to read — the set is closed on purpose.
           </Hint>
-          <PageAppearanceForm
-            profileId={active.id}
-            role={active.role}
-            appearance={{
-              accent: identity.accent ?? PAGE_APPEARANCE_DEFAULTS.accent,
-              headerStyle: identity.headerStyle ?? PAGE_APPEARANCE_DEFAULTS.headerStyle,
-              gridStyle: identity.gridStyle ?? PAGE_APPEARANCE_DEFAULTS.gridStyle,
-              coverStyle: resolveCoverStyle(
-                identity.coverStyle,
-                identity.headerStyle ?? PAGE_APPEARANCE_DEFAULTS.headerStyle,
-              ),
-              linkMode: identity.linkMode ?? PAGE_APPEARANCE_DEFAULTS.linkMode,
-              greeting: identity.greeting,
-            }}
-          />
+          {isAdmin ? (
+            <Button variant="action" asChild>
+              <Link href={`/${active.username}`}>Change the look on your page ↗</Link>
+            </Button>
+          ) : (
+            <p className="text-faint text-label">The look stays with the Admin.</p>
+          )}
         </DashCard>
 
         {isAdmin ? (
           <>
+            {/* ── 3 · Links — where the page points ── */}
             <DashCard>
               <DashCardHead>
                 <DashCardTitle>Your links</DashCardTitle>
               </DashCardHead>
               <Hint>
-                These become the row of icons on your page. Saving replaces all five — an empty
-                field removes that link.
+                These become the row under your name. Saving replaces all five — an empty field
+                removes that link.
               </Hint>
               <ProfileLinksForm profileId={active.id} links={links} />
             </DashCard>
 
+            {/* ── 4 · Connections — what feeds the page ── */}
             <DashCard>
               <DashCardHead>
-                <DashCardTitle>Connections</DashCardTitle>
+                <DashCardTitle>Connected accounts</DashCardTitle>
               </DashCardHead>
               <Hint>
-                The socials this account owns — profile usernames come from their handles.
+                The socials this account owns — usernames come from their handles, and posts
+                import from them. You can re-authenticate any time; a provider can&apos;t be
+                fully disconnected while a profile still depends on it.
               </Hint>
               <SocialConnections youtube={youtube} connectAction={connectGoogle} bare />
             </DashCard>
 
+            {/* ── 5 · Managers — who helps ── */}
             <DashCard>
               <DashCardHead>
                 <DashCardTitle>Managers</DashCardTitle>
@@ -160,8 +159,8 @@ export default async function SettingsPage({
                 </DashCardNote>
               </DashCardHead>
               <Hint>
-                Up to {MAX_MANAGERS_PER_PROFILE} people who can post and tag on this profile.
-                Settings and connections stay yours.
+                Up to {MAX_MANAGERS_PER_PROFILE} people who can post, tag and curate on this
+                profile. Settings and connections stay yours.
               </Hint>
               <ManagerControls
                 profileId={active.id}
@@ -170,20 +169,22 @@ export default async function SettingsPage({
               />
             </DashCard>
 
+            {/* ── 6 · The one destructive action, last ── */}
             <DashCard>
               <DeleteProfileButton profileId={active.id} username={active.username} />
             </DashCard>
           </>
         ) : (
           /* A Manager is told what they cannot do and why, rather than finding
-             a shorter page and guessing. */
+             a shorter page and guessing (v2 §dSettings isManager). */
           <DashCard>
             <DashCardHead>
-              <DashCardTitle>Admin-only</DashCardTitle>
+              <DashCardTitle>Settings belong to the Admin</DashCardTitle>
             </DashCardHead>
             <Hint className="mb-0">
-              Links, connections and Managers are the Admin&rsquo;s. You manage this profile&rsquo;s
-              content — posts, products and shelves — and you can change its picture above.
+              You manage this page: posts, tagging, things, shelves, collabs and traffic — and
+              you can change its picture above. Links, connections and Managers stay with the
+              Admin.
             </Hint>
           </DashCard>
         )}

@@ -6,7 +6,6 @@ import type {
   PageGridStyle,
   PageHeaderStyle,
   PageLinkMode,
-  ProfileLinkView,
 } from "@plugfolio/core";
 import Link from "next/link";
 import { useState } from "react";
@@ -24,7 +23,6 @@ export function OwnerBand({
   profileId,
   role,
   appearance,
-  links,
 }: {
   profileId: string;
   role: "admin" | "manager";
@@ -35,7 +33,6 @@ export function OwnerBand({
     coverStyle: PageCoverStyle;
     linkMode: PageLinkMode;
   };
-  links: readonly ProfileLinkView[];
 }) {
   const [open, setOpen] = useState(false);
   const admin = role === "admin";
@@ -73,7 +70,7 @@ export function OwnerBand({
         </div>
       </div>
       {admin && open ? (
-        <LookPanel profileId={profileId} appearance={appearance} links={links} />
+        <LookPanel profileId={profileId} appearance={appearance} />
       ) : null}
     </div>
   );

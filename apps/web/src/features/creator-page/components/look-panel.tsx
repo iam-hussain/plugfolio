@@ -6,16 +6,14 @@ import type {
   PageGridStyle,
   PageHeaderStyle,
   PageLinkMode,
-  ProfileLinkView,
 } from "@plugfolio/core";
 import { useMutation } from "@tanstack/react-query";
 import { cva } from "class-variance-authority";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-// Leaf imports, not the product-tagging barrel — the barrel drags the
+// A leaf import, not the product-tagging barrel — the barrel drags the
 // dashboard shell (and through core, node:crypto) into this client bundle.
 import { updateProfileIdentity } from "@/features/product-tagging/api";
-import { ProfileLinksForm } from "@/features/product-tagging/components/profile-links-form";
 
 /**
  * The live look panel (v2, `Plugfolio v2.dc.html` §creator owner band) — the
@@ -80,11 +78,9 @@ const label = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 export function LookPanel({
   profileId,
   appearance,
-  links,
 }: {
   profileId: string;
   appearance: Appearance;
-  links: readonly ProfileLinkView[];
 }) {
   const router = useRouter();
   // Optimistic per-axis: the chip flips on the tap; the refreshed page (the
@@ -183,9 +179,15 @@ export function LookPanel({
       </div>
 
       <p className={`${eyebrow} mt-[18px]`}>Your links — the row under your name</p>
-      <div className="mt-2.5">
-        <ProfileLinksForm profileId={profileId} links={links} />
-      </div>
+      <p className="text-muted-foreground text-label mt-2 leading-[1.55]">
+        Links are data, and data lives in one place —{" "}
+        <a
+          href={`/dashboard/settings?profile=${profileId}`}
+          className="text-primary font-semibold no-underline hover:underline"
+        >
+          edit them in Settings →
+        </a>
+      </p>
 
       {save.isError ? (
         <p role="alert" className="text-destructive text-micro mt-3">
