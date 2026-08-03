@@ -6,9 +6,10 @@ import { Mail } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { registerAccount, resendVerification } from "../api";
-import { RoleArtefact, RoleDeck } from "./auth-artefact";
+import { RoleArtefact } from "./auth-artefact";
 import { ROLE_COPY, type AuthRole } from "./auth-copy";
 import { AuthShell } from "./auth-shell";
+import { RoleSockets } from "./role-sockets";
 import { AuthStatus } from "./auth-status";
 import { FieldLabel, TextField } from "./auth-field";
 import { PasswordInput } from "./password-input";
@@ -74,11 +75,16 @@ export function JoinScreen({ initialRole }: JoinScreenProps) {
   }
 
   return (
-    <AuthShell role={role} artefact={<RoleDeck role={role} onRoleChange={setRole} />}>
-      <h1 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
+    <AuthShell role={role}>
+      <h1 className="font-display text-name font-bold leading-[1.15] tracking-[-0.035em]">
         {copy.joinHeadline}
       </h1>
-      <p className="text-muted-foreground text-copy mt-2.5 leading-[1.5]">{copy.joinCopy}</p>
+      <p className="text-muted-foreground text-copy mt-2 leading-[1.6]">{copy.joinCopy}</p>
+
+      {/* v2: the role fork lives in the card — the socket picker. */}
+      <div className="mt-[18px]">
+        <RoleSockets role={role} onRoleChange={setRole} />
+      </div>
 
       <form
         className="mt-[18px] flex flex-col"
@@ -121,7 +127,7 @@ export function JoinScreen({ initialRole }: JoinScreenProps) {
 
       <div className="border-border text-label mt-[22px] flex items-center justify-center gap-2 border-t pt-5 text-center">
         <span className="text-muted-foreground">Already have an account?</span>
-        <Link href={`/signin?as=${role}`} className="text-brand-violet-deep font-bold">
+        <Link href={`/signin?as=${role}`} className="text-foreground font-bold">
           Sign in
         </Link>
       </div>

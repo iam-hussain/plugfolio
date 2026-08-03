@@ -1,66 +1,79 @@
 import Link from "next/link";
-import { Logo, PlugMark } from "@/components/brand";
+import { Logo } from "@/components/brand";
 import type { AuthRole } from "./auth-copy";
 
 /**
- * Auth shell ("The Tagged Feed" auth, DESIGN auth.html): two panes on desktop
- * — the role-gradient *artefact* pane (the thing you're about to make, on a
- * committed saturated field) beside the light form pane — plus a 5px top rail
- * in the role's solid tint. Auth is a dead end by design: no nav, no tab bar;
- * the mark is the only way out.
+ * Auth shell (v2, ADR-0026): the ink pane beside the form. Desktop splits —
+ * the fixed ink panel carries the reversed brand mark, "Plug yourself in."
+ * and the three lime-dash promises; the form pane sits on the canvas with its
+ * 400px card. On a phone the ink pane collapses to the promises-free top
+ * band and the form takes the screen. Auth stays a dead end by design: no
+ * nav, no pill — the mark is the only way out, plus the one honest escape
+ * hatch ("keep shopping instead") every screen carries under its card.
  *
- * `role` scopes the gradient tokens (`bg-role-gradient` / `bg-role-solid`).
- * `"generic"` is the neutral field the account screens (sign-in, forgot, reset,
- * verify) wear — they declare no role, so they wear the brand itself.
- *
- * ONE layout for every screen, mobile and desktop, for consistency: the
- * artefact pane up top (logo + artefact + line), the form riding up over it on
- * a rounded sheet. Only /join's artefact (the role deck) is interactive on a
- * phone; the other screens hide their non-interactive *card* on mobile (see
- * RoleArtefact) but keep the same pane, logo and line.
+ * `role` still scopes copy downstream; the v2 pane itself is ink for
+ * everyone — the lime accent is the auth surface's one colour.
  */
+const PROMISES = [
+  "No account is ever needed to buy.",
+  "No cart, no checkout — you finish at the retailer.",
+  "One account, whatever you turn out to be.",
+] as const;
+
 export function AuthShell({
   role,
   artefact,
   children,
 }: {
   role: AuthRole | "generic";
-  /** Left-pane content — the role deck (/join) or a single artefact + line. */
-  artefact: React.ReactNode;
+  /** Extra pane content — /join's role deck; decorative elsewhere. */
+  artefact?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
+    // v2 auth wears lime as its action colour (ink text on the fill) — the one
+    // surface where the accent IS the offer: joining. Scoped here so every
+    // primary button and ring inside inherits it from the tokens.
     <div
       data-role={role}
-      className="relative min-h-dvh lg:grid lg:grid-cols-[46fr_54fr] lg:items-stretch"
+      className="relative min-h-dvh [--color-primary:78_100%_62%] [--color-primary-foreground:250_27%_9%] [--ring:78_100%_62%] lg:flex lg:items-stretch"
     >
-      {/* ── the top rail — a signal in the role's solid tint ── */}
-      <span aria-hidden className="bg-role-solid fixed inset-x-0 top-0 z-50 h-[5px]" />
-
-      {/* ── pane one — the artefact ── */}
-      <aside className="bg-role-gradient relative grid content-center justify-items-center gap-4 overflow-hidden px-5 pb-16 pt-6 text-white lg:min-h-dvh lg:gap-7 lg:px-9 lg:pb-24 lg:pt-10">
-        <PlugMark
-          tone="flat"
-          aria-hidden
-          className="pointer-events-none absolute -bottom-[30%] -left-[14%] w-[76%] text-white/10 lg:-bottom-[19%] lg:-left-[7%] lg:w-[62%]"
-        />
-        <Link
-          href="/"
-          aria-label="Plugfolio home"
-          className="relative z-10 justify-self-start lg:absolute lg:left-[34px] lg:top-[30px]"
-        >
+      {/* ── pane one — the ink panel ── */}
+      <aside className="bg-brand-ink flex flex-col justify-center px-6 py-8 text-white lg:w-2/5 lg:shrink-0 lg:px-11 lg:py-12">
+        <Link href="/" aria-label="Plugfolio home" className="self-start">
           <Logo layout="reversed" />
         </Link>
-        <div className="relative z-10 grid justify-items-center gap-4 lg:gap-6">{artefact}</div>
+        <h2 className="font-display mt-7 hidden text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.15] tracking-[-0.04em] lg:block">
+          Plug yourself in.
+        </h2>
+        <ul className="mt-[18px] hidden flex-col gap-2.5 lg:flex">
+          {PROMISES.map((line) => (
+            <li key={line} className="text-label flex gap-2.5 leading-[1.55] text-white/70">
+              <span aria-hidden className="text-accent">
+                —
+              </span>
+              {line}
+            </li>
+          ))}
+        </ul>
+        {artefact ? <div className="mt-6 hidden lg:block">{artefact}</div> : null}
       </aside>
 
-      {/* ── pane two — the form (rides up over the pane on a sheet) ── */}
-      <main className="bg-background rounded-t-bay relative z-[2] -mt-8 grid content-center px-5 pb-14 pt-8 shadow-[0_-22px_44px_-24px_hsl(var(--brand-ink)/0.3)] lg:mt-0 lg:rounded-none lg:p-10 lg:shadow-none">
-        <span
-          aria-hidden
-          className="bg-border rounded-pill mx-auto -mt-2 mb-8 h-1 w-10 lg:hidden"
-        />
-        <div className="mx-auto w-full max-w-[380px]">{children}</div>
+      {/* ── pane two — the form ── */}
+      <main className="bg-background flex flex-1 flex-col items-center justify-center px-5 py-9 lg:px-10">
+        <div className="border-border bg-card rounded-drawer w-full max-w-[400px] border p-[22px]">
+          {children}
+        </div>
+        <p className="text-faint text-micro mt-[18px] max-w-[380px] text-center leading-[1.6]">
+          Shopping never asks for any of this. An account is only for following, saving,
+          commenting, selling or hiring.
+        </p>
+        <Link
+          href="/explore"
+          className="text-muted-foreground text-pico tracking-eyebrow mt-3 font-mono font-bold uppercase"
+        >
+          ← Keep shopping instead
+        </Link>
       </main>
     </div>
   );

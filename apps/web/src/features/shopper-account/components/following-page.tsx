@@ -54,11 +54,15 @@ export function FollowingPage({
   return (
     <main className={cn(measure(), "pb-[clamp(48px,7vw,88px)] pt-[clamp(20px,3vw,34px)]")}>
       <div className="flex flex-wrap items-baseline gap-4">
-        <h1 className="font-display text-display font-bold leading-[1.08] tracking-[-0.035em]">
+        <h1 className="font-display text-display font-bold leading-[1.08] tracking-[-0.04em]">
           Following
         </h1>
         {followedTotal > 0 && since ? <LastLooked>{sinceLabel(since, now)}</LastLooked> : null}
       </div>
+      <p className="text-muted-foreground text-copy mt-2 max-w-[460px] leading-[1.55]">
+        A list, not a feed. Every route out of here goes to that creator&apos;s own page —
+        nothing is merged into a stream you buy from.
+      </p>
 
       {followedTotal === 0 ? (
         <div className="mt-[26px]">

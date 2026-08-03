@@ -50,6 +50,10 @@ export function WatchlistPage({ items }: WatchlistPageProps) {
         <h1 className="font-display text-display font-bold leading-[1.08] tracking-[-0.035em]">
           Saved
         </h1>
+      <p className="text-muted-foreground text-copy mt-2 max-w-[460px] leading-[1.55]">
+        A shelf, not a cart. Nothing here is reserved, priced or held — each card just takes
+        you back to where you found it.
+      </p>
         {items.length > 0 ? (
           <p className="text-muted-foreground text-copy m-0 font-semibold tabular-nums">
             {items.length} saved
