@@ -1,24 +1,24 @@
 import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
-import { Manrope, Sora, Space_Mono } from "next/font/google";
+import { Inter, Sora, Space_Mono } from "next/font/google";
 import { brand } from "@plugfolio/tokens";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import { Providers } from "./providers";
 import "./globals.css";
 
-// Type system (DESIGN §Typography): Sora for display/wordmark/headlines,
-// Manrope for UI + body (tabular figures for prices), Space Mono kept for
-// code/data. Each is exposed as a CSS variable the tokens read into --font-*.
+// Type system (v2, ADR-0026): Sora for display/wordmark/headlines, Inter for
+// UI + body, Space Mono for the uppercase label voice and code/data. Each is
+// exposed as a CSS variable the tokens read into --font-*.
 const sora = Sora({
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-sora",
   display: "swap",
 });
-const manrope = Manrope({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-manrope",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
   display: "swap",
 });
 const spaceMono = Space_Mono({
@@ -77,7 +77,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html
       lang="en"
       data-theme={theme}
-      className={`${sora.variable} ${manrope.variable} ${spaceMono.variable}`}
+      className={`${sora.variable} ${inter.variable} ${spaceMono.variable}`}
     >
       <body>
         <Providers>{children}</Providers>

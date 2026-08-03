@@ -30,8 +30,10 @@ const preset = {
         },
         // Third text tier (Admin design): timestamps, table eyebrows, hints.
         faint: "hsl(var(--text-faint) / <alpha-value>)",
-        // Selected fill (Violet Wash on light) — nav-active, soft chips, sel-bar.
+        // v2: the SUNK inset fill — inputs, quiet wells, pressed chips.
         active: "hsl(var(--surface-active) / <alpha-value>)",
+        // The sticky top bar's blur wash (carries its own alpha).
+        veil: "hsl(var(--surface-veil))",
         border: {
           DEFAULT: "hsl(var(--border) / <alpha-value>)",
           // Stronger hairline for inputs & secondary-button outlines.
@@ -57,6 +59,20 @@ const preset = {
         destructive: {
           DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
           foreground: "hsl(var(--destructive-foreground) / <alpha-value>)",
+        },
+        // v2's one success colour (forest) — Live badges, sent confirmations.
+        success: {
+          DEFAULT: "hsl(var(--success) / <alpha-value>)",
+          foreground: "hsl(var(--success-foreground) / <alpha-value>)",
+        },
+        // The floating morphing pill nav (ADR-0026 §6). Raw vars — the shell
+        // mixes fixed alpha values, so no <alpha-value> channel here.
+        nav: {
+          DEFAULT: "var(--nav-bg)",
+          foreground: "var(--nav-text)",
+          sunk: "var(--nav-sunk)",
+          line: "var(--nav-line)",
+          edge: "var(--nav-edge)",
         },
         input: "hsl(var(--border) / <alpha-value>)",
         // Raw brand palette (Brand Guidelines v1.1 §05) — for the few spots that
@@ -179,7 +195,12 @@ const preset = {
         pill: "9999px",
         paper: "3px",
         image: "1rem", // 16px
+        // v2 card steps between image (16) and tile (20) / between tile and
+        // card (26): row cards sit at 18, sheets and editors at 22/24.
+        row: "1.125rem", // 18px — list rows, comment cards, bands
         tile: "1.25rem", // 20px
+        sheet: "1.375rem", // 22px — panels, hero cards
+        drawer: "1.5rem", // 24px — media frames, auth card, share sheet
         card: "1.625rem", // 26px
         bay: "2.125rem", // 34px
         // A shape nested inside an image-radius box sits 3px tighter, so the
@@ -196,6 +217,10 @@ const preset = {
         raise: "0 10px 26px 0 hsl(var(--brand-ink) / 0.08)",
         menu: "0 12px 30px 0 hsl(var(--brand-ink) / 0.18)",
         overlay: "0 14px 40px 0 hsl(var(--brand-ink) / 0.22)",
+        // v2 (ADR-0026): the floating pill nav's deep drop, and the menu drop
+        // its account/profile popovers use.
+        nav: "0 18px 44px -18px rgba(10,8,20,.55)",
+        pop: "0 24px 54px -22px rgba(10,8,20,.45)",
       },
       // The auth artefact pane's role gradient (stops in `--role-grad-*`,
       // scoped by a `data-role` container).
@@ -203,8 +228,8 @@ const preset = {
         "role-gradient": "linear-gradient(155deg, var(--role-grad-a), var(--role-grad-b))",
       },
       fontFamily: {
-        // Sora = display / wordmark / headlines; Manrope = UI & body (with
-        // tabular figures for prices); Space Mono = code / data where needed.
+        // Sora = display / wordmark / headlines; Inter = UI & body (v2,
+        // ADR-0026); Space Mono = the uppercase label voice + code / data.
         display: ["var(--font-display)", "system-ui", "sans-serif"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],

@@ -1,28 +1,29 @@
 /**
- * Plugfolio design tokens — "The Tagged Feed" (DESIGN.md).
+ * Plugfolio design tokens — v2 redesign (ADR-0026, docs/design/v2-visual-system.md).
  *
  * The ONLY source of color / radius / type. Components reference these through
  * the Tailwind preset (@plugfolio/config/tailwind) as semantic utility classes
- * (bg-background, text-foreground, bg-tile-butter, …) — NEVER a raw hex, NEVER
- * an inline style.
+ * (bg-background, text-foreground, bg-active, …) — NEVER a raw hex, NEVER an
+ * inline style.
  *
  * Colors are stored as HSL channels (no `hsl()` wrapper) so Tailwind's
  * `<alpha-value>` opacity modifier works: `hsl(var(--color-primary) / 0.5)`.
  *
- * The world is LIGHT-committed: a cool violet-tinted near-white Canvas
- * (#FCFBFE) is the page, and white is a *lift* reserved for raised objects.
- * Dark is fully supported through the same tokens (the second block below).
+ * v2 inverts the old "white is a lift" rule: the page is WHITE, and the raised
+ * card is the violet-tinted grey (#F8F7FB); inputs and inset fields sink one
+ * step further (#F1EFF7). Dark mirrors the same three steps upward from
+ * #16141F.
  *
  * Two token families:
- *   1. Semantic tokens (--color-primary, --surface, --text, --tile-*, …) —
- *      what components consume. They flip between light and dark.
+ *   1. Semantic tokens (--color-primary, --surface, --text, …) — what
+ *      components consume. They flip between light and dark.
  *   2. Raw brand tokens (--brand-*) — fixed palette values behind the
- *      semantics, for the few spots needing a specific brand color (the lime
- *      coupon chip, the ink shadow, the coral warm alt). Same in both themes.
+ *      semantics (the lime offer chip, the ink panel). Same in both themes.
  *
- * Electric Lime is a FILL ONLY with ink text on top — never a text color.
- * The six tile hues carry content colour; they are never text, border, or a
- * page-bleed wash (the Tile-Carries-Colour rule).
+ * Electric Lime is a FILL ONLY with ink text on top — it flags a live offer,
+ * nothing else. Coral #FF6B5C is the one danger colour; forest #1C7A5C the one
+ * success colour. The old --tile-* hues are retained for the admin app but are
+ * deprecated on shopper surfaces (ADR-0026 §3).
  */
 
 :root,
@@ -31,68 +32,73 @@
 
   /* Raw brand palette — fixed in both themes. */
   --brand-violet: 262 83% 58%; /* #7C3AED Brand Violet */
-  --brand-violet-deep: 263 69% 42%; /* #5B21B6 hover / pressed */
+  --brand-violet-deep: 263 69% 42%; /* #5B21B6 pressed */
   --brand-violet-tint: 255 92% 76%; /* #A78BFA accents / focus */
-  --brand-ink: 250 27% 9%; /* #12101C text / shadow colour */
+  --brand-ink: 250 27% 9%; /* #12101C ink panels / shadow colour */
   --brand-lime: 78 100% 62%; /* #C6FF3D fill only, ink text */
-  --brand-coral: 10 100% 73%; /* #FF8A73 warm alt (DESIGN departure) */
+  --brand-coral: 6 100% 68%; /* #FF6B5C danger / warm alt */
   --brand-violet-wash: 258 68% 95%; /* #EFEAFB tint field */
-  --brand-canvas: 260 60% 99%; /* #FCFBFE page ground */
+  --brand-canvas: 0 0% 100%; /* #FFFFFF page ground (light) */
 
-  /* Semantic — the identity + action colour. */
+  /* Semantic — the identity + action colour (the page "accent"). */
   --color-primary: 262 83% 58%; /* #7C3AED */
   --color-primary-foreground: 0 0% 100%;
   /* Electric Lime — flags a live offer, fill only; ink text on top, always. */
   --color-accent: 78 100% 62%; /* #C6FF3D */
   --color-accent-foreground: 250 27% 9%; /* Ink */
 
-  /* Functional surface roles: `--surface` is the PAGE (bg-background, Canvas);
-     `--surface-muted` is the RAISED card/input fill (bg-card, White — a lift);
-     `--surface-active` is the selected fill (Violet Wash). */
-  --surface: 260 60% 99%; /* #FCFBFE Canvas — the page */
-  --surface-muted: 0 0% 100%; /* #FFFFFF White — raised cards, sheets, inputs */
-  --surface-active: 258 68% 95%; /* #EFEAFB Violet Wash — selected fills */
+  /* Functional surface roles (v2): `--surface` is the PAGE (white canvas);
+     `--surface-muted` is the RAISED card fill (#F8F7FB); `--surface-active`
+     is the SUNK inset fill for inputs and quiet wells (#F1EFF7).
+     `--surface-veil` is the blur wash behind the sticky top bar. */
+  --surface: 0 0% 100%; /* #FFFFFF Canvas — the page */
+  --surface-muted: 252 29% 97%; /* #F8F7FB cards, sheets, panels */
+  --surface-active: 255 25% 95%; /* #F1EFF7 inputs, inset fields */
+  --surface-veil: 0 0% 100% / 0.9; /* top-bar backdrop wash */
 
-  --text: 250 27% 9%; /* #12101C Ink — headlines & body */
-  --text-muted: 254 14% 36%; /* #56506A Ink 2 — supporting copy, subheads */
-  --text-faint: 260 9% 56%; /* #8B8499 Ink 3 — captions, handles, metadata */
+  --text: 250 27% 9%; /* #12101C */
+  --text-muted: 251 11% 42%; /* #645F78 supporting copy */
+  --text-faint: 252 10% 62%; /* #8F8AA3 captions, handles, metadata */
 
-  --border: 265 29% 92%; /* #E9E4F0 Line — hairlines, card borders */
-  --border-strong: 258 29% 86%; /* #D8D2E6 input & secondary-button borders */
-  --ring: 262 83% 58%; /* #7C3AED — 3px Brand Violet focus ring */
+  --border: 254 32% 92%; /* #E7E4F1 hairlines, card borders */
+  --border-strong: 255 20% 86%; /* #D6D1E5 input & secondary-button outlines */
+  --ring: 262 83% 58%; /* accent focus ring */
 
-  /* Destructive actions (delete/remove) — shadcn components expect it. */
-  --destructive: 0 72% 45%;
-  --destructive-foreground: 0 0% 100%;
+  /* Danger + success — v2's two status colours (coral / forest). */
+  --destructive: 6 100% 68%; /* #FF6B5C */
+  --destructive-foreground: 250 27% 9%; /* ink on coral */
+  --success: 158 63% 29%; /* #1C7A5C */
+  --success-foreground: 0 0% 100%;
 
-  /* The six content-tile hues + the text that rides on them (all AA on light). */
-  --tile-butter: 47 100% 65%; /* #FFD84D */
-  --tile-mint: 149 62% 75%; /* #96E6BC */
-  --tile-sky: 207 100% 83%; /* #A9D8FF */
-  --tile-lavender: 256 100% 86%; /* #C9B6FF */
-  --tile-coral: 10 100% 73%; /* #FF8A73 */
-  --tile-blush: 337 100% 89%; /* #FFC9DE */
-  --tile-foreground: 250 27% 9%; /* Ink on a light tile */
+  /* The floating morphing pill nav (docs/design/v2-visual-system.md §Layout).
+     Full colours (not channels): the shell mixes fixed alpha values. */
+  --nav-bg: #12101c;
+  --nav-text: #f4f3f8;
+  --nav-sunk: rgba(255, 255, 255, 0.12);
+  --nav-line: rgba(255, 255, 255, 0.18);
+  --nav-edge: rgba(255, 255, 255, 0.08); /* 1px shell border */
+
+  /* DEPRECATED — admin-only tile hues (ADR-0026 retires tiles on shopper
+     surfaces; the admin app still reads them). */
+  --tile-butter: 47 100% 65%;
+  --tile-mint: 149 62% 75%;
+  --tile-sky: 207 100% 83%;
+  --tile-lavender: 256 100% 86%;
+  --tile-coral: 10 100% 73%;
+  --tile-blush: 337 100% 89%;
+  --tile-foreground: 250 27% 9%;
 
   /* Shape & type. */
-  --radius: 1rem; /* radius-lg / image (16px); other steps derive in the preset */
+  --radius: 1rem; /* radius-lg (16px); other steps derive in the preset */
   --font-display: var(--font-sora, "Sora"), system-ui, sans-serif;
-  --font-sans: var(--font-manrope, "Manrope"), system-ui, sans-serif;
+  --font-sans: var(--font-inter, "Inter"), system-ui, sans-serif;
   --font-mono: var(--font-space-mono, "Space Mono"), ui-monospace, monospace;
 }
 
-/* Dark — a deep violet-tinted canvas; tag pills stay white, tiles go deep. */
 /**
- * Role-gradient tokens (auth artefact pane) — the one place a saturated field
- * is committed, keyed by the role the visitor is declaring. Full colours (not
- * HSL channels) because a gradient stop takes no alpha modifier. The pane's
- * text is always white; the artefact cards on it are white "light objects".
- * `--role-solid` is a lighter solid tint used for the 5px top rail (a signal,
- * never a surface). Same values in both themes — the auth pane is a rich field
- * regardless. `generic` is the field the account screens wear (sign-in, forgot,
- * reset, verify): they declare no role, so they wear the *brand* itself —
- * Brand Violet → Violet Deep, the canonical Plugfolio gradient (§7) — rather
- * than borrowing a role's colour.
+ * Role-gradient tokens (auth) — kept for the auth layout's role fields. v2
+ * auth commits to the ink pane + lime accent instead of role gradients; these
+ * remain until every auth screen is on the v2 layout, then can be dropped.
  */
 [data-role="creator"] {
   --role-grad-a: #0375b6;
@@ -116,59 +122,73 @@
 }
 
 /**
- * Creator page accent (ADR-0017) — the one colour a creator chooses, scoped by
- * a `data-accent` ancestor exactly like `data-role` above. Five options, and
- * the list is closed *because* it is closed: each is measured against white
- * label text (violet 5.70 · indigo 7.90 · coral 5.09 · forest 6.50 ·
- * magenta 6.28), so no choice a creator can express makes their own Buy button
- * fail AA. Only `--color-primary` moves; every component keeps reading the
- * token, so nothing downstream knows a creator picked coral.
+ * Creator page accent (ADR-0017, amended by ADR-0026) — the one colour a
+ * creator chooses, scoped by a `data-accent` ancestor. Five options, closed
+ * *because* it is closed. v2 values as drawn: indigo #3D4EE8 · coral #FF6B5C ·
+ * forest #1C7A5C · magenta #C4247E. Coral's white-text contrast (~3.1:1) is a
+ * known deviation recorded in ADR-0026 §4 — flagged, not silently fixed.
+ * Only `--color-primary` (+ ring) moves; nothing downstream knows.
  *
  * `violet` is the default and needs no block — it IS `--color-primary`.
  */
 [data-accent="indigo"] {
-  --color-primary: 245 57% 51%; /* #4338CA */
+  --color-primary: 236 79% 57%; /* #3D4EE8 */
+  --ring: 236 79% 57%;
 }
 [data-accent="coral"] {
-  --color-primary: 6 69% 47%; /* #CC3626 */
+  --color-primary: 6 100% 68%; /* #FF6B5C */
+  --ring: 6 100% 68%;
 }
 [data-accent="forest"] {
-  --color-primary: 157 69% 25%; /* #146B4A */
+  --color-primary: 158 63% 29%; /* #1C7A5C */
+  --ring: 158 63% 29%;
 }
 [data-accent="magenta"] {
-  --color-primary: 325 72% 41%; /* #B31D74 */
+  --color-primary: 327 69% 45%; /* #C4247E */
+  --ring: 327 69% 45%;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --color-primary: 258 90% 66%; /* #8B5CF6 lifted violet for dark */
+  --brand-canvas: 249 15% 10%; /* #16141F page ground (dark) */
+
+  --color-primary: 262 83% 58%; /* accent holds its hue in the dark */
   --color-primary-foreground: 0 0% 100%;
   --color-accent: 78 100% 62%; /* lime stays lime — fill only */
   --color-accent-foreground: 250 27% 9%;
 
-  --surface: 252 22% 9%; /* #14121C page */
-  --surface-muted: 252 24% 16%; /* #231F33 raised cards, sheets, inputs */
-  --surface-active: 253 28% 20%; /* #2A2440 selected fills */
+  --surface: 249 15% 10%; /* #16141F page */
+  --surface-muted: 251 15% 14%; /* #1F1C2B cards, sheets, panels */
+  --surface-active: 252 15% 17%; /* #272234 inputs, inset fields */
+  --surface-veil: 249 15% 10% / 0.9;
 
-  --text: 257 41% 97%; /* #F5F3FA */
-  --text-muted: 259 19% 78%; /* #C2BBD1 */
-  --text-faint: 259 11% 62%; /* #9A93A9 */
+  --text: 252 26% 96%; /* #F4F3F8 */
+  --text-muted: 251 12% 66%; /* #A29EB4 */
+  --text-faint: 251 10% 52%; /* #7B7690 */
 
-  --border: 253 21% 25%; /* #39334E */
-  --border-strong: 253 19% 33%; /* #4A4363 */
-  --ring: 258 90% 66%;
+  --border: 251 17% 20%; /* #2E2A3D */
+  --border-strong: 251 20% 27%; /* #3E3854 */
+  --ring: 262 83% 58%;
 
-  --destructive: 0 72% 51%;
-  --destructive-foreground: 0 0% 100%;
+  --destructive: 6 100% 68%;
+  --destructive-foreground: 250 27% 9%;
+  --success: 158 63% 36%; /* lifted a step for dark */
+  --success-foreground: 0 0% 100%;
 
-  --tile-butter: 41 54% 27%; /* #6B5320 */
-  --tile-mint: 157 54% 23%; /* #1B5A42 */
-  --tile-sky: 211 57% 25%; /* #1B3E63 */
-  --tile-lavender: 259 41% 33%; /* #463175 */
-  --tile-coral: 30 71% 21%; /* #5A340F */
-  --tile-blush: 329 37% 26%; /* #5C2A44 */
-  --tile-foreground: 257 41% 97%; /* light text on a deep tile */
+  --nav-bg: #16141f;
+  --nav-text: #f4f3f8;
+  --nav-sunk: #2e2a3d;
+  --nav-line: #3e3854;
+  --nav-edge: rgba(255, 255, 255, 0.14);
+
+  --tile-butter: 41 54% 27%;
+  --tile-mint: 157 54% 23%;
+  --tile-sky: 211 57% 25%;
+  --tile-lavender: 259 41% 33%;
+  --tile-coral: 30 71% 21%;
+  --tile-blush: 329 37% 26%;
+  --tile-foreground: 252 26% 96%;
 }
 
 /* OS-dark visitors with no explicit theme get the dark canvas. */
@@ -176,25 +196,36 @@
   :root:not([data-theme]) {
     color-scheme: dark;
 
-    --color-primary: 258 90% 66%;
+    --brand-canvas: 249 15% 10%;
+
+    --color-primary: 262 83% 58%;
     --color-primary-foreground: 0 0% 100%;
     --color-accent: 78 100% 62%;
     --color-accent-foreground: 250 27% 9%;
 
-    --surface: 252 22% 9%;
-    --surface-muted: 252 24% 16%;
-    --surface-active: 253 28% 20%;
+    --surface: 249 15% 10%;
+    --surface-muted: 251 15% 14%;
+    --surface-active: 252 15% 17%;
+    --surface-veil: 249 15% 10% / 0.9;
 
-    --text: 257 41% 97%;
-    --text-muted: 259 19% 78%;
-    --text-faint: 259 11% 62%;
+    --text: 252 26% 96%;
+    --text-muted: 251 12% 66%;
+    --text-faint: 251 10% 52%;
 
-    --border: 253 21% 25%;
-    --border-strong: 253 19% 33%;
-    --ring: 258 90% 66%;
+    --border: 251 17% 20%;
+    --border-strong: 251 20% 27%;
+    --ring: 262 83% 58%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 6 100% 68%;
+    --destructive-foreground: 250 27% 9%;
+    --success: 158 63% 36%;
+    --success-foreground: 0 0% 100%;
+
+    --nav-bg: #16141f;
+    --nav-text: #f4f3f8;
+    --nav-sunk: #2e2a3d;
+    --nav-line: #3e3854;
+    --nav-edge: rgba(255, 255, 255, 0.14);
 
     --tile-butter: 41 54% 27%;
     --tile-mint: 157 54% 23%;
@@ -202,6 +233,6 @@
     --tile-lavender: 259 41% 33%;
     --tile-coral: 30 71% 21%;
     --tile-blush: 329 37% 26%;
-    --tile-foreground: 257 41% 97%;
+    --tile-foreground: 252 26% 96%;
   }
 }
