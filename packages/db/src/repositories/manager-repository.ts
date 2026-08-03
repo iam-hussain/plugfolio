@@ -63,6 +63,10 @@ export function createUserRepository(db: PrismaClient = prisma): UserRepository 
       return row?.username ?? null;
     },
 
+    async setImage(userId: string, imageUrl: string | null): Promise<void> {
+      await db.user.update({ where: { id: userId }, data: { image: imageUrl } });
+    },
+
     async updateUsername(userId: string, username: string): Promise<"ok" | "taken"> {
       try {
         await db.user.update({ where: { id: userId }, data: { username } });

@@ -87,7 +87,9 @@ import {
   updatePostInput,
   updateProduct,
   updateMemberHandle,
+  updateMemberImage,
   updateMemberHandleInput,
+  updateMemberImageInput,
   createReport,
   createReportInput,
   createSupportTicket,
@@ -349,6 +351,13 @@ app.post("/support", async (c) => {
 });
 
 // The member handle (ADR-0009): public identity, never a login.
+app.patch("/me/image", async (c) => {
+  const userId = await requireUserId(c);
+  const input = updateMemberImageInput.parse(await c.req.json());
+  await updateMemberImage({ users: repositories.users }, userId, input);
+  return c.json({ updated: true });
+});
+
 app.patch("/me/handle", async (c) => {
   const userId = await requireUserId(c);
   const input = updateMemberHandleInput.parse(await c.req.json());

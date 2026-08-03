@@ -47,6 +47,7 @@ export async function updateProfileIdentity(
   const patch: { -readonly [K in keyof ProfileIdentity]?: ProfileIdentity[K] } = {};
   if (input.displayName !== undefined) patch.displayName = input.displayName;
   if (input.avatarUrl !== undefined) patch.avatarUrl = input.avatarUrl;
+  if (input.coverUrl !== undefined) patch.coverUrl = input.coverUrl;
   if (input.bio !== undefined) patch.bio = input.bio;
   // How the page looks (ADR-0017) — Admin-only, like the rest of identity.
   if (input.accent !== undefined) patch.accent = input.accent;

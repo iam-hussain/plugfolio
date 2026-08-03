@@ -17,6 +17,7 @@ export const updateProfileIdentityInput = z.object({
   profileId: z.string().uuid(),
   displayName: z.string().trim().min(1).max(80).nullish(),
   avatarUrl: z.string().trim().url().max(500).nullish(),
+  coverUrl: z.string().trim().url().max(500).nullish(),
   bio: z.string().trim().min(1).max(280).nullish(),
   accent: pageAccent.nullish(),
   headerStyle: pageHeaderStyle.nullish(),

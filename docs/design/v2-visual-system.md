@@ -119,6 +119,13 @@ marketing primitives · cover treatment + link-row mode as **stored**
 appearance axes (Profile.coverStyle/linkMode, resolved at the read) · the
 admin console's Internal chip · coral accent resolved to AA (ink foreground).
 
+**Image framing (amends ADR-0023's flow, not its pipeline):** every upload
+(profile avatar, the new page cover, the member photo, post stills, thing
+photos) opens the crop dialog first — drag to position, zoom to focus, canvas
+crop to the kind's exact box — then uploads through the unchanged
+process-watermark-store path. Profiles gained `coverUrl` (2.5:1 `cover` kind);
+members gained a stored photo (`PATCH /me/image`).
+
 **Structural migration complete.** The prototype (`Plugfolio v2.dc.html` in
 the design project) remains the reference for any future polish; remaining
 deltas are cosmetic judgment calls, not missing screens.

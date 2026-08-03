@@ -66,6 +66,7 @@ function makeDeps(existingManagers = 0, options: { inviteePasswordless?: boolean
     async getHandle() {
       return "user-abc12345";
     },
+    async setImage() {},
     async updateUsername() {
       return "ok";
     },

@@ -103,6 +103,7 @@ describe("handle reset", () => {
       async getHandle(userId) {
         return handles.get(userId) ?? null;
       },
+      async setImage() {},
       async updateUsername(userId, username) {
         if ([...handles.values()].includes(username)) return "taken";
         handles.set(userId, username);

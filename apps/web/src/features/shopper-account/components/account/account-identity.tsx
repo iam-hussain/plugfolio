@@ -1,5 +1,6 @@
 import { SettingRow, SettingRows } from "@plugfolio/ui";
 import { HandleForm } from "../handle-form";
+import { MemberPhotoForm } from "../member-photo-form";
 
 /**
  * "You" — how the account appears when it acts as itself: following a creator,
@@ -31,13 +32,13 @@ export function AccountIdentity({ name, image, handle }: AccountIdentityProps) {
       >
         <HandleForm currentHandle={handle} />
       </SettingRow>
-      {/* ponytail: photo is whatever the connected social gave us —
-              an uploader lands with media storage, not before. */}
       <SettingRow
         label="Profile photo"
         value={image ? "Set" : "Not set"}
-        hint="Shown beside your comments and in the account menu. It follows your connected account."
-      />
+        hint="Shown beside your comments and in the account menu. Frame it when you upload."
+      >
+        <MemberPhotoForm image={image} handle={handle} />
+      </SettingRow>
     </SettingRows>
   );
 }

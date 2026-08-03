@@ -19,7 +19,7 @@ import type { Route } from "next";
 import { Trash2 } from "lucide-react";
 import { useProductEditor } from "../hooks/use-product-editor";
 import { CouponFields } from "./coupon-fields";
-import { ImageUploadButton } from "./image-upload-button";
+import { ImageCropUpload } from "./image-crop-upload";
 import { ProductEditorPreview, type EditableProduct } from "./product-editor-preview";
 import { ShelfOptions } from "./shelf-options";
 
@@ -130,7 +130,7 @@ export function ProductEditor({ profileId, categories, product, libraryHref }: P
                 label="Photo"
                 note="Replace the scraped image with your own — cropped, watermarked and stored."
               >
-                <ImageUploadButton
+                <ImageCropUpload
                   kind="product"
                   onUploaded={fields.setImageUrl}
                   label="Upload photo"

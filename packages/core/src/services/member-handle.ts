@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { ConflictError } from "../errors";
 import type { AppSettingsRepository } from "../ports/admin-repository";
 import type { UserRepository } from "../ports/manager-repository";
-import type { UpdateMemberHandleInput } from "../schemas/member-handle";
+import type { UpdateMemberHandleInput, UpdateMemberImageInput } from "../schemas/member-handle";
 import { isUsernameReserved } from "./app-settings";
 
 /**
@@ -40,4 +40,13 @@ export async function getMemberHandle(
   userId: string,
 ): Promise<string> {
   return (await deps.users.getHandle(userId)) ?? "";
+}
+
+/** The member's own picture — how they appear in the top bar and on comments. */
+export async function updateMemberImage(
+  deps: Pick<MemberHandleDeps, "users">,
+  userId: string,
+  input: UpdateMemberImageInput,
+): Promise<void> {
+  await deps.users.setImage(userId, input.imageUrl);
 }

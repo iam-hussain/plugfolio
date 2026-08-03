@@ -24,6 +24,8 @@ export type PageAppearance = {
 export type ProfileIdentity = PageAppearance & {
   readonly displayName: string | null;
   readonly avatarUrl: string | null;
+  /** The page cover imagery (v2); null = the accent-gradient fallback. */
+  readonly coverUrl: string | null;
   readonly bio: string | null;
 };
 

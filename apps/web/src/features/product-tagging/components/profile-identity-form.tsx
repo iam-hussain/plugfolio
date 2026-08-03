@@ -15,7 +15,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { updateProfileIdentity } from "../api";
-import { ImageUploadButton } from "./image-upload-button";
+import { ImageCropUpload } from "./image-crop-upload";
 
 /**
  * Public-identity form (brief 10): the Admin edits name, picture and bio; a
@@ -38,6 +38,7 @@ export function ProfileIdentityForm({
   const router = useRouter();
   const [displayName, setDisplayName] = useState(identity.displayName ?? "");
   const [avatarUrl, setAvatarUrl] = useState(identity.avatarUrl ?? "");
+  const [coverUrl, setCoverUrl] = useState(identity.coverUrl ?? "");
   const [bio, setBio] = useState(identity.bio ?? "");
   const isAdmin = role === "admin";
 
@@ -46,7 +47,13 @@ export function ProfileIdentityForm({
       updateProfileIdentity(profileId, {
         avatarUrl: avatarUrl.trim() || null,
         // A Manager's payload carries only the picture (the server enforces it).
-        ...(isAdmin ? { displayName: displayName.trim() || null, bio: bio.trim() || null } : {}),
+        ...(isAdmin
+          ? {
+              displayName: displayName.trim() || null,
+              bio: bio.trim() || null,
+              coverUrl: coverUrl.trim() || null,
+            }
+          : {}),
       }),
     onSuccess: () => router.refresh(),
   });
@@ -69,7 +76,7 @@ export function ProfileIdentityForm({
           note="Upload a photo — cropped, watermarked and stored — or paste an image URL."
         >
           <div className="flex flex-col gap-2">
-            <ImageUploadButton kind="avatar" onUploaded={setAvatarUrl} label="Upload photo" />
+            <ImageCropUpload kind="avatar" onUploaded={setAvatarUrl} label="Upload photo" />
             <Input
               id="identity-avatar"
               type="url"
@@ -91,6 +98,36 @@ export function ProfileIdentityForm({
           </span>
         </div>
       </DashFieldPair>
+
+      {/* The page cover (v2) — framed in the crop dialog like every upload.
+          Admin-only, like the rest of how the page looks. */}
+      <DashField
+        label="Cover picture"
+        hint={isAdmin ? "· optional" : "· Admin only"}
+        htmlFor="identity-cover"
+        note="Wide and shallow (2.5:1) — you frame it when you upload. Clear it for the accent fallback."
+      >
+        <div className="flex flex-col gap-2">
+          {isAdmin ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <ImageCropUpload kind="cover" onUploaded={setCoverUrl} label="Upload cover" />
+              {coverUrl.trim() ? (
+                <Button type="button" variant="ghost" size="sm" onClick={() => setCoverUrl("")}>
+                  Remove cover
+                </Button>
+              ) : null}
+            </div>
+          ) : null}
+          {coverUrl.trim() ? (
+            <span className="border-border rounded-lg block aspect-[2.5/1] w-full max-w-[420px] overflow-hidden border">
+              {/* eslint-disable-next-line @next/next/no-img-element -- ponytail: unoptimized until image domains are pinned */}
+              <img src={coverUrl} alt="Cover preview" className="size-full object-cover" />
+            </span>
+          ) : (
+            <span className="text-faint text-micro">No cover — the accent gradient shows.</span>
+          )}
+        </div>
+      </DashField>
 
       {/* The Admin/Manager boundary is SHOWN, never hidden: a Manager sees
           the field, sees it labelled Admin-only, and sees it disabled. */}

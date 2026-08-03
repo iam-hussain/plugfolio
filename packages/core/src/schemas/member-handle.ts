@@ -17,3 +17,9 @@ export const memberHandle = z
 export const updateMemberHandleInput = z.object({ username: memberHandle });
 
 export type UpdateMemberHandleInput = z.infer<typeof updateMemberHandleInput>;
+
+/** The member's picture — an uploaded (avatar-kind) URL, or null to clear. */
+export const updateMemberImageInput = z.object({
+  imageUrl: z.string().trim().url().max(500).nullable(),
+});
+export type UpdateMemberImageInput = z.infer<typeof updateMemberImageInput>;

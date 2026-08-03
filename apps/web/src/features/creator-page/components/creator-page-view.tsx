@@ -181,11 +181,12 @@ export function CreatorPageView({
           <CreatorCover
             treatment="tile"
             tall={page.headerStyle === "centred"}
+            url={page.coverUrl}
             badge={thingsCount > 0 ? `${thingsCount} things live` : null}
           />
         </div>
       ) : (
-        <CreatorCover treatment={cover} tall={page.headerStyle === "centred"} />
+        <CreatorCover treatment={cover} tall={page.headerStyle === "centred"} url={page.coverUrl} greeting={page.greeting} />
       )}
       <div className={measure()}>
         <CreatorHeader

@@ -78,6 +78,7 @@ export function createProfileIdentityRepository(
           displayName: true,
           avatarUrl: true,
           bio: true,
+          coverUrl: true,
           accent: true,
           headerStyle: true,
           gridStyle: true,

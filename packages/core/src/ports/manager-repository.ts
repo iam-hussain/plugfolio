@@ -26,4 +26,6 @@ export type UserRepository = {
   getHandle(userId: string): Promise<string | null>;
   /** "taken" surfaces the global-uniqueness constraint for a typed ConflictError. */
   updateUsername(userId: string, username: string): Promise<"ok" | "taken">;
+  /** The member's picture (top bar, comments); null clears it. */
+  setImage(userId: string, imageUrl: string | null): Promise<void>;
 };

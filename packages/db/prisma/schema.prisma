@@ -126,6 +126,8 @@ model Profile {
   /// strings like the rest; unset derives from the header style at the read.
   coverStyle  String?
   linkMode    String?
+  /// The page cover imagery (v2) — uploaded via the cover kind (ADR-0023).
+  coverUrl    String?
   /// The one line above the name ("Hey — glad you found me."). Unset = none.
   greeting    String?
   /// Set by an admin: takes just this page off the public surface (owner can

@@ -49,6 +49,7 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
           displayName: true,
           avatarUrl: true,
           bio: true,
+          coverUrl: true,
           accent: true,
           headerStyle: true,
           gridStyle: true,

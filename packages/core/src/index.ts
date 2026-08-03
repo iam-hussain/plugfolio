@@ -225,7 +225,8 @@ export {
   setProductCategoryInput,
   type SetProductCategoryInput,
 } from "./schemas/creator-content";
-export { updateMemberHandleInput, type UpdateMemberHandleInput } from "./schemas/member-handle";
+export { updateMemberHandleInput,
+  updateMemberImageInput, type UpdateMemberHandleInput } from "./schemas/member-handle";
 export {
   socialPlatform,
   type SocialPlatform,
@@ -339,6 +340,7 @@ export {
 export {
   generateMemberHandle,
   updateMemberHandle,
+  updateMemberImage,
   getMemberHandle,
   type MemberHandleDeps,
 } from "./services/member-handle";

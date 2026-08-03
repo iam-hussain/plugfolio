@@ -65,6 +65,16 @@ export async function addComment(input: AddCommentInput): Promise<void> {
   if (!response.ok) throw await parseError(response);
 }
 
+export async function updateMemberImage(input: { imageUrl: string | null }): Promise<void> {
+  const response = await fetch("/api/me/image", {
+    method: "PATCH",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+    credentials: "same-origin",
+  });
+  if (!response.ok) throw await parseError(response);
+}
+
 export async function updateMemberHandle(input: UpdateMemberHandleInput): Promise<void> {
   const response = await fetch("/api/me/handle", {
     method: "PATCH",

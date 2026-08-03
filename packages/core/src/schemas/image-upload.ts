@@ -2,11 +2,13 @@ import { z } from "zod";
 import type { ImageSpec } from "../ports/image-storage";
 
 /**
- * Upload boundary (ADR-0023). The three surfaces that take a real image; each
- * is cover-cropped to a fixed box so the page never depends on what a creator
- * happened to upload. Watermark on all three per product decision.
+ * Upload boundary (ADR-0023). The surfaces that take a real image; each is
+ * cover-cropped to a fixed box so the page never depends on what a creator
+ * happened to upload. Watermark on all per product decision. The client crops
+ * to the box FIRST (the crop dialog), so the server's centre-crop is a
+ * normalizer, not the framing decision.
  */
-export const uploadKind = z.enum(["avatar", "product", "post"]);
+export const uploadKind = z.enum(["avatar", "product", "post", "cover"]);
 export type UploadKind = z.infer<typeof uploadKind>;
 
 /** Reject before decode; a phone photo is a few MB, 12 is generous headroom. */
@@ -19,6 +21,9 @@ export const IMAGE_SPECS: Record<UploadKind, ImageSpec> = {
   product: { width: 800, height: 800, quality: 80, watermark: true },
   // 4:5 portrait — the Instagram-native frame the shopper surface is built for.
   post: { width: 1080, height: 1350, quality: 82, watermark: true },
+  // The page cover band (v2): wide and shallow — 2.5:1 covers every treatment
+  // (band/tile/split) at the 1060 measure without upscaling.
+  cover: { width: 1600, height: 640, quality: 80, watermark: true },
 };
 
 /**

@@ -2,7 +2,7 @@
 
 import type { PostMediaKind } from "@plugfolio/core";
 import { DashField, DashFieldRow, Input, NativeSelect, NativeSelectOption } from "@plugfolio/ui";
-import { ImageUploadButton } from "./image-upload-button";
+import { ImageCropUpload } from "./image-crop-upload";
 
 /**
  * The photo and the video — two fields, deliberately, not one "media type"
@@ -51,7 +51,7 @@ export function PostMediaFields({
         note="Shown on its own, or as the still behind a video’s play button. Also what your link unfurls to when it is shared."
       >
         <div className="flex flex-col gap-2">
-          <ImageUploadButton kind="post" onUploaded={onMediaUrlChange} label="Upload photo" />
+          <ImageCropUpload kind="post" onUploaded={onMediaUrlChange} label="Upload photo" />
           <Input
             id="post-photo"
             type="url"

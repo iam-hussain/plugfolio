@@ -65,6 +65,8 @@ export type CreatorPage = {
   /** Public identity (brief 10); null = show @username / an initial tile. */
   readonly displayName: string | null;
   readonly avatarUrl: string | null;
+  /** The cover imagery (v2); null = the accent-gradient fallback. */
+  readonly coverUrl: string | null;
   readonly bio: string | null;
   /** One line above the name (ADR-0017); null = none. */
   readonly greeting: string | null;
