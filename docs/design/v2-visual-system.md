@@ -108,18 +108,17 @@ nav verbs) · post view (buy-mode pill) · product view (coupon ticket, buy-mode
 pill) · Following/Saved framing · auth (ink pane, lime action colour, socket
 picker) · 404/error (FaultMark animation).
 
-**Added since:** the dashboard chrome (v2 rail tabs, mono status pills,
-mono field labels, coral danger zone, the v2 profile switcher, Things/Shelves
-naming) · the overview's quick-add cards and "N posts earn nothing yet" card
-with the untagged rail · mono stat eyebrows on Traffic · the business home's
-two doors, mono board eyebrows, and forest (not lime) agreement in the
-thread.
+**Added since:** the dashboard chrome (v2 rail, mono status pills, coral
+danger zone, the v2 profile switcher, Things/Shelves naming) · the overview's
+quick-add + needs-tagging cards · the full Traffic section (/dashboard/
+traffic: range chips, the views-vs-taps chart, what-was-opened, and referrer
+sources — View events now record `referrer`) · editors' sticky "What a
+shopper will see" panels · the business doors and forest agreement · Support's
+two-column frame · carded comments with the accent creator edge · v2
+marketing primitives · cover treatment + link-row mode as **stored**
+appearance axes (Profile.coverStyle/linkMode, resolved at the read) · the
+admin console's Internal chip · coral accent resolved to AA (ink foreground).
 
-**Inheriting v2 through the tokens, awaiting their structural pass:** the
-marketing subpages (how-it-works, for-creators, for-business), Support,
-Account, comments internals, the dashboard's traffic chart + breakdown +
-sources panels and the editor drawers' sticky shopper preview, the operator
-console, and the customise drawer's new axes (cover treatment, link-row mode
-as *stored* options — today they derive from the header style). The prototype
-(`Plugfolio v2.dc.html` in the design project) remains the pixel source for
-each of those.
+**Structural migration complete.** The prototype (`Plugfolio v2.dc.html` in
+the design project) remains the reference for any future polish; remaining
+deltas are cosmetic judgment calls, not missing screens.
