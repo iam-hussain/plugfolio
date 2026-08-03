@@ -166,8 +166,10 @@
   --color-accent-foreground: 250 27% 9%;
 
   --surface: 249 15% 10%; /* #16141F page */
-  --surface-muted: 251 15% 14%; /* #1F1C2B cards, sheets, panels */
-  --surface-active: 252 15% 17%; /* #272234 inputs, inset fields */
+  /* Lifted from the drawn #1F1C2B/#272234 (Aug 2026, same decision as the
+     light step): a 4-point card was sinking into the page. */
+  --surface-muted: 251 16% 16%; /* #232030 cards, sheets, panels */
+  --surface-active: 252 16% 19%; /* #2A2639 inputs, inset fields */
   --surface-veil: 249 15% 10% / 0.9;
 
   --text: 252 26% 96%; /* #F4F3F8 */
@@ -211,8 +213,8 @@
     --color-accent-foreground: 250 27% 9%;
 
     --surface: 249 15% 10%;
-    --surface-muted: 251 15% 14%;
-    --surface-active: 252 15% 17%;
+    --surface-muted: 251 16% 16%;
+    --surface-active: 252 16% 19%;
     --surface-veil: 249 15% 10% / 0.9;
 
     --text: 252 26% 96%;
