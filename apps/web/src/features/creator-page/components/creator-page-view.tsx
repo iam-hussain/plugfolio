@@ -26,7 +26,7 @@ import { CommentsSection, FollowButton } from "@/features/shopper-account";
 import { formatCount } from "@/lib/format-count";
 import { CategoryChips } from "./category-chips";
 import { CreatorContextBar } from "./creator-context-bar";
-import { CustomiseDrawer } from "./customise-drawer";
+import { OwnerBand } from "./owner-band";
 import { PageShare } from "./page-share";
 import { PostGrid } from "./post-grid";
 import { ViewBeacon } from "./view-beacon";
@@ -128,39 +128,6 @@ export function CreatorPageView({
     />
   );
 
-  // The header's action slot. The context bar below carries its own Follow —
-  // safe to duplicate because each renders from the server's answer and
-  // refreshes it on success, so both copies land back on one truth. The tapped
-  // one flips instantly; the other catches up on that refresh.
-  const headerAction = membership ? (
-    // The owner's two tools sit where a visitor's Follow sits (DESIGN
-    // §.ch-act > .owner-tools). They used to live in a band under the header
-    // captioned "this is your page" — a whole strip of chrome to say what the
-    // presence of the tools already says.
-    <>
-      <Button variant="secondary" asChild>
-        <Link href={{ pathname: "/dashboard", query: { profile: page.id } }}>Dashboard</Link>
-      </Button>
-      {membership.role === "admin" ? (
-        // The page's own live editor (ADR-0017): the drawer opens over the
-        // page, so the creator edits against the real thing.
-        <CustomiseDrawer
-          profileId={page.id}
-          role={membership.role}
-          appearance={{
-            accent: page.accent,
-            headerStyle: page.headerStyle,
-            gridStyle: page.gridStyle,
-            coverStyle: page.coverStyle,
-            linkMode: page.linkMode,
-            greeting: page.greeting,
-          }}
-        />
-      ) : null}
-    </>
-  ) : (
-    follow
-  );
 
   // Stored, resolved at the read (ADR-0026): the drawer writes them, the
   // repository resolves nulls against the header style.
@@ -241,8 +208,21 @@ export function CreatorPageView({
               trigger="pill"
             />
           }
-          action={headerAction}
         />
+        {membership ? (
+          <OwnerBand
+            profileId={page.id}
+            role={membership.role === "admin" ? "admin" : "manager"}
+            appearance={{
+              accent: page.accent,
+              headerStyle: page.headerStyle,
+              gridStyle: page.gridStyle,
+              coverStyle: page.coverStyle,
+              linkMode: page.linkMode,
+            }}
+            links={links}
+          />
+        ) : null}
         {!viewer.signedIn ? (
           // The anon band (v2): shopping never needs an account — say it once,
           // quietly, with the one door for follow/comment.
