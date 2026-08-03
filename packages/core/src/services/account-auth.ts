@@ -97,6 +97,7 @@ export async function registerAccount(deps: AccountAuthDeps, input: RegisterInpu
     // before the person has picked one, and verification replaces it (ADR-0024).
     username: generateMemberHandle(),
     passwordHash: hashPassword(input.password),
+    name: input.name ?? null,
   });
   if (created === "exists") {
     // Register is allowed to acknowledge existence (standard flow, brief 04) —

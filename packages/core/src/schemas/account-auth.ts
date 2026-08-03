@@ -7,11 +7,16 @@ import { memberHandle } from "./member-handle";
  */
 
 const email = z.string().trim().toLowerCase().email();
-const password = z.string().min(8, "At least 8 characters").max(100);
+const password = z.string().min(10, "At least 10 characters").max(100);
 /** Login takes an email OR a member handle — same password either way (ADR-0024). */
 const identifier = z.string().trim().toLowerCase().min(1);
 
-export const registerInput = z.object({ email, password });
+export const registerInput = z.object({
+  email,
+  password,
+  /** "First Last", assembled by the form; optional — never required to buy. */
+  name: z.string().trim().min(1).max(120).optional(),
+});
 export type RegisterInput = z.infer<typeof registerInput>;
 
 export const credentialsInput = z.object({ identifier, password: z.string().min(1) });

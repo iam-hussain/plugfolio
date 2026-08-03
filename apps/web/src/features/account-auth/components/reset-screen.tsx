@@ -2,11 +2,10 @@
 
 import { Button } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
-import { Check, UserRound } from "lucide-react";
+import { Check } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { resetPassword } from "../api";
-import { RoleArtefact } from "./auth-artefact";
 import { AuthShell } from "./auth-shell";
 import { AuthStatus } from "./auth-status";
 import { FieldLabel } from "./auth-field";
@@ -27,11 +26,9 @@ export function ResetScreen({ token }: ResetScreenProps) {
   const mismatch = confirm.length > 0 && confirm !== password;
   const submit = useMutation({ mutationFn: () => resetPassword({ token: token ?? "", password }) });
 
-  const artefact = <RoleArtefact role="creator" />;
-
   if (submit.isSuccess) {
     return (
-      <AuthShell role="generic" artefact={artefact}>
+      <AuthShell role="generic">
         <AuthStatus icon={<Check aria-hidden />} title="Password set">
           <p className="text-muted-foreground text-copy max-w-[38ch] leading-[1.5]">
             You&apos;re all set — sign in with your new password.
@@ -45,15 +42,15 @@ export function ResetScreen({ token }: ResetScreenProps) {
   }
 
   return (
-    <AuthShell role="generic" artefact={artefact}>
-      <h1 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
+    <AuthShell role="generic">
+      <h1 className="font-display text-name font-bold leading-[1.15] tracking-[-0.035em]">
         Set a new password
       </h1>
       {token ? (
-        <div className="bg-active rounded-image text-copy mt-5 flex items-start gap-3 p-4 leading-[1.5]">
-          <UserRound aria-hidden className="mt-0.5 size-[18px] shrink-0" />
-          <span>Setting a password verifies your email and signs you in.</span>
-        </div>
+        <p className="text-muted-foreground text-copy mt-2 text-pretty leading-[1.6]">
+          Pick something you have not used elsewhere. Setting it verifies your email and signs
+          you in.
+        </p>
       ) : (
         <p className="text-muted-foreground text-copy mt-2.5 leading-[1.5]">
           This link is incomplete — use the one from your email, or{" "}
@@ -78,9 +75,10 @@ export function ResetScreen({ token }: ResetScreenProps) {
             value={password}
             onChange={setPassword}
             autoComplete="new-password"
+            placeholder="At least 10 characters"
           />
-          <p className="text-muted-foreground text-micro mb-3.5 mt-[7px]">At least 8 characters.</p>
-          <FieldLabel htmlFor="reset-confirm">Confirm password</FieldLabel>
+          <div className="mb-3.5 mt-3.5" />
+          <FieldLabel htmlFor="reset-confirm">Repeat it</FieldLabel>
           <PasswordInput
             id="reset-confirm"
             value={confirm}
@@ -102,10 +100,11 @@ export function ResetScreen({ token }: ResetScreenProps) {
           ) : null}
           <Button
             type="submit"
+            variant="action"
             disabled={submit.isPending || mismatch || !password}
-            className="mt-[22px] w-full"
+            className="font-display rounded-lg mt-[18px] h-[50px] w-full"
           >
-            {submit.isPending ? "Saving…" : "Save password"}
+            {submit.isPending ? "Saving…" : "Save and sign in"}
           </Button>
           <p className="text-muted-foreground text-micro mt-3 text-center">
             You&apos;ll be signed in straight away.

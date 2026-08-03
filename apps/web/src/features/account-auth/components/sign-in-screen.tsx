@@ -8,7 +8,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { resendVerification } from "../api";
-import { RoleArtefact } from "./auth-artefact";
 import { type AuthRole } from "./auth-copy";
 import { FieldLabel, TextField } from "./auth-field";
 import { AuthShell } from "./auth-shell";
@@ -78,12 +77,12 @@ export function SignInScreen({ callbackUrl = "/explore", initialRole }: SignInSc
   const resend = useMutation({ mutationFn: () => resendVerification({ identifier }) });
 
   return (
-    <AuthShell role="generic" artefact={<RoleArtefact role={role} />}>
-      <h1 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
+    <AuthShell role="generic">
+      <h1 className="font-display text-name font-bold leading-[1.15] tracking-[-0.035em]">
         Welcome back
       </h1>
-      <p className="text-muted-foreground text-copy mt-2.5 leading-[1.5]">
-        Email or username, and your password. That&apos;s the whole thing.
+      <p className="text-muted-foreground text-copy mt-2 text-pretty leading-[1.6]">
+        Email or your @handle, plus your password. No magic-link-only login here.
       </p>
 
       {state === "invalid" ? (
@@ -124,7 +123,7 @@ export function SignInScreen({ callbackUrl = "/explore", initialRole }: SignInSc
           if (identifier.trim() && password) submit.mutate();
         }}
       >
-        <FieldLabel htmlFor="login-identifier">Email or username</FieldLabel>
+        <FieldLabel htmlFor="login-identifier">Email or @handle</FieldLabel>
         <TextField
           id="login-identifier"
           type="text"
@@ -132,7 +131,7 @@ export function SignInScreen({ callbackUrl = "/explore", initialRole }: SignInSc
           onChange={(event) => setIdentifier(event.target.value)}
           required
           autoComplete="username"
-          placeholder="you@email.com or mayamakes"
+          placeholder="you@example.com"
           className="mb-3.5"
         />
         <FieldLabel htmlFor="login-password">Password</FieldLabel>
@@ -142,27 +141,34 @@ export function SignInScreen({ callbackUrl = "/explore", initialRole }: SignInSc
           onChange={setPassword}
           autoComplete="current-password"
         />
-        <Button type="submit" disabled={submit.isPending} className="mt-[22px] w-full">
+        <Button
+          type="submit"
+          variant="action"
+          disabled={submit.isPending}
+          className="font-display rounded-lg mt-[18px] h-[50px] w-full"
+        >
           {submit.isPending ? "Signing in…" : "Sign in"}
         </Button>
       </form>
 
-      <div className="border-border text-label mt-[22px] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t pt-5 text-center">
-        <Link href="/forgot" className="text-muted-foreground hover:text-primary font-semibold">
-          Forgot password?
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5">
+        <Link href={`/join?as=${role}`} className="text-foreground text-label font-semibold">
+          New here? Make an account
         </Link>
-        {/* The lost-email door (brief 04 edge): a reset link is no use when the
-            inbox itself is gone — support can move the account email. */}
+        <Link href="/forgot" className="text-faint text-label">
+          Forgot password
+        </Link>
+      </div>
+      {/* The lost-email door (brief 04 edge): a reset link is no use when the
+          inbox itself is gone — support can move the account email. */}
+      <p className="mt-2.5 text-center">
         <Link
           href="/support?category=lost_email_access"
-          className="text-muted-foreground hover:text-primary font-semibold"
+          className="text-faint text-micro hover:text-primary"
         >
           Can&apos;t access your email?
         </Link>
-        <Link href={`/join?as=${role}`} className="text-brand-violet-deep font-bold">
-          Create an account
-        </Link>
-      </div>
+      </p>
     </AuthShell>
   );
 }

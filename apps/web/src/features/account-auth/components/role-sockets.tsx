@@ -54,7 +54,7 @@ export function RoleSockets({
           )}
           aria-hidden
         >
-          <PlugMark className="size-[26px]" />
+          <PlugMark tone="auto" className="size-[26px]" />
           <span className="bg-border-strong h-[11px] w-0.5" />
         </div>
       </div>

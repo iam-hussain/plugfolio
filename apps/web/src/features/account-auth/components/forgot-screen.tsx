@@ -6,7 +6,6 @@ import { Mail } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { requestPasswordReset } from "../api";
-import { RoleArtefact } from "./auth-artefact";
 import { AuthShell } from "./auth-shell";
 import { AuthStatus } from "./auth-status";
 import { FieldLabel, TextField } from "./auth-field";
@@ -20,11 +19,9 @@ export function ForgotScreen() {
   const [email, setEmail] = useState("");
   const submit = useMutation({ mutationFn: () => requestPasswordReset({ email }) });
 
-  const artefact = <RoleArtefact role="creator" />;
-
   if (submit.isSuccess) {
     return (
-      <AuthShell role="generic" artefact={artefact}>
+      <AuthShell role="generic">
         <AuthStatus icon={<Mail aria-hidden />} title="Check your email">
           <p className="text-muted-foreground text-copy max-w-[38ch] leading-[1.5]">
             If an account exists for <b className="text-foreground">{email}</b>, a reset link is on
@@ -39,12 +36,13 @@ export function ForgotScreen() {
   }
 
   return (
-    <AuthShell role="generic" artefact={artefact}>
-      <h1 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
-        Reset your password
+    <AuthShell role="generic">
+      <h1 className="font-display text-name font-bold leading-[1.15] tracking-[-0.035em]">
+        Forgot your password
       </h1>
-      <p className="text-muted-foreground text-copy mt-2.5 leading-[1.5]">
-        Enter your email and we&apos;ll send one reset link.
+      <p className="text-muted-foreground text-copy mt-2 text-pretty leading-[1.6]">
+        Tell us the email and we&apos;ll send a reset link. We won&apos;t say whether an account
+        exists.
       </p>
       <form
         className="mt-[18px] flex flex-col"
@@ -61,18 +59,23 @@ export function ForgotScreen() {
           onChange={(event) => setEmail(event.target.value)}
           required
           autoComplete="email"
-          placeholder="you@email.com"
+          placeholder="you@example.com"
         />
-        <Button type="submit" disabled={submit.isPending} className="mt-[22px] w-full">
-          {submit.isPending ? "Sending…" : "Send reset link"}
+        <Button
+          type="submit"
+          variant="action"
+          disabled={submit.isPending}
+          className="font-display rounded-lg mt-[18px] h-[50px] w-full"
+        >
+          {submit.isPending ? "Sending…" : "Send the reset link"}
         </Button>
       </form>
-      <div className="border-border text-label mt-[22px] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t pt-5 text-center">
-        <Link href="/signin" className="text-muted-foreground hover:text-primary font-semibold">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5">
+        <Link href="/signin" className="text-foreground text-label font-semibold">
           Back to sign in
         </Link>
-        <Link href="/join" className="text-brand-violet-deep font-bold">
-          Create an account
+        <Link href="/join" className="text-faint text-label">
+          Make an account
         </Link>
       </div>
     </AuthShell>

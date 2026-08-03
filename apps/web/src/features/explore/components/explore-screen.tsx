@@ -187,7 +187,9 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
               defaultValue={query}
               autoComplete="off"
               placeholder="Search captions, creators, things"
-              className="text-body min-h-11 flex-1 bg-transparent focus:outline-none"
+              // The design sets this at 15px — the copy step's desktop end,
+              // not body's 17px.
+              className="text-copy min-h-11 flex-1 bg-transparent focus:outline-none"
             />
             {query ? (
               <Link

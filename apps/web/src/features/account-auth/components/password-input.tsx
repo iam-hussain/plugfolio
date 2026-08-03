@@ -12,21 +12,32 @@ export type PasswordInputProps = {
   value: string;
   onChange: (value: string) => void;
   autoComplete: "new-password" | "current-password";
+  placeholder?: string;
+  /** The design's stated policy is 10 (v2 §join); login stays permissive. */
+  minLength?: number;
 };
 
-export function PasswordInput({ id, value, onChange, autoComplete }: PasswordInputProps) {
+export function PasswordInput({
+  id,
+  value,
+  onChange,
+  autoComplete,
+  placeholder,
+  minLength = autoComplete === "new-password" ? 10 : 1,
+}: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
 
   return (
-    <div className="bg-muted border-border focus-within:border-ring flex items-center rounded-[9px] border">
+    <div className="bg-active border-border focus-within:border-ring rounded-panel flex items-center border">
       <input
         id={id}
         type={visible ? "text" : "password"}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         required
-        minLength={8}
+        minLength={minLength}
         maxLength={100}
+        placeholder={placeholder}
         autoComplete={autoComplete}
         className="text-foreground text-copy min-w-0 flex-1 bg-transparent py-[13px] pl-3.5 outline-none"
       />

@@ -24,6 +24,8 @@ export type AuthAccountRepository = {
     email: string;
     username: string;
     passwordHash: string;
+    /** The person's display name, when the join form collected one. */
+    name: string | null;
   }): Promise<{ id: string } | "exists">;
   /** Also marks the email verified — a reset/invite link proves the inbox. */
   setPassword(userId: string, passwordHash: string): Promise<void>;
