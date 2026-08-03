@@ -5,14 +5,14 @@ import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
 
 const followBadge = cva(
-  "text-micro rounded-pill px-3 py-1.5 font-bold uppercase tracking-[0.04em] tabular-nums whitespace-nowrap",
+  // v2 (ADR-0026): the count is a mono line under the name, not a pill — the
+  // accent when there is something new, faint when the row is quiet.
+  "font-mono text-nano block truncate tracking-[0.06em] tabular-nums",
   {
     variants: {
       tone: {
-        new: "bg-primary text-primary-foreground",
-        // The design's quiet badge is the hairline colour, not the raised
-        // surface — `bg-muted` is white here, i.e. invisible on a white card.
-        quiet: "bg-border text-muted-foreground",
+        new: "text-primary",
+        quiet: "text-faint",
       },
     },
     defaultVariants: { tone: "quiet" },
@@ -96,7 +96,7 @@ export function FollowRowShell({
     <div
       data-gone={gone ? "yes" : undefined}
       className={cn(
-        "border-border bg-card rounded-tile hover:border-primary flex flex-wrap items-center gap-4 border px-[18px] py-3.5 transition-colors",
+        "border-border bg-card rounded-tile hover:border-primary flex flex-wrap items-center gap-3 border px-3.5 py-3 transition-colors",
         "data-[gone]:bg-background data-[gone]:border-dashed",
         className,
       )}
@@ -142,11 +142,11 @@ export function FollowIdentity({
       <Slottable>{children}</Slottable>
       {avatar}
       <span className="min-w-0">
-        <b className="text-label block truncate font-bold">{name}</b>
+        <b className="text-copy block truncate font-semibold">{name}</b>
         {handle ? (
-          <span className="text-muted-foreground text-copy mt-0.5 block truncate">{handle}</span>
+          <span className="text-muted-foreground text-label block truncate">{handle}</span>
         ) : null}
-        <span className="text-faint text-micro mt-0.5 block truncate">{meta}</span>
+        <span className="mt-[3px] block min-w-0">{meta}</span>
       </span>
     </Comp>
   );

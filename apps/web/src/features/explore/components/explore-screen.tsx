@@ -10,8 +10,6 @@ import {
   AdSlotWhy,
   Button,
   cn,
-  DiscoveryGrid,
-  DiscoveryRail,
   measure,
   WallEnd,
   WallEndNote,
@@ -84,7 +82,7 @@ const SHELVES: readonly { label: string; tab: ExploreTab }[] = [
   { label: "All", tab: "all" },
   { label: "Creators", tab: "creators" },
   { label: "Posts", tab: "posts" },
-  { label: "Products", tab: "products" },
+  { label: "Things", tab: "products" },
 ];
 
 /** "1 creator", "4 creators" — a count pill that reads "1 creators" is a typo. */
@@ -200,10 +198,7 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
               </Link>
             ) : null}
           </label>
-          <button
-            type="submit"
-            className="bg-primary text-primary-foreground rounded-lg text-copy h-[52px] px-6 font-semibold"
-          >
+          <button type="submit" className="sr-only">
             Search
           </button>
         </form>
@@ -261,30 +256,11 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
                     href={teaser ? scopeHref("creators", query) : undefined}
                     divided={false}
                   />
-                  {/* The deck on All, the shared grid once this IS the result. */}
-                  {teaser ? (
-                    <DiscoveryRail>
-                      {creators.map((creator, index) => (
-                        <CreatorCard
-                          key={creator.id}
-                          creator={creator}
-                          index={index}
-                          layout="rail"
-                        />
-                      ))}
-                    </DiscoveryRail>
-                  ) : (
-                    <DiscoveryGrid>
-                      {creators.map((creator, index) => (
-                        <CreatorCard
-                          key={creator.id}
-                          creator={creator}
-                          index={index}
-                          layout="grid"
-                        />
-                      ))}
-                    </DiscoveryGrid>
-                  )}
+                  <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                    {creators.map((creator) => (
+                      <CreatorCard key={creator.id} creator={creator} />
+                    ))}
+                  </div>
                 </section>
               ) : null}
 
@@ -323,11 +299,11 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
                       }
                     />
                   ) : null}
-                  <DiscoveryGrid>
-                    {posts.map((post, index) => (
-                      <PostCard key={post.id} post={post} index={index} />
+                  <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {posts.map((post) => (
+                      <PostCard key={post.id} post={post} />
                     ))}
-                  </DiscoveryGrid>
+                  </div>
                 </section>
               ) : null}
 
@@ -339,11 +315,11 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
                     href={teaser ? scopeHref("products", query) : undefined}
                     divided={showCreators || showPosts}
                   />
-                  <DiscoveryGrid>
-                    {products.map((product, index) => (
-                      <ProductCard key={product.id} product={product} index={index} />
+                  <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {products.map((product) => (
+                      <ProductCard key={product.id} product={product} />
                     ))}
-                  </DiscoveryGrid>
+                  </div>
                 </section>
               ) : null}
 

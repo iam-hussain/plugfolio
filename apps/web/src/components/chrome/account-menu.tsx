@@ -1,6 +1,7 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage, cn } from "@plugfolio/ui";
+import { Avatar, AvatarFallback, AvatarImage } from "@plugfolio/ui";
+import { cva } from "class-variance-authority";
 import type { Route } from "next";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
@@ -33,6 +34,14 @@ export type AccountMenuProps = {
   profiles: readonly AccountMenuProfile[];
   hasBusiness: boolean;
 };
+
+const profileRow = cva(
+  "rounded-panel flex min-h-11 items-center gap-2.5 px-2 py-2 no-underline transition-colors",
+  {
+    variants: { editing: { true: "bg-active", false: "hover:bg-active" } },
+    defaultVariants: { editing: false },
+  },
+);
 
 const itemClass =
   "hover:bg-active text-foreground rounded-panel flex min-h-11 w-full items-center px-2.5 py-2.5 text-left text-label font-medium no-underline transition-colors";
@@ -139,10 +148,7 @@ export function AccountMenu({ name, handle, avatarUrl, profiles, hasBusiness }: 
                     role="menuitem"
                     href={`/dashboard?profile=${profile.id}` as Route}
                     onClick={close}
-                    className={cn(
-                      "rounded-panel flex min-h-11 items-center gap-2.5 px-2 py-2 no-underline transition-colors",
-                      editing ? "bg-active" : "hover:bg-active",
-                    )}
+                    className={profileRow({ editing })}
                   >
                     <Avatar className="rounded-[9px] size-7">
                       {profile.avatarUrl ? <AvatarImage src={profile.avatarUrl} alt="" /> : null}

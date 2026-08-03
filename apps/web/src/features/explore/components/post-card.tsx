@@ -1,86 +1,41 @@
 import type { DiscoveryPost } from "@plugfolio/core";
-import {
-  DiscoveryAvatar,
-  DiscoveryCard,
-  DiscoveryPinMore,
-  discoveryTone,
-  ProductTag,
-} from "@plugfolio/ui";
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "@/lib/format-price";
 
 /**
- * A post on Explore — the same chassis as a creator and a thing, wearing the
- * one detail that makes this product itself: a `ProductTag` pinned on the
- * photograph, price and all.
- *
- * It used to wear three of them, scattered at preset coordinates because tag
- * positions aren't stored — which read as decoration and regularly landed on
- * the subject. One tag, pinned at the foot of the frame where it can never
- * cover what you're looking at, plus a "+N" that opens the post. The tag is a
- * real link to the product; the rest of the card opens the post.
+ * A post on Explore (v2, `Plugfolio v2.dc.html` §explore) — the photograph
+ * with the ink tag-count pill on it, then who it's by, the caption, and the
+ * card's answer row: the first tagged price plus how many more wait inside.
+ * The whole card opens the post; the products are one screen further, where
+ * the tap is measured.
  */
-export function PostCard({ post, index }: { post: DiscoveryPost; index: number }) {
+export function PostCard({ post }: { post: DiscoveryPost }) {
   const [lead] = post.tags;
-  const more = post.productCount - (lead ? 1 : 0);
-  const initial = post.username.charAt(0).toUpperCase();
-
+  const price = lead ? (formatPrice(lead.priceCents, lead.currency) ?? "Price on the store") : "—";
+  const more = post.productCount > 1 ? `+${post.productCount - 1} more` : null;
   return (
-    <DiscoveryCard
-      tone={discoveryTone(index)}
-      avatar={<DiscoveryAvatar initial={initial} src={post.avatarUrl} />}
-      handle={`@${post.username}`}
-      title={
-        <Link href={`/${post.username}/post/${post.id}`}>
+    <Link
+      href={`/${post.username}/post/${post.id}`}
+      className="border-border bg-card rounded-tile hover:border-primary block overflow-hidden border no-underline transition-[transform,border-color] duration-150 hover:-translate-y-0.5"
+    >
+      <span className="bg-active relative block h-[190px] overflow-hidden">
+        {/* ponytail: unoptimized until the social-import pipeline pins image domains */}
+        <Image src={post.mediaUrl} alt="" fill unoptimized className="object-cover" />
+        <span className="bg-brand-ink/80 text-pico absolute left-2.5 top-2.5 rounded-pill px-2.5 py-[5px] font-mono font-bold tracking-[0.06em] text-white">
+          {post.productCount > 0 ? `${post.productCount} tagged` : "nothing tagged"}
+        </span>
+      </span>
+      <span className="block px-3.5 pb-3.5 pt-3">
+        <span className="text-faint text-micro block truncate">@{post.username}</span>
+        <span className="text-label mt-1 block overflow-hidden leading-[1.45] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
           {post.caption ?? "See what's tagged"}
-        </Link>
-      }
-      stat={
-        post.productCount > 0
-          ? `${post.productCount} ${post.productCount === 1 ? "thing" : "things"}`
-          : "Nothing tagged"
-      }
-      action="Open →"
-      media={
-        /* ponytail: unoptimized until the social-import pipeline pins image domains */
-        <Image
-          src={post.mediaUrl}
-          alt=""
-          width={480}
-          height={600}
-          unoptimized
-          className="size-full object-cover"
-        />
-      }
-      pins={
-        lead ? (
-          <>
-            <ProductTag
-              asChild
-              tone={lead.tone}
-              name={lead.name}
-              price={formatPrice(lead.priceCents, lead.currency) ?? ""}
-              className="min-w-0 max-w-full"
-            >
-              <Link
-                href={`/${post.username}/product/${lead.productId}`}
-                aria-label={`${lead.name} — ${formatPrice(lead.priceCents, lead.currency) ?? "view"}`}
-              />
-            </ProductTag>
-            {more > 0 ? (
-              <DiscoveryPinMore asChild>
-                <Link
-                  href={`/${post.username}/post/${post.id}`}
-                  aria-label={`${more} more tagged in this post`}
-                >
-                  +{more}
-                </Link>
-              </DiscoveryPinMore>
-            ) : null}
-          </>
-        ) : null
-      }
-    />
+        </span>
+        <span className="mt-2.5 flex items-center justify-between gap-2">
+          <span className="font-display text-label font-semibold tabular-nums">{price}</span>
+          {more ? <span className="text-faint text-nano">{more}</span> : null}
+        </span>
+      </span>
+    </Link>
   );
 }

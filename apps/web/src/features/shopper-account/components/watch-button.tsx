@@ -30,6 +30,11 @@ export type WatchButtonProps = {
    * corner affordance over the card, not a headline.
    */
   display?: "pill" | "icon";
+  /**
+   * On the watchlist itself every row is already saved, so the honest verb is
+   * "Remove" (v2 §saved) — not a "Saved" state that reads as a fact.
+   */
+  verb?: "save" | "remove";
 };
 
 export function WatchButton({
@@ -38,6 +43,7 @@ export function WatchButton({
   isAuthenticated,
   initiallyWatched,
   display = "pill",
+  verb = "save",
 }: WatchButtonProps) {
   const icon = display === "icon";
   const router = useRouter();
@@ -96,7 +102,7 @@ export function WatchButton({
         {icon ? (
           <span className="sr-only">{watched ? "Remove from watchlist" : "Save for later"}</span>
         ) : watched ? (
-          "Saved"
+          verb === "remove" ? "Remove" : "Saved"
         ) : (
           "Save"
         )}
