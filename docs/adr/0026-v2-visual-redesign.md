@@ -28,10 +28,11 @@ Adopt the v2 visual system across `@plugfolio/tokens`, `@plugfolio/config` (Tail
    arrives only as the page accent, the ink panels, and photography.
 4. **One accent, five options, page-scoped** (amends ADR-0017): violet `#7C3AED` (default) ·
    indigo `#3D4EE8` · coral `#FF6B5C` · forest `#1C7A5C` · magenta `#C4247E`. The accent drives
-   `--color-primary`; everything downstream keeps reading the token. *Known deviation:* coral
-   `#FF6B5C` behind white label text measures ~3.1:1 — below AA for the small-bold labels it
-   carries. Shipped as drawn to stay faithful to the design; flagged to the designer for a
-   darker press-state or an ink-text variant before GA.
+   `--color-primary`; everything downstream keeps reading the token. *Resolved deviation:*
+   coral `#FF6B5C` behind white label text measures ~3.1:1 — below AA. The coral accent now
+   pairs with **ink** foreground (~6.7:1), keeping the drawn hue; every other accent keeps
+   white. If the designer prefers a darker coral with white text, swap the pair in
+   `tokens.css` in one place.
 5. **Lime `#C6FF3D` stays offer-only** (fill + ink text). Coral `#FF6B5C` becomes the one
    danger/destructive colour; forest `#1C7A5C` the one success colour.
 6. **The morphing pill nav.** The bottom tab bar is replaced by a fixed, centred ink pill that

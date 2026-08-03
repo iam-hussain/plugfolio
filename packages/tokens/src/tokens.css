@@ -137,6 +137,11 @@
 }
 [data-accent="coral"] {
   --color-primary: 6 100% 68%; /* #FF6B5C */
+  /* Ink, not white: coral behind white small text measures ~3.1:1 — below AA.
+     Ink on coral measures ~6.7:1, keeps the drawn hue, and resolves the
+     deviation ADR-0026 §4 recorded. Every component reads the token pair, so
+     nothing downstream knows. */
+  --color-primary-foreground: 250 27% 9%;
   --ring: 6 100% 68%;
 }
 [data-accent="forest"] {
