@@ -22,8 +22,8 @@ import { AccountPage } from "@/features/shopper-account";
 const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 
 const PROFILES: readonly AccessibleProfile[] = [
-  { id: "p1", username: "mayamoves", role: "admin" },
-  { id: "p2", username: "rheamakes", role: "manager" },
+  { id: "p1", username: "mayamoves", displayName: null, avatarUrl: null, role: "admin" },
+  { id: "p2", username: "rheamakes", displayName: null, avatarUrl: null, role: "manager" },
 ];
 
 const CONNECTED: YouTubeConnectionView = {

@@ -22,11 +22,11 @@ function makeDeps(existingManagers = 0, options: { inviteePasswordless?: boolean
 
   const profiles: ProfileRepository = {
     async listByUser(userId) {
-      return userId === ADMIN ? [{ id: PROFILE_ID, username: "lena" }] : [];
+      return userId === ADMIN ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null }] : [];
     },
     async listAccessibleByUser(userId) {
-      if (userId === ADMIN) return [{ id: PROFILE_ID, username: "lena", role: "admin" }];
-      if (userId === MANAGER_USER) return [{ id: PROFILE_ID, username: "lena", role: "manager" }];
+      if (userId === ADMIN) return [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null, role: "admin" }];
+      if (userId === MANAGER_USER) return [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null, role: "manager" }];
       return [];
     },
     async exists() {

@@ -35,8 +35,11 @@ export async function AppTopBar() {
           repositories.businesses.findByUser(user.id),
         ]);
         const profiles: AccountMenuProfile[] = accessible.map((profile) => ({
+          id: profile.id,
           username: profile.username,
-          role: profile.role === "admin" ? "Dashboard" : "Manager",
+          displayName: profile.displayName,
+          avatarUrl: profile.avatarUrl,
+          role: profile.role,
         }));
         const resolvedHandle = handle ?? user.email?.split("@")[0] ?? "you";
         return {

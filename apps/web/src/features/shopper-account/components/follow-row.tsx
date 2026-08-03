@@ -34,7 +34,7 @@ export type FollowRowProps = {
   badge: { label: string; isNew: boolean };
 };
 
-export function FollowRow({ creator, meta, badge }: FollowRowProps) {
+export function FollowRow({ creator, meta: _meta, badge }: FollowRowProps) {
   const [gone, setGone] = useState(false);
   const [failed, setFailed] = useState(false);
   // No display name means the handle IS the name — printing it as both lines
@@ -63,16 +63,18 @@ export function FollowRow({ creator, meta, badge }: FollowRowProps) {
         asChild
         dimmed={gone}
         avatar={
-          <Avatar className="size-[52px]">
+          <Avatar className="rounded-panel size-[46px]">
             {creator.avatarUrl ? <AvatarImage src={creator.avatarUrl} alt="" /> : null}
-            <AvatarFallback className="bg-active text-primary font-display text-body font-bold">
+            <AvatarFallback className="bg-active text-primary font-display text-body rounded-panel font-bold">
               {creator.username.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
         }
         name={name}
         handle={handle}
-        meta={meta}
+        // v2: the count line IS the row's meta — accent mono when something
+        // is new, faint when quiet. `meta` (followed-date) stands down.
+        meta={<FollowBadge tone={badge.isNew ? "new" : "quiet"}>{badge.label}</FollowBadge>}
       >
         <Link href={`/${creator.username}`} />
       </FollowIdentity>
@@ -87,24 +89,22 @@ export function FollowRow({ creator, meta, badge }: FollowRowProps) {
           </Button>
         </div>
       ) : (
-        <>
-          <FollowBadge tone={badge.isNew ? "new" : "quiet"}>{badge.label}</FollowBadge>
-          <div className="ml-auto flex items-center gap-3">
-            {failed ? (
-              <span role="alert" className="text-destructive text-micro font-semibold">
-                Didn&apos;t save
-              </span>
-            ) : null}
-            <Button
-              variant="secondary"
-              onClick={() => toggle.mutate(true)}
-              disabled={toggle.isPending}
-              aria-label={`Unfollow ${name}`}
-            >
-              Following
-            </Button>
-          </div>
-        </>
+        <div className="ml-auto flex items-center gap-3">
+          {failed ? (
+            <span role="alert" className="text-destructive text-micro font-semibold">
+              Didn&apos;t save
+            </span>
+          ) : null}
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => toggle.mutate(true)}
+            disabled={toggle.isPending}
+            aria-label={`Unfollow ${name}`}
+          >
+            Unfollow
+          </Button>
+        </div>
       )}
     </FollowRowShell>
   );

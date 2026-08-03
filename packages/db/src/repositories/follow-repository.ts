@@ -29,7 +29,7 @@ export function createFollowRepository(db: PrismaClient = prisma): FollowReposit
       const rows = await db.follow.findMany({
         where: { userId },
         orderBy: { createdAt: "desc" },
-        select: { profile: { select: { id: true, username: true } } },
+        select: { profile: { select: { id: true, username: true, displayName: true, avatarUrl: true } } },
       });
       return rows.map((row) => row.profile);
     },

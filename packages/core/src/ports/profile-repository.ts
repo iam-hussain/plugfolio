@@ -6,6 +6,9 @@
 export type ProfileSummary = {
   readonly id: string;
   readonly username: string;
+  /** Public identity, for switchers and menus (v2 account menu rows). */
+  readonly displayName: string | null;
+  readonly avatarUrl: string | null;
 };
 
 /** Admin = the profile's owning user; Manager = invited helper (ADR-0004). */

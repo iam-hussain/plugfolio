@@ -28,7 +28,7 @@ function makeFakeProfiles(): ProfileRepository {
     },
     async listAccessibleByUser(userId: string) {
       return userId === CREATOR_ID
-        ? [{ id: PROFILE_ID, username: "lena", role: "admin" as const }]
+        ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null, role: "admin" as const }]
         : [];
     },
     async exists(profileId: string) {
@@ -57,7 +57,12 @@ function makeFakeFollows(): FollowRepository & { rows: Set<string> } {
       return rows.has(`${userId}:${profileId}`);
     },
     async listProfilesByUser() {
-      return [...rows].map((key) => ({ id: key.split(":")[1]!, username: "someone" }));
+      return [...rows].map((key) => ({
+        id: key.split(":")[1]!,
+        username: "someone",
+        displayName: null,
+        avatarUrl: null,
+      }));
     },
     // The /following read model is exercised in following-list.test.ts.
     async listFollowedCreators() {

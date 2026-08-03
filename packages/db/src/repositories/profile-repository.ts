@@ -15,7 +15,7 @@ export function createProfileRepository(db: PrismaClient = prisma): ProfileRepos
       return db.profile.findMany({
         where: { userId },
         orderBy: { createdAt: "asc" },
-        select: { id: true, username: true },
+        select: { id: true, username: true, displayName: true, avatarUrl: true },
       });
     },
 
@@ -24,12 +24,12 @@ export function createProfileRepository(db: PrismaClient = prisma): ProfileRepos
         db.profile.findMany({
           where: { userId },
           orderBy: { createdAt: "asc" },
-          select: { id: true, username: true },
+          select: { id: true, username: true, displayName: true, avatarUrl: true },
         }),
         db.profileManager.findMany({
           where: { userId },
           orderBy: { createdAt: "asc" },
-          select: { profile: { select: { id: true, username: true } } },
+          select: { profile: { select: { id: true, username: true, displayName: true, avatarUrl: true } } },
         }),
       ]);
       return [
@@ -50,7 +50,7 @@ export function createProfileRepository(db: PrismaClient = prisma): ProfileRepos
     async create(profile: { userId: string; username: string }): Promise<ProfileSummary> {
       return db.profile.create({
         data: profile,
-        select: { id: true, username: true },
+        select: { id: true, username: true, displayName: true, avatarUrl: true },
       });
     },
   };

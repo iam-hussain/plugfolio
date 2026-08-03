@@ -4,6 +4,7 @@ import type { AccessibleProfile } from "@plugfolio/core";
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -72,6 +73,7 @@ export function ProfileSwitcher({
             className="flex min-h-[44px] flex-none items-center gap-2.5 text-left"
           >
             <Avatar className="rounded-md size-[38px]">
+              {active?.avatarUrl ? <AvatarImage src={active.avatarUrl} alt="" /> : null}
               <AvatarFallback className="bg-active text-primary text-micro rounded-md font-bold">
                 {active?.username.charAt(0).toUpperCase()}
               </AvatarFallback>
@@ -104,6 +106,7 @@ export function ProfileSwitcher({
               }}
             >
               <Avatar className="size-[26px]">
+                {profile.avatarUrl ? <AvatarImage src={profile.avatarUrl} alt="" /> : null}
                 <AvatarFallback className="bg-active text-primary text-pico font-bold">
                   {profile.username.charAt(0).toUpperCase()}
                 </AvatarFallback>

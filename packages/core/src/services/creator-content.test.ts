@@ -61,10 +61,10 @@ function makeDeps(
 
   const profiles: ProfileRepository = {
     async listByUser(userId) {
-      return userId === USER ? [{ id: PROFILE_ID, username: "lena" }] : [];
+      return userId === USER ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null }] : [];
     },
     async listAccessibleByUser(userId) {
-      return userId === USER ? [{ id: PROFILE_ID, username: "lena", role: "admin" as const }] : [];
+      return userId === USER ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null, role: "admin" as const }] : [];
     },
     async exists() {
       return true;
@@ -74,7 +74,7 @@ function makeDeps(
     },
     async create(profile) {
       created.push({ username: profile.username });
-      return { id: "new-profile", username: profile.username };
+      return { id: "new-profile", username: profile.username, displayName: null, avatarUrl: null };
     },
   };
   const connections: ConnectionReadRepository = {
