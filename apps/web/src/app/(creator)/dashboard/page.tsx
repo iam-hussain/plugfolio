@@ -21,7 +21,6 @@ import {
   DashCardTitle,
   DashBody,
   EmptyState,
-  Nudge,
   ProfileChip,
   ProfileChips,
 } from "@plugfolio/ui";
@@ -63,11 +62,12 @@ export default async function DashboardPage({
         getCreatorPage({ creatorPages: repositories.creatorPages }, active.username),
       ])
     : [null, null];
-  const untagged = page?.posts.filter((post) => post.products.length === 0).length ?? 0;
+  const untaggedPosts = page?.posts.filter((post) => post.products.length === 0) ?? [];
+  const untagged = untaggedPosts.length;
 
   return (
     <>
-      <DashboardPageHeader title="Dashboard" eyebrow={session.user.email ?? undefined} />
+      <DashboardPageHeader title="Overview" eyebrow={session.user.email ?? undefined} />
 
       <DashBody>
         {profiles.length === 0 ? (
@@ -106,30 +106,94 @@ export default async function DashboardPage({
                   }
                 />
 
-                {/* Only when there is something to tag. A nudge that is always
-                    there is wallpaper; this one carries the count. */}
-                {untagged > 0 ? (
-                  <Nudge
-                    action={
-                      <Button asChild>
-                        <Link
-                          href={{
-                            pathname: "/dashboard/posts",
-                            query: { profile: active.id, filter: "untagged" },
-                          }}
-                        >
-                          Tag them
-                        </Link>
-                      </Button>
+              </DashCard>
+            ) : null}
+
+            {/* v2 quick-add cards: the three verbs the back room exists for. */}
+            {active ? (
+              <div className="mt-3.5 grid gap-3 lg:grid-cols-3">
+                {[
+                  {
+                    title: "Add a post",
+                    note: "A still or a reel, then tag what is in it.",
+                    href: { pathname: "/dashboard/posts/new", query: { profile: active.id } },
+                    lead: true,
+                  },
+                  {
+                    title: "Add a thing",
+                    note: "Paste a product URL — image, title and price come with it.",
+                    href: { pathname: "/dashboard/products/new", query: { profile: active.id } },
+                    lead: false,
+                  },
+                  {
+                    title: "Add a shelf",
+                    note: "Group your posts and things. One shelf each, or none.",
+                    href: { pathname: "/dashboard/categories", query: { profile: active.id } },
+                    lead: false,
+                  },
+                ].map((card) => (
+                  <Link
+                    key={card.title}
+                    href={card.href}
+                    className={
+                      card.lead
+                        ? "border-primary bg-card rounded-tile block border p-[18px] transition-transform duration-150 hover:-translate-y-0.5"
+                        : "border-border bg-card rounded-tile hover:border-primary block border p-[18px] transition-[transform,border-color] duration-150 hover:-translate-y-0.5"
                     }
                   >
-                    <b>
-                      {untagged} {untagged === 1 ? "post has" : "posts have"} no products tagged.
-                    </b>{" "}
-                    Tag them to make those posts shoppable.
-                  </Nudge>
-                ) : null}
-              </DashCard>
+                    <span className="font-display text-body block font-semibold tracking-[-0.02em]">
+                      {card.title}
+                    </span>
+                    <span className="text-muted-foreground text-label mt-1.5 block leading-normal">
+                      {card.note}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            ) : null}
+
+            {/* The v2 "needs tagging" card — the single highest-value thing on
+                this screen: an untagged post earns nothing. Only when it has
+                something to say; an always-present nudge is wallpaper. */}
+            {active && untagged > 0 ? (
+              <div className="border-primary bg-card rounded-sheet mt-3.5 border p-[18px]">
+                <p className="text-primary text-pico tracking-eyebrow font-mono font-bold uppercase">
+                  Needs tagging
+                </p>
+                <p className="font-display text-title mt-2 font-bold tracking-[-0.035em]">
+                  {untagged} {untagged === 1 ? "post earns" : "posts earn"} nothing yet
+                </p>
+                <p className="text-muted-foreground text-label mt-1.5 leading-[1.55]">
+                  {untagged === 1 ? "It imported fine — it just has" : "They imported fine — they just have"}{" "}
+                  no things on {untagged === 1 ? "it" : "them"}.
+                </p>
+                <ul className="mt-3.5 flex gap-[9px] overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  {untaggedPosts.slice(0, 8).map((post) => (
+                    <li key={post.id} className="w-[104px] flex-none">
+                      <Link
+                        href={{
+                          pathname: `/dashboard/posts/${post.id}`,
+                          query: { profile: active.id },
+                        }}
+                        className="border-border rounded-panel hover:border-primary block overflow-hidden border transition-colors"
+                      >
+                        <span className="bg-active block h-[104px] overflow-hidden">
+                          {/* eslint-disable-next-line @next/next/no-img-element -- ponytail: unoptimized until image domains are pinned */}
+                          <img
+                            src={post.mediaUrl}
+                            alt=""
+                            className="size-full object-cover"
+                            loading="lazy"
+                          />
+                        </span>
+                        <span className="text-muted-foreground text-nano block h-11 overflow-hidden px-2 py-[7px] leading-[1.35]">
+                          {post.caption ?? "Untitled post"}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ) : null}
 
             <DashCard>

@@ -68,21 +68,29 @@ export function ProfileSwitcher({
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="border-border bg-card text-foreground text-label rounded-pill hover:border-primary inline-flex min-h-[44px] flex-none items-center gap-2.5 border py-[7px] pl-2 pr-3.5 font-bold"
+            className="flex min-h-[44px] flex-none items-center gap-2.5 text-left"
           >
-            <Avatar className="size-[30px]">
-              <AvatarFallback className="bg-active text-primary text-micro font-bold">
+            <Avatar className="rounded-md size-[38px]">
+              <AvatarFallback className="bg-active text-primary text-micro rounded-md font-bold">
                 {active?.username.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            @{active?.username}
-            <ChevronDown className="text-faint size-3.5" aria-hidden />
+            <span className="min-w-0">
+              <span className="text-faint text-pico tracking-eyebrow block font-mono uppercase">
+                Editing {Math.max(1, profiles.findIndex((p) => p.id === active?.id) + 1)} of{" "}
+                {profiles.length} profile{profiles.length === 1 ? "" : "s"}
+              </span>
+              <span className="font-display text-body flex items-center gap-1.5 font-bold tracking-[-0.03em]">
+                @{active?.username}
+                <ChevronDown className="text-primary size-3.5" aria-hidden />
+              </span>
+            </span>
             <span className="sr-only">Switch profile</span>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[min(300px,calc(100vw-32px))]">
-          <DropdownMenuLabel className="text-faint text-micro font-bold uppercase tracking-[0.08em]">
-            Profiles · {profiles.length} of {maxProfiles}
+          <DropdownMenuLabel className="text-faint text-pico tracking-eyebrow font-mono font-bold uppercase">
+            Your profiles · {profiles.length} of {maxProfiles}
           </DropdownMenuLabel>
           {profiles.map((profile) => (
             <DropdownMenuItem

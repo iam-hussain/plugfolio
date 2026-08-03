@@ -5,11 +5,13 @@ import { cn } from "../lib/cn";
 
 /** The underlined section tab across the top of the back room. */
 const dashTab = cva(
-  "text-label -mb-px inline-flex min-h-[44px] flex-none snap-start items-center rounded-t-image border-b-2 px-3.5 py-2.5 font-semibold hover:text-primary",
+  // v2 rail (ADR-0026): the active section fills with the card surface and
+  // underlines in the accent; the rest sit quiet on the canvas.
+  "text-label rounded-t-panel -mb-px inline-flex min-h-[44px] flex-none snap-start items-center gap-[7px] border-b-2 px-3.5 py-2.5 font-semibold hover:text-primary",
   {
     variants: {
       current: {
-        true: "border-primary text-foreground font-bold",
+        true: "border-primary bg-card text-foreground",
         false: "text-muted-foreground border-transparent",
       },
     },
@@ -420,18 +422,22 @@ export function FilterButton({
    reply owed, an offer running (§7 lime-means-offer). */
 
 const pillVariants = cva(
-  "text-micro rounded-pill inline-flex items-center px-[9px] py-[3px] font-bold",
+  // v2 (ADR-0026): mono uppercase status language. Lime stays offer-only
+  // (`code`); work waiting rides the page accent; "live" is the forest
+  // outline; spent states sink.
+  "text-pico tracking-eyebrow rounded-pill inline-flex items-center whitespace-nowrap px-[9px] py-[5px] font-mono font-bold uppercase",
   {
     variants: {
       tone: {
-        shelf: "bg-active text-brand-violet-deep",
-        own: "bg-active text-brand-violet-deep",
-        agreed: "bg-active text-brand-violet-deep",
+        shelf: "border-border-strong text-muted-foreground border",
+        own: "border-border-strong text-muted-foreground border",
+        agreed: "border-success text-success border",
+        live: "border-success text-success border",
         code: "bg-accent text-accent-foreground",
-        untagged: "bg-accent text-accent-foreground",
-        new: "bg-accent text-accent-foreground",
-        none: "bg-border text-muted-foreground",
-        closed: "bg-border text-muted-foreground",
+        untagged: "bg-primary text-primary-foreground",
+        new: "bg-primary text-primary-foreground",
+        none: "bg-active text-faint",
+        closed: "bg-active text-faint",
       },
     },
     defaultVariants: { tone: "none" },
@@ -539,7 +545,7 @@ export function DashField({
     <div className={cn("mb-3.5 grid gap-1.5", className)}>
       <label
         htmlFor={htmlFor}
-        className="text-faint text-micro font-bold uppercase tracking-[0.06em]"
+        className="text-faint text-pico tracking-eyebrow font-mono font-bold uppercase"
       >
         {label}
         {hint ? <i className="text-primary not-italic"> {hint}</i> : null}
@@ -591,7 +597,7 @@ export function DashFieldForm({ children, className, ...props }: React.Component
 /** The uppercase micro label above a field row. */
 export function DashFieldRowLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-faint text-micro -mb-1 mt-0.5 flex-[1_0_100%] font-bold uppercase tracking-[0.06em]">
+    <span className="text-faint text-pico tracking-eyebrow -mb-1 mt-0.5 flex-[1_0_100%] font-mono font-bold uppercase">
       {children}
     </span>
   );
@@ -632,9 +638,13 @@ export function DangerZone({
   action: React.ReactNode;
 }) {
   return (
-    <div className="border-border rounded-tile border border-dashed px-5 py-[18px]">
-      <b className="text-destructive text-label block font-bold">{title}</b>
-      <p className="text-muted-foreground text-copy mb-3.5 mt-1.5 max-w-[56ch]">{children}</p>
+    <div className="border-destructive rounded-tile border px-5 py-[18px]">
+      <b className="text-destructive text-pico tracking-eyebrow block font-mono font-bold uppercase">
+        {title}
+      </b>
+      <p className="text-muted-foreground text-copy mb-3.5 mt-2 max-w-[56ch] leading-[1.6]">
+        {children}
+      </p>
       {action}
     </div>
   );

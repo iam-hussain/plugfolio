@@ -48,10 +48,10 @@ export function Stat({
         className,
       )}
     >
-      <span className="text-faint text-micro block font-bold uppercase tracking-[0.07em]">
+      <span className="text-faint text-pico tracking-eyebrow block font-mono font-bold uppercase">
         {label}
       </span>
-      <b className="font-display text-name mb-2 mt-1.5 block font-extrabold tabular-nums leading-none tracking-[-0.035em]">
+      <b className="font-display text-name mb-2 mt-2 block font-bold tabular-nums leading-none tracking-[-0.035em]">
         {value}
       </b>
       {provenance}

@@ -11,11 +11,13 @@ import { usePathname, useSearchParams } from "next/navigation";
  * Settings shows for Managers as well (they get the picture control); the page
  * itself gates everything else to the Admin, visibly rather than by hiding it.
  */
+// v2 naming (ADR-0026 / functional spec §14): products read as "Things" and
+// categories as "Shelves" everywhere a creator sees them; routes stay put.
 const TABS = [
-  { href: "/dashboard", label: "Home" },
+  { href: "/dashboard", label: "Overview" },
   { href: "/dashboard/posts", label: "Posts" },
-  { href: "/dashboard/products", label: "Products" },
-  { href: "/dashboard/categories", label: "Categories" },
+  { href: "/dashboard/products", label: "Things" },
+  { href: "/dashboard/categories", label: "Shelves" },
   { href: "/dashboard/collabs", label: "Collabs" },
   { href: "/dashboard/settings", label: "Settings" },
 ];
