@@ -24,6 +24,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <div className="flex items-center gap-3">
             <SidebarTrigger className="text-muted-foreground" />
             <TopBarTitle />
+            {/* v2 (ADR-0026): the console announces itself — never a public
+                surface, and it should never be mistaken for one. */}
+            <span className="bg-brand-ink text-accent tracking-eyebrow rounded-[5px] px-[7px] py-[3px] font-mono text-pico font-bold uppercase">
+              Internal
+            </span>
           </div>
           <ThemeToggle cookieName="admin-theme" initialTheme={theme} />
         </header>
