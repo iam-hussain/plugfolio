@@ -1,26 +1,27 @@
-import { Button, cn, measure, ProductTag, Tile, type TileProps } from "@plugfolio/ui";
+import { Button, cn, measure, ProductTag } from "@plugfolio/ui";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
 /**
  * Shared vocabulary for the marketing pages (/how-it-works, /for-creators,
- * /for-business — DESIGN mk-* classes). Persuade surfaces: Canvas ground, Sora
- * headlines, ink-pill CTAs, real tagged-post artefacts. All colour and type
- * from tokens; positions/tilts are literal utility classes, never inline style.
+ * /for-business), on the v2 system (ADR-0026): white canvas, Sora headlines,
+ * mono eyebrows, bordered cards, real tagged-post artefacts. All colour and
+ * type from tokens; positions are literal utility classes, never inline style.
  */
 export const mk = {
   main: cn(measure({ width: "narrow" }), "pb-[clamp(56px,9vw,96px)]"),
-  eyebrow: "font-sans text-micro font-semibold uppercase tracking-[0.06em] text-muted-foreground",
-  h1: "font-display mt-2.5 text-display-xl font-extrabold tracking-[-0.04em]",
-  lede: "text-muted-foreground mt-4 max-w-[52ch] text-body leading-[1.55]",
+  eyebrow: "font-mono text-pico font-bold uppercase tracking-eyebrow text-faint",
+  h1: "font-display mt-2.5 text-display-xl font-bold tracking-[-0.05em]",
+  lede: "text-muted-foreground mt-4 max-w-[52ch] text-body leading-[1.6]",
   cta: "mt-7 flex flex-wrap items-center gap-3",
   band: "mt-[clamp(48px,8vw,88px)]",
-  h2: "font-display text-display-lg font-bold leading-[1.12] tracking-[-0.03em]",
+  h2: "font-display text-display-lg font-bold leading-[1.12] tracking-[-0.04em]",
   copy: "text-muted-foreground mt-3 max-w-[62ch] text-copy leading-[1.6]",
 } as const;
 
-type TileTone = NonNullable<TileProps["tone"]>;
+/** Kept for call-site compatibility; v2 retired the tile hues (ADR-0026 §3). */
+type TileTone = "butter" | "mint" | "sky" | "lavender" | "coral" | "blush";
 
 type Tag = {
   name?: string;
@@ -31,17 +32,18 @@ type Tag = {
 };
 
 /**
- * The signature artefact — a real tagged post on a colour tile (the price pill
- * is the actual control, not a drawing of one). `wrap` carries the tilt.
+ * The signature artefact — a real tagged post (the price pill is the actual
+ * control, not a drawing of one). v2: a plain bordered card, no mat, no tilt.
+ * `tone`/`wrap` survive so call sites keep compiling; neither changes anything.
  */
 export function PostCard({
-  tone,
+  tone: _tone,
   photo,
   alt,
   tags,
   footer,
   square,
-  wrap = "rotate-[-1.8deg]",
+  wrap: _wrap,
 }: {
   tone: TileTone;
   photo: string;
@@ -53,12 +55,9 @@ export function PostCard({
   wrap?: string;
 }) {
   return (
-    <Tile
-      tone={tone}
-      className={`shadow-rest rounded-card p-2.5 transition-transform duration-300 hover:rotate-0 ${wrap}`}
-    >
+    <div className="border-border-strong bg-card rounded-sheet border p-2.5 shadow-[0_22px_44px_-20px_rgba(18,16,28,.28)]">
       <div className="relative">
-        <div className="rounded-image overflow-hidden">
+        <div className="rounded-lg overflow-hidden">
           <Image
             src={`/landing/posts/${photo}.jpg`}
             alt={alt}
@@ -87,12 +86,12 @@ export function PostCard({
             height={60}
             className="rounded-pill size-7 object-cover"
           />
-          <span className="bg-card text-brand-violet-deep rounded-pill text-nano px-2.5 py-1 font-mono font-semibold">
+          <span className="bg-active text-muted-foreground rounded-pill text-nano px-2.5 py-1 font-mono font-semibold">
             {footer.count}
           </span>
         </div>
       ) : null}
-    </Tile>
+    </div>
   );
 }
 
@@ -129,10 +128,10 @@ export function SplitBand({
   );
 }
 
-/** A named fact card (mk-fact) — a bold claim over one plain line, on a lift. */
+/** A named fact card (mk-fact) — a bold claim over one plain line. */
 export function Fact({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border-border bg-card shadow-rest rounded-card border p-6">
+    <div className="border-border bg-card rounded-sheet border p-6">
       <b className="font-display text-body block font-bold tracking-[-0.02em]">{title}</b>
       <p className="text-muted-foreground text-copy mt-2 leading-[1.55]">{children}</p>
     </div>
@@ -150,8 +149,8 @@ export function Step({
   children: React.ReactNode;
 }) {
   return (
-    <li className="border-border bg-card shadow-rest rounded-card border p-6">
-      <span className="bg-foreground text-background rounded-pill text-nano grid size-7 place-items-center font-mono font-bold">
+    <li className="border-border bg-card rounded-sheet border p-6">
+      <span className="bg-brand-ink rounded-pill text-nano grid size-7 place-items-center font-mono font-bold text-white">
         {n}
       </span>
       <b className="font-display text-body mt-3.5 block font-bold tracking-[-0.02em]">{title}</b>
@@ -211,23 +210,17 @@ export function MarketingDoors({
         {doors.map((door) => (
           <Link
             key={door.href}
-            data-role={door.role}
             href={door.href as Route}
-            className="bg-card border-border shadow-rest hover:shadow-lift hover:border-role-deep/40 group/door rounded-card relative flex flex-col overflow-hidden border p-6 no-underline transition-[box-shadow,border-color] duration-200"
+            className="bg-card border-border hover:border-primary group/door rounded-sheet flex flex-col border p-6 no-underline transition-[transform,border-color] duration-150 hover:-translate-y-0.5"
           >
-            <span aria-hidden className="bg-role-deep absolute inset-x-0 top-0 h-[3px]" />
-            <span
-              aria-hidden
-              className="from-role-solid/35 absolute inset-0 bg-gradient-to-br via-transparent to-transparent opacity-70 transition-opacity duration-200 group-hover/door:opacity-100"
-            />
-            <span className={`relative ${mk.eyebrow}`}>{door.micro}</span>
-            <h3 className="font-display text-title relative mt-2.5 font-bold tracking-[-0.02em]">
+            <span className="text-primary text-pico tracking-eyebrow font-mono uppercase">
+              {door.micro}
+            </span>
+            <h3 className="font-display text-title mt-2.5 font-bold tracking-[-0.03em]">
               {door.title}
             </h3>
-            <p className="text-muted-foreground text-copy relative mt-2 leading-[1.5]">
-              {door.copy}
-            </p>
-            <span className="text-role-deep text-label relative mt-auto flex items-center gap-1.5 pt-5 font-bold">
+            <p className="text-muted-foreground text-copy mt-2 leading-[1.55]">{door.copy}</p>
+            <span className="text-primary text-label mt-auto flex items-center gap-1.5 pt-5 font-semibold">
               {door.go}
               <span
                 aria-hidden
