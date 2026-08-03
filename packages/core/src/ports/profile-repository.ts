@@ -16,12 +16,22 @@ export type ProfileRole = "admin" | "manager";
 
 export type AccessibleProfile = ProfileSummary & { readonly role: ProfileRole };
 
+/** The rail's count pills (v2 dashboard): what each section holds. */
+export type ProfileContentCounts = {
+  readonly posts: number;
+  readonly products: number;
+  readonly categories: number;
+  readonly collabs: number;
+};
+
 export type ProfileRepository = {
   /** Profiles the user OWNS (is Admin of). */
   listByUser(userId: string): Promise<readonly ProfileSummary[]>;
   /** Owned + managed — what the dashboard shows and content writes check. */
   listAccessibleByUser(userId: string): Promise<readonly AccessibleProfile[]>;
   exists(profileId: string): Promise<boolean>;
+  /** Section counts for the dashboard rail, one profile per call. */
+  contentCounts(profileId: string): Promise<ProfileContentCounts>;
   countByUser(userId: string): Promise<number>;
   create(profile: { userId: string; username: string }): Promise<ProfileSummary>;
 };

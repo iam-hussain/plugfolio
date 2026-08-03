@@ -29,6 +29,9 @@ function makeDeps(existingManagers = 0, options: { inviteePasswordless?: boolean
       if (userId === MANAGER_USER) return [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null, role: "manager" }];
       return [];
     },
+    async contentCounts() {
+      return { posts: 0, products: 0, categories: 0, collabs: 0 };
+    },
     async exists() {
       return true;
     },

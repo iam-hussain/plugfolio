@@ -7,13 +7,8 @@ import {
   getMyProfiles,
   getTraffic,
   listYouTubeChannels,
-  MAX_PROFILES_PER_ACCOUNT,
 } from "@plugfolio/core";
 import {
-  ActiveProfile,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Button,
   DashCard,
   DashCardAction,
@@ -22,13 +17,11 @@ import {
   DashCardTitle,
   DashBody,
   EmptyState,
-  ProfileChip,
-  ProfileChips,
 } from "@plugfolio/ui";
 import { env } from "@/env";
 import { SocialConnections } from "@/features/account-auth";
 import { connectGoogle } from "@/features/account-auth/connect-social-action";
-import { DashboardPageHeader, NewProfileButton } from "@/features/product-tagging";
+import { NewProfileButton } from "@/features/product-tagging";
 import { TrafficSummaryView } from "@/features/traffic";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
@@ -79,8 +72,6 @@ export default async function DashboardPage({
 
   return (
     <>
-      <DashboardPageHeader title="Overview" eyebrow={session.user.email ?? undefined} />
-
       <DashBody>
         {profiles.length === 0 ? (
           <EmptyState
@@ -93,35 +84,7 @@ export default async function DashboardPage({
           </EmptyState>
         ) : (
           <>
-            {active ? (
-              <DashCard>
-                <ActiveProfile
-                  avatar={
-                    <Avatar className="size-[60px] flex-none">
-                      {page?.avatarUrl ? <AvatarImage src={page.avatarUrl} alt="" /> : null}
-                      <AvatarFallback className="text-primary font-display text-title font-extrabold">
-                        {active.username.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  }
-                  handle={`@${active.username}`}
-                  url={
-                    <>
-                      plugfolio.com/{active.username}
-                      {active.role === "manager" ? " · you manage this profile" : ""}
-                    </>
-                  }
-                  action={
-                    <Button variant="outline" asChild>
-                      <Link href={`/${active.username}`}>View page</Link>
-                    </Button>
-                  }
-                />
-
-              </DashCard>
-            ) : null}
-
-            {/* v2 quick-add cards: the three verbs the back room exists for. */}
+{/* v2 quick-add cards: the three verbs the back room exists for. */}
             {active ? (
               <div className="mt-3.5 grid gap-3 lg:grid-cols-3">
                 {[
@@ -204,36 +167,6 @@ export default async function DashboardPage({
               </div>
             ) : null}
 
-            <DashCard>
-              <DashCardHead>
-                <DashCardTitle>Profiles</DashCardTitle>
-                <DashCardNote>
-                  {profiles.length} of {MAX_PROFILES_PER_ACCOUNT}
-                </DashCardNote>
-                <DashCardAction>
-                  <NewProfileButton />
-                </DashCardAction>
-              </DashCardHead>
-              <ProfileChips>
-                {profiles.map((profile) => (
-                  <ProfileChip
-                    key={profile.id}
-                    current={profile.id === active?.id}
-                    role={profile.role === "manager" ? "manager" : undefined}
-                    avatar={
-                      <Avatar className="size-7">
-                        <AvatarFallback className="text-primary text-pico font-bold">
-                          {profile.username.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                    }
-                    asChild
-                  >
-                    <Link href={`/dashboard?profile=${profile.id}`}>@{profile.username}</Link>
-                  </ProfileChip>
-                ))}
-              </ProfileChips>
-            </DashCard>
           </>
         )}
 

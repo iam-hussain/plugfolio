@@ -10,8 +10,6 @@ import {
   CollabRows,
   DashBody,
   DashCard,
-  DashCardHead,
-  DashCardTitle,
   EmptyState,
   FilterButton,
   Filters,
@@ -113,6 +111,9 @@ export default async function CreatorCollabsPage({
           </FilterButton>
         </Filters>
 
+        <p className="text-faint text-pico tracking-eyebrow mb-2.5 font-mono font-bold uppercase">
+          Incoming requests
+        </p>
         {filtered.length === 0 ? (
           <EmptyState
             title={rows.length === 0 ? "No collabs yet" : "Nothing here"}
@@ -143,7 +144,7 @@ export default async function CreatorCollabsPage({
                 name={collab.businessName}
                 status={
                   collab.needsReply ? (
-                    <Pill tone="new">Needs a reply</Pill>
+                    <Pill tone="new">Awaiting you</Pill>
                   ) : collab.agreed ? (
                     <Pill tone="agreed">Terms agreed</Pill>
                   ) : null
@@ -168,10 +169,10 @@ export default async function CreatorCollabsPage({
           </CollabRows>
         )}
 
-        <DashCard className="mt-3.5">
-          <DashCardHead>
-            <DashCardTitle>Open requirements</DashCardTitle>
-          </DashCardHead>
+        <p className="text-faint text-pico tracking-eyebrow mb-2.5 mt-6 font-mono font-bold uppercase">
+          Open requirements
+        </p>
+        <DashCard className="mt-0">
           {active ? (
             <RequirementBoard requirements={requirements} approachAsProfileId={active.id} />
           ) : (

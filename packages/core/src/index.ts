@@ -64,6 +64,7 @@ export type {
   ProfileSummary,
   ProfileRole,
   AccessibleProfile,
+  ProfileContentCounts,
 } from "./ports/profile-repository";
 export type { ManagerRepository, ManagerView, UserRepository } from "./ports/manager-repository";
 export type {

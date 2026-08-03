@@ -38,6 +38,16 @@ export function createProfileRepository(db: PrismaClient = prisma): ProfileRepos
       ];
     },
 
+    async contentCounts(profileId: string) {
+      const [posts, products, categories, collabs] = await Promise.all([
+        db.post.count({ where: { profileId } }),
+        db.product.count({ where: { profileId } }),
+        db.category.count({ where: { profileId } }),
+        db.collab.count({ where: { profileId } }),
+      ]);
+      return { posts, products, categories, collabs };
+    },
+
     async exists(profileId: string): Promise<boolean> {
       const count = await db.profile.count({ where: { id: profileId } });
       return count > 0;

@@ -185,6 +185,9 @@ function makeDeps(
         ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null, role: "admin" as const }]
         : [];
     },
+    async contentCounts() {
+      return { posts: 0, products: 0, categories: 0, collabs: 0 };
+    },
     async exists(profileId) {
       return profileId === PROFILE_ID;
     },
