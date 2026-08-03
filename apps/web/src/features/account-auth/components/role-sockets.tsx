@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@plugfolio/ui";
+import { cva } from "class-variance-authority";
 import { PlugMark } from "@/components/brand";
 import type { AuthRole } from "./auth-copy";
 
@@ -15,6 +16,21 @@ const SOCKETS: readonly { role: AuthRole; label: string; left: string }[] = [
   { role: "creator", label: "Create", left: "left-1/2" },
   { role: "business", label: "Business", left: "left-[83.33%]" },
 ];
+
+const socket = cva("rounded-lg min-w-0 flex-1 border px-2 py-3 text-center transition-colors", {
+  variants: {
+    on: { true: "border-primary bg-primary/15", false: "border-border bg-active" },
+  },
+  defaultVariants: { on: false },
+});
+const slot = cva("block h-[15px] w-[5px] rounded-[2px]", {
+  variants: { on: { true: "bg-foreground", false: "bg-border-strong" } },
+  defaultVariants: { on: false },
+});
+const socketLabel = cva("text-pico mt-2 block font-mono uppercase tracking-[0.12em]", {
+  variants: { on: { true: "text-foreground", false: "text-faint" } },
+  defaultVariants: { on: false },
+});
 
 export function RoleSockets({
   role,
@@ -43,42 +59,22 @@ export function RoleSockets({
         </div>
       </div>
       <div className="flex gap-2" role="radiogroup" aria-label="I'm here to">
-        {SOCKETS.map((socket) => {
-          const on = socket.role === role;
+        {SOCKETS.map((item) => {
+          const on = item.role === role;
           return (
             <button
-              key={socket.role}
+              key={item.role}
               type="button"
               role="radio"
               aria-checked={on}
-              onClick={() => onRoleChange(socket.role)}
-              className={cn(
-                "rounded-lg min-w-0 flex-1 border px-2 py-3 text-center transition-colors",
-                on ? "border-primary bg-primary/15" : "border-border bg-active",
-              )}
+              onClick={() => onRoleChange(item.role)}
+              className={socket({ on })}
             >
               <span className="flex justify-center gap-[5px]" aria-hidden>
-                <span
-                  className={cn(
-                    "block h-[15px] w-[5px] rounded-[2px]",
-                    on ? "bg-foreground" : "bg-border-strong",
-                  )}
-                />
-                <span
-                  className={cn(
-                    "block h-[15px] w-[5px] rounded-[2px]",
-                    on ? "bg-foreground" : "bg-border-strong",
-                  )}
-                />
+                <span className={slot({ on })} />
+                <span className={slot({ on })} />
               </span>
-              <span
-                className={cn(
-                  "text-pico mt-2 block font-mono uppercase tracking-[0.12em]",
-                  on ? "text-foreground" : "text-faint",
-                )}
-              >
-                {socket.label}
-              </span>
+              <span className={socketLabel({ on })}>{item.label}</span>
             </button>
           );
         })}

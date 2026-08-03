@@ -43,7 +43,7 @@ export function AuthShell({
         <Link href="/" aria-label="Plugfolio home" className="self-start">
           <Logo layout="reversed" />
         </Link>
-        <h2 className="font-display mt-7 hidden text-[clamp(1.5rem,2.6vw,2.125rem)] font-bold leading-[1.15] tracking-[-0.04em] lg:block">
+        <h2 className="font-display mt-7 hidden text-display-sm font-bold leading-[1.15] tracking-[-0.04em] lg:block">
           Plug yourself in.
         </h2>
         <ul className="mt-[18px] hidden flex-col gap-2.5 lg:flex">
