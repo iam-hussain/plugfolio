@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getMemberHandle } from "@plugfolio/core";
+import { cn, measure } from "@plugfolio/ui";
 import { SupportForm } from "@/features/support";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -18,6 +19,26 @@ export const metadata: Metadata = {
 
 type SearchParams = { category?: string };
 
+/** The v2 companion card: what happens after Send, stated up front. */
+const NEXT: readonly { lead: string | null; copy: string }[] = [
+  {
+    lead: null,
+    copy: "A person reads it — there is no bot on this queue. You get a reply at the address you gave, usually inside one working day.",
+  },
+  {
+    lead: "Account deletion",
+    copy: "is handled here on purpose, so nothing irreversible happens by mis-tap.",
+  },
+  {
+    lead: "Username disputes",
+    copy: "go to whoever verified the handle first. Send the connected account and we will check.",
+  },
+  {
+    lead: null,
+    copy: "Shopping is never affected while a request is open — every creator page and every Buy keeps working.",
+  },
+];
+
 export default async function SupportPage({
   searchParams,
 }: {
@@ -33,17 +54,43 @@ export default async function SupportPage({
     : null;
 
   return (
-    <main className="mx-auto w-full max-w-[680px] px-5 pb-[clamp(48px,7vw,88px)] pt-[clamp(22px,4vw,40px)]">
-      <p className="text-muted-foreground tracking-eyebrow text-nano font-mono font-semibold uppercase">
-        Help
-      </p>
-      <h1 className="font-display text-display-lg mt-2.5 font-extrabold tracking-[-0.035em]">
-        What can we help with?
+    <main className={cn(measure(), "pb-[clamp(48px,7vw,88px)] pt-[clamp(22px,4vw,40px)]")}>
+      <h1 className="font-display text-display-sm font-bold tracking-[-0.04em]">
+        Support &amp; feedback
       </h1>
-      <p className="text-muted-foreground text-copy mt-3 max-w-[50ch] leading-[1.5]">
-        Pick the closest issue — a person reads every ticket and replies by email.
+      <p className="text-muted-foreground text-copy mt-2 max-w-[62ch] leading-[1.6]">
+        No account needed — if you&apos;re locked out you can still reach us here. Lost
+        verification mails, username disputes, merges, deletions — or tell us what&apos;s
+        annoying you and what you&apos;d like built.
       </p>
-      <SupportForm handle={handle} initialCategory={category} initialEmail={email} />
+
+      {/* v2: the form beside the "what happens next" card, so the promise sits
+          in view while someone writes. */}
+      <div className="mt-[18px] grid items-start gap-3 lg:grid-cols-[1.25fr_0.75fr]">
+        <div className="border-border bg-card rounded-tile border p-[18px]">
+          <SupportForm handle={handle} initialCategory={category} initialEmail={email} />
+        </div>
+        <aside className="border-border bg-card rounded-tile border p-[18px]">
+          <h2 className="text-faint text-pico tracking-eyebrow font-mono font-bold uppercase">
+            What happens next
+          </h2>
+          <ul className="mt-3 flex flex-col">
+            {NEXT.map((item, index) => (
+              <li
+                key={item.copy}
+                className={cn(
+                  "text-muted-foreground text-label leading-[1.6]",
+                  index > 0 && "border-border mt-3 border-t pt-3",
+                )}
+              >
+                {item.lead ? <b className="text-foreground font-semibold">{item.lead}</b> : null}
+                {item.lead ? " " : null}
+                {item.copy}
+              </li>
+            ))}
+          </ul>
+        </aside>
+      </div>
     </main>
   );
 }
