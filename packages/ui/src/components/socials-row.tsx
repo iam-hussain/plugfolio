@@ -73,24 +73,48 @@ export function SocialGlyph({ platform }: { platform: SocialPlatform }) {
 
 export type SocialsRowProps = {
   links: readonly SocialLink[];
+  /**
+   * v2 (ADR-0026): the default is label pills — mono uppercase with the ↗
+   * mark, unmistakable as ways OFF the page. `icons` keeps the circles for
+   * creators who prefer them (the appearance set's "link row" axis).
+   */
+  mode?: "labels" | "icons";
   className?: string;
 };
 
-export function SocialsRow({ links, className }: SocialsRowProps) {
+export function SocialsRow({ links, mode = "labels", className }: SocialsRowProps) {
   if (links.length === 0) return null;
+  if (mode === "icons") {
+    return (
+      <ul className={cn("flex flex-wrap gap-2", className)}>
+        {links.map((link) => (
+          <li key={`${link.platform}-${link.href}`}>
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer me"
+              aria-label={link.label}
+              title={link.label}
+              className="border-border-strong text-muted-foreground hover:border-primary hover:text-primary rounded-pill ease-design grid size-[38px] place-items-center border transition-colors duration-200"
+            >
+              {ICONS[link.platform]}
+            </a>
+          </li>
+        ))}
+      </ul>
+    );
+  }
   return (
-    <ul className={cn("flex flex-wrap gap-2", className)}>
+    <ul className={cn("flex flex-wrap gap-[7px]", className)}>
       {links.map((link) => (
         <li key={`${link.platform}-${link.href}`}>
           <a
             href={link.href}
             target="_blank"
             rel="noopener noreferrer me"
-            aria-label={link.label}
-            title={link.label}
-            className="border-border bg-card text-muted-foreground hover:border-primary hover:text-primary hover:bg-active rounded-pill ease-design grid size-10 place-items-center border transition-colors duration-200"
+            className="border-border-strong text-muted-foreground hover:border-primary hover:text-primary rounded-pill text-pico tracking-eyebrow ease-design inline-flex h-[34px] items-center gap-1.5 border px-[13px] font-mono font-bold uppercase transition-colors duration-200"
           >
-            {ICONS[link.platform]}
+            {link.label} <span aria-hidden className="opacity-50">↗</span>
           </a>
         </li>
       ))}

@@ -17,6 +17,7 @@ import {
 } from "@plugfolio/ui";
 import type { Route } from "next";
 import Link from "next/link";
+import { PillNavOverride, pillNavAction, pillNavCircle } from "@/components/chrome/pill-nav";
 import { FollowButton, WatchButton } from "@/features/shopper-account";
 import { JsonLd } from "@/components/json-ld";
 import { CreatorContextBar } from "./creator-context-bar";
@@ -69,6 +70,27 @@ export function PostPageView({
         href={`/${page.username}` as Route}
         revealAfter={120}
       />
+      {/* The pill nav morphs into the buy verbs (ADR-0026 §6): back to the
+          page, save, and the jump to what's tagged. */}
+      <PillNavOverride>
+        <Link
+          href={`/${page.username}`}
+          aria-label={`Back to @${page.username}`}
+          className={pillNavCircle}
+        >
+          <span aria-hidden>←</span>
+        </Link>
+        <WatchButton
+          kind="post"
+          targetId={post.id}
+          isAuthenticated={viewer.signedIn}
+          initiallyWatched={viewer.watched}
+          display="icon"
+        />
+        <a href="#tagged" className={pillNavAction}>
+          See the things
+        </a>
+      </PillNavOverride>
       <BackLink asChild>
         <Link href={`/${page.username}`}>
           <BackLinkIcon />
@@ -154,7 +176,7 @@ export function PostPageView({
         title="In this post"
         meta={`${productCount} ${productCount === 1 ? "product" : "products"} tagged`}
       />
-      <section aria-label="Tagged products">
+      <section id="tagged" aria-label="Tagged products" className="scroll-mt-20">
         {productCount === 0 ? (
           <div className="mt-5">
             <EmptyState title="Nothing tagged on this post yet">

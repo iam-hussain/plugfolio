@@ -9,12 +9,19 @@ import {
   Button,
   CreatorCover,
   CreatorHeader,
+  defaultCoverTreatment,
   EmptyState,
   measure,
   PageBand,
   SocialsRow,
 } from "@plugfolio/ui";
+import { cn } from "@plugfolio/ui";
 import Link from "next/link";
+import {
+  PillNavDivider,
+  PillNavOverride,
+  pillNavCircle,
+} from "@/components/chrome/pill-nav";
 import { RequestCollabForm } from "@/features/business-collab";
 import { CommentsSection, FollowButton } from "@/features/shopper-account";
 import { formatCount } from "@/lib/format-count";
@@ -154,6 +161,9 @@ export function CreatorPageView({
     follow
   );
 
+  const cover = defaultCoverTreatment(page.headerStyle);
+  const thingsCount = thingsTagged + products.length;
+
   return (
     <main data-accent={page.accent} className="pb-14">
       <ViewBeacon surface="profile" username={page.username} />
@@ -168,10 +178,45 @@ export function CreatorPageView({
         avatarUrl={page.avatarUrl}
         action={membership ? null : follow}
       />
-      {/* Edge to edge, outside the measure — the band the page opens with
-          (DESIGN creator.html: `.cover` is a direct child of `<main>`, and
-          only what follows it sits inside `.inner`). */}
-      <CreatorCover style={page.headerStyle} />
+      {/* The pill nav morphs into this page's verbs (ADR-0026 §6): the way
+          back to Explore, Follow (or the owner's Dashboard), and Share. */}
+      <PillNavOverride>
+        <Link
+          href="/explore"
+          className="text-nav-foreground text-pico tracking-eyebrow flex items-center gap-2 pl-2 font-mono font-bold uppercase"
+        >
+          <span aria-hidden>←</span> Explore
+        </Link>
+        <PillNavDivider />
+        {membership ? (
+          <Button variant="action" className="px-5" asChild>
+            <Link href={{ pathname: "/dashboard", query: { profile: page.id } }}>Dashboard</Link>
+          </Button>
+        ) : (
+          follow
+        )}
+        <PageShare
+          handle={page.username}
+          displayName={page.displayName}
+          avatarUrl={page.avatarUrl}
+          meta={`${posts.length} posts · ${thingsCount} things`}
+          trigger="circle"
+          className={pillNavCircle}
+        />
+      </PillNavOverride>
+      {/* The cover: band and none run edge to edge above the measure; the
+          tile treatment sits inside it (v2 §Layout). */}
+      {cover === "tile" ? (
+        <div className={cn(measure(), "pt-3")}>
+          <CreatorCover
+            treatment="tile"
+            tall={page.headerStyle === "centred"}
+            badge={thingsCount > 0 ? `${thingsCount} things live` : null}
+          />
+        </div>
+      ) : (
+        <CreatorCover treatment={cover} tall={page.headerStyle === "centred"} />
+      )}
       <div className={measure()}>
         <CreatorHeader
           handle={page.username}
@@ -180,22 +225,39 @@ export function CreatorPageView({
           bio={page.bio}
           greeting={page.greeting}
           followers={formatCount(page.followerCount)}
+          counts={{ posts: String(posts.length), things: String(thingsCount) }}
           style={page.headerStyle}
+          cover={cover}
           socials={<SocialsRow links={socials} />}
           share={
             <PageShare
               handle={page.username}
               displayName={page.displayName}
               avatarUrl={page.avatarUrl}
-              meta={`${posts.length} posts · ${thingsTagged} things`}
+              meta={`${posts.length} posts · ${thingsCount} things`}
+              trigger="pill"
             />
           }
           action={headerAction}
         />
+        {!viewer.signedIn ? (
+          // The anon band (v2): shopping never needs an account — say it once,
+          // quietly, with the one door for follow/comment.
+          <div className="border-border bg-card rounded-row mb-4 flex flex-wrap items-center justify-between gap-3 border px-4 py-3.5">
+            <p className="text-muted-foreground text-label leading-normal">
+              Shopping this page never needs an account.{" "}
+              <b className="text-foreground font-semibold">Sign in only to follow or comment.</b>
+            </p>
+            <Button variant="secondary" size="sm" asChild>
+              <Link href="/signin">Sign in</Link>
+            </Button>
+          </div>
+        ) : null}
         {viewer.hasBusiness && !membership ? (
-          // A band that belongs to one viewer only (DESIGN §.band-biz).
-          <PageBand layout="stack">
-            <p className="text-primary text-micro pb-2 font-bold uppercase tracking-[0.08em]">
+          // A band that belongs to one viewer only (v2 §.band-biz): accent
+          // border, the one collab door.
+          <PageBand layout="stack" className="border-primary">
+            <p className="text-primary text-pico tracking-eyebrow pb-2 font-mono font-bold uppercase">
               You own a business
             </p>
             <RequestCollabForm profileId={page.id} />
@@ -211,18 +273,9 @@ export function CreatorPageView({
             />
           </div>
         ) : null}
-        <div className="mb-3.5 mt-[22px] flex items-baseline gap-3">
-          <h2 className="text-title font-extrabold tracking-[-0.02em]">Shop</h2>
-          <span className="text-muted-foreground text-micro ml-auto font-semibold uppercase tracking-[0.06em]">
-            {posts.length} post{posts.length === 1 ? "" : "s"}
-            {products.length > 0
-              ? ` · ${products.length} product${products.length === 1 ? "" : "s"}`
-              : ""}
-            {thingsTagged > 0
-              ? ` · ${thingsTagged} thing${thingsTagged === 1 ? "" : "s"} tagged`
-              : ""}
-          </span>
-        </div>
+        {/* v2: no "Shop" heading — the shelves row leads straight into the
+            wall; the counts already live in the header's stat row. */}
+        <div className="mt-4" />
         {activeCategory && shopCount === 0 ? (
           <EmptyState
             title="Nothing on this shelf yet"

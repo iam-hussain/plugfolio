@@ -14,22 +14,25 @@ import { cn } from "../lib/cn";
  * push the goods off the screen.
  */
 export function ShelfChips({
-  label = "Shelves",
+  label,
   children,
   className,
 }: {
+  /** v2 shows no label on the creator page; pass one where a caption helps. */
   label?: string;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
     <div className={cn("pt-2.5", className)}>
-      <span className="text-faint text-micro mb-2 block font-semibold uppercase tracking-[0.06em]">
-        {label}
-      </span>
+      {label ? (
+        <span className="text-faint text-pico tracking-eyebrow mb-2 block font-mono font-bold uppercase">
+          {label}
+        </span>
+      ) : null}
       <nav
         aria-label="Filter by shelf"
-        className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex gap-[7px] overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {children}
       </nav>
@@ -49,11 +52,12 @@ export function ShelfChip({ selected, asChild, className, ...props }: ShelfChipP
     <Comp
       aria-current={selected ? "true" : undefined}
       className={cn(
-        "border-border bg-card text-muted-foreground rounded-image text-label",
-        "inline-flex min-h-10 flex-none items-center whitespace-nowrap border px-4 py-2.5 font-semibold no-underline",
+        // v2 chip: 11px-radius, Inter 13/600; selected fills with the accent.
+        "border-border-strong text-foreground/80 rounded-md text-label",
+        "inline-flex min-h-10 flex-none items-center gap-1.5 whitespace-nowrap border px-[15px] py-[9px] font-semibold no-underline",
         "ease-design hover:border-primary hover:text-primary transition-colors duration-200",
         selected &&
-          "bg-primary border-primary text-primary-foreground hover:text-primary-foreground",
+          "bg-primary border-transparent text-primary-foreground hover:text-primary-foreground",
         className,
       )}
       {...props}

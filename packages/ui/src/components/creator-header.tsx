@@ -3,78 +3,91 @@ import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
 
 /**
- * The creator page header (DESIGN creator.html §.ch) — the big round avatar
- * overlapping the cover band, name, `@handle · N followers`, bio, then the
- * socials row and the two named share ways.
+ * The creator page header (v2, ADR-0026 / docs/design/v2-visual-system.md) —
+ * the square-cornered avatar pulled up over the cover, the Sora name with the
+ * mono accent greeting under it, bio, the `@handle · location` mono line, the
+ * links row, and the three counts over a hairline.
  *
- * The cover is a SEPARATE export, and deliberately so: in the design it is a
- * direct child of `<main>` and runs edge to edge, while everything under it
- * lives inside the 1200px measure. Rendering it here put it inside the page's
- * padded container, where it read as a card behind the avatar rather than as
- * the band the page opens with. `CreatorCover` goes above the container;
- * `CreatorHeader` goes in it and pulls up over it.
+ * The cover is a SEPARATE export: `band` and `split` run edge to edge above
+ * the measure, `tile` sits inside it, `none` is a 6px accent strip. Both
+ * components read the same `style`/`cover` so the pull-up always agrees with
+ * the cover's height.
  *
- * Three treatments, the creator's choice (ADR-0017). None of them drops
- * anything — they change how much room identity gets before the goods.
- *
- * Knows shapes, not sources (ADR-0018): every value arrives as a prop, and the
- * interactive bits (Follow, Share, QR) arrive as slots so this stays a Server
- * Component wherever it's used.
+ * Three header treatments, the creator's choice (ADR-0017, amended by
+ * ADR-0026): compact gets to the goods fastest (dense row, counts as one mono
+ * line), balanced stacks identity then counts, centred is the big-avatar
+ * profile read. Knows shapes, not sources (ADR-0018): every value arrives as
+ * a prop; interactive bits arrive as slots.
  */
 export type CreatorHeaderStyle = "compact" | "balanced" | "centred";
+export type CreatorCoverTreatment = "band" | "tile" | "split" | "none";
+
+/** The design's default cover for each header treatment. */
+export function defaultCoverTreatment(style: CreatorHeaderStyle): CreatorCoverTreatment {
+  return style === "compact" ? "none" : "tile";
+}
 
 export type CreatorHeaderProps = {
   handle: string;
   displayName?: string | null;
   avatarUrl?: string | null;
   bio?: string | null;
-  /** One line above the name ("Hey — glad you found me."). */
+  /** One line under the name, set as the mono accent eyebrow. */
   greeting?: string | null;
+  /** "Bengaluru, IN" — rides the mono line beside the handle. */
+  location?: string | null;
   /** Pre-formatted — the UI package doesn't own number formatting. */
   followers: string;
+  /** The three counts row; `followers` alone renders when absent. */
+  counts?: { posts: string; things: string };
   style?: CreatorHeaderStyle;
-  /** The socials row (icon-only circular links). */
+  /** Which cover this header pulls up over (defaults per `style`). */
+  cover?: CreatorCoverTreatment;
+  /** The links row (label pills or icon circles). */
   socials?: React.ReactNode;
-  /** The share ways — Link and QR, each saying what it does. */
+  /** The accent "Share · QR" pill. */
   share?: React.ReactNode;
   /** Follow for visitors, owner tools for the creator. */
   action?: React.ReactNode;
-  /** Rendered under the header: the owner band, the business strip. */
+  /** Rendered under the header: the viewer bands. */
   children?: React.ReactNode;
   className?: string;
 };
 
-/* The cover is shallower on a phone and in the compact treatment — it is a
-   band, not a picture, and it never earns more than it costs in scroll.
-
-   It carries the CREATOR'S accent. It was one flat wash for everybody, and
-   pale enough on a white canvas that the page read as opening on nothing.
-   Tinting it with their accent makes the first thing on the page theirs and
-   costs no new decision — they already picked the accent (ADR-0017). */
-const cover = cva("from-primary/15 to-background relative overflow-hidden bg-gradient-to-b", {
+const coverShell = cva("relative overflow-hidden", {
   variants: {
-    style: {
-      compact: "h-[96px] sm:h-[112px]",
-      balanced: "h-[120px] sm:h-[168px]",
-      centred: "h-[150px] sm:h-[220px]",
+    treatment: {
+      band: "h-[164px] sm:h-[236px]",
+      tile: "rounded-drawer border-border h-[150px] border sm:h-[210px]",
+      split: "grid h-[188px] grid-cols-2 sm:h-[230px] lg:grid-cols-[1fr_1.25fr]",
+      none: "bg-primary h-1.5",
     },
+    /** Centred headers get a taller band. */
+    tall: { true: "", false: "" },
   },
-  defaultVariants: { style: "balanced" },
+  compoundVariants: [
+    { treatment: "band", tall: true, className: "h-[196px] sm:h-[290px]" },
+  ],
+  defaultVariants: { treatment: "tile", tall: false },
 });
 
-/**
- * The band the creator page opens with — edge to edge, outside the measure.
- * Its height has to agree with `CreatorHeader`'s upward pull, which is why
- * both read the same `style`.
- */
 export function CreatorCover({
-  style = "balanced",
+  treatment = "tile",
+  tall = false,
   url,
+  badge,
+  greeting,
   className,
   children,
 }: {
-  style?: CreatorHeaderStyle;
+  treatment?: CreatorCoverTreatment;
+  /** Centred headers pull a taller band. */
+  tall?: boolean;
   url?: string | null;
+  /** The white "126 things live" pill, tile treatment only. */
+  badge?: string | null;
+  /** The split treatment's accent panel line. */
+  greeting?: string | null;
   className?: string;
   /** An optimised `<Image>` when the app has one; `url` is the plain path. */
   children?: React.ReactNode;
@@ -82,98 +95,83 @@ export function CreatorCover({
   const art =
     children ??
     (url ? (
-      // A plain <img>: the UI package is framework-free and never imports next/image. Apps pass an optimised <Image> as `children` when they need one.
+      // A plain <img>: the UI package is framework-free and never imports
+      // next/image. Apps pass an optimised <Image> as `children` when needed.
       <img src={url} alt="" className="size-full object-cover" />
-    ) : null);
+    ) : (
+      <span aria-hidden className="from-primary/25 to-primary/5 block size-full bg-gradient-to-b" />
+    ));
+
+  if (treatment === "none") {
+    return <div aria-hidden className={cn(coverShell({ treatment }), className)} />;
+  }
+
+  if (treatment === "split") {
+    return (
+      <div className={cn(coverShell({ treatment, tall }), className)}>
+        <div className="bg-primary text-primary-foreground flex flex-col justify-end p-4 sm:p-6">
+          <p className="tracking-eyebrow text-pico font-mono font-bold uppercase opacity-75">
+            Shop window
+          </p>
+          {greeting ? (
+            <p className="font-display text-title mt-2 font-bold leading-tight tracking-[-0.04em]">
+              {greeting}
+            </p>
+          ) : null}
+        </div>
+        <div className="overflow-hidden">{art}</div>
+      </div>
+    );
+  }
 
   return (
-    <div className={cn(cover({ style }), className)}>
+    <div className={cn(coverShell({ treatment, tall }), className)}>
       {art}
-      {/* Only over a picture. The accent band already ends in the canvas, so
-          a second fade on top of it just greys the creator's colour out. */}
-      {art ? (
-        <span
-          aria-hidden
-          className="from-brand-ink/10 to-background absolute inset-0 bg-gradient-to-b via-transparent"
-        />
+      {treatment === "band" ? (
+        <span aria-hidden className="bg-primary absolute inset-x-0 bottom-0 h-1" />
+      ) : null}
+      {treatment === "tile" && badge ? (
+        <span className="text-pico tracking-eyebrow absolute right-3 top-3 rounded-pill bg-white/95 px-2.5 py-1.5 font-mono font-bold uppercase text-[hsl(var(--brand-ink))]">
+          {badge}
+        </span>
       ) : null}
     </div>
   );
 }
 
-/**
- * The identity row: the avatar and who they are, CENTRED ON EACH OTHER.
- *
- * The name column used to be pushed 48px down so it cleared the avatar's
- * overlap and never sat on the cover. That worked, and it left the avatar's
- * whole top half staring at empty canvas — a hole big enough that the header
- * read as badly assembled rather than as deliberate. Centring closes it, and
- * the overlap shrinks from half the avatar to about a third so the words
- * still land on canvas rather than on the band.
- */
-const identity = cva("relative z-[1] flex gap-4 px-1", {
+/* The identity row pulls up over the cover; how far depends on which cover it
+   is over (v2: tile -34/-46 · band -46/-58 · split/none pad down instead). */
+const identity = cva("relative z-[1] flex", {
   variants: {
     style: {
-      compact: "-mt-[18px] flex-wrap items-center sm:-mt-[22px]",
-      balanced: "-mt-6 flex-wrap items-center sm:-mt-8",
-      centred: "-mt-11 flex-col items-center gap-[18px] text-center sm:-mt-[60px]",
+      compact: "flex-row items-center gap-3.5",
+      balanced: "flex-col items-start gap-3.5",
+      centred: "flex-col items-center gap-3.5 text-center",
+    },
+    cover: { band: "", tile: "", split: "pt-[18px]", none: "pt-5" },
+  },
+  compoundVariants: [
+    { style: "balanced", cover: "band", className: "-mt-[46px]" },
+    { style: "centred", cover: "band", className: "-mt-[58px]" },
+    { style: "balanced", cover: "tile", className: "-mt-[34px]" },
+    { style: "centred", cover: "tile", className: "-mt-[46px]" },
+  ],
+  defaultVariants: { style: "balanced", cover: "tile" },
+});
+
+const portrait = cva("bg-active relative shrink-0 overflow-hidden rounded-card", {
+  variants: {
+    style: {
+      compact: "border-border-strong size-14 border",
+      balanced: "size-[84px] shadow-[0_0_0_5px_hsl(var(--surface)),0_14px_30px_-14px_hsl(var(--brand-ink)/0.32)] sm:size-[92px]",
+      centred: "size-[104px] shadow-[0_0_0_5px_hsl(var(--surface)),0_14px_30px_-14px_hsl(var(--brand-ink)/0.32)] sm:size-[120px]",
     },
   },
 });
 
-const portrait = cva(
-  "ring-background bg-active relative shrink-0 overflow-hidden rounded-pill ring-[3px] sm:ring-4",
-  {
-    variants: {
-      style: {
-        compact: "size-12 sm:size-[58px]",
-        balanced: "size-[68px] sm:size-[88px]",
-        centred: "size-[96px] sm:size-[128px]",
-      },
-    },
-  },
-);
-
-const column = cva("min-w-0", {
+const name = cva("font-display font-bold leading-[1.1] tracking-[-0.04em]", {
   variants: {
-    style: {
-      compact: "flex-1 basis-[200px]",
-      balanced: "flex-1 basis-[240px]",
-      centred: "flex w-full flex-col items-center",
-    },
-  },
-});
-
-const actions = cva("flex flex-none items-center gap-2.5 max-sm:w-full max-sm:basis-full", {
-  variants: {
-    style: {
-      // On a phone the actions take their own row: they never shrink, so
-      // beside the name they eat the identity column to one word per line.
-      compact: "ml-auto max-sm:ml-0 max-sm:mt-3.5 max-sm:flex-col",
-      balanced: "ml-auto max-sm:ml-0 max-sm:mt-3.5 max-sm:flex-col",
-      centred: "w-full justify-center",
-    },
-  },
-});
-
-/**
- * Bio, socials and share start at the AVATAR'S edge, not indented under the
- * name. All three are wider than that column, so the indent bought nothing
- * and left a gutter with nothing in it running down the whole header.
- */
-const rest = cva("px-1", {
-  variants: {
-    style: {
-      compact: "pt-2.5",
-      balanced: "pt-3.5",
-      centred: "flex flex-col items-center pt-3.5 text-center",
-    },
-  },
-});
-
-const name = cva("font-display font-extrabold tracking-[-0.03em]", {
-  variants: {
-    style: { compact: "text-title", balanced: "text-name", centred: "text-name-lg" },
+    style: { compact: "text-title", balanced: "text-name-md", centred: "text-name-lg" },
   },
 });
 
@@ -183,8 +181,11 @@ export function CreatorHeader({
   avatarUrl,
   bio,
   greeting,
+  location,
   followers,
+  counts,
   style = "balanced",
+  cover,
   socials,
   share,
   action,
@@ -193,11 +194,11 @@ export function CreatorHeader({
 }: CreatorHeaderProps) {
   const displayed = displayName ?? handle;
   const centred = style === "centred";
-  const hasRest = bio || socials || share;
+  const coverTreatment = cover ?? defaultCoverTreatment(style);
 
   return (
-    <header className={cn("pb-5", className)}>
-      <div className={identity({ style })}>
+    <header className={cn("relative pb-5", centred && "text-center", className)}>
+      <div className={identity({ style, cover: coverTreatment })}>
         <span className={portrait({ style })}>
           {avatarUrl ? (
             // A plain <img> — see above.
@@ -209,35 +210,78 @@ export function CreatorHeader({
           )}
         </span>
 
-        <div className={column({ style })}>
-          {greeting ? <p className="text-primary text-label font-bold">{greeting}</p> : null}
+        <div className={cn("min-w-0", centred && "flex w-full flex-col items-center")}>
           <h1 className={name({ style })}>{displayed}</h1>
-          <div
-            className={cn(
-              "mt-[3px] flex flex-wrap items-baseline gap-x-2.5 gap-y-1",
-              centred && "justify-center",
-            )}
-          >
-            <span className="text-muted-foreground text-label font-semibold">@{handle}</span>
-            <span className="text-faint" aria-hidden>
-              ·
-            </span>
-            <span className="text-label font-bold tabular-nums">
-              {followers} <span className="text-muted-foreground font-medium">followers</span>
-            </span>
-          </div>
+          {greeting ? (
+            <p className="text-primary text-pico tracking-eyebrow mt-[7px] font-mono uppercase">
+              {greeting}
+            </p>
+          ) : null}
         </div>
 
-        {action ? <div className={actions({ style })}>{action}</div> : null}
+        {action ? (
+          <div className={cn("flex items-center gap-2", style === "compact" && "ml-auto")}>
+            {action}
+          </div>
+        ) : null}
       </div>
 
-      {hasRest ? (
-        <div className={rest({ style })}>
-          {bio ? <p className="text-muted-foreground text-copy max-w-[58ch]">{bio}</p> : null}
-          {socials ? <div className={cn(bio && "mt-3")}>{socials}</div> : null}
-          {share ? <div className={cn((bio || socials) && "mt-3")}>{share}</div> : null}
+      {bio ? (
+        <p
+          className={cn(
+            "text-muted-foreground text-copy mt-3.5 max-w-[52ch] text-pretty",
+            style === "compact" && "mt-3 line-clamp-1",
+            centred && "mx-auto",
+          )}
+        >
+          {bio}
+        </p>
+      ) : null}
+      <p className="text-faint text-nano mt-2 font-mono tracking-[0.06em]">
+        @{handle}
+        {location ? <> &nbsp;·&nbsp; {location}</> : null}
+      </p>
+
+      {socials || share ? (
+        <div className={cn("mt-3.5 flex flex-wrap items-center gap-[7px]", centred && "justify-center")}>
+          {socials}
+          {share}
         </div>
       ) : null}
+
+      {/* Counts: compact collapses to one mono line; the others get the row. */}
+      {style === "compact" ? (
+        <p className="border-border text-muted-foreground text-nano mt-3.5 border-t pt-3.5 font-mono tracking-[0.08em]">
+          {counts ? `${counts.posts} posts · ${counts.things} things · ${followers} followers` : `${followers} followers`}
+        </p>
+      ) : (
+        <dl
+          className={cn(
+            "border-border mt-[18px] flex gap-[26px] border-t pt-4",
+            centred && "justify-center",
+          )}
+        >
+          {[
+            ...(counts
+              ? [
+                  { label: "Posts", value: counts.posts },
+                  { label: "Things", value: counts.things },
+                ]
+              : []),
+            { label: "Followers", value: followers },
+          ].map((stat) => (
+            <div key={stat.label}>
+              <dt className="sr-only">{stat.label}</dt>
+              <dd className="font-display text-body font-bold tabular-nums tracking-[-0.03em]">
+                {stat.value}
+              </dd>
+              <dd className="text-faint text-pico tracking-eyebrow mt-0.5 font-mono uppercase">
+                {stat.label}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
       {children}
     </header>
   );

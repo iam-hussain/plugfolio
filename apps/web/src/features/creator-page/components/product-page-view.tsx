@@ -29,6 +29,11 @@ import {
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  PillNavOverride,
+  pillNavActionQuiet,
+  pillNavCircle,
+} from "@/components/chrome/pill-nav";
 import { CommentsSection, WatchButton } from "@/features/shopper-account";
 import { JsonLd } from "@/components/json-ld";
 import { formatPrice } from "@/lib/format-price";
@@ -105,6 +110,37 @@ export function ProductPageView({
         href={`/${page.username}` as Route}
         revealAfter={120}
       />
+      {/* The pill nav morphs into the buy verbs (ADR-0026 §6). An in-store
+          offer has no link, so the pill says so instead of promising a shop
+          it cannot reach. */}
+      <PillNavOverride>
+        <Link
+          href={`/${page.username}`}
+          aria-label={`Back to @${page.username}`}
+          className={pillNavCircle}
+        >
+          <span aria-hidden>←</span>
+        </Link>
+        <WatchButton
+          kind="product"
+          targetId={product.id}
+          isAuthenticated={viewer.signedIn}
+          initiallyWatched={viewer.watched}
+          display="icon"
+        />
+        {inStoreOnly ? (
+          <span className={pillNavActionQuiet}>In-store only</span>
+        ) : (
+          <ProductTapButton
+            productId={product.id}
+            postId={product.fromPost?.id}
+            affiliateUrl={product.affiliateUrl!}
+            source="product"
+            label={own ? "Shop their store" : `Buy at ${retailerName(product.affiliateUrl!)}`}
+            className="h-10 px-5"
+          />
+        )}
+      </PillNavOverride>
       <BackLink asChild>
         <Link href={`/${page.username}`}>
           <BackLinkIcon />

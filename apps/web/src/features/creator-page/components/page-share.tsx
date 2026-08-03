@@ -19,9 +19,24 @@ export type PageShareProps = {
   displayName?: string | null;
   avatarUrl?: string | null;
   meta: string;
+  /**
+   * v2 (ADR-0026): `pill` is the header's accent "Share · QR"; `circle` is the
+   * bare icon circle the morphing pill nav uses; `ways` keeps the two named
+   * ways for surfaces that still want them.
+   */
+  trigger?: "pill" | "circle" | "ways";
+  /** Extra classes on the trigger (the nav circle passes its shell). */
+  className?: string;
 };
 
-export function PageShare({ handle, displayName, avatarUrl, meta }: PageShareProps) {
+export function PageShare({
+  handle,
+  displayName,
+  avatarUrl,
+  meta,
+  trigger = "pill",
+  className,
+}: PageShareProps) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"link" | "code">("link");
 
@@ -32,14 +47,37 @@ export function PageShare({ handle, displayName, avatarUrl, meta }: PageSharePro
 
   return (
     <>
-      <ShareWays>
-        <ShareWay icon={<Link2 />} onClick={() => openOn("link")}>
-          Link
-        </ShareWay>
-        <ShareWay icon={<QrCode />} onClick={() => openOn("code")}>
-          QR
-        </ShareWay>
-      </ShareWays>
+      {trigger === "pill" ? (
+        <button
+          type="button"
+          onClick={() => openOn("link")}
+          className={
+            className ??
+            "bg-primary text-primary-foreground text-pico tracking-eyebrow rounded-pill inline-flex h-[34px] items-center gap-[7px] px-3.5 font-mono font-bold uppercase transition-transform hover:-translate-y-px"
+          }
+        >
+          <Link2 aria-hidden className="size-[13px]" strokeWidth={2.2} />
+          Share · QR
+        </button>
+      ) : trigger === "circle" ? (
+        <button
+          type="button"
+          aria-label="Share this page"
+          onClick={() => openOn("link")}
+          className={className}
+        >
+          <Link2 aria-hidden className="size-[17px]" strokeWidth={2} />
+        </button>
+      ) : (
+        <ShareWays>
+          <ShareWay icon={<Link2 />} onClick={() => openOn("link")}>
+            Link
+          </ShareWay>
+          <ShareWay icon={<QrCode />} onClick={() => openOn("code")}>
+            QR
+          </ShareWay>
+        </ShareWays>
+      )}
       <SharePanel
         handle={handle}
         displayName={displayName}

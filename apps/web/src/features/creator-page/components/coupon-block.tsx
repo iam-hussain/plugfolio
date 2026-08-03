@@ -1,4 +1,4 @@
-import { CouponBlock as CouponPanel } from "@plugfolio/ui";
+import { CodeButton, CouponBlock as CouponPanel } from "@plugfolio/ui";
 import { CopyCodeButton } from "./copy-code-button";
 
 /**
@@ -41,10 +41,12 @@ export function CouponBlock({
   if (ended) {
     if (variant === "chip") return <p className="text-faint text-micro mt-2">Offer ended</p>;
     return (
-      <CouponPanel channel="Offer ended" live={false}>
-        <p className="text-muted-foreground text-micro m-0">
-          The product is still here — only the code has expired.
-        </p>
+      <CouponPanel
+        channel="Offer ended"
+        live={false}
+        note="This code has expired. The product is still here."
+      >
+        <CodeButton code={couponCode} live={false} />
       </CouponPanel>
     );
   }

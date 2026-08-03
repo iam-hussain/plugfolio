@@ -1,33 +1,37 @@
 "use client";
 
 import * as React from "react";
-import { Check, Copy } from "lucide-react";
+import { Check } from "lucide-react";
 import { cva } from "class-variance-authority";
 import { cn } from "../lib/cn";
 
-/** A live offer is a dashed panel on the page ground; a spent one recedes. */
-const couponPanel = cva("rounded-image border-border mt-3 border px-3.5 py-3", {
-  variants: {
-    live: { true: "bg-background border-dashed", false: "bg-transparent" },
-  },
-  defaultVariants: { live: false },
-});
-
-const couponChannel = cva("text-micro font-bold uppercase tracking-[0.07em]", {
-  variants: {
-    live: { true: "text-muted-foreground", false: "text-faint" },
-  },
-  defaultVariants: { live: false },
-});
-
 /**
- * The coupon block (DESIGN §.coupon, ADR-0011) — **always above the button**:
- * copy, then go. A shopper who reaches the retailer before they have the code
- * has to come back for it, and most don't.
+ * The coupon ticket (v2, docs/design/v2-visual-system.md §Signature moves,
+ * ADR-0011) — **always above the button**: copy, then go. A shopper who
+ * reaches the retailer before they have the code has to come back for it, and
+ * most don't.
  *
- * Dashed while the offer is live, solid and quiet once it has ended — an ended
- * offer never takes the product down with it.
+ * Live: accent border, the channel eyebrow, the lime code chip, and the
+ * dashed expiry row. Ended: the whole ticket recedes (grey border, sunk fill,
+ * a dead chip) — an ended offer never takes the product down with it.
  */
+const ticket = cva("rounded-row mt-4 overflow-hidden border", {
+  variants: {
+    live: {
+      true: "border-primary bg-card",
+      false: "border-border bg-active opacity-70",
+    },
+  },
+  defaultVariants: { live: true },
+});
+
+const couponChannel = cva("text-pico tracking-eyebrow font-mono font-bold uppercase", {
+  variants: {
+    live: { true: "text-primary", false: "text-faint" },
+  },
+  defaultVariants: { live: true },
+});
+
 export function CouponBlock({
   channel,
   live = true,
@@ -36,7 +40,7 @@ export function CouponBlock({
   expires,
   className,
 }: {
-  /** "Online code" · "In-store code" — which channel the code works in. */
+  /** "Online offer" · "In-store offer" — which channel the code works in. */
   channel: React.ReactNode;
   live?: boolean;
   /** The `CodeButton`, plus any "10% off" style detail beside it. */
@@ -47,11 +51,21 @@ export function CouponBlock({
   className?: string;
 }) {
   return (
-    <div className={cn(couponPanel({ live }), className)}>
-      <span className={couponChannel({ live })}>{channel}</span>
-      <div className="mt-[7px] flex flex-wrap items-center gap-2">{children}</div>
-      {note ? <p className="text-muted-foreground text-micro mt-2">{note}</p> : null}
-      {expires ? <p className="text-muted-foreground text-micro mt-1.5">{expires}</p> : null}
+    <div className={cn(ticket({ live }), className)}>
+      <div className="flex items-center justify-between gap-2.5 px-4 py-3.5">
+        <div className="min-w-0">
+          <span className={couponChannel({ live })}>{channel}</span>
+          {note ? (
+            <p className="text-muted-foreground text-label mt-1.5 leading-normal">{note}</p>
+          ) : null}
+        </div>
+        <div className="flex shrink-0 flex-wrap items-center gap-2">{children}</div>
+      </div>
+      {expires ? (
+        <p className="border-border-strong text-faint text-pico tracking-eyebrow border-t border-dashed px-4 py-2.5 font-mono uppercase">
+          {expires}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -60,41 +74,58 @@ export function CouponBlock({
  * The code itself — a button, because copying is the action. Copying is also
  * the only signal we get for an in-store offer, so it is recorded (ADR-0011);
  * redemption at the counter never is, and the block says so.
+ *
+ * The chip is Electric Lime with ink text — the one place lime is allowed
+ * (§7): a live offer.
  */
 export function CodeButton({
   code,
-  label = "Code",
+  label = "Copy",
   copied,
+  live = true,
   className,
   ...props
 }: React.ComponentProps<"button"> & {
   code: string;
   label?: string;
   copied?: boolean;
+  /** A spent code renders dead — no lime, no copy affordance. */
+  live?: boolean;
 }) {
+  if (!live) {
+    return (
+      <span
+        aria-label="Offer ended"
+        className={cn(
+          "bg-border text-faint rounded-md text-label inline-flex min-h-11 items-center px-[15px] font-mono font-bold",
+          className,
+        )}
+      >
+        —
+      </span>
+    );
+  }
   return (
     <button
       type="button"
       data-copied={copied ? "" : undefined}
       aria-label={`Copy code ${code}`}
       className={cn(
-        "border-border bg-card text-foreground text-label rounded-pill min-h-11 border px-4 py-[9px] font-bold",
-        "ease-design inline-flex items-center gap-[9px] transition-colors duration-200",
-        "hover:border-primary hover:text-primary data-[copied]:border-primary data-[copied]:text-primary",
+        "bg-accent text-accent-foreground rounded-md text-label inline-flex min-h-11 items-center gap-2 px-[15px] font-mono font-bold tracking-[0.06em]",
+        "ease-design transition-transform duration-150 hover:-translate-y-px",
         className,
       )}
       {...props}
     >
-      {/* Code first, then what pressing it does — the shopper is looking for
-          the code, not for the verb (DESIGN §.code: `<b>SAVE30</b><em>Copy</em>`). */}
-      <b className="tabular-nums tracking-[0.04em]">{code}</b>
-      <span className="text-micro text-muted-foreground font-bold uppercase tracking-[0.07em]">
-        {copied ? "Copied" : label}
-      </span>
       {copied ? (
-        <Check className="size-4" aria-hidden />
+        <>
+          Copied <Check className="size-4" aria-hidden />
+        </>
       ) : (
-        <Copy className="size-4 opacity-60" aria-hidden />
+        <>
+          {code}
+          <span className="sr-only">{label}</span>
+        </>
       )}
     </button>
   );

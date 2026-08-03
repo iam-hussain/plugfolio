@@ -3,37 +3,32 @@ import {
   Button,
   CreatorCover,
   CreatorHeader,
-  ShareWays,
-  ShareWay,
+  defaultCoverTreatment,
   SocialsRow,
 } from "@plugfolio/ui";
-import { Link2, QrCode } from "lucide-react";
 
 /**
- * Creator page header (DESIGN creator.html §.ch) — the avatar overlapping the
- * cover band, identity, socials, and the two named share ways.
+ * Creator page header (v2, ADR-0026) — the square avatar pulled up over the
+ * cover, the Sora name with the mono accent greeting under it, bio, the mono
+ * handle line, the label-pill links row, and the three counts over a hairline.
  *
- * The cover is its own component and sits OUTSIDE the measure, which is what
- * the decorator here reproduces: edge to edge, then everything under it inside
- * 1200px. The header pulls up over it. Rendering the two together put a
- * page-wide band inside a padded container, where it read as a card.
- *
- * The three treatments are the creator's choice (ADR-0017). Compare them here:
- * none of them drops anything, they change how much room identity gets before
- * the goods.
+ * The cover is its own component: `band` runs edge to edge, `tile` sits inside
+ * the measure, `none` is the accent strip compact defaults to. The decorator
+ * reproduces each pairing so the pull-up is judged against the real cover.
  */
 const SOCIALS = [
   { platform: "instagram" as const, href: "https://instagram.com/maya", label: "Instagram" },
   { platform: "youtube" as const, href: "https://youtube.com/@maya", label: "YouTube" },
-  { platform: "tiktok" as const, href: "https://tiktok.com/@maya", label: "TikTok" },
   { platform: "website" as const, href: "https://mayarao.co", label: "mayarao.co" },
 ];
 
 const share = (
-  <ShareWays>
-    <ShareWay icon={<Link2 />}>Link</ShareWay>
-    <ShareWay icon={<QrCode />}>QR</ShareWay>
-  </ShareWays>
+  <button
+    type="button"
+    className="bg-primary text-primary-foreground text-pico tracking-eyebrow rounded-pill inline-flex h-[34px] items-center gap-[7px] px-3.5 font-mono font-bold uppercase"
+  >
+    Share · QR
+  </button>
 );
 
 const meta: Meta<typeof CreatorHeader> = {
@@ -41,55 +36,66 @@ const meta: Meta<typeof CreatorHeader> = {
   component: CreatorHeader,
   parameters: { layout: "fullscreen" },
   decorators: [
-    (Story, ctx) => (
-      <div className="-m-8">
-        <CreatorCover style={ctx.args.style} />
-        <div className="max-w-inner mx-auto px-5 lg:px-10">
-          <Story />
+    (Story, ctx) => {
+      const style = ctx.args.style ?? "balanced";
+      const cover = ctx.args.cover ?? defaultCoverTreatment(style);
+      return (
+        <div className="-m-8 pb-8">
+          {cover === "tile" ? (
+            <div className="max-w-inner mx-auto px-5 pt-3 lg:px-10">
+              <CreatorCover
+                treatment="tile"
+                tall={style === "centred"}
+                badge="126 things live"
+              />
+            </div>
+          ) : (
+            <CreatorCover treatment={cover} tall={style === "centred"} greeting="Everything I wear, linked." />
+          )}
+          <div className="max-w-inner mx-auto px-5 lg:px-10">
+            <Story />
+          </div>
         </div>
-      </div>
-    ),
+      );
+    },
   ],
   args: {
-    handle: "mayamoves",
+    handle: "mayarao",
     displayName: "Maya Rao",
-    bio: "Everyday things that actually work — desk, gym, skin, home. Everything in my posts is tagged, so you can just tap it.",
-    followers: "48.2K",
+    bio: "Thrift-first outfits, one honest link per thing. Bengaluru.",
+    greeting: "Everything I wear, linked.",
+    location: "Bengaluru, IN",
+    followers: "82.4k",
+    counts: { posts: "48", things: "126" },
     socials: <SocialsRow links={SOCIALS} />,
     share,
-    action: <Button>Follow</Button>,
   },
 };
 export default meta;
 type Story = StoryObj<typeof CreatorHeader>;
 
-/** The default: identity, then shelves, then posts. */
+/** The default: identity, then shelves, then posts — over the tile cover. */
 export const Balanced: Story = {};
 
-/** Goods first. Everything tightens; nothing is dropped. */
+/** Goods first: dense row, counts as one mono line, the accent strip cover. */
 export const Compact: Story = { args: { style: "compact" } };
 
-/** Big avatar, centred. Reads as a profile. */
+/** Big avatar, centred; reads as a profile. Taller cover. */
 export const Centred: Story = { args: { style: "centred" } };
 
-/** With the greeting line the creator can set (ADR-0017). */
-export const WithGreeting: Story = {
-  args: { greeting: "Hey — glad you found me." },
-};
+/** The edge-to-edge band cover with its accent baseline. */
+export const BandCover: Story = { args: { cover: "band" } };
 
-/**
- * The owner's view: their two tools where a visitor gets Follow.
- *
- * There used to be a band under this captioned "This is your page — visitors
- * see exactly this", with a second Dashboard button in it. A whole strip of
- * chrome to say what the presence of the tools already says.
- */
+/** The split cover: the accent "shop window" panel beside the imagery. */
+export const SplitCover: Story = { args: { cover: "split" } };
+
+/** The owner's tools where a visitor gets nothing (Follow lives in the nav). */
 export const OwnerView: Story = {
   args: {
     action: (
       <>
-        <Button variant="outline">Dashboard</Button>
-        <Button>Customise</Button>
+        <Button variant="secondary">Dashboard</Button>
+        <Button>Change the look</Button>
       </>
     ),
   },
@@ -97,5 +103,14 @@ export const OwnerView: Story = {
 
 /** No display name, no bio, no socials — a page on its first day. */
 export const Bare: Story = {
-  args: { displayName: null, bio: null, socials: null, followers: "0" },
+  args: {
+    displayName: null,
+    bio: null,
+    greeting: null,
+    location: null,
+    socials: null,
+    share: null,
+    followers: "0",
+    counts: { posts: "0", things: "0" },
+  },
 };
