@@ -138,6 +138,11 @@ export {
 } from "./schemas/shopper-social";
 export {
   pageAccent,
+  pageCoverStyle,
+  type PageCoverStyle,
+  pageLinkMode,
+  type PageLinkMode,
+  resolveCoverStyle,
   type PageAccent,
   pageHeaderStyle,
   type PageHeaderStyle,

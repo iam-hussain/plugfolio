@@ -7,6 +7,7 @@ import type {
 } from "@plugfolio/core";
 import { PAGE_APPEARANCE_DEFAULTS } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
+import { resolveCoverStyle } from "@plugfolio/core";
 import { readAppearance, readMediaKind } from "../page-appearance";
 
 const productSelect = {
@@ -51,6 +52,8 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
           accent: true,
           headerStyle: true,
           gridStyle: true,
+          coverStyle: true,
+          linkMode: true,
           greeting: true,
           _count: { select: { followers: true } },
           categories: {
@@ -74,17 +77,21 @@ export function createCreatorPageRepository(db: PrismaClient = prisma): CreatorP
         },
       });
       if (!row) return null;
-      const { _count, accent, headerStyle, gridStyle, greeting, ...page } = row;
+      const { _count, accent, headerStyle, gridStyle, coverStyle, linkMode, greeting, ...page } =
+        row;
       // Resolve the defaults once here (ADR-0017) so no component downstream
       // has to know what a default is.
-      const look = readAppearance({ accent, headerStyle, gridStyle, greeting });
+      const look = readAppearance({ accent, headerStyle, gridStyle, coverStyle, linkMode, greeting });
+      const resolvedHeader = look.headerStyle ?? PAGE_APPEARANCE_DEFAULTS.headerStyle;
       return {
         ...page,
         posts: page.posts.map((post) => ({ ...post, mediaKind: readMediaKind(post.mediaKind) })),
         greeting: look.greeting,
         accent: look.accent ?? PAGE_APPEARANCE_DEFAULTS.accent,
-        headerStyle: look.headerStyle ?? PAGE_APPEARANCE_DEFAULTS.headerStyle,
+        headerStyle: resolvedHeader,
         gridStyle: look.gridStyle ?? PAGE_APPEARANCE_DEFAULTS.gridStyle,
+        coverStyle: resolveCoverStyle(look.coverStyle, resolvedHeader),
+        linkMode: look.linkMode ?? PAGE_APPEARANCE_DEFAULTS.linkMode,
         followerCount: _count.followers,
       };
     },

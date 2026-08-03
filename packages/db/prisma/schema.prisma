@@ -122,6 +122,10 @@ model Profile {
   accent      String?
   headerStyle String?
   gridStyle   String?
+  /// v2 appearance axes (ADR-0026): cover treatment + links-row mode. Plain
+  /// strings like the rest; unset derives from the header style at the read.
+  coverStyle  String?
+  linkMode    String?
   /// The one line above the name ("Hey — glad you found me."). Unset = none.
   greeting    String?
   /// Set by an admin: takes just this page off the public surface (owner can

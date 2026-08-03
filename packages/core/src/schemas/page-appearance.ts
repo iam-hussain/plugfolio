@@ -20,14 +20,34 @@ export type PageHeaderStyle = z.infer<typeof pageHeaderStyle>;
 export const pageGridStyle = z.enum(["grid", "cards", "list"]);
 export type PageGridStyle = z.infer<typeof pageGridStyle>;
 
+/** The cover treatment (ADR-0026): band = edge-to-edge · tile = inside the
+ *  measure · split = accent panel + imagery · none = the accent strip.
+ *  Unset derives from the header style (compact→none, else tile). */
+export const pageCoverStyle = z.enum(["band", "tile", "split", "none"]);
+export type PageCoverStyle = z.infer<typeof pageCoverStyle>;
+
+/** The links row: mono label pills (the v2 default) or icon circles. */
+export const pageLinkMode = z.enum(["labels", "icons"]);
+export type PageLinkMode = z.infer<typeof pageLinkMode>;
+
+/** The stored-null cover resolves against the header style, not a constant. */
+export function resolveCoverStyle(
+  cover: PageCoverStyle | null,
+  headerStyle: PageHeaderStyle,
+): PageCoverStyle {
+  return cover ?? (headerStyle === "compact" ? "none" : "tile");
+}
+
 export const PAGE_APPEARANCE_DEFAULTS = {
   accent: "violet",
   headerStyle: "balanced",
   gridStyle: "grid",
+  linkMode: "labels",
 } as const satisfies {
   accent: PageAccent;
   headerStyle: PageHeaderStyle;
   gridStyle: PageGridStyle;
+  linkMode: PageLinkMode;
 };
 
 /** The greeting is one line above the name; longer than this is a bio. */

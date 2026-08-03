@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { pageAccent, pageGreeting, pageGridStyle, pageHeaderStyle } from "./page-appearance";
+import {
+  pageAccent,
+  pageCoverStyle,
+  pageGreeting,
+  pageGridStyle,
+  pageHeaderStyle,
+  pageLinkMode,
+} from "./page-appearance";
 
 /**
  * Public-identity edits from profile Settings (brief 10): display name, the
@@ -14,6 +21,8 @@ export const updateProfileIdentityInput = z.object({
   accent: pageAccent.nullish(),
   headerStyle: pageHeaderStyle.nullish(),
   gridStyle: pageGridStyle.nullish(),
+  coverStyle: pageCoverStyle.nullish(),
+  linkMode: pageLinkMode.nullish(),
   greeting: pageGreeting.nullish(),
 });
 

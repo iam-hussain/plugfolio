@@ -1,5 +1,5 @@
 import type { MediaKind, PageAppearance } from "@plugfolio/core";
-import { pageAccent, pageGridStyle, pageHeaderStyle } from "@plugfolio/core";
+import { pageAccent, pageCoverStyle, pageGridStyle, pageHeaderStyle, pageLinkMode } from "@plugfolio/core";
 
 /**
  * Appearance columns are plain strings (ADR-0017: Mongo enums buy nothing), so
@@ -12,6 +12,8 @@ export type AppearanceRow = {
   accent: string | null;
   headerStyle: string | null;
   gridStyle: string | null;
+  coverStyle: string | null;
+  linkMode: string | null;
   greeting: string | null;
 };
 
@@ -20,6 +22,8 @@ export function readAppearance(row: AppearanceRow): PageAppearance {
     accent: pageAccent.safeParse(row.accent).data ?? null,
     headerStyle: pageHeaderStyle.safeParse(row.headerStyle).data ?? null,
     gridStyle: pageGridStyle.safeParse(row.gridStyle).data ?? null,
+    coverStyle: pageCoverStyle.safeParse(row.coverStyle).data ?? null,
+    linkMode: pageLinkMode.safeParse(row.linkMode).data ?? null,
     greeting: row.greeting,
   };
 }

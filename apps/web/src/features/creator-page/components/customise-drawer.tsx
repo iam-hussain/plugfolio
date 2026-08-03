@@ -1,6 +1,12 @@
 "use client";
 
-import type { PageAccent, PageGridStyle, PageHeaderStyle } from "@plugfolio/core";
+import type {
+  PageAccent,
+  PageCoverStyle,
+  PageGridStyle,
+  PageHeaderStyle,
+  PageLinkMode,
+} from "@plugfolio/core";
 import {
   Button,
   Sheet,
@@ -30,6 +36,8 @@ export type CustomiseDrawerProps = {
     accent: PageAccent;
     headerStyle: PageHeaderStyle;
     gridStyle: PageGridStyle;
+    coverStyle: PageCoverStyle;
+    linkMode: PageLinkMode;
     greeting: string | null;
   };
   role: "admin" | "manager";

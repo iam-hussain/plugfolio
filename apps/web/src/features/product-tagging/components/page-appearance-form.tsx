@@ -1,6 +1,12 @@
 "use client";
 
-import type { PageAccent, PageGridStyle, PageHeaderStyle } from "@plugfolio/core";
+import type {
+  PageAccent,
+  PageCoverStyle,
+  PageGridStyle,
+  PageHeaderStyle,
+  PageLinkMode,
+} from "@plugfolio/core";
 import { Button, Input, Label } from "@plugfolio/ui";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -50,6 +56,8 @@ export type PageAppearanceFormProps = {
     accent: PageAccent;
     headerStyle: PageHeaderStyle;
     gridStyle: PageGridStyle;
+    coverStyle: PageCoverStyle;
+    linkMode: PageLinkMode;
     greeting: string | null;
   };
   role: "admin" | "manager";
@@ -86,11 +94,25 @@ const GRIDS: readonly { value: PageGridStyle; label: string; note: string }[] = 
   { value: "list", label: "List", note: "One per row. Easiest to scan on a phone." },
 ];
 
+const COVERS: readonly { value: PageCoverStyle; label: string; note: string }[] = [
+  { value: "band", label: "Band", note: "Edge to edge, with your accent's baseline." },
+  { value: "tile", label: "Tile", note: "A framed cover inside the page column." },
+  { value: "split", label: "Split", note: "Your accent panel beside the imagery." },
+  { value: "none", label: "None", note: "Straight to the goods — just the accent strip." },
+];
+
+const LINK_MODES: readonly { value: PageLinkMode; label: string; note: string }[] = [
+  { value: "labels", label: "Text", note: "Named pills — Instagram, YouTube, your site." },
+  { value: "icons", label: "Icons", note: "Circles. Quieter, if the row got long." },
+];
+
 export function PageAppearanceForm({ profileId, appearance, role }: PageAppearanceFormProps) {
   const router = useRouter();
   const [accent, setAccent] = useState<PageAccent>(appearance.accent);
   const [headerStyle, setHeaderStyle] = useState<PageHeaderStyle>(appearance.headerStyle);
   const [gridStyle, setGridStyle] = useState<PageGridStyle>(appearance.gridStyle);
+  const [coverStyle, setCoverStyle] = useState<PageCoverStyle>(appearance.coverStyle);
+  const [linkMode, setLinkMode] = useState<PageLinkMode>(appearance.linkMode);
   const [greeting, setGreeting] = useState(appearance.greeting ?? "");
   const isAdmin = role === "admin";
 
@@ -100,6 +122,8 @@ export function PageAppearanceForm({ profileId, appearance, role }: PageAppearan
         accent,
         headerStyle,
         gridStyle,
+        coverStyle,
+        linkMode,
         greeting: greeting.trim() || null,
       }),
     onSuccess: () => router.refresh(),
@@ -153,10 +177,22 @@ export function PageAppearanceForm({ profileId, appearance, role }: PageAppearan
         onPick={(next) => setHeaderStyle(next)}
       />
       <Choice
-        legend="Post layout"
+        legend="Cover treatment"
+        options={COVERS}
+        value={coverStyle}
+        onPick={(next) => setCoverStyle(next)}
+      />
+      <Choice
+        legend="Wall layout"
         options={GRIDS}
         value={gridStyle}
         onPick={(next) => setGridStyle(next)}
+      />
+      <Choice
+        legend="Link row"
+        options={LINK_MODES}
+        value={linkMode}
+        onPick={(next) => setLinkMode(next)}
       />
 
       <div className="flex flex-col gap-1.5">

@@ -21,6 +21,14 @@ save where you made them. Nothing here is ever seen by a shopper.
 | `/dashboard/categories` | Shelves: add, rename, reorder, delete |
 | `/dashboard/collabs` | The collab list + the open requirement board |
 | `/dashboard/settings` | Identity, appearance, links, connections, Managers, danger zone |
+| `/dashboard/traffic` | The v2 Traffic section (ADR-0026): range chips, views-vs-taps chart, what was opened, sources |
+
+**Appearance (ADR-0017, amended by ADR-0026):** five axes, all stored on
+`Profile` as nullable strings and resolved at the read — `accent`,
+`headerStyle`, `gridStyle`, plus v2's `coverStyle` (band / tile / split /
+none; unset derives from the header style: compact→none, else tile) and
+`linkMode` (labels / icons). Edited in the customise drawer on the live page
+and in Settings; Admin-only like the rest of identity.
 
 ## The shell
 

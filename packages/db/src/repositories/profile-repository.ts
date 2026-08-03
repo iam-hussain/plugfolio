@@ -71,6 +71,8 @@ export function createProfileIdentityRepository(
           accent: true,
           headerStyle: true,
           gridStyle: true,
+          coverStyle: true,
+          linkMode: true,
           greeting: true,
         },
       });

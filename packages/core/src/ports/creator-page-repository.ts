@@ -5,7 +5,13 @@
  * in `@plugfolio/db` (§6.2).
  */
 
-import type { PageAccent, PageGridStyle, PageHeaderStyle } from "../schemas/page-appearance";
+import type {
+  PageAccent,
+  PageCoverStyle,
+  PageGridStyle,
+  PageHeaderStyle,
+  PageLinkMode,
+} from "../schemas/page-appearance";
 
 export type ShopperProduct = {
   readonly id: string;
@@ -67,6 +73,8 @@ export type CreatorPage = {
   readonly accent: PageAccent;
   readonly headerStyle: PageHeaderStyle;
   readonly gridStyle: PageGridStyle;
+  readonly coverStyle: PageCoverStyle;
+  readonly linkMode: PageLinkMode;
   readonly followerCount: number;
   readonly categories: readonly PageCategory[];
   readonly posts: readonly ShopperPost[];

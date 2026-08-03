@@ -1,6 +1,12 @@
 /** Port for a profile's public identity + deletion (brief 10 Settings). */
 
-import type { PageAccent, PageGridStyle, PageHeaderStyle } from "../schemas/page-appearance";
+import type {
+  PageAccent,
+  PageCoverStyle,
+  PageGridStyle,
+  PageHeaderStyle,
+  PageLinkMode,
+} from "../schemas/page-appearance";
 
 /**
  * How the page looks (ADR-0017). Null on any field = the default; the read
@@ -10,6 +16,8 @@ export type PageAppearance = {
   readonly accent: PageAccent | null;
   readonly headerStyle: PageHeaderStyle | null;
   readonly gridStyle: PageGridStyle | null;
+  readonly coverStyle: PageCoverStyle | null;
+  readonly linkMode: PageLinkMode | null;
   readonly greeting: string | null;
 };
 

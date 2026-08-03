@@ -9,7 +9,6 @@ import {
   Button,
   CreatorCover,
   CreatorHeader,
-  defaultCoverTreatment,
   EmptyState,
   measure,
   PageBand,
@@ -152,6 +151,8 @@ export function CreatorPageView({
             accent: page.accent,
             headerStyle: page.headerStyle,
             gridStyle: page.gridStyle,
+            coverStyle: page.coverStyle,
+            linkMode: page.linkMode,
             greeting: page.greeting,
           }}
         />
@@ -161,7 +162,9 @@ export function CreatorPageView({
     follow
   );
 
-  const cover = defaultCoverTreatment(page.headerStyle);
+  // Stored, resolved at the read (ADR-0026): the drawer writes them, the
+  // repository resolves nulls against the header style.
+  const cover = page.coverStyle;
   const thingsCount = thingsTagged + products.length;
 
   return (
@@ -228,7 +231,7 @@ export function CreatorPageView({
           counts={{ posts: String(posts.length), things: String(thingsCount) }}
           style={page.headerStyle}
           cover={cover}
-          socials={<SocialsRow links={socials} />}
+          socials={<SocialsRow links={socials} mode={page.linkMode} />}
           share={
             <PageShare
               handle={page.username}

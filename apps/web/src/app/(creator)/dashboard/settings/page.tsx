@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   PAGE_APPEARANCE_DEFAULTS,
+  resolveCoverStyle,
   getMyProfileIdentity,
   getMyProfiles,
   listManagers,
@@ -118,6 +119,11 @@ export default async function SettingsPage({
               accent: identity.accent ?? PAGE_APPEARANCE_DEFAULTS.accent,
               headerStyle: identity.headerStyle ?? PAGE_APPEARANCE_DEFAULTS.headerStyle,
               gridStyle: identity.gridStyle ?? PAGE_APPEARANCE_DEFAULTS.gridStyle,
+              coverStyle: resolveCoverStyle(
+                identity.coverStyle,
+                identity.headerStyle ?? PAGE_APPEARANCE_DEFAULTS.headerStyle,
+              ),
+              linkMode: identity.linkMode ?? PAGE_APPEARANCE_DEFAULTS.linkMode,
               greeting: identity.greeting,
             }}
           />

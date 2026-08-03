@@ -52,6 +52,8 @@ export async function updateProfileIdentity(
   if (input.accent !== undefined) patch.accent = input.accent;
   if (input.headerStyle !== undefined) patch.headerStyle = input.headerStyle;
   if (input.gridStyle !== undefined) patch.gridStyle = input.gridStyle;
+  if (input.coverStyle !== undefined) patch.coverStyle = input.coverStyle;
+  if (input.linkMode !== undefined) patch.linkMode = input.linkMode;
   if (input.greeting !== undefined) patch.greeting = input.greeting;
   // Brief 10: the picture is the ONE control a Manager gets.
   const touchesMoreThanPicture = Object.keys(patch).some((key) => key !== "avatarUrl");
