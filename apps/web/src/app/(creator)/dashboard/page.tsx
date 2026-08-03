@@ -170,10 +170,15 @@ export default async function DashboardPage({
           </>
         )}
 
-        <SocialConnections youtube={youtube} connectAction={connectGoogle} />
+        {/* Wrapped so the stack rhythm holds: the card-to-card auto margin
+            only fires between adjacent DashCards, and the block above this is
+            a plain div. */}
+        <div className="mt-3.5">
+          <SocialConnections youtube={youtube} connectAction={connectGoogle} />
+        </div>
 
         {active && traffic ? (
-          <DashCard>
+          <DashCard className="mt-3.5">
             <DashCardHead>
               <DashCardTitle>Traffic · @{active.username}</DashCardTitle>
               <DashCardNote>All time</DashCardNote>
