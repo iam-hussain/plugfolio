@@ -15,7 +15,7 @@ export function CreatorCard({ creator }: { creator: DiscoveryCreator }) {
       href={`/${creator.username}`}
       className="border-border bg-card rounded-tile hover:border-primary flex items-center gap-3 border p-3.5 no-underline transition-[transform,border-color] duration-150 hover:-translate-y-0.5"
     >
-      <span className="bg-active rounded-panel relative size-[46px] shrink-0 overflow-hidden">
+      <span className="bg-border-strong rounded-panel relative size-[46px] shrink-0 overflow-hidden">
         {creator.avatarUrl ? (
           /* ponytail: unoptimized until the social-import pipeline pins image domains */
           <Image src={creator.avatarUrl} alt="" fill unoptimized className="object-cover" />
@@ -29,9 +29,12 @@ export function CreatorCard({ creator }: { creator: DiscoveryCreator }) {
         <span className="font-display text-copy block truncate font-semibold tracking-[-0.02em]">
           {creator.displayName ?? `@${creator.username}`}
         </span>
-        <span className="text-muted-foreground text-label block truncate">
-          @{creator.username}
-        </span>
+        {/* No display name means the handle IS the name — never both lines. */}
+        {creator.displayName ? (
+          <span className="text-muted-foreground text-label block truncate">
+            @{creator.username}
+          </span>
+        ) : null}
         <span className="text-faint text-pico mt-[5px] block font-mono tracking-[0.06em]">
           {creator.productCount} {creator.productCount === 1 ? "thing" : "things"} tagged
         </span>

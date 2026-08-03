@@ -74,7 +74,7 @@ export function ProfileSwitcher({
           >
             <Avatar className="rounded-md size-[38px]">
               {active?.avatarUrl ? <AvatarImage src={active.avatarUrl} alt="" /> : null}
-              <AvatarFallback className="bg-active text-primary text-micro rounded-md font-bold">
+              <AvatarFallback className="text-primary text-micro rounded-md font-bold">
                 {active?.username.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -107,7 +107,7 @@ export function ProfileSwitcher({
             >
               <Avatar className="size-[26px]">
                 {profile.avatarUrl ? <AvatarImage src={profile.avatarUrl} alt="" /> : null}
-                <AvatarFallback className="bg-active text-primary text-pico font-bold">
+                <AvatarFallback className="text-primary text-pico font-bold">
                   {profile.username.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>

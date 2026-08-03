@@ -128,7 +128,7 @@ export function AccountPage({
           avatar={
             <Avatar className="size-12 flex-none sm:size-14">
               {image ? <AvatarImage src={image} alt="" /> : null}
-              <AvatarFallback className="bg-active text-primary font-display text-title font-bold">
+              <AvatarFallback className="text-primary font-display text-title font-bold">
                 {(handle || email || "?").trim().charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>

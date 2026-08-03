@@ -43,7 +43,9 @@ function AvatarFallback({
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "bg-muted text-muted-foreground flex size-full items-center justify-center rounded-full text-sm group-data-[size=sm]/avatar:text-xs",
+        // v2: border-strong, not the card tint — an initial on the card's own
+        // colour was invisible in light and dark alike (ADR-0026 review).
+        "bg-border-strong text-foreground flex size-full items-center justify-center rounded-full text-sm group-data-[size=sm]/avatar:text-xs",
         className,
       )}
       {...props}

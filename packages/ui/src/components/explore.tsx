@@ -233,7 +233,7 @@ export function DiscoveryCard({
  */
 export function DiscoveryAvatar({ initial, src }: { initial: string; src?: string | null }) {
   return (
-    <span className="bg-active text-primary rounded-pill text-pico grid size-5 flex-none place-items-center overflow-hidden font-bold">
+    <span className="bg-border-strong text-primary rounded-pill text-pico grid size-5 flex-none place-items-center overflow-hidden font-bold">
       {src ? (
         // A plain <img>: this package is framework-free and never imports next/image.
         <img src={src} alt="" className="size-full object-cover" />

@@ -159,7 +159,7 @@ const identity = cva("relative z-[1] flex", {
   defaultVariants: { style: "balanced", cover: "tile" },
 });
 
-const portrait = cva("bg-active relative shrink-0 overflow-hidden rounded-card", {
+const portrait = cva("bg-border-strong relative shrink-0 overflow-hidden rounded-card", {
   variants: {
     style: {
       compact: "border-border-strong size-14 border",

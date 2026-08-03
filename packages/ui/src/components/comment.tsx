@@ -105,7 +105,7 @@ export function CommentAvatar({
   return (
     <span
       className={cn(
-        "bg-active text-primary text-micro rounded-pill grid size-8 flex-none place-items-center overflow-hidden font-extrabold",
+        "bg-border-strong text-primary text-micro rounded-pill grid size-8 flex-none place-items-center overflow-hidden font-extrabold",
         className,
       )}
     >

@@ -65,7 +65,7 @@ export function FollowRow({ creator, meta: _meta, badge }: FollowRowProps) {
         avatar={
           <Avatar className="rounded-panel size-[46px]">
             {creator.avatarUrl ? <AvatarImage src={creator.avatarUrl} alt="" /> : null}
-            <AvatarFallback className="bg-active text-primary font-display text-body rounded-panel font-bold">
+            <AvatarFallback className="text-primary font-display text-body rounded-panel font-bold">
               {creator.username.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>

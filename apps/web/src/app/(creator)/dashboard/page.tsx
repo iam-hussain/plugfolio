@@ -99,7 +99,7 @@ export default async function DashboardPage({
                   avatar={
                     <Avatar className="size-[60px] flex-none">
                       {page?.avatarUrl ? <AvatarImage src={page.avatarUrl} alt="" /> : null}
-                      <AvatarFallback className="bg-active text-primary font-display text-title font-extrabold">
+                      <AvatarFallback className="text-primary font-display text-title font-extrabold">
                         {active.username.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -222,7 +222,7 @@ export default async function DashboardPage({
                     role={profile.role === "manager" ? "manager" : undefined}
                     avatar={
                       <Avatar className="size-7">
-                        <AvatarFallback className="bg-active text-primary text-pico font-bold">
+                        <AvatarFallback className="text-primary text-pico font-bold">
                           {profile.username.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>

@@ -256,7 +256,7 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
                     href={teaser ? scopeHref("creators", query) : undefined}
                     divided={false}
                   />
-                  <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                  <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
                     {creators.map((creator) => (
                       <CreatorCard key={creator.id} creator={creator} />
                     ))}

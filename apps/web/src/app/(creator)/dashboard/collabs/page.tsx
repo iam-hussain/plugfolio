@@ -135,7 +135,7 @@ export default async function CreatorCollabsPage({
                 key={collab.id}
                 avatar={
                   <Avatar className="size-11 flex-none">
-                    <AvatarFallback className="bg-active text-primary font-bold">
+                    <AvatarFallback className="text-primary font-bold">
                       {collab.businessName.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>

@@ -102,7 +102,7 @@ export function AccountMenu({ name, handle, avatarUrl, profiles, hasBusiness }: 
       >
         <Avatar className="size-7">
           {avatarUrl ? <AvatarImage src={avatarUrl} alt="" /> : null}
-          <AvatarFallback className="bg-active text-foreground text-micro">{initial}</AvatarFallback>
+          <AvatarFallback className="text-foreground text-micro">{initial}</AvatarFallback>
         </Avatar>
         <span className="hidden max-w-[14ch] items-center gap-1.5 sm:inline-flex">
           <span className="text-foreground text-nano truncate font-mono tracking-[0.04em]">
@@ -124,7 +124,7 @@ export function AccountMenu({ name, handle, avatarUrl, profiles, hasBusiness }: 
           <div className="flex items-center gap-2.5 px-2 pb-2.5 pt-1.5">
             <Avatar className="size-9">
               {avatarUrl ? <AvatarImage src={avatarUrl} alt="" /> : null}
-              <AvatarFallback className="bg-active text-foreground text-micro">
+              <AvatarFallback className="text-foreground text-micro">
                 {initial}
               </AvatarFallback>
             </Avatar>
@@ -152,7 +152,7 @@ export function AccountMenu({ name, handle, avatarUrl, profiles, hasBusiness }: 
                   >
                     <Avatar className="rounded-[9px] size-7">
                       {profile.avatarUrl ? <AvatarImage src={profile.avatarUrl} alt="" /> : null}
-                      <AvatarFallback className="bg-background text-primary text-pico rounded-[9px] font-bold">
+                      <AvatarFallback className="text-primary text-pico rounded-[9px] font-bold">
                         {profile.username.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
