@@ -77,6 +77,9 @@ export function CommentsSection({
   return (
     <CommentSection
       id="comments"
+      // v2: named for what a page's comments mostly are — questions about the
+      // goods ("does this ship to Pune?", "is the code still live?").
+      title={productId ? "Questions about this thing" : "Questions on this page"}
       count={comments.total}
       report={<ReportButton {...report} />}
       className="scroll-mt-20"

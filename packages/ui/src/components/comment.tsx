@@ -65,9 +65,11 @@ export function SortButton({
       type="button"
       aria-pressed={selected}
       className={cn(
-        "border-border bg-card text-muted-foreground text-micro rounded-pill min-h-[38px] border px-3.5 py-2 font-bold",
+        // v2: quiet outline chips; the selected sort takes the accent edge
+        // rather than a fill — sorting is a lens, not an action.
+        "border-border-strong text-faint text-label rounded-md min-h-[38px] border px-3 py-[7px] font-semibold",
         "ease-design hover:border-primary hover:text-primary transition-colors duration-200",
-        selected && "bg-foreground border-foreground text-background hover:text-background",
+        selected && "border-primary text-primary",
         className,
       )}
       {...props}
@@ -83,14 +85,8 @@ export function CommentList({
   className?: string;
 }) {
   return (
-    <ul
-      className={cn(
-        // The page's list separates its entries; a threaded list doesn't,
-        // because the reply rail already carries the structure.
-        "[&>li+li]:border-border mt-[18px] list-none p-0 [&>li+li]:border-t",
-        className,
-      )}
-    >
+    // v2: every comment is its own card; the gap carries the separation.
+    <ul className={cn("mt-[18px] flex list-none flex-col gap-2.5 p-0", className)}>
       {children}
     </ul>
   );
@@ -140,20 +136,29 @@ export type CommentProps = {
 export function Comment({ author, badge, when, body, avatar, actions, replies }: CommentProps) {
   return (
     <>
-      <div className="flex gap-3 py-3.5">
+      {/* v2: a bordered card; the creator's own reply earns the accent edge,
+          which the badge's presence already declares. */}
+      <div
+        className={cn(
+          "border-border bg-card rounded-row flex gap-3 border px-4 py-3.5",
+          badge && "border-primary",
+        )}
+      >
         {avatar}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline gap-2">
-            <b className="text-label font-bold">{author}</b>
+            <b className="text-label font-semibold">{author}</b>
             {badge ? (
-              <span className="bg-active text-primary text-micro rounded-pill px-2 py-0.5 font-bold uppercase tracking-[0.04em]">
+              <span className="bg-primary text-primary-foreground text-pico tracking-eyebrow rounded-[5px] px-[7px] py-[3px] font-mono font-bold uppercase">
                 {badge}
               </span>
             ) : null}
-            <span className="text-faint text-micro">{when}</span>
+            <span className="text-faint text-nano">{when}</span>
           </div>
-          <p className="text-muted-foreground text-copy mt-[5px]">{body}</p>
-          {actions ? <div className="mt-2 flex items-center gap-1">{actions}</div> : null}
+          <p className="text-muted-foreground text-copy mt-1.5 text-pretty leading-[1.55]">
+            {body}
+          </p>
+          {actions ? <div className="mt-2.5 flex items-center gap-1">{actions}</div> : null}
         </div>
       </div>
       {replies}
@@ -164,6 +169,6 @@ export function Comment({ author, badge, when, body, avatar, actions, replies }:
 /** The indented reply rail — one level only (ADR-0013). */
 export function CommentThread({ children }: { children: React.ReactNode }) {
   return (
-    <ul className="border-border mb-1.5 ml-11 list-none border-l p-0 [&_>li]:pl-4">{children}</ul>
+    <ul className="mb-1.5 ml-8 mt-2.5 flex list-none flex-col gap-2.5 p-0">{children}</ul>
   );
 }
