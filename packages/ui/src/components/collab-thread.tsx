@@ -27,9 +27,9 @@ const termsCardVariants = cva(
       status: {
         /* Negotiating is the resting state and wears the ordinary hairline. */
         negotiating: "border-border",
-        /* Agreed earns the accent edge — it is the one moment in the thread
-           where something was settled. */
-        agreed: "border-accent",
+        /* Agreed earns the forest edge (v2: lime stays offer-only) — the one
+           moment in the thread where something was settled. */
+        agreed: "border-success",
       },
     },
     defaultVariants: { status: "negotiating" },
@@ -142,7 +142,7 @@ export function AgreedBanner({ className, children, ...props }: React.ComponentP
     <p
       data-slot="agreed-banner"
       className={cn(
-        "bg-accent text-accent-foreground rounded-image text-copy mt-3 flex items-center gap-2.5 px-4 py-3 font-bold",
+        "bg-success text-success-foreground rounded-image text-copy mt-3 flex items-center gap-2.5 px-4 py-3 font-semibold",
         className,
       )}
       {...props}
