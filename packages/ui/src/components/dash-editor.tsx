@@ -250,7 +250,7 @@ export function CardFoot({ children }: { children: React.ReactNode }) {
 
 export function PreviewLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-faint text-micro mb-2 block font-bold uppercase tracking-[0.07em]">
+    <span className="text-faint text-pico tracking-eyebrow mb-2.5 block font-mono font-bold uppercase">
       {children}
     </span>
   );
@@ -273,9 +273,16 @@ export function PreviewCard({
   sticky?: boolean;
 }) {
   return (
-    <div className={cn(sticky && "min-[940px]:sticky min-[940px]:top-32")}>
-      <PreviewLabel>What a shopper sees</PreviewLabel>
-      <div className="border-border bg-card rounded-tile border p-3.5">
+    // v2: the preview rides in a sunk panel, so it reads as a window onto the
+    // public page rather than as another form card.
+    <div
+      className={cn(
+        "bg-active border-border-strong rounded-sheet border p-3.5",
+        sticky && "min-[940px]:sticky min-[940px]:top-32",
+      )}
+    >
+      <PreviewLabel>What a shopper will see</PreviewLabel>
+      <div className="border-border bg-card rounded-lg border p-3.5">
         {image}
         <p className="text-label mt-3 font-bold">{title}</p>
         {price ? (

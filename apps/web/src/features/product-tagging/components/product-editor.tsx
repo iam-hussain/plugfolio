@@ -49,14 +49,17 @@ export function ProductEditor({ profileId, categories, product, libraryHref }: P
   const { fields, state, save, remove } = useProductEditor({ profileId, product, libraryHref });
 
   return (
-    <div className="grid items-start gap-[18px] min-[940px]:grid-cols-[minmax(0,38%)_minmax(0,1fr)] min-[940px]:gap-[26px]">
-      <ProductEditorPreview
-        product={product}
-        kind={fields.kind}
-        affiliateUrl={fields.affiliateUrl}
-        couponCode={fields.couponCode}
-        imageUrl={fields.imageUrl}
-      />
+    // v2: the form leads; the shopper preview rides sticky on the right.
+    <div className="grid items-start gap-[18px] min-[940px]:grid-cols-[minmax(0,1fr)_minmax(0,38%)] min-[940px]:gap-[26px]">
+      <div className="min-w-0 min-[940px]:order-last">
+        <ProductEditorPreview
+          product={product}
+          kind={fields.kind}
+          affiliateUrl={fields.affiliateUrl}
+          couponCode={fields.couponCode}
+          imageUrl={fields.imageUrl}
+        />
+      </div>
 
       <div>
         <DashCard>

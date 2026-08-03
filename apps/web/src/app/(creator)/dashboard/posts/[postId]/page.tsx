@@ -266,6 +266,36 @@ export default async function EditPostPage({
                 `/dashboard/products/new?profile=${active.id}&post=${post.id}` as Route
               }
             />
+
+            {/* The live preview §7.4 requires — a window onto the public
+                card, updating as products connect (v2 §Post editor). */}
+            <div className="bg-active border-border-strong rounded-sheet mt-3.5 border p-3.5">
+              <p className="text-faint text-pico tracking-eyebrow mb-2.5 font-mono font-bold uppercase">
+                What a shopper will see
+              </p>
+              <div className="border-border bg-card rounded-lg overflow-hidden border">
+                <span className="bg-active block h-[150px] overflow-hidden">
+                  <Image
+                    src={post.mediaUrl}
+                    alt=""
+                    width={600}
+                    height={300}
+                    unoptimized
+                    className="size-full object-cover"
+                  />
+                </span>
+                <span className="block px-3 py-[11px]">
+                  <span className="text-label block leading-[1.4]">
+                    {post.caption ?? "Untitled post"}
+                  </span>
+                  <span className="text-primary text-pico tracking-eyebrow mt-2 block font-mono uppercase">
+                    {post.products.length > 0
+                      ? `In this post — ${post.products.length} thing${post.products.length === 1 ? "" : "s"}`
+                      : "Nothing tagged yet"}
+                  </span>
+                </span>
+              </div>
+            </div>
           </DashCard>
         </EditorGrid>
       </DashBody>

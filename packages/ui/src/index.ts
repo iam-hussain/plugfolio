@@ -56,6 +56,7 @@ export * from "./components/navigation-menu";
 export * from "./components/pagination";
 export * from "./components/popover";
 export * from "./components/progress";
+export { TrafficChart } from "./components/traffic-chart";
 export * from "./components/prompt-dialog";
 export * from "./components/radio-group";
 export * from "./components/resizable";
