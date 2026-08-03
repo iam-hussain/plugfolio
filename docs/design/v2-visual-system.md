@@ -96,3 +96,24 @@ introduce a second scale.
 
 `.pf-t` = translateY(−1px) on hover; `.pf-c` = translateY(−2px) + accent border; transitions
 .15s ease; the socket plug .28s `cubic-bezier(.2,.8,.3,1)`; reduced-motion kills all of it.
+
+## Migration status (Aug 2026)
+
+**On the v2 design, structurally:** tokens + preset (both themes, Inter, nav
+tokens, keyframes) · chrome (top bar, account menu, morphing pill nav with the
+override contract, landing footer) · landing (stack hero) · Explore (search
+head, chips, v2 card chassis, dashed sponsored slot) · creator page (header ×
+cover treatments, wall layouts, socials pills, shelf chips, viewer bands, pill
+nav verbs) · post view (buy-mode pill) · product view (coupon ticket, buy-mode
+pill) · Following/Saved framing · auth (ink pane, lime action colour, socket
+picker) · 404/error (FaultMark animation).
+
+**Inheriting v2 through the tokens, awaiting their structural pass:** the
+marketing subpages (how-it-works, for-creators, for-business), Support,
+Account, comments internals, the creator dashboard (v2 rail, traffic chart +
+breakdown + sources panels, editor drawers, shelves screen), business
+setup/collabs/thread (turn banner, terms bubble), the operator console, and
+the customise drawer's new axes (cover treatment, link-row mode as *stored*
+options — today they derive from the header style). The prototype
+(`Plugfolio v2.dc.html` in the design project) remains the pixel source for
+each of those.
