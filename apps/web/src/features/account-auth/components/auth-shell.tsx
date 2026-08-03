@@ -38,15 +38,17 @@ export function AuthShell({
       data-role={role}
       className="relative min-h-dvh [--color-primary:78_100%_62%] [--color-primary-foreground:250_27%_9%] [--ring:78_100%_62%] lg:flex lg:items-stretch"
     >
-      {/* ── pane one — the ink panel ── */}
-      <aside className="bg-brand-ink flex flex-col justify-center px-6 py-8 text-white lg:w-2/5 lg:shrink-0 lg:px-11 lg:py-12">
+      {/* ── pane one — the ink panel: DESKTOP ONLY. The design's narrow
+          layout has no ink band; the brand lockup rides above the card
+          instead (v2 §auth authSplit/authStacked). ── */}
+      <aside className="bg-brand-ink hidden flex-col justify-center px-11 py-12 text-white lg:flex lg:w-2/5 lg:shrink-0">
         <Link href="/" aria-label="Plugfolio home" className="self-start">
           <Logo layout="reversed" />
         </Link>
-        <h2 className="font-display mt-7 hidden text-display-sm font-bold leading-[1.15] tracking-[-0.04em] lg:block">
+        <h2 className="font-display text-display-sm mt-7 font-bold leading-[1.15] tracking-[-0.04em]">
           Plug yourself in.
         </h2>
-        <ul className="mt-[18px] hidden flex-col gap-2.5 lg:flex">
+        <ul className="mt-[18px] flex flex-col gap-2.5">
           {PROMISES.map((line) => (
             <li key={line} className="text-label flex gap-2.5 leading-[1.55] text-white/70">
               <span aria-hidden className="text-accent">
@@ -56,11 +58,15 @@ export function AuthShell({
             </li>
           ))}
         </ul>
-        {artefact ? <div className="mt-6 hidden lg:block">{artefact}</div> : null}
+        {artefact ? <div className="mt-6">{artefact}</div> : null}
       </aside>
 
       {/* ── pane two — the form ── */}
       <main className="bg-background flex flex-1 flex-col items-center justify-center px-5 py-9 lg:px-10">
+        {/* The stacked layout's way out: the mark above the card. */}
+        <Link href="/" aria-label="Plugfolio home" className="mb-6 lg:hidden">
+          <Logo layout="horizontal" tone="auto" />
+        </Link>
         <div className="border-border bg-card rounded-drawer w-full max-w-[400px] border p-[22px]">
           {children}
         </div>
