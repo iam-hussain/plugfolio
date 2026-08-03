@@ -74,37 +74,36 @@ export function DiscoveryRail({ children }: { children: React.ReactNode }) {
 
 const cardShell = cva(
   [
-    "group/card border-border bg-card rounded-card ease-design relative flex flex-col border p-2 text-inherit no-underline",
-    "transition-[transform,box-shadow,border-color] duration-300",
-    "hover:shadow-lift hover:-translate-y-1 hover:border-transparent",
-    "focus-within:shadow-lift focus-within:-translate-y-1",
+    // v2 (ADR-0026): the plain bordered card — no mats, no tilt. Hover lifts
+    // 2px and the border takes the accent (.pf-c).
+    "group/card border-border bg-card rounded-tile ease-design relative flex flex-col overflow-hidden border text-inherit no-underline",
+    "transition-[transform,border-color] duration-150",
+    "hover:border-primary hover:-translate-y-0.5",
+    "focus-within:border-primary focus-within:-translate-y-0.5",
   ],
   {
     variants: {
       layout: {
         grid: "w-full",
-        // The one place the resting tilt lives — see the note at the top.
-        rail: [
-          "w-[190px] flex-none snap-start min-[560px]:w-[212px]",
-          "[&:nth-child(odd)]:-rotate-[1.2deg] [&:nth-child(even)]:rotate-[1.2deg]",
-          "hover:rotate-0 focus-within:rotate-0",
-        ],
+        rail: "w-[190px] flex-none snap-start min-[560px]:w-[212px]",
       },
     },
     defaultVariants: { layout: "grid" },
   },
 );
 
-/** The colour mat the photo is mounted on. */
-const cardMat = cva("rounded-tile relative overflow-hidden p-2", {
+/** v2 retires the colour mats (ADR-0026 §3): the photo IS the card's top.
+    The `tone` prop survives so call sites keep compiling; it no longer
+    changes anything. */
+const cardMat = cva("relative overflow-hidden", {
   variants: {
     tone: {
-      lavender: "bg-tile-lavender",
-      sky: "bg-tile-sky",
-      butter: "bg-tile-butter",
-      mint: "bg-tile-mint",
-      blush: "bg-tile-blush",
-      coral: "bg-tile-coral",
+      lavender: "",
+      sky: "",
+      butter: "",
+      mint: "",
+      blush: "",
+      coral: "",
     },
   },
   defaultVariants: { tone: "lavender" },
@@ -117,9 +116,14 @@ const cardMat = cva("rounded-tile relative overflow-hidden p-2", {
  * own product.
  */
 const cardFlag = cva(
-  "text-pico rounded-pill absolute left-2 top-2 z-10 max-w-[calc(100%-1rem)] truncate px-2.5 py-1 font-bold uppercase tracking-[0.06em]",
+  "text-pico absolute left-2 top-2 z-10 max-w-[calc(100%-1rem)] truncate font-mono font-bold uppercase tracking-[0.06em]",
   {
-    variants: { tone: { offer: "bg-accent text-accent-foreground", own: "bg-card text-primary" } },
+    variants: {
+      tone: {
+        offer: "bg-accent text-accent-foreground rounded-[6px] px-2 py-1",
+        own: "bg-card text-muted-foreground border-border-strong rounded-pill border px-2 py-1",
+      },
+    },
     defaultVariants: { tone: "own" },
   },
 );
@@ -171,7 +175,7 @@ export function DiscoveryCard({
   return (
     <article className={cn(cardShell({ layout }), className)}>
       <div className={cardMat({ tone })}>
-        <div className="rounded-image bg-active relative aspect-[4/5] w-full overflow-hidden">
+        <div className="bg-active relative aspect-[4/5] w-full overflow-hidden">
           {/* One authored moment: the photo eases in past its own frame while
               the card lifts. Slower than the lift, so it reads as depth. */}
           <div className="ease-design size-full transition-transform duration-500 group-hover/card:scale-[1.04]">
@@ -189,9 +193,9 @@ export function DiscoveryCard({
         {flag ? <span className={cardFlag({ tone: flag.tone })}>{flag.label}</span> : null}
       </div>
 
-      <div className="mb-3.5 mt-3 px-1">
+      <div className="mb-3 mt-3 px-3.5">
         {handle ? (
-          <span className="text-muted-foreground text-micro flex min-w-0 items-center gap-1.5 font-semibold">
+          <span className="text-faint text-micro flex min-w-0 items-center gap-1.5">
             {avatar}
             <span className="truncate">{handle}</span>
           </span>
@@ -200,8 +204,8 @@ export function DiscoveryCard({
             `after` sits below the pins' z-10, so a tag stays tappable. */}
         <h3
           className={cn(
-            "text-label mt-1 line-clamp-2 font-bold leading-[1.3] tracking-[-0.01em]",
-            "[&>a]:after:rounded-card [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0",
+            "text-label mt-1 line-clamp-2 font-medium leading-[1.45]",
+            "[&>a]:after:rounded-tile [&>a]:no-underline [&>a]:after:absolute [&>a]:after:inset-0",
             "[&>a]:focus-visible:after:ring-ring [&>a]:focus-visible:outline-none [&>a]:focus-visible:after:ring-2 [&>a]:focus-visible:after:ring-offset-2",
           )}
         >
@@ -209,10 +213,12 @@ export function DiscoveryCard({
         </h3>
       </div>
 
-      <div className="border-border mx-1 mt-auto flex items-center justify-between gap-2 border-t pb-0.5 pt-3">
-        <span className="text-copy min-w-0 truncate font-bold tabular-nums">{stat}</span>
+      <div className="mt-auto flex items-center justify-between gap-2 px-3.5 pb-3.5">
+        <span className="font-display text-label min-w-0 truncate font-semibold tabular-nums">
+          {stat}
+        </span>
         {action ? (
-          <span className="text-muted-foreground text-label group-hover/card:text-primary whitespace-nowrap font-bold transition-colors">
+          <span className="text-faint text-nano group-hover/card:text-primary whitespace-nowrap transition-colors">
             {action}
           </span>
         ) : null}
@@ -278,5 +284,5 @@ export function WallEnd({ children }: { children: React.ReactNode }) {
 }
 
 export function WallEndNote({ children }: { children: React.ReactNode }) {
-  return <p className="text-muted-foreground text-micro m-0 font-semibold">{children}</p>;
+  return <p className="text-faint text-nano m-0 font-mono tracking-[0.06em]">{children}</p>;
 }

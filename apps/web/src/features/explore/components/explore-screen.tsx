@@ -25,20 +25,20 @@ import { PostCard } from "./post-card";
 import { ProductCard } from "./product-card";
 import { cva } from "class-variance-authority";
 
-/** A results section takes a rule above it only when something precedes it. */
+/** A results section takes breathing room only when something precedes it. */
 const sectionHead = cva("flex items-baseline justify-between gap-4", {
-  variants: { divided: { true: "border-border mt-9 border-t pt-[26px]", false: "" } },
+  variants: { divided: { true: "mt-[26px]", false: "" } },
   defaultVariants: { divided: false },
 });
 
-/** The scope chips sit on the violet band, so their states are white-on-tint. */
+/** v2 scope chips: 11px-radius, selected fills with the accent. */
 const scopeChip = cva(
-  "rounded-pill flex min-h-11 shrink-0 items-center px-[18px] text-label font-semibold whitespace-nowrap",
+  "rounded-md flex min-h-11 shrink-0 items-center px-[15px] text-label font-semibold whitespace-nowrap transition-colors",
   {
     variants: {
       active: {
-        true: "bg-card text-foreground border border-white",
-        false: "border border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20",
+        true: "bg-primary text-primary-foreground border border-transparent",
+        false: "border-border-strong text-foreground/80 hover:border-primary hover:text-primary border",
       },
     },
     defaultVariants: { active: false },
@@ -108,13 +108,15 @@ function SectionHead({
   return (
     <div className={sectionHead({ divided })}>
       <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
-        <h2 className="font-display text-title font-bold tracking-[-0.02em]">{title}</h2>
-        <span className="text-muted-foreground text-label font-semibold">{meta}</span>
+        <h2 className="text-faint text-pico tracking-eyebrow font-mono font-bold uppercase">
+          {title}
+        </h2>
+        <span className="text-faint text-nano">{meta}</span>
       </div>
       {href ? (
         <Link
           href={href}
-          className="text-brand-violet-deep text-label whitespace-nowrap font-bold hover:underline"
+          className="text-primary text-label whitespace-nowrap font-semibold hover:underline"
         >
           See all →
         </Link>
@@ -172,69 +174,65 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
 
   return (
     <div className="bg-background min-h-[70vh]">
-      {/* ── the gradient hero (shopper mode) ── */}
-      <div data-role="shopper" className="bg-role-gradient text-white">
-        <div className={cn(measure(), "pb-16 pt-8")}>
-          <div className="flex flex-wrap items-baseline gap-4">
-            <h1 className="font-display text-display-lg font-extrabold tracking-[-0.035em]">
-              Explore
-            </h1>
-            <p className="rounded-pill text-nano bg-white/15 px-3.5 py-1.5 font-mono font-bold uppercase tracking-[0.04em]">
-              {count}
-            </p>
-          </div>
-
-          <form
-            action="/explore"
-            method="get"
-            role="search"
-            className="mt-6 flex max-w-[640px] flex-wrap gap-2.5"
+      {/* ── the v2 search head: plain canvas, the card-filled field, the
+          scope chips and the mono result line (ADR-0026). Search stays a
+          plain GET form — no login, no JS required (§2.2). ── */}
+      <div className={cn(measure(), "pt-[22px]")}>
+        <form action="/explore" method="get" role="search" className="flex gap-2.5">
+          <label className="rounded-lg border-border-strong bg-card flex h-[52px] flex-1 items-center gap-2.5 border px-[18px] focus-within:border-primary">
+            <Search aria-hidden className="size-[17px] shrink-0 opacity-50" />
+            <span className="sr-only">Search captions, creators and things</span>
+            <input
+              type="search"
+              name="q"
+              maxLength={80}
+              defaultValue={query}
+              autoComplete="off"
+              placeholder="Search captions, creators, things"
+              className="text-body min-h-11 flex-1 bg-transparent focus:outline-none"
+            />
+            {query ? (
+              <Link
+                href={scopeHref(tab, "")}
+                className="text-faint text-nano font-mono tracking-[0.06em]"
+              >
+                CLEAR
+              </Link>
+            ) : null}
+          </label>
+          <button
+            type="submit"
+            className="bg-primary text-primary-foreground rounded-lg text-copy h-[52px] px-6 font-semibold"
           >
-            <label className="rounded-pill flex min-h-[54px] flex-1 basis-[260px] items-center gap-2.5 border border-white/30 bg-white/15 px-4 focus-within:border-white">
-              <Search aria-hidden className="size-5 shrink-0" />
-              <span className="sr-only">Search posts, people and things</span>
-              <input
-                type="search"
-                name="q"
-                maxLength={80}
-                defaultValue={query}
-                autoComplete="off"
-                placeholder="Search posts, people, things…"
-                className="min-h-11 flex-1 bg-transparent text-white placeholder:text-white/70 focus:outline-none"
-              />
-            </label>
-            <button
-              type="submit"
-              className="bg-card text-foreground rounded-pill text-copy min-h-[54px] px-6 font-semibold"
-            >
-              Search
-            </button>
-          </form>
+            Search
+          </button>
+        </form>
 
-          <nav
-            aria-label="Show"
-            className="mt-4 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]"
-          >
-            {SHELVES.map((shelf) => {
-              const active = shelf.tab === tab;
-              return (
-                <Link
-                  key={shelf.tab}
-                  href={scopeHref(shelf.tab, query)}
-                  aria-current={active ? "true" : undefined}
-                  className={scopeChip({ active })}
-                >
-                  {shelf.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
+        <nav
+          aria-label="Show"
+          className="mt-3 flex gap-[7px] overflow-x-auto pb-0.5 [scrollbar-width:none]"
+        >
+          {SHELVES.map((shelf) => {
+            const active = shelf.tab === tab;
+            return (
+              <Link
+                key={shelf.tab}
+                href={scopeHref(shelf.tab, query)}
+                aria-current={active ? "true" : undefined}
+                className={scopeChip({ active })}
+              >
+                {shelf.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <p className="text-faint text-nano mt-3.5 font-mono tracking-[0.06em]">{count}</p>
       </div>
 
-      {/* ── the sheet (canvas) ── */}
-      <div className="bg-background rounded-t-bay relative z-10 -mt-6">
-        <div className={cn(measure(), "pb-16 pt-8")}>
+      {/* ── the wall ── */}
+      <div>
+        <div className={cn(measure(), "pb-16 pt-2")}>
           {!hasResults ? (
             query ? (
               <Empty

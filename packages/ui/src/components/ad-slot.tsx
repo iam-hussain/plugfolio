@@ -45,10 +45,10 @@ export function AdSlot({
   return (
     <aside
       aria-label={label}
-      className="border-border bg-card rounded-tile mb-[26px] mt-1 grid gap-2.5 border p-3 min-[720px]:px-4 min-[720px]:py-3.5"
+      className="border-border-strong bg-card rounded-tile mb-[26px] mt-1 grid gap-2.5 border border-dashed p-4 min-[720px]:px-5 min-[720px]:py-[18px]"
     >
       <div className="text-muted-foreground flex items-center justify-between gap-3">
-        <span className="text-micro font-bold uppercase tracking-[0.06em]">{label}</span>
+        <span className="bg-brand-ink text-accent rounded-[6px] text-pico tracking-eyebrow px-2 py-1 font-mono font-bold uppercase">{label}</span>
         {why}
       </div>
       <Comp
