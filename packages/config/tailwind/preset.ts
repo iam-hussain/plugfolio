@@ -234,6 +234,48 @@ const preset = {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
+      // v2 system screens (ADR-0026 §8): the PlugMark halves pull apart with a
+      // spark between the prongs. One set of keyframes, two tempos (404 3.4s,
+      // error 2.4s); reduced-motion disables them via motion-reduce.
+      keyframes: {
+        "pf-pull-l": {
+          "0%, 58%": { transform: "translateX(0) rotate(0)" },
+          "70%": { transform: "translateX(-9px) rotate(-5deg)" },
+          "82%": { transform: "translateX(-7px) rotate(-4deg)" },
+          "100%": { transform: "translateX(0) rotate(0)" },
+        },
+        "pf-pull-r": {
+          "0%, 58%": { transform: "translateX(0) rotate(0)" },
+          "70%": { transform: "translateX(9px) rotate(5deg)" },
+          "82%": { transform: "translateX(7px) rotate(4deg)" },
+          "100%": { transform: "translateX(0) rotate(0)" },
+        },
+        "pf-spark": {
+          "0%, 62%": { opacity: "0", transform: "scale(.4)" },
+          "66%": { opacity: "1", transform: "scale(1)" },
+          "72%": { opacity: ".2", transform: "scale(.7)" },
+          "76%": { opacity: "1", transform: "scale(1.05)" },
+          "86%, 100%": { opacity: "0", transform: "scale(.4)" },
+        },
+        "pf-flick": {
+          "0%, 60%": { opacity: "1" },
+          "64%": { opacity: ".25" },
+          "68%": { opacity: "1" },
+          "74%": { opacity: ".4" },
+          "80%": { opacity: "1" },
+          "100%": { opacity: "1" },
+        },
+      },
+      animation: {
+        "pull-l": "pf-pull-l 3.4s ease-in-out infinite",
+        "pull-r": "pf-pull-r 3.4s ease-in-out infinite",
+        spark: "pf-spark 3.4s linear infinite",
+        flick: "pf-flick 3.4s linear infinite",
+        "pull-l-fast": "pf-pull-l 2.4s ease-in-out infinite",
+        "pull-r-fast": "pf-pull-r 2.4s ease-in-out infinite",
+        "spark-fast": "pf-spark 2.4s linear infinite",
+        "flick-fast": "pf-flick 2.4s linear infinite",
+      },
       letterSpacing: {
         // Sora tracks tight at display sizes (-2% to -5%); Space Mono eyebrows
         // track wide (0.12–0.18em).

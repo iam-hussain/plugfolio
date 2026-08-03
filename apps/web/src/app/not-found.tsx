@@ -1,7 +1,7 @@
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Button, cn, measure, SystemMark, SystemScreen } from "@plugfolio/ui";
+import { Button, cn, measure, FaultMark, SystemScreen } from "@plugfolio/ui";
 import { exploreCreators } from "@plugfolio/core";
 import { Logo } from "@/components/brand";
 import { SiteFooter } from "@/components/chrome/site-footer";
@@ -44,7 +44,7 @@ export default async function NotFound() {
       <main className="flex-1">
         <div className={measure()}>
           <SystemScreen
-            mark={<SystemMark state="unplugged" title="An unplugged plug" />}
+            mark={<FaultMark tempo="slow" tone="accent" />}
             title="This page doesn’t exist."
             lede="It may have been removed, or the link might be wrong. Nothing you did caused this."
             actions={

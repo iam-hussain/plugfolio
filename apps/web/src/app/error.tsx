@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, cn, measure, SystemMark, SystemScreen } from "@plugfolio/ui";
+import { Button, cn, measure, FaultMark, SystemScreen } from "@plugfolio/ui";
 import { Check, Copy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -70,7 +70,7 @@ export default function Error({
 
       <main className={cn(measure(), "flex-1")}>
         <SystemScreen
-          mark={<SystemMark state="cracked" title="A plug with a split body" />}
+          mark={<FaultMark tempo="fast" tone="fault" />}
           title="Something went wrong."
           lede="That’s on us, not you. Trying again usually clears it — if it doesn’t, send us the reference below and we’ll go and look."
           actions={

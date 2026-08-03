@@ -5,6 +5,7 @@ export { PlugMark, type PlugMarkProps } from "./brand/plug-mark";
 export { Wordmark, type WordmarkProps } from "./brand/wordmark";
 export { Logo, type LogoProps } from "./brand/logo";
 export { SystemMark, type SystemMarkProps } from "./brand/system-mark";
+export { FaultMark } from "./brand/fault-mark";
 export * from "./components/accordion";
 export * from "./components/alert-dialog";
 export * from "./components/alert";
