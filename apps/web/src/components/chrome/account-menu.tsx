@@ -30,9 +30,9 @@ export type AccountMenuProps = {
 };
 
 const itemClass =
-  "hover:bg-active hover:text-brand-violet-deep text-foreground rounded-image flex min-h-11 w-full items-center gap-2.5 px-3 py-2.5 text-left text-copy font-semibold no-underline transition-colors";
+  "hover:bg-active text-foreground rounded-panel flex min-h-11 w-full items-center gap-2.5 px-2.5 py-2.5 text-left text-label font-medium no-underline transition-colors";
 const sectionClass =
-  "text-muted-foreground mx-3 mt-2.5 mb-1 text-nano font-bold tracking-[0.08em] uppercase";
+  "text-faint tracking-eyebrow mx-2 mt-2.5 mb-1.5 font-mono text-pico font-bold uppercase";
 const subClass = "text-faint ml-auto text-micro font-semibold";
 
 export function AccountMenu({
@@ -77,18 +77,18 @@ export function AccountMenu({
         // `sm` — which is exactly where the "Shopping ▾" label appears. Below
         // that the label is hidden but `pr-3` stayed, so the pill rendered
         // 52×46: a visibly squashed egg around a perfectly round avatar.
-        className="bg-active text-brand-violet-deep hover:border-brand-violet-deep/40 rounded-pill text-copy flex min-h-11 items-center gap-2 border border-transparent p-1.5 font-bold sm:pr-3"
+        className="border-border-strong rounded-pill flex h-9 items-center gap-2 border p-[3px] transition-transform hover:-translate-y-px sm:pr-3"
       >
-        <Avatar className="size-8">
+        <Avatar className="size-7">
           {avatarUrl ? <AvatarImage src={avatarUrl} alt="" /> : null}
-          <AvatarFallback className="bg-card text-brand-violet-deep text-micro">
-            {initial}
-          </AvatarFallback>
+          <AvatarFallback className="bg-active text-foreground text-micro">{initial}</AvatarFallback>
         </Avatar>
         <span className="hidden max-w-[14ch] items-center gap-1.5 sm:inline-flex">
-          <span className="truncate">@{handle}</span>
-          <span aria-hidden className="text-pico">
-            ▾
+          <span className="text-foreground text-nano truncate font-mono tracking-[0.04em]">
+            @{handle}
+          </span>
+          <span aria-hidden className="text-primary text-nano">
+            {open ? "▴" : "▾"}
           </span>
         </span>
         <span className="sr-only">Your account and roles</span>
@@ -97,7 +97,7 @@ export function AccountMenu({
       {open ? (
         <div
           role="menu"
-          className="border-border bg-card shadow-lift rounded-tile absolute right-0 top-[calc(100%+8px)] z-50 w-[min(300px,calc(100vw-32px))] border p-2"
+          className="border-border-strong bg-card shadow-pop rounded-tile absolute right-0 top-[calc(100%+10px)] z-[70] w-[min(282px,calc(100vw-32px))] border p-2.5"
         >
           <div className="border-border mb-1.5 border-b px-3 pb-3 pt-2.5">
             <div className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export function AccountMenu({
             type="button"
             role="menuitem"
             onClick={() => signOut({ callbackUrl: "/" })}
-            className={itemClass}
+            className={`${itemClass} text-destructive font-semibold`}
           >
             Sign out
           </button>

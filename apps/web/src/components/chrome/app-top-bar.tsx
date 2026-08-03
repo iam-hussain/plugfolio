@@ -1,7 +1,6 @@
 import { getMemberHandle } from "@plugfolio/core";
-import { Button, cn, measure, ThemeToggle } from "@plugfolio/ui";
+import { cn, measure, ThemeToggle } from "@plugfolio/ui";
 import { cookies } from "next/headers";
-import type { Route } from "next";
 import Link from "next/link";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -11,30 +10,15 @@ import { SearchIcon, UserIcon } from "./icons";
 import { PAGE_CONTEXT_SLOT } from "./page-context-slot";
 
 /**
- * App top bar — the one shared header on every page (Dev Spec §03; §7 unified
- * chrome). Left: PlugMark + wordmark → home.
+ * App top bar (v2, ADR-0026) — the one shared header on every page. Left: the
+ * brand lockup. Right: the search circle, the theme toggle, and either the
+ * sign-in pill or the account pill (avatar + @handle) that opens the account
+ * menu. Navigation itself lives in the morphing pill nav and the footer — the
+ * bar carries identity and entry points, not a link row.
  *
- * Signed out (a prospect): the full marketing nav (Explore · How it works · For
- * creators · For business) with Log in + the "Explore creators" CTA on desktop.
- *
- * Signed in: Explore · Following · Saved, and the account menu (DESIGN chrome.js) — the
- * avatar + mode pill that opens the roles/profiles dropdown. Server Component so
- * the session and the profile list resolve without a client round-trip; nothing
- * here ever walls the buy path.
+ * Server Component so the session and the profile list resolve without a
+ * client round-trip; nothing here ever walls the buy path.
  */
-const MARKETING_NAV: readonly { label: string; href: Route }[] = [
-  { label: "Explore", href: "/explore" as Route },
-  { label: "How it works", href: "/how-it-works" as Route },
-  { label: "For creators", href: "/for-creators" as Route },
-  { label: "For business", href: "/for-business" as Route },
-];
-
-const SIGNED_IN_NAV: readonly { label: string; href: Route }[] = [
-  { label: "Explore", href: "/explore" as Route },
-  { label: "Following", href: "/following" as Route },
-  { label: "Saved", href: "/saved" as Route },
-];
-
 export async function AppTopBar() {
   const session = await auth();
   const user = session?.user;
@@ -67,81 +51,46 @@ export async function AppTopBar() {
     : null;
 
   return (
-    <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-40 border-b backdrop-blur">
-      <div className={cn(measure(), "flex h-14 items-center justify-between gap-4 lg:h-[62px]")}>
+    <header className="border-border bg-veil sticky top-0 z-40 border-b backdrop-blur-[14px]">
+      <div className={cn(measure(), "flex h-[60px] items-center gap-3.5")}>
         {/* Signed in, the logo goes to Explore (their real home); signed out it
             goes to the marketing landing. */}
         <Link
           href={user ? "/explore" : "/"}
           aria-label={user ? "Explore creators" : "Plugfolio home"}
-          className="flex items-center"
+          className="flex shrink-0 items-center"
         >
           <Logo layout="horizontal" tone="auto" />
         </Link>
 
-        {/* A page may own ONE element inside the shared bar (DESIGN chrome.js
-            §data-chrome-slot): /[handle] puts the creator's avatar and Follow
-            here once you have scrolled past their header, so past that point
-            the bar stops being Plugfolio's and becomes theirs. Adopting the
-            shared chrome never costs a page its one bespoke affordance. */}
-        {/* `flex-1` so the slot always fills the gap between the logo and the
-            nav — empty or not, the nav (Explore · Following · Saved) then
-            sits hard right on every page, not centered on the ones without a
-            context bar. */}
+        {/* A page may own ONE element inside the shared bar: /[handle] puts the
+            creator's identity here once their header scrolls out of view.
+            `flex-1` keeps the right-side cluster hard right either way. */}
         <div id={PAGE_CONTEXT_SLOT} className="flex min-w-0 flex-1 items-center" />
 
-        <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
-          {(user ? SIGNED_IN_NAV : MARKETING_NAV).map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-muted-foreground hover:text-foreground text-copy font-semibold"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-1 lg:gap-3">
-          {/* Signed out or in — the theme is a device preference, not an
-              account setting, so it sits outside the account menu and needs no
-              session. Seeded from the cookie so the icon is right on the first
-              paint, same as `RootLayout`'s `data-theme`. */}
+        <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/explore"
+            aria-label="Search creators, posts and things"
+            title="Search creators, posts and things"
+            className="bg-active border-border text-muted-foreground hover:text-foreground rounded-pill flex size-9 items-center justify-center border transition-colors"
+          >
+            <SearchIcon className="size-4" />
+          </Link>
+          {/* The theme is a device preference, not an account setting, so it
+              sits outside the account menu and needs no session. Seeded from
+              the cookie so the icon is right on the first paint. */}
           <ThemeToggle initialTheme={theme} />
           {menu ? (
-            <>
-              <Button variant="ghost" size="icon-sm" asChild className="lg:hidden">
-                <Link href="/explore" aria-label="Search creators">
-                  <SearchIcon />
-                </Link>
-              </Button>
-              <AccountMenu {...menu} />
-            </>
+            <AccountMenu {...menu} />
           ) : (
-            <>
-              <Button variant="ghost" size="icon-sm" asChild className="lg:hidden">
-                <Link href="/explore" aria-label="Search creators">
-                  <SearchIcon />
-                </Link>
-              </Button>
-              <Link
-                href="/signin"
-                className="text-foreground text-copy hidden font-semibold lg:inline"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/explore"
-                className="bg-primary text-primary-foreground rounded-pill text-copy hidden px-[18px] py-[9px] font-semibold lg:inline-flex"
-              >
-                Explore creators
-              </Link>
-              <Button variant="ghost" size="icon-sm" asChild className="lg:hidden">
-                <Link href="/signin" aria-label="Sign in">
-                  <UserIcon />
-                </Link>
-              </Button>
-            </>
+            <Link
+              href="/signin"
+              className="border-border-strong text-label rounded-pill flex h-9 items-center gap-[7px] border px-[15px] font-semibold"
+            >
+              <UserIcon className="size-3.5" />
+              Sign in
+            </Link>
           )}
         </div>
       </div>

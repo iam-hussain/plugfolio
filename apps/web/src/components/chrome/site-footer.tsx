@@ -1,65 +1,90 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { cn, measure } from "@plugfolio/ui";
-import { Logo } from "@/components/brand";
 
 /**
- * The one site footer (DESIGN `.foot`) — brand mark on the left, the way-out
- * links on the right, over a single hairline. Product-agnostic, so it lives in
- * chrome/ beside the top bar and tab bar; `ShopperShell` renders it on every
- * shopper surface, and the marketing and landing pages use it directly.
- *
- * The link set is shared on purpose. The design varies it slightly per page
- * (and drops the page's own link); reproducing that would make the footer a
- * client component just to read the pathname, for a link that harmlessly
- * points at where you already are. ponytail: add `usePathname` here if the
- * self-link ever actually bites.
+ * The site footer (v2, ADR-0026) — four columns over a single hairline: the
+ * brand blurb, then Shop / Make / Company link stacks under Space Mono
+ * eyebrows. v2 carries it only on the marketing landing (every other screen
+ * ends at the pill nav), so `ShopperShell` no longer renders it.
  */
-const LINKS: readonly { label: string; href: Route }[] = [
-  { label: "Explore", href: "/explore" as Route },
-  { label: "How it works", href: "/how-it-works" as Route },
-  { label: "For creators", href: "/for-creators" as Route },
-  { label: "For business", href: "/for-business" as Route },
-  { label: "Help", href: "/support" as Route },
+type Column = { title: string; links: readonly { label: string; href: Route }[] };
+
+const COLUMNS: readonly Column[] = [
+  {
+    title: "Shop",
+    links: [
+      { label: "Explore", href: "/explore" as Route },
+      { label: "Following", href: "/following" as Route },
+      { label: "Saved", href: "/saved" as Route },
+    ],
+  },
+  {
+    title: "Make",
+    links: [
+      { label: "Become a creator", href: "/join" as Route },
+      { label: "Dashboard", href: "/dashboard" as Route },
+      { label: "Collabs", href: "/collabs" as Route },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "How it works", href: "/how-it-works" as Route },
+      { label: "For creators", href: "/for-creators" as Route },
+      { label: "For business", href: "/for-business" as Route },
+      { label: "Support & feedback", href: "/support" as Route },
+    ],
+  },
 ];
 
 export type SiteFooterProps = {
-  /** Overrides the brand sign-off; pass `null` to drop it. */
+  /** Kept for call-site compatibility; v2's footer carries no sign-off line. */
   note?: string | null;
 };
 
-export function SiteFooter({ note }: SiteFooterProps = {}) {
-  // The sign-off the design carries on every shopper surface. Year is read,
-  // not written — a stale one is the kind of thing nobody notices in January.
-  const line =
-    note === undefined ? `One link, everything shoppable · ${new Date().getFullYear()}` : note;
+export function SiteFooter(_props: SiteFooterProps = {}) {
   return (
     <footer className="border-border border-t">
       <div
         className={cn(
           measure(),
-          "flex flex-wrap items-center justify-between gap-x-6 gap-y-1.5 pb-[clamp(14px,2vw,22px)] pt-[clamp(22px,3vw,32px)]",
+          "grid grid-cols-2 gap-6 pb-8 pt-6 lg:grid-cols-[2fr_1fr_1fr_1fr]",
         )}
       >
-        <Link href="/" aria-label="Plugfolio home" className="flex items-center">
-          <Logo layout="horizontal" tone="auto" />
-        </Link>
-        <div className="flex flex-wrap items-center gap-x-5">
-          {LINKS.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="text-muted-foreground hover:text-primary text-label inline-flex min-h-11 items-center py-3 font-semibold transition-colors"
-            >
-              {item.label}
-            </Link>
-          ))}
-          {line ? (
-            <span className="text-faint text-micro font-sans font-semibold uppercase tracking-[0.06em]">
-              {line}
-            </span>
-          ) : null}
+        <div className="col-span-2 lg:col-span-1">
+          <Link
+            href="/"
+            className="font-display text-body inline-flex items-end font-bold tracking-[-0.045em]"
+          >
+            plugfolio
+            <span aria-hidden className="bg-primary mb-1 ml-0.5 size-1 rounded-[1px]" />
+          </Link>
+          <p className="text-faint text-micro mt-1.5 leading-normal">
+            Shoppable creator pages.
+            <br />
+            Shopping never needs an account.
+          </p>
         </div>
+        {COLUMNS.map((column) => (
+          <div key={column.title}>
+            <h2 className="text-faint text-pico tracking-eyebrow font-mono font-bold uppercase">
+              {column.title}
+            </h2>
+            <ul className="mt-2.5 flex flex-col gap-1">
+              {column.links.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-muted-foreground hover:text-foreground text-label inline-flex min-h-8 items-center transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </footer>
   );
