@@ -28,6 +28,7 @@ const TAB_PATHS = new Set([
   "/dashboard/products",
   "/dashboard/categories",
   "/dashboard/collabs",
+  "/dashboard/traffic",
 ]);
 
 export type ProfileSwitcherProps = {

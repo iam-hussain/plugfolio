@@ -18,16 +18,25 @@ export const recordViewInput = z.discriminatedUnion("surface", [
     /** The handle in the URL — the only id a public page knows about itself. */
     username: z.string().min(1),
     idempotencyKey: z.string().uuid(),
+    /** `document.referrer` at mount — where the view came from (ADR-0021).
+        Optional and free-text; classified into named sources at the read. */
+    referrer: z.string().max(2000).optional(),
   }),
   z.object({
     surface: z.literal("post"),
     postId: z.string().uuid(),
     idempotencyKey: z.string().uuid(),
+    /** `document.referrer` at mount — where the view came from (ADR-0021).
+        Optional and free-text; classified into named sources at the read. */
+    referrer: z.string().max(2000).optional(),
   }),
   z.object({
     surface: z.literal("product"),
     productId: z.string().uuid(),
     idempotencyKey: z.string().uuid(),
+    /** `document.referrer` at mount — where the view came from (ADR-0021).
+        Optional and free-text; classified into named sources at the read. */
+    referrer: z.string().max(2000).optional(),
   }),
 ]);
 

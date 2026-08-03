@@ -18,6 +18,7 @@ const TABS = [
   { href: "/dashboard/posts", label: "Posts" },
   { href: "/dashboard/products", label: "Things" },
   { href: "/dashboard/categories", label: "Shelves" },
+  { href: "/dashboard/traffic", label: "Traffic" },
   { href: "/dashboard/collabs", label: "Collabs" },
   { href: "/dashboard/settings", label: "Settings" },
 ];

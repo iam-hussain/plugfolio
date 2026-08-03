@@ -22,6 +22,8 @@ export type NewView = {
   readonly deviceId: string;
   readonly idempotencyKey: string;
   readonly surface: ViewSurface;
+  /** `document.referrer` as the browser reported it; null when it sent none. */
+  readonly referrer: string | null;
   readonly occurredAt: Date;
 };
 

@@ -616,6 +616,9 @@ model View {
   /// mounts the beacon twice in development (§6.8).
   idempotencyKey String     @unique
   surface        ViewSurface
+  /// `document.referrer` as the browser reported it (ADR-0021); null when it
+  /// sent none. Classified into named sources at the Traffic read.
+  referrer       String?
   occurredAt     DateTime   @default(now())
 
   @@index([profileId, occurredAt])

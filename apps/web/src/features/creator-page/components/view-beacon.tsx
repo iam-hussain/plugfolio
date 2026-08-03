@@ -28,7 +28,13 @@ export function ViewBeacon(target: ViewBeaconProps) {
     // server, and this covers the wasted request.
     if (fired.current) return;
     fired.current = true;
-    const input = { ...target, idempotencyKey: crypto.randomUUID() } as RecordViewInput;
+    const input = {
+      ...target,
+      idempotencyKey: crypto.randomUUID(),
+      // Where the view came from (ADR-0021) — as the browser reports it, or
+      // absent. The API classifies it into a named source at the read.
+      ...(document.referrer ? { referrer: document.referrer } : {}),
+    } as RecordViewInput;
     void recordView(input);
     // The surface a mounted page sits on never changes under it.
     // eslint-disable-next-line react-hooks/exhaustive-deps

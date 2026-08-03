@@ -35,6 +35,7 @@ export async function recordView(deps: RecordViewDeps, command: RecordViewComman
     deviceId: command.deviceId,
     idempotencyKey: command.idempotencyKey,
     surface: command.surface,
+    referrer: command.referrer?.trim() ? command.referrer.trim() : null,
     occurredAt: deps.now(),
   });
 }

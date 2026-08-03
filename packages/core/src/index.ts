@@ -44,6 +44,10 @@ export type {
 export type {
   TrafficReadRepository,
   TrafficSummary,
+  TrafficRange,
+  TrafficBucket,
+  TrafficSource,
+  SummarizeOptions,
   PostTraffic,
   ProductTraffic,
   CodeCopyCount,
@@ -279,7 +283,14 @@ export {
   explorePosts,
   type ExploreDeps,
 } from "./services/explore";
-export { getTraffic, tapThroughRate, type TrafficReadDeps } from "./services/get-traffic";
+export {
+  classifyReferrer,
+  getTraffic,
+  parseTrafficRange,
+  tapThroughRate,
+  TRAFFIC_RANGES,
+  type TrafficReadDeps,
+} from "./services/get-traffic";
 export { recordView, type RecordViewDeps } from "./services/record-view";
 export { getMyProfiles, type ProfileReadDeps } from "./services/get-my-profiles";
 export {

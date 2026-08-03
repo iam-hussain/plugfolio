@@ -42,6 +42,22 @@ export type CodeCopyCount = {
   readonly copies: number;
 };
 
+/** The window a creator reads Traffic over (v2, ADR-0026). */
+export type TrafficRange = "today" | "week" | "month" | "year" | "all";
+
+/** One bar pair in the views-vs-taps chart. `label` is pre-formatted. */
+export type TrafficBucket = {
+  readonly label: string;
+  readonly views: number;
+  readonly taps: number;
+};
+
+/** Views by the referrer that brought them, classified into named sources. */
+export type TrafficSource = {
+  readonly source: string;
+  readonly views: number;
+};
+
 export type TrafficSummary = {
   /** Every view of the profile's page, posts and product pages. */
   readonly totalViews: number;
@@ -53,8 +69,28 @@ export type TrafficSummary = {
   readonly byPost: readonly PostTraffic[];
   readonly byProduct: readonly ProductTraffic[];
   readonly byCode: readonly CodeCopyCount[];
+  /** Views split by what was opened: the page, a post, a thing. */
+  readonly viewsBySurface: {
+    readonly profile: number;
+    readonly post: number;
+    readonly product: number;
+  };
+  /** The chart's bar pairs, oldest first. Empty when nothing was measured. */
+  readonly series: readonly TrafficBucket[];
+  /** Views by named source, most-viewed first. Views recorded before the
+      referrer existed land in "Typed or unknown" — never guessed at. */
+  readonly sources: readonly TrafficSource[];
+};
+
+export type SummarizeOptions = {
+  /** Only events at/after this instant; omit for all time. */
+  readonly since?: Date | null;
+  /** The chart's granularity; the service picks it from the range. */
+  readonly bucket?: "hour" | "day" | "month";
+  /** Injected clock, so bucketing is testable. */
+  readonly now?: Date;
 };
 
 export type TrafficReadRepository = {
-  summarize(profileId: string): Promise<TrafficSummary>;
+  summarize(profileId: string, options?: SummarizeOptions): Promise<TrafficSummary>;
 };

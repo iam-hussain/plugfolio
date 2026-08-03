@@ -244,6 +244,11 @@ export default async function DashboardPage({
             <DashCardHead>
               <DashCardTitle>Traffic · @{active.username}</DashCardTitle>
               <DashCardNote>All time</DashCardNote>
+              <DashCardAction>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={`/dashboard/traffic?profile=${active.id}`}>Open Traffic</Link>
+                </Button>
+              </DashCardAction>
             </DashCardHead>
             <TrafficSummaryView summary={traffic} pageHref={`/${active.username}` as Route} />
           </DashCard>
