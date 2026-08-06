@@ -12,6 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  formatPrice,
 } from "@plugfolio/ui";
 import { Download } from "lucide-react";
 import type { Metadata } from "next";
@@ -26,11 +27,6 @@ export const metadata: Metadata = { title: "Products" };
 export const dynamic = "force-dynamic";
 
 const COUPON_FILTERS = ["has-coupon", "expired-coupon"] as const;
-
-function formatPrice(priceCents: number | null, currency: string): string {
-  if (priceCents === null) return "—";
-  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(priceCents / 100);
-}
 
 export default async function ProductsPage({
   searchParams,
@@ -110,7 +106,7 @@ export default async function ProductsPage({
                 <TableCell>
                   <span className="block font-medium">{product.title}</span>
                   <span className="text-muted-foreground text-micro mt-0.5 block font-mono">
-                    {formatPrice(product.priceCents, product.currency)}
+                    {formatPrice(product.priceCents, product.currency) ?? "—"}
                     {product.affiliateUrl ? (
                       <>
                         {" · "}

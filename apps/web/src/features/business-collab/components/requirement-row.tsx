@@ -8,10 +8,8 @@ import {
   RequirementMeta,
   RequirementTitle,
 } from "@plugfolio/ui";
+import { shortDate } from "@/lib/format-date";
 import { CloseRequirementButton } from "./close-requirement-button";
-
-/** Short dates read as "12 Aug"; a brief is never long enough to want a year. */
-const dateFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric" });
 
 /**
  * One brief on the business's own board — open or closed.
@@ -37,7 +35,7 @@ export function RequirementRow({ requirement }: { requirement: RequirementView }
 
       <RequirementMeta>
         {requirement.budget ? <span>Budget {requirement.budget}</span> : null}
-        {requirement.deadline ? <span>By {dateFormat.format(requirement.deadline)}</span> : null}
+        {requirement.deadline ? <span>By {shortDate(requirement.deadline)}</span> : null}
         {/* "no approaches yet", not "0" — a zero beside a brief posted an hour
             ago reads as failure. */}
         <ApproachCount tone={requirement.approachCount === 0 ? "none" : "some"}>

@@ -1,5 +1,6 @@
 import type { RequirementView } from "@plugfolio/core";
 import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@plugfolio/ui";
+import { shortDate } from "@/lib/format-date";
 import { ApproachForm } from "./approach-form";
 
 /**
@@ -11,8 +12,6 @@ export type RequirementBoardProps = {
   /** The approaching creator profile; omit for a read-only board. */
   approachAsProfileId?: string;
 };
-
-const dateFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric" });
 
 export function RequirementBoard({ requirements, approachAsProfileId }: RequirementBoardProps) {
   if (requirements.length === 0) {
@@ -30,7 +29,7 @@ export function RequirementBoard({ requirements, approachAsProfileId }: Requirem
                 <span>{requirement.businessName}</span>
                 {requirement.budget ? <Badge variant="outline">{requirement.budget}</Badge> : null}
                 {requirement.deadline ? (
-                  <span>by {dateFormat.format(requirement.deadline)}</span>
+                  <span>by {shortDate(requirement.deadline)}</span>
                 ) : null}
               </CardDescription>
             </CardHeader>

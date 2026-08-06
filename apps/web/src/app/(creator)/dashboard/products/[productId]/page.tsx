@@ -1,5 +1,4 @@
 import type { Metadata, Route } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import {
@@ -19,13 +18,15 @@ import {
   PageHead,
   PageHeadActions,
   PageHeadTitle,
+  ProductThumb,
   Provenance,
   Stat,
   UseRow,
   UsesList,
 } from "@plugfolio/ui";
-import { ChevronLeft, ImageOff } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { ProductEditor } from "@/features/product-tagging";
+import { formatNumber } from "@/lib/format-number";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -39,8 +40,6 @@ export const metadata: Metadata = { title: "Edit product" };
 
 type Params = { productId: string };
 type SearchParams = { profile?: string };
-
-const number = new Intl.NumberFormat("en");
 
 export default async function ProductEditPage({
   params,
@@ -131,14 +130,14 @@ export default async function ProductEditPage({
           <div className="grid gap-3 md:grid-cols-3">
             <Stat
               label="Views"
-              value={number.format(measured?.views ?? 0)}
+              value={formatNumber(measured?.views ?? 0)}
               provenance={<Provenance kind="tracked">Tracked</Provenance>}
             >
               This product&rsquo;s page opening.
             </Stat>
             <Stat
               label="Taps"
-              value={number.format(measured?.taps ?? 0)}
+              value={formatNumber(measured?.taps ?? 0)}
               provenance={<Provenance kind="tracked">Tracked</Provenance>}
             >
               Someone left for the retailer from this product.
@@ -146,7 +145,7 @@ export default async function ProductEditPage({
             {product.couponCode ? (
               <Stat
                 label="Code copies"
-                value={number.format(measured?.codeCopies ?? 0)}
+                value={formatNumber(measured?.codeCopies ?? 0)}
                 provenance={<Provenance kind="untracked">Redemption not tracked</Provenance>}
               >
                 We count the copy. What happens at the checkout is the retailer&rsquo;s side.
@@ -166,26 +165,9 @@ export default async function ProductEditPage({
                 <UseRow
                   key={post.id}
                   asChild
-                  image={
-                    <span className="bg-active rounded-image relative size-10 flex-none overflow-hidden">
-                      {post.mediaUrl ? (
-                        <Image
-                          src={post.mediaUrl}
-                          alt=""
-                          fill
-                          unoptimized
-                          sizes="40px"
-                          className="object-cover"
-                        />
-                      ) : (
-                        <span className="text-faint grid size-full place-items-center">
-                          <ImageOff className="size-4" aria-hidden />
-                        </span>
-                      )}
-                    </span>
-                  }
+                  image={<ProductThumb src={post.mediaUrl} size="sm" />}
                   title={post.caption ?? "Untitled post"}
-                  count={`${number.format(tapsByPost.get(post.id) ?? 0)} taps`}
+                  count={`${formatNumber(tapsByPost.get(post.id) ?? 0)} taps`}
                 >
                   <Link href={`/dashboard/posts/${post.id}?profile=${active.id}` as Route} />
                 </UseRow>

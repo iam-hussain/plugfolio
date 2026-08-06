@@ -16,6 +16,7 @@ import {
 } from "@plugfolio/ui";
 import type { Route } from "next";
 import Link from "next/link";
+import { formatNumber } from "@/lib/format-number";
 
 /**
  * The Traffic read view (DESIGN dashboard.html §Traffic).
@@ -34,8 +35,6 @@ export type TrafficSummaryViewProps = {
   /** Where to send a creator whose numbers are all zero. */
   pageHref: Route;
 };
-
-const number = new Intl.NumberFormat("en");
 
 export function TrafficSummaryView({ summary, pageHref }: TrafficSummaryViewProps) {
   const rate = tapThroughRate(summary);
@@ -73,14 +72,14 @@ export function TrafficSummaryView({ summary, pageHref }: TrafficSummaryViewProp
       <Stats>
         <Stat
           label="Views"
-          value={number.format(summary.totalViews)}
+          value={formatNumber(summary.totalViews)}
           provenance={<Provenance kind="tracked">Tracked</Provenance>}
         >
           Your page, posts and product pages opening.
         </Stat>
         <Stat
           label="Taps"
-          value={number.format(summary.totalTaps)}
+          value={formatNumber(summary.totalTaps)}
           provenance={<Provenance kind="tracked">Tracked</Provenance>}
         >
           Someone leaving for a retailer.
@@ -123,8 +122,8 @@ export function TrafficSummaryView({ summary, pageHref }: TrafficSummaryViewProp
                   key={post.postId}
                   title={post.caption ?? "Untitled post"}
                   gone={!post.caption}
-                  secondary={number.format(post.views)}
-                  value={number.format(post.taps)}
+                  secondary={formatNumber(post.views)}
+                  value={formatNumber(post.taps)}
                 />
               ))}
             </RankList>
@@ -143,8 +142,8 @@ export function TrafficSummaryView({ summary, pageHref }: TrafficSummaryViewProp
                 <RankRow
                   key={product.productId}
                   title={product.title}
-                  secondary={number.format(product.views)}
-                  value={number.format(product.taps)}
+                  secondary={formatNumber(product.views)}
+                  value={formatNumber(product.taps)}
                 />
               ))}
             </RankList>
@@ -156,7 +155,7 @@ export function TrafficSummaryView({ summary, pageHref }: TrafficSummaryViewProp
         <div className="mt-[22px]">
           <Stat
             label="Code copies"
-            value={number.format(summary.totalCodeCopies)}
+            value={formatNumber(summary.totalCodeCopies)}
             provenance={<Provenance kind="untracked">Redemption not tracked</Provenance>}
           >
             Copies are counted here. Whether a code was used at a checkout or a counter happens on
@@ -175,7 +174,7 @@ export function TrafficSummaryView({ summary, pageHref }: TrafficSummaryViewProp
                     ) : null}
                   </>
                 }
-                value={number.format(code.copies)}
+                value={formatNumber(code.copies)}
               />
             ))}
           </RankList>

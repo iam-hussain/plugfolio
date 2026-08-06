@@ -18,6 +18,7 @@ import Image from "next/image";
 import type { Route } from "next";
 import { Search } from "lucide-react";
 import Link from "next/link";
+import { plural } from "@/lib/plural";
 import { CreatorCard } from "./creator-card";
 import { PostCard } from "./post-card";
 import { ProductCard } from "./product-card";
@@ -84,11 +85,6 @@ const SHELVES: readonly { label: string; tab: ExploreTab }[] = [
   { label: "Posts", tab: "posts" },
   { label: "Things", tab: "products" },
 ];
-
-/** "1 creator", "4 creators" — a count pill that reads "1 creators" is a typo. */
-function plural(count: number, noun: string): string {
-  return `${count} ${noun}${count === 1 ? "" : "s"}`;
-}
 
 /** One header shape for all three sections: name, count, and the way out. */
 function SectionHead({

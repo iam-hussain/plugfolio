@@ -1,5 +1,7 @@
 /** Public surface of the shared UI kit — every shadcn component + cn + brand. */
 export { cn } from "./lib/cn";
+// Display formatters shared across apps (web + admin)
+export { formatPrice, formatCount, formatNumber } from "./lib/format";
 // Brand mark & lockups (Brand Guidelines v1.1) — never redrawn, always reused.
 export { PlugMark, type PlugMarkProps } from "./brand/plug-mark";
 export { Wordmark, type WordmarkProps } from "./brand/wordmark";
@@ -73,6 +75,7 @@ export * from "./components/slider";
 export * from "./components/sonner";
 export * from "./components/spinner";
 export * from "./components/product-tag";
+export * from "./components/product-thumb";
 export * from "./components/stat-tile";
 export * from "./components/tile";
 export * from "./components/switch";

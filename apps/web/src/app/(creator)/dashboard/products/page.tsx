@@ -1,5 +1,4 @@
 import type { Metadata, Route } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCreatorPage, getMyProfiles, listProfileProducts } from "@plugfolio/core";
@@ -15,10 +14,12 @@ import {
   Pill,
   ProductRow,
   ProductRows,
+  ProductThumb,
 } from "@plugfolio/ui";
-import { ImageOff, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { DashboardPageHeader } from "@/features/product-tagging";
 import { formatPrice } from "@/lib/format-price";
+import { hostname } from "@/lib/retailer-name";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -95,28 +96,11 @@ export default async function DashboardProductsPage({
             {products.map((product) => {
               const price = formatPrice(product.priceCents, product.currency);
               const shelf = product.categoryId ? categoryById.get(product.categoryId) : null;
-              const destination = product.affiliateUrl ? hostOf(product.affiliateUrl) : null;
+              const destination = product.affiliateUrl ? hostname(product.affiliateUrl) : null;
               return (
                 <ProductRow
                   key={product.id}
-                  image={
-                    <span className="bg-active rounded-image relative size-[52px] flex-none overflow-hidden">
-                      {product.imageUrl ? (
-                        <Image
-                          src={product.imageUrl}
-                          alt=""
-                          fill
-                          unoptimized
-                          sizes="52px"
-                          className="object-cover"
-                        />
-                      ) : (
-                        <span className="text-faint grid size-full place-items-center">
-                          <ImageOff className="size-5" aria-hidden />
-                        </span>
-                      )}
-                    </span>
-                  }
+                  image={<ProductThumb src={product.imageUrl} />}
                   title={product.title}
                   price={price}
                   badges={
@@ -169,11 +153,3 @@ export default async function DashboardProductsPage({
   );
 }
 
-/** "opens Nykaa" — the retailer, not the URL. A raw URL in a dense row is noise. */
-function hostOf(url: string): string | null {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return null;
-  }
-}

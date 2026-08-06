@@ -1,4 +1,7 @@
 import type { FollowedCreator } from "@plugfolio/core";
+import { plural } from "./plural";
+
+export { plural };
 
 /**
  * The words on the Following page.
@@ -15,10 +18,6 @@ const DAY_MS = 86_400_000;
 
 export function agoInDays(from: Date, now: Date): number {
   return Math.max(0, Math.floor((now.getTime() - from.getTime()) / DAY_MS));
-}
-
-export function plural(count: number, noun: string): string {
-  return `${count} ${noun}${count === 1 ? "" : "s"}`;
 }
 
 /** "Last looked 6 days ago" — the denominator for every count on the page. */

@@ -29,17 +29,19 @@ import {
   Pill,
   ProductRow,
   ProductRows,
+  ProductThumb,
   Provenance,
   Stat,
   Stats,
 } from "@plugfolio/ui";
-import { ChevronLeft, ImageOff, Link2Off, Pencil } from "lucide-react";
+import { ChevronLeft, Link2Off, Pencil } from "lucide-react";
 import {
   DisconnectProductButton,
   PostForm,
   PostVisibilitySwitch,
   ProductConnector,
 } from "@/features/product-tagging";
+import { formatNumber } from "@/lib/format-number";
 import { formatPrice } from "@/lib/format-price";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
@@ -56,8 +58,6 @@ export const metadata: Metadata = { title: "Edit post" };
 
 type Params = { postId: string };
 type SearchParams = { profile?: string };
-
-const number = new Intl.NumberFormat("en");
 
 export default async function EditPostPage({
   params,
@@ -163,12 +163,12 @@ export default async function EditPostPage({
               <Stats className="md:grid-cols-2">
                 <Stat
                   label="Views"
-                  value={number.format(measured?.views ?? 0)}
+                  value={formatNumber(measured?.views ?? 0)}
                   provenance={<Provenance kind="tracked">Tracked</Provenance>}
                 />
                 <Stat
                   label="Taps"
-                  value={number.format(measured?.taps ?? 0)}
+                  value={formatNumber(measured?.taps ?? 0)}
                   provenance={<Provenance kind="tracked">Tracked</Provenance>}
                 />
               </Stats>
@@ -199,24 +199,7 @@ export default async function EditPostPage({
                 {post.products.map((product) => (
                   <ProductRow
                     key={product.id}
-                    image={
-                      <span className="bg-active rounded-image relative size-[52px] flex-none overflow-hidden">
-                        {product.imageUrl ? (
-                          <Image
-                            src={product.imageUrl}
-                            alt=""
-                            fill
-                            unoptimized
-                            sizes="52px"
-                            className="object-cover"
-                          />
-                        ) : (
-                          <span className="text-faint grid size-full place-items-center">
-                            <ImageOff className="size-5" aria-hidden />
-                          </span>
-                        )}
-                      </span>
-                    }
+                    image={<ProductThumb src={product.imageUrl} />}
                     title={product.title}
                     price={formatPrice(product.priceCents, product.currency)}
                     badges={
