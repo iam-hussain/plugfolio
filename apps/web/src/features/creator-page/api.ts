@@ -1,8 +1,10 @@
 import type { RecordCodeCopyInput, RecordOutboundTapInput, RecordViewInput } from "@plugfolio/core";
+import { apiPost } from "@/lib/api-client";
 
 /**
  * Client-side calls into the backend for this feature (§5: components don't
- * `fetch` inline — they go through the feature's api.ts + TanStack Query).
+ * `fetch` inline — they go through the feature's api.ts + TanStack Query),
+ * over the shared `lib/api-client` transport.
  *
  * The request type is the SAME Zod-inferred contract the route validates
  * (`@plugfolio/core`), so client and server can't drift. This is exactly the
@@ -17,49 +19,21 @@ export type RecordedTap = {
   occurredAt: string;
 };
 
-export async function recordTap(input: RecordOutboundTapInput): Promise<RecordedTap> {
-  const response = await fetch("/api/taps", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(input),
-    // Send the signed device cookie so the server can verify identity (§6.7).
-    credentials: "same-origin",
-  });
-
-  if (!response.ok) {
-    const problem = (await response.json().catch(() => null)) as {
-      error?: { message?: string };
-    } | null;
-    throw new Error(problem?.error?.message ?? "Failed to record tap");
-  }
-
-  const data = (await response.json()) as { tap: RecordedTap };
-  return data.tap;
-}
+export const recordTap = (input: RecordOutboundTapInput): Promise<RecordedTap> =>
+  apiPost<{ tap: RecordedTap }>("/api/taps", input, {
+    fallbackMessage: "Failed to record tap",
+  }).then((data) => data.tap);
 
 /** The second attribution event (ADR-0011). Fire-and-forget from the caller's
  * perspective — copying the code never waits on this. */
-export async function recordCodeCopy(input: RecordCodeCopyInput): Promise<void> {
-  const response = await fetch("/api/code-copies", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(input),
-    credentials: "same-origin",
-  });
-  if (!response.ok) throw new Error("Failed to record code copy");
-}
+export const recordCodeCopy = (input: RecordCodeCopyInput): Promise<void> =>
+  apiPost("/api/code-copies", input, { fallbackMessage: "Failed to record code copy" });
 
 /**
  * The third attribution event: a surface opening. Genuinely fire-and-forget —
  * a failed view is one missing row, and nothing on the page waits on it or
- * shows an error for it.
+ * shows an error for it, so it swallows every failure.
  */
-export async function recordView(input: RecordViewInput): Promise<void> {
-  await fetch("/api/views", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(input),
-    credentials: "same-origin",
-    keepalive: true,
-  }).catch(() => {});
+export function recordView(input: RecordViewInput): void {
+  void apiPost("/api/views", input, { keepalive: true }).catch(() => {});
 }

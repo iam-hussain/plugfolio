@@ -5,92 +5,31 @@ import type {
   UpdateMemberHandleInput,
   WatchTargetInput,
 } from "@plugfolio/core";
+import { apiDelete, apiPatch, apiPost } from "@/lib/api-client";
 
 /**
  * Client calls for the shopper-account actions (§5: components go through the
  * feature's api.ts). Contracts are the same Zod-inferred types the routes
- * validate, so client and server can't drift.
+ * validate, so client and server can't drift; transport is `lib/api-client`.
  */
 
-async function parseError(response: Response): Promise<Error> {
-  const problem = (await response.json().catch(() => null)) as {
-    error?: { message?: string };
-  } | null;
-  return new Error(problem?.error?.message ?? "Request failed");
-}
+export const followProfile = (input: FollowProfileInput) => apiPost("/api/follows", input);
 
-export async function followProfile(input: FollowProfileInput): Promise<void> {
-  const response = await fetch("/api/follows", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(input),
-    credentials: "same-origin",
-  });
-  if (!response.ok) throw await parseError(response);
-}
+export const unfollowProfile = (input: FollowProfileInput) =>
+  apiDelete(`/api/follows/${input.profileId}`);
 
-export async function unfollowProfile(input: FollowProfileInput): Promise<void> {
-  const response = await fetch(`/api/follows/${input.profileId}`, {
-    method: "DELETE",
-    credentials: "same-origin",
-  });
-  if (!response.ok) throw await parseError(response);
-}
+export const saveToWatchlist = (input: WatchTargetInput) => apiPost("/api/watchlist", input);
 
-export async function saveToWatchlist(input: WatchTargetInput): Promise<void> {
-  const response = await fetch("/api/watchlist", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(input),
-    credentials: "same-origin",
-  });
-  if (!response.ok) throw await parseError(response);
-}
+export const removeFromWatchlist = (input: WatchTargetInput) =>
+  apiDelete(`/api/watchlist/${input.kind}/${input.targetId}`);
 
-export async function removeFromWatchlist(input: WatchTargetInput): Promise<void> {
-  const response = await fetch(`/api/watchlist/${input.kind}/${input.targetId}`, {
-    method: "DELETE",
-    credentials: "same-origin",
-  });
-  if (!response.ok) throw await parseError(response);
-}
+export const addComment = (input: AddCommentInput) => apiPost("/api/comments", input);
 
-export async function addComment(input: AddCommentInput): Promise<void> {
-  const response = await fetch("/api/comments", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(input),
-    credentials: "same-origin",
-  });
-  if (!response.ok) throw await parseError(response);
-}
+export const updateMemberImage = (input: { imageUrl: string | null }) =>
+  apiPatch("/api/me/image", input);
 
-export async function updateMemberImage(input: { imageUrl: string | null }): Promise<void> {
-  const response = await fetch("/api/me/image", {
-    method: "PATCH",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(input),
-    credentials: "same-origin",
-  });
-  if (!response.ok) throw await parseError(response);
-}
+export const updateMemberHandle = (input: UpdateMemberHandleInput) =>
+  apiPatch("/api/me/handle", input);
 
-export async function updateMemberHandle(input: UpdateMemberHandleInput): Promise<void> {
-  const response = await fetch("/api/me/handle", {
-    method: "PATCH",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(input),
-    credentials: "same-origin",
-  });
-  if (!response.ok) throw await parseError(response);
-}
-
-export async function reactToComment(input: ReactToCommentInput): Promise<void> {
-  const response = await fetch(`/api/comments/${input.commentId}/reaction`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ value: input.value }),
-    credentials: "same-origin",
-  });
-  if (!response.ok) throw await parseError(response);
-}
+export const reactToComment = (input: ReactToCommentInput) =>
+  apiPost(`/api/comments/${input.commentId}/reaction`, { value: input.value });
