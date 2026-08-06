@@ -1,3 +1,4 @@
+import type { SessionRepository } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 
 /**
@@ -6,7 +7,7 @@ import { prisma, type PrismaClient } from "../client";
  * the session-token cookie against the same Session table — no Auth.js runtime
  * needed on the API side.
  */
-export function createSessionRepository(db: PrismaClient = prisma) {
+export function createSessionRepository(db: PrismaClient = prisma): SessionRepository {
   return {
     async findUserIdBySessionToken(sessionToken: string): Promise<string | null> {
       const row = await db.session.findUnique({

@@ -1,6 +1,8 @@
 import { NotFoundError } from "../errors";
-import type { ReportCategory, ReportTargetType } from "../ports/admin-repository";
 import type { CreateReportInput } from "../schemas/report";
+
+export type { ReportWriteRepository, NewReport } from "../ports/report-repository";
+import type { ReportWriteRepository } from "../ports/report-repository";
 
 /**
  * The product-side report inflow (admin-console-m2 §3.2): a shopper flags a
@@ -9,21 +11,6 @@ import type { CreateReportInput } from "../schemas/report";
  * preview even after a takedown; unknown targets are rejected so random
  * uuids can't stuff the queue.
  */
-
-export type NewReport = {
-  targetType: ReportTargetType;
-  targetId: string;
-  category: ReportCategory;
-  note: string | null;
-  reporterLabel: string;
-  snippet: string;
-};
-
-export type ReportWriteRepository = {
-  /** One line describing the target now (comment body, product title, …). */
-  resolveTargetSnippet(type: ReportTargetType, targetId: string): Promise<string | null>;
-  create(report: NewReport): Promise<void>;
-};
 
 export type CreateReportDeps = {
   reports: ReportWriteRepository;

@@ -77,6 +77,7 @@ export type {
   ProfileContentCounts,
 } from "./ports/profile-repository";
 export type { ManagerRepository, ManagerView, UserRepository } from "./ports/manager-repository";
+export type { SessionRepository } from "./ports/session-repository";
 export type {
   ConnectionReadRepository,
   PostWriteRepository,
