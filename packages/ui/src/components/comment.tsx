@@ -67,7 +67,7 @@ export function SortButton({
       className={cn(
         // v2: quiet outline chips; the selected sort takes the accent edge
         // rather than a fill — sorting is a lens, not an action.
-        "border-border-strong text-faint text-label rounded-md min-h-[38px] border px-3 py-[7px] font-semibold",
+        "border-border-strong text-faint text-label min-h-[38px] rounded-md border px-3 py-[7px] font-semibold",
         "ease-design hover:border-primary hover:text-primary transition-colors duration-200",
         selected && "border-primary text-primary",
         className,
@@ -86,9 +86,7 @@ export function CommentList({
 }) {
   return (
     // v2: every comment is its own card; the gap carries the separation.
-    <ul className={cn("mt-[18px] flex list-none flex-col gap-2.5 p-0", className)}>
-      {children}
-    </ul>
+    <ul className={cn("mt-[18px] flex list-none flex-col gap-2.5 p-0", className)}>{children}</ul>
   );
 }
 
@@ -168,7 +166,5 @@ export function Comment({ author, badge, when, body, avatar, actions, replies }:
 
 /** The indented reply rail — one level only (ADR-0013). */
 export function CommentThread({ children }: { children: React.ReactNode }) {
-  return (
-    <ul className="mb-1.5 ml-8 mt-2.5 flex list-none flex-col gap-2.5 p-0">{children}</ul>
-  );
+  return <ul className="mb-1.5 ml-8 mt-2.5 flex list-none flex-col gap-2.5 p-0">{children}</ul>;
 }

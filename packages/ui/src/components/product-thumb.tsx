@@ -30,7 +30,12 @@ export function ProductThumb({ src, alt = "", size = "md" }: ProductThumbProps) 
   return (
     <span className={thumb({ size })}>
       {src ? (
-        <img src={src} alt={alt} className="absolute inset-0 size-full object-cover" loading="lazy" />
+        <img
+          src={src}
+          alt={alt}
+          className="absolute inset-0 size-full object-cover"
+          loading="lazy"
+        />
       ) : (
         <span className="text-faint grid size-full place-items-center">
           <ImageOff className={cn(iconSize[size ?? "md"])} aria-hidden />

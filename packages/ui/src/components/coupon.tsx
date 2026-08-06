@@ -97,7 +97,7 @@ export function CodeButton({
       <span
         aria-label="Offer ended"
         className={cn(
-          "bg-border text-faint rounded-md text-label inline-flex min-h-11 items-center px-[15px] font-mono font-bold",
+          "bg-border text-faint text-label inline-flex min-h-11 items-center rounded-md px-[15px] font-mono font-bold",
           className,
         )}
       >
@@ -111,7 +111,7 @@ export function CodeButton({
       data-copied={copied ? "" : undefined}
       aria-label={`Copy code ${code}`}
       className={cn(
-        "bg-accent text-accent-foreground rounded-md text-label inline-flex min-h-11 items-center gap-2 px-[15px] font-mono font-bold tracking-[0.06em]",
+        "bg-accent text-accent-foreground text-label inline-flex min-h-11 items-center gap-2 rounded-md px-[15px] font-mono font-bold tracking-[0.06em]",
         "ease-design transition-transform duration-150 hover:-translate-y-px",
         className,
       )}

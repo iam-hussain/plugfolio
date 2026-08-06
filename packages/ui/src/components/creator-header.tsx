@@ -65,9 +65,7 @@ const coverShell = cva("relative overflow-hidden", {
     /** Centred headers get a taller band. */
     tall: { true: "", false: "" },
   },
-  compoundVariants: [
-    { treatment: "band", tall: true, className: "h-[196px] sm:h-[290px]" },
-  ],
+  compoundVariants: [{ treatment: "band", tall: true, className: "h-[196px] sm:h-[290px]" }],
   defaultVariants: { treatment: "tile", tall: false },
 });
 
@@ -131,7 +129,7 @@ export function CreatorCover({
         <span aria-hidden className="bg-primary absolute inset-x-0 bottom-0 h-1" />
       ) : null}
       {treatment === "tile" && badge ? (
-        <span className="text-pico tracking-eyebrow absolute right-3 top-3 rounded-pill bg-white/95 px-2.5 py-1.5 font-mono font-bold uppercase text-[hsl(var(--brand-ink))]">
+        <span className="text-pico tracking-eyebrow rounded-pill absolute right-3 top-3 bg-white/95 px-2.5 py-1.5 font-mono font-bold uppercase text-[hsl(var(--brand-ink))]">
           {badge}
         </span>
       ) : null}
@@ -163,8 +161,10 @@ const portrait = cva("bg-border-strong relative shrink-0 overflow-hidden rounded
   variants: {
     style: {
       compact: "border-border-strong size-14 border",
-      balanced: "size-[84px] shadow-[0_0_0_5px_hsl(var(--surface)),0_14px_30px_-14px_hsl(var(--brand-ink)/0.32)] sm:size-[92px]",
-      centred: "size-[104px] shadow-[0_0_0_5px_hsl(var(--surface)),0_14px_30px_-14px_hsl(var(--brand-ink)/0.32)] sm:size-[120px]",
+      balanced:
+        "size-[84px] shadow-[0_0_0_5px_hsl(var(--surface)),0_14px_30px_-14px_hsl(var(--brand-ink)/0.32)] sm:size-[92px]",
+      centred:
+        "size-[104px] shadow-[0_0_0_5px_hsl(var(--surface)),0_14px_30px_-14px_hsl(var(--brand-ink)/0.32)] sm:size-[120px]",
     },
   },
 });
@@ -243,7 +243,12 @@ export function CreatorHeader({
       </p>
 
       {socials || share ? (
-        <div className={cn("mt-3.5 flex flex-wrap items-center gap-[7px]", centred && "justify-center")}>
+        <div
+          className={cn(
+            "mt-3.5 flex flex-wrap items-center gap-[7px]",
+            centred && "justify-center",
+          )}
+        >
           {socials}
           {share}
         </div>
@@ -252,7 +257,9 @@ export function CreatorHeader({
       {/* Counts: compact collapses to one mono line; the others get the row. */}
       {style === "compact" ? (
         <p className="border-border text-muted-foreground text-nano mt-3.5 border-t pt-3.5 font-mono tracking-[0.08em]">
-          {counts ? `${counts.posts} posts · ${counts.things} things · ${followers} followers` : `${followers} followers`}
+          {counts
+            ? `${counts.posts} posts · ${counts.things} things · ${followers} followers`
+            : `${followers} followers`}
         </p>
       ) : (
         <dl

@@ -162,7 +162,10 @@ export function BoardTitle({ className, children, ...props }: React.ComponentPro
   return (
     <h2
       data-slot="board-title"
-      className={cn("text-faint text-pico tracking-eyebrow font-mono font-bold uppercase", className)}
+      className={cn(
+        "text-faint text-pico tracking-eyebrow font-mono font-bold uppercase",
+        className,
+      )}
       {...props}
     >
       {children}

@@ -114,7 +114,10 @@ export function SocialsRow({ links, mode = "labels", className }: SocialsRowProp
             rel="noopener noreferrer me"
             className="border-border-strong text-muted-foreground hover:border-primary hover:text-primary rounded-pill text-pico tracking-eyebrow ease-design inline-flex h-[34px] items-center gap-1.5 border px-[13px] font-mono font-bold uppercase transition-colors duration-200"
           >
-            {link.label} <span aria-hidden className="opacity-50">↗</span>
+            {link.label}{" "}
+            <span aria-hidden className="opacity-50">
+              ↗
+            </span>
           </a>
         </li>
       ))}
