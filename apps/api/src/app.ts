@@ -97,6 +97,7 @@ import {
   isFeatureEnabled,
   ForbiddenError,
   updateProductInput,
+  toErrorShape,
 } from "@plugfolio/core";
 import { deviceIdentity, requireUserId, sessionUserId } from "./auth";
 import {
@@ -113,7 +114,6 @@ import {
   verifyEmailDeps,
   watchlistDeps,
 } from "./container";
-import { toErrorShape } from "./http/error-response";
 
 /**
  * The standalone REST API (ADR-0008, ADR-0006): thin controllers only —

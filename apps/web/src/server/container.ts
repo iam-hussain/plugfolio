@@ -1,4 +1,11 @@
 import {
+  makeBusinessCollabDeps,
+  makeProfileIdentityDeps,
+  makeProfileLinkDeps,
+  makeProfileManagerDeps,
+  systemClock,
+} from "@plugfolio/core";
+import {
   createAppSettingsRepository,
   createBusinessRepository,
   createCategoryRepository,
@@ -48,7 +55,7 @@ export const repositories = {
   settings: createAppSettingsRepository(),
 };
 
-export const clock = { now: () => new Date() };
+export const clock = systemClock;
 
 /** Sponsored placements (ADR-0020) — admin-placed, gated on the `ads` flag. */
 export const adPlacementDeps = {
@@ -57,24 +64,18 @@ export const adPlacementDeps = {
   now: clock.now,
 };
 
-/** The business-collab service dependency bundle, wired once. */
-export const businessCollabDeps = {
-  businesses: repositories.businesses,
-  requirements: repositories.requirements,
-  collabs: repositories.collabs,
-  profiles: repositories.profiles,
-  now: clock.now,
-};
+/** Service-dependency bundles — shapes defined once in @plugfolio/core (§6). */
+export const businessCollabDeps = makeBusinessCollabDeps(repositories, clock.now);
 
-export const profileLinkDeps = {
+export const profileLinkDeps = makeProfileLinkDeps({
   profiles: repositories.profiles,
   profileLinks: repositories.profileLinks,
-};
+});
 
-export const profileIdentityDeps = {
+export const profileIdentityDeps = makeProfileIdentityDeps({
   profiles: repositories.profiles,
   identity: repositories.profileIdentity,
-};
+});
 
 export const youtubeDeps = {
   connections: repositories.socialConnections,
@@ -82,8 +83,8 @@ export const youtubeDeps = {
   now: clock.now,
 };
 
-export const profileManagerDeps = {
+export const profileManagerDeps = makeProfileManagerDeps({
   profiles: repositories.profiles,
   managers: repositories.managers,
   users: repositories.users,
-};
+});

@@ -11,6 +11,16 @@ export { DEVICE_COOKIE, verifyDeviceToken, issueDeviceToken } from "./auth/devic
 // The guessable-secret guard: admin sign-in (ADR-0014), verify codes (ADR-0024)
 export { createFailureLimit, type FailureLimit } from "./auth/rate-limit";
 
+// Composition helpers — shared wiring for every app's composition root (§6)
+export {
+  systemClock,
+  makeBusinessCollabDeps,
+  makeProfileLinkDeps,
+  makeProfileIdentityDeps,
+  makeProfileManagerDeps,
+  selectAuthMailer,
+} from "./composition/wiring";
+
 // Domain
 export type { OutboundTap, NewOutboundTap, TapSource } from "./domain/tap";
 
