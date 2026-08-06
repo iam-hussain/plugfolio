@@ -1,6 +1,11 @@
 import { AppError } from "../errors";
 import type { ImageProcessor, ImageStore } from "../ports/image-storage";
-import { IMAGE_SPECS, MAX_UPLOAD_BYTES, sniffImageMime, type UploadKind } from "../schemas/image-upload";
+import {
+  IMAGE_SPECS,
+  MAX_UPLOAD_BYTES,
+  sniffImageMime,
+  type UploadKind,
+} from "../schemas/image-upload";
 
 /**
  * Upload one image (ADR-0023): validate at the boundary, normalize to the

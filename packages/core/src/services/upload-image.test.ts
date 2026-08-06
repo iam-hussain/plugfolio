@@ -13,7 +13,12 @@ function makeDeps(): UploadImageDeps & { seenSpec?: unknown; putKey?: string } {
     processor: {
       async process(_input, spec) {
         out.seenSpec = spec;
-        return { bytes: new Uint8Array([1, 2, 3]), contentType: "image/webp", width: spec.width, height: spec.height };
+        return {
+          bytes: new Uint8Array([1, 2, 3]),
+          contentType: "image/webp",
+          width: spec.width,
+          height: spec.height,
+        };
       },
     },
     store: {
@@ -34,9 +39,9 @@ describe("uploadImage", () => {
   });
 
   it("rejects an empty file", async () => {
-    await expect(uploadImage(makeDeps(), "post", { bytes: new Uint8Array() })).rejects.toBeInstanceOf(
-      AppError,
-    );
+    await expect(
+      uploadImage(makeDeps(), "post", { bytes: new Uint8Array() }),
+    ).rejects.toBeInstanceOf(AppError);
   });
 
   it("processes with the kind's spec and returns the stored URL", async () => {
@@ -44,6 +49,10 @@ describe("uploadImage", () => {
     const result = await uploadImage(deps, "post", { bytes: JPEG });
     expect(deps.seenSpec).toEqual(IMAGE_SPECS.post);
     expect(deps.putKey).toBe("post");
-    expect(result).toEqual({ url: "https://cdn.test/post/1080x1350.webp", width: 1080, height: 1350 });
+    expect(result).toEqual({
+      url: "https://cdn.test/post/1080x1350.webp",
+      width: 1080,
+      height: 1350,
+    });
   });
 });

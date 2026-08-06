@@ -28,7 +28,15 @@ function makeFakeProfiles(): ProfileRepository {
     },
     async listAccessibleByUser(userId: string) {
       return userId === CREATOR_ID
-        ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null, role: "admin" as const }]
+        ? [
+            {
+              id: PROFILE_ID,
+              username: "lena",
+              displayName: null,
+              avatarUrl: null,
+              role: "admin" as const,
+            },
+          ]
         : [];
     },
     async contentCounts() {

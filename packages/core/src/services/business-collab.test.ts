@@ -178,11 +178,21 @@ function makeDeps(
 
   const profiles: ProfileRepository = {
     async listByUser(userId) {
-      return userId === CREATOR_USER ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null }] : [];
+      return userId === CREATOR_USER
+        ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null }]
+        : [];
     },
     async listAccessibleByUser(userId) {
       return userId === CREATOR_USER
-        ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null, role: "admin" as const }]
+        ? [
+            {
+              id: PROFILE_ID,
+              username: "lena",
+              displayName: null,
+              avatarUrl: null,
+              role: "admin" as const,
+            },
+          ]
         : [];
     },
     async contentCounts() {
