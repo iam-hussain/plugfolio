@@ -24,3 +24,12 @@ export {
 } from "./components/profile-identity-form";
 export { DeleteProfileButton } from "./components/delete-profile-button";
 export { HidePostButton, PostVisibilitySwitch } from "./components/hide-post-button";
+export { DashboardHome, type DashboardHomeProps } from "./components/dashboard-home";
+export { PostEditorView, type PostEditorViewProps } from "./components/post-editor-view";
+export { ProductEditorView, type ProductEditorViewProps } from "./components/product-editor-view";
+export { PostsListView, POST_FILTERS, type PostsListViewProps } from "./components/posts-list-view";
+export { ProductsListView, type ProductsListViewProps } from "./components/products-list-view";
+export {
+  ProfileSettingsView,
+  type ProfileSettingsViewProps,
+} from "./components/profile-settings-view";

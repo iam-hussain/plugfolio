@@ -5,15 +5,7 @@ import type {
   DiscoveryProduct,
 } from "@plugfolio/core";
 import { EXPLORE_PAGE_SIZE } from "@plugfolio/core";
-import {
-  AdSlot,
-  AdSlotWhy,
-  Button,
-  cn,
-  measure,
-  WallEnd,
-  WallEndNote,
-} from "@plugfolio/ui";
+import { AdSlot, AdSlotWhy, Button, cn, measure, WallEnd, WallEndNote } from "@plugfolio/ui";
 import Image from "next/image";
 import type { Route } from "next";
 import { Search } from "lucide-react";
@@ -37,7 +29,8 @@ const scopeChip = cva(
     variants: {
       active: {
         true: "bg-primary text-primary-foreground border border-transparent",
-        false: "border-border-strong text-foreground/80 hover:border-primary hover:text-primary border",
+        false:
+          "border-border-strong text-foreground/80 hover:border-primary hover:text-primary border",
       },
     },
     defaultVariants: { active: false },
@@ -173,7 +166,7 @@ export function ExploreScreen({ tab, query, creators, posts, products, ad }: Exp
           plain GET form — no login, no JS required (§2.2). ── */}
       <div className={cn(measure(), "pt-[22px]")}>
         <form action="/explore" method="get" role="search" className="flex gap-2.5">
-          <label className="rounded-lg border-border-strong bg-card flex h-[52px] flex-1 items-center gap-2.5 border px-[18px] focus-within:border-primary">
+          <label className="border-border-strong bg-card focus-within:border-primary flex h-[52px] flex-1 items-center gap-2.5 rounded-lg border px-[18px]">
             <Search aria-hidden className="size-[17px] shrink-0 opacity-50" />
             <span className="sr-only">Search captions, creators and things</span>
             <input

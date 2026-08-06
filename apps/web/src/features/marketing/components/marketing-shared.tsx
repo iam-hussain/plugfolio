@@ -57,7 +57,7 @@ export function PostCard({
   return (
     <div className="border-border-strong bg-card rounded-sheet border p-2.5 shadow-[0_22px_44px_-20px_rgba(18,16,28,.28)]">
       <div className="relative">
-        <div className="rounded-lg overflow-hidden">
+        <div className="overflow-hidden rounded-lg">
           <Image
             src={`/landing/posts/${photo}.jpg`}
             alt={alt}

@@ -72,7 +72,7 @@ export function ProfileSwitcher({
             type="button"
             className="flex min-h-[44px] flex-none items-center gap-2.5 text-left"
           >
-            <Avatar className="rounded-md size-[38px]">
+            <Avatar className="size-[38px] rounded-md">
               {active?.avatarUrl ? <AvatarImage src={active.avatarUrl} alt="" /> : null}
               <AvatarFallback className="text-primary text-micro rounded-md font-bold">
                 {active?.username.charAt(0).toUpperCase()}

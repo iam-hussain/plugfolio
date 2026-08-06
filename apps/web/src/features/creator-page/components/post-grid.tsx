@@ -63,7 +63,7 @@ function PlayBadge() {
   return (
     <span
       aria-label="Video"
-      className="bg-brand-ink/75 absolute left-2 top-2 flex size-6 items-center justify-center rounded-pill text-white"
+      className="bg-brand-ink/75 rounded-pill absolute left-2 top-2 flex size-6 items-center justify-center text-white"
     >
       <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor" aria-hidden>
         <polygon points="3,1.5 10,6 3,10.5" />
@@ -75,7 +75,7 @@ function PlayBadge() {
 /** The "Thing" pill a standalone product wears, top-right on the media. */
 function ThingPill() {
   return (
-    <span className="bg-background border-border text-foreground text-pico tracking-eyebrow absolute right-2 top-2 rounded-pill border px-2 py-1 font-mono font-bold uppercase">
+    <span className="bg-background border-border text-foreground text-pico tracking-eyebrow rounded-pill absolute right-2 top-2 border px-2 py-1 font-mono font-bold uppercase">
       Thing
     </span>
   );
@@ -137,7 +137,7 @@ function ProductCard({
       </span>
       {layout !== "grid" ? (
         <span className={layout === "list" ? "min-w-0 flex-1" : "block px-3 pb-[13px] pt-[11px]"}>
-          <span className="text-label block font-medium leading-[1.4] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
+          <span className="text-label block overflow-hidden font-medium leading-[1.4] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] [display:-webkit-box]">
             {product.title}
           </span>
           <AnswerRow
@@ -180,7 +180,7 @@ function PostCard({
       </span>
       {layout !== "grid" ? (
         <span className={layout === "list" ? "min-w-0 flex-1" : "block px-3 pb-[13px] pt-[11px]"}>
-          <span className="text-label block font-medium leading-[1.4] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
+          <span className="text-label block overflow-hidden font-medium leading-[1.4] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] [display:-webkit-box]">
             {/* A post with no caption falls back to the handle, so a titled
                 layout never renders a nameless card (ADR-0017 consequence). */}
             {post.caption ?? `@${handle}`}

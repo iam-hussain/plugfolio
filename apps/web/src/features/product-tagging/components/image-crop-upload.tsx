@@ -153,7 +153,7 @@ export function ImageCropUpload({ kind, onUploaded, label = "Upload" }: ImageCro
               Drag to move, zoom to focus. What you see here is exactly what shows.
             </DialogDescription>
           </DialogHeader>
-          <div className={`${FRAME_CLASS[kind]} bg-active rounded-lg w-full overflow-hidden`}>
+          <div className={`${FRAME_CLASS[kind]} bg-active w-full overflow-hidden rounded-lg`}>
             <canvas
               ref={canvasRef}
               width={box.width}

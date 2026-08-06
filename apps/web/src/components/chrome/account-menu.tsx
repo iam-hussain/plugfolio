@@ -124,9 +124,7 @@ export function AccountMenu({ name, handle, avatarUrl, profiles, hasBusiness }: 
           <div className="flex items-center gap-2.5 px-2 pb-2.5 pt-1.5">
             <Avatar className="size-9">
               {avatarUrl ? <AvatarImage src={avatarUrl} alt="" /> : null}
-              <AvatarFallback className="text-foreground text-micro">
-                {initial}
-              </AvatarFallback>
+              <AvatarFallback className="text-foreground text-micro">{initial}</AvatarFallback>
             </Avatar>
             <div className="min-w-0">
               <p className="text-copy truncate font-semibold">@{handle}</p>
@@ -150,7 +148,7 @@ export function AccountMenu({ name, handle, avatarUrl, profiles, hasBusiness }: 
                     onClick={close}
                     className={profileRow({ editing })}
                   >
-                    <Avatar className="rounded-[9px] size-7">
+                    <Avatar className="size-7 rounded-[9px]">
                       {profile.avatarUrl ? <AvatarImage src={profile.avatarUrl} alt="" /> : null}
                       <AvatarFallback className="text-primary text-pico rounded-[9px] font-bold">
                         {profile.username.charAt(0).toUpperCase()}

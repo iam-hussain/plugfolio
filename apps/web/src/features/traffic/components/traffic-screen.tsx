@@ -46,7 +46,6 @@ const rangeChip = cva(
   },
 );
 
-
 export function TrafficScreen({
   summary,
   range,
@@ -67,8 +66,8 @@ export function TrafficScreen({
     <>
       <div className="flex flex-wrap items-end justify-between gap-3.5">
         <Hint className="mb-0 max-w-[520px]">
-          Every figure is a counted event. Nothing is estimated, and we never see a sale — so
-          there is no earnings number here.
+          Every figure is a counted event. Nothing is estimated, and we never see a sale — so there
+          is no earnings number here.
         </Hint>
         <nav aria-label="Range" className="flex gap-1.5 overflow-x-auto">
           {TRAFFIC_RANGES.map((option) => (
@@ -209,7 +208,7 @@ export function TrafficScreen({
 
             <DashCard className="mt-0">
               <DashCardTitle className="text-body">Where it came from</DashCardTitle>
-              <Hint className="mb-0 mt-1.5 text-label">
+              <Hint className="text-label mb-0 mt-1.5">
                 The link that brought each view, as the browser reported it.
               </Hint>
               <ul className="mt-3.5 flex flex-col gap-3">

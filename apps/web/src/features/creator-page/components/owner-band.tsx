@@ -69,9 +69,7 @@ export function OwnerBand({
           ) : null}
         </div>
       </div>
-      {admin && open ? (
-        <LookPanel profileId={profileId} appearance={appearance} />
-      ) : null}
+      {admin && open ? <LookPanel profileId={profileId} appearance={appearance} /> : null}
     </div>
   );
 }

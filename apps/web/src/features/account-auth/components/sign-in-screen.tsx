@@ -145,7 +145,7 @@ export function SignInScreen({ callbackUrl = "/explore", initialRole }: SignInSc
           type="submit"
           variant="action"
           disabled={submit.isPending}
-          className="font-display rounded-lg mt-[18px] h-[50px] w-full"
+          className="font-display mt-[18px] h-[50px] w-full rounded-lg"
         >
           {submit.isPending ? "Signing in…" : "Sign in"}
         </Button>

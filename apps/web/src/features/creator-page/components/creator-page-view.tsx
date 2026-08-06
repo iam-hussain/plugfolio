@@ -16,14 +16,11 @@ import {
 } from "@plugfolio/ui";
 import { cn } from "@plugfolio/ui";
 import Link from "next/link";
-import {
-  PillNavDivider,
-  PillNavOverride,
-  pillNavCircle,
-} from "@/components/chrome/pill-nav";
+import { PillNavDivider, PillNavOverride, pillNavCircle } from "@/components/chrome/pill-nav";
 import { RequestCollabForm } from "@/features/business-collab";
 import { CommentsSection, FollowButton } from "@/features/shopper-account";
 import { formatCount } from "@/lib/format-count";
+import { toSocials } from "../to-socials";
 import { CategoryChips } from "./category-chips";
 import { CreatorContextBar } from "./creator-context-bar";
 import { OwnerBand } from "./owner-band";
@@ -83,16 +80,7 @@ export function CreatorPageView({
   viewer,
   structuredData,
 }: CreatorPageViewProps) {
-  // "Your links" → the socials row (design-out: required on every creator
-  // header). Label = the platform; the website reads as its hostname.
-  const socials = links.map((link) => ({
-    platform: link.platform,
-    href: link.url,
-    label:
-      link.platform === "website"
-        ? new URL(link.url).hostname.replace(/^www\./, "")
-        : link.platform.charAt(0).toUpperCase() + link.platform.slice(1),
-  }));
+  const socials = toSocials(links);
 
   // Hidden posts (brief 07) never reach visitors — only the dashboard shows
   // them. Category chips filter the rest (ADR-0010); "All" holds everything.
@@ -127,7 +115,6 @@ export function CreatorPageView({
       initiallyFollowing={viewer.following}
     />
   );
-
 
   // Stored, resolved at the read (ADR-0026): the drawer writes them, the
   // repository resolves nulls against the header style.
@@ -186,7 +173,12 @@ export function CreatorPageView({
           />
         </div>
       ) : (
-        <CreatorCover treatment={cover} tall={page.headerStyle === "centred"} url={page.coverUrl} greeting={page.greeting} />
+        <CreatorCover
+          treatment={cover}
+          tall={page.headerStyle === "centred"}
+          url={page.coverUrl}
+          greeting={page.greeting}
+        />
       )}
       <div className={measure()}>
         <CreatorHeader

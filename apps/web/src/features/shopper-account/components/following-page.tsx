@@ -60,8 +60,8 @@ export function FollowingPage({
         {followedTotal > 0 && since ? <LastLooked>{sinceLabel(since, now)}</LastLooked> : null}
       </div>
       <p className="text-muted-foreground text-copy mt-2 max-w-[460px] leading-[1.55]">
-        A list, not a feed. Every route out of here goes to that creator&apos;s own page —
-        nothing is merged into a stream you buy from.
+        A list, not a feed. Every route out of here goes to that creator&apos;s own page — nothing
+        is merged into a stream you buy from.
       </p>
 
       {followedTotal === 0 ? (

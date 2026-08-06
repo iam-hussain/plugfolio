@@ -106,8 +106,8 @@ export function JoinScreen({ initialRole }: JoinScreenProps) {
         Make an account
       </h1>
       <p className="text-muted-foreground text-copy mt-2 text-pretty leading-[1.6]">
-        Email and a password — that is the whole thing. Your @handle is generated for you.
-        Remember: you never need this to buy.
+        Email and a password — that is the whole thing. Your @handle is generated for you. Remember:
+        you never need this to buy.
       </p>
 
       {/* The role fork — the socket picker, with its promise directly under. */}
@@ -168,7 +168,7 @@ export function JoinScreen({ initialRole }: JoinScreenProps) {
         {submit.isError ? (
           <p
             role="alert"
-            className="border-destructive text-muted-foreground text-label mt-3 rounded-panel border p-3 leading-[1.55]"
+            className="border-destructive text-muted-foreground text-label rounded-panel mt-3 border p-3 leading-[1.55]"
           >
             {submit.error.message}
           </p>
@@ -177,7 +177,7 @@ export function JoinScreen({ initialRole }: JoinScreenProps) {
           type="submit"
           variant="action"
           disabled={submit.isPending}
-          className="font-display rounded-lg mt-[18px] h-[50px] w-full"
+          className="font-display mt-[18px] h-[50px] w-full rounded-lg"
         >
           {submit.isPending ? "Creating…" : copy.cta}
         </Button>

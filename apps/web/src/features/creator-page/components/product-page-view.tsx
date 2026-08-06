@@ -29,11 +29,7 @@ import {
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  PillNavOverride,
-  pillNavActionQuiet,
-  pillNavCircle,
-} from "@/components/chrome/pill-nav";
+import { PillNavOverride, pillNavActionQuiet, pillNavCircle } from "@/components/chrome/pill-nav";
 import { CommentsSection, WatchButton } from "@/features/shopper-account";
 import { JsonLd } from "@/components/json-ld";
 import { formatPrice } from "@/lib/format-price";

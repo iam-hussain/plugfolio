@@ -102,7 +102,11 @@ export function WatchButton({
         {icon ? (
           <span className="sr-only">{watched ? "Remove from watchlist" : "Save for later"}</span>
         ) : watched ? (
-          verb === "remove" ? "Remove" : "Saved"
+          verb === "remove" ? (
+            "Remove"
+          ) : (
+            "Saved"
+          )
         ) : (
           "Save"
         )}
