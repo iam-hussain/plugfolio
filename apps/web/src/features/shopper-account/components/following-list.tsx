@@ -1,7 +1,7 @@
 import type { FollowedCreator, FollowSort } from "@plugfolio/core";
 import { Button, FollowGroup } from "@plugfolio/ui";
 import Link from "next/link";
-import { badgeFor, metaLine, plural } from "@/lib/follow-labels";
+import { badgeFor, metaLine, plural } from "../follow-labels";
 import { FollowRow } from "./follow-row";
 
 /**

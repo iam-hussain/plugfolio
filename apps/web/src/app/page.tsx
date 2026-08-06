@@ -1,4 +1,4 @@
-import { LandingPage } from "@/features/landing";
+import { LandingPage } from "@/features/marketing";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 // Server Component (§5 server-first). The landing composes the landing feature;

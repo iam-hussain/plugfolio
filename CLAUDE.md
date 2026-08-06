@@ -79,6 +79,10 @@ apps/
   web/            # Next.js App Router — pages + Auth.js; proxies /api/* to apps/api. The feature-based src/ below lives here.
   api/            # standalone REST API (Hono) — thin shells over core services; mobile clients hit this directly.
   admin/          # internal ops app (Next.js) — talks to the DB directly via core+db, separate AdminUser identity (ADR-0014).
+                  # Convention differs from web on purpose: no features/ layer. Each resource is a route folder holding
+                  # page.tsx (server-rendered table + detail), actions.ts (its server actions) and export/route.ts (CSV);
+                  # shared chrome lives in admin/src/components. Keep detail-page bodies under ~150 lines by lifting
+                  # sections into components/, same threshold as web (§8).
 packages/
   core/           # framework-free domain: entities, rules, services, Zod schemas, repository INTERFACES (§6). No Prisma/Next.
   db/             # Prisma schema + client + repository IMPLEMENTATIONS — the ONLY place Prisma is imported.
@@ -100,11 +104,12 @@ apps/web/src/
     api/auth/               # Auth.js routes (the only /api/* served by web — the rest proxies to apps/api, ADR-0008)
   features/                 # THE core. One folder per product capability.
     creator-page/
-      components/           # feature-scoped UI
-      hooks/                # feature-scoped hooks (use-...)
-      api.ts                # client calls into backend for this feature
-      types.ts             # feature types (Zod schemas + inferred types)
-      index.ts              # public surface of the feature — import from here only
+      components/           # feature-scoped UI (the only always-present part)
+      hooks/                # feature-scoped hooks (use-...) — ADD when a feature has real client state
+      api.ts                # client calls into backend — ADD for a feature with writes (read-only surfaces omit it)
+      index.ts              # public surface of the feature — import from here only (always present)
+      # Types live next to what uses them (contracts come from @plugfolio/core's Zod schemas),
+      # so a separate types.ts is optional — add one only when a feature grows enough to warrant it.
     product-tagging/
     shopper-account/        # follow + comment
     business-collab/

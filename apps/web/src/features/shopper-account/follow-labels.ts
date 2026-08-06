@@ -1,5 +1,5 @@
 import type { FollowedCreator } from "@plugfolio/core";
-import { plural } from "./plural";
+import { plural } from "../../lib/plural";
 
 export { plural };
 
