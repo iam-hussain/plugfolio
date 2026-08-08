@@ -2,6 +2,7 @@
  * Typed error hierarchy (CLAUDE.md §6.5). Services throw these; the HTTP layer
  * maps each `code` to a status in exactly one place. Never throw bare strings.
  */
+import { ZodError } from "zod";
 
 export type AppErrorCode =
   | "VALIDATION"
@@ -58,4 +59,42 @@ export class RateLimitedError extends AppError {
     super("RATE_LIMITED", message, details);
     this.name = "RateLimitedError";
   }
+}
+
+/**
+ * The single, framework-free mapping from a thrown error to an HTTP status +
+ * wire body (§6.5). Each app adapts this to its own response object (Next's
+ * `NextResponse.json`, Hono's `c.json`) — the *mapping* lives here only, so a
+ * new error code is added in one place, not once per deployable.
+ */
+export type ErrorShape = {
+  status: 400 | 401 | 403 | 404 | 409 | 429 | 500;
+  body: { error: { code: string; message: string; details?: unknown } };
+};
+
+const statusByCode: Record<AppErrorCode, ErrorShape["status"]> = {
+  VALIDATION: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  CONFLICT: 409,
+  RATE_LIMITED: 429,
+  INTERNAL: 500,
+};
+
+export function toErrorShape(error: unknown): ErrorShape {
+  if (error instanceof ZodError) {
+    return {
+      status: 400,
+      body: { error: { code: "VALIDATION", message: "Invalid request", details: error.flatten() } },
+    };
+  }
+  if (error instanceof AppError) {
+    return {
+      status: statusByCode[error.code],
+      body: { error: { code: error.code, message: error.message } },
+    };
+  }
+  console.error("Unhandled error:", error);
+  return { status: 500, body: { error: { code: "INTERNAL", message: "Something went wrong" } } };
 }

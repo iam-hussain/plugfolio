@@ -33,10 +33,7 @@ export default async function TrafficRoute({
 
   return (
     <>
-      <DashboardPageHeader
-        title="Traffic"
-        eyebrow={active ? `@${active.username}` : undefined}
-      />
+      <DashboardPageHeader title="Traffic" eyebrow={active ? `@${active.username}` : undefined} />
       <DashBody>
         {active && summary ? (
           <TrafficScreen

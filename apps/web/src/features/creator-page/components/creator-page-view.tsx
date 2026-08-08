@@ -5,27 +5,14 @@ import type {
   CreatorProductRow,
   ProfileLinkView,
 } from "@plugfolio/core";
-import {
-  Button,
-  CreatorCover,
-  CreatorHeader,
-  EmptyState,
-  measure,
-  PageBand,
-  SocialsRow,
-} from "@plugfolio/ui";
-import { cn } from "@plugfolio/ui";
+import { Button, CreatorHeader, EmptyState, measure, SocialsRow } from "@plugfolio/ui";
 import Link from "next/link";
-import {
-  PillNavDivider,
-  PillNavOverride,
-  pillNavCircle,
-} from "@/components/chrome/pill-nav";
-import { RequestCollabForm } from "@/features/business-collab";
 import { CommentsSection, FollowButton } from "@/features/shopper-account";
 import { formatCount } from "@/lib/format-count";
+import { buildCreatorPageModel } from "../creator-page-model";
 import { CategoryChips } from "./category-chips";
 import { CreatorContextBar } from "./creator-context-bar";
+import { AnonBand, BusinessBand, CreatorPageCover, CreatorPageNav } from "./creator-page-sections";
 import { OwnerBand } from "./owner-band";
 import { PageShare } from "./page-share";
 import { PostGrid } from "./post-grid";
@@ -42,7 +29,8 @@ import { ViewBeacon } from "./view-beacon";
  *
  * Server Component: the no-login shopper surface renders on the server
  * (ADR-0002) and only the follow button, the share sheet, the customise drawer
- * and the comment composer are client islands.
+ * and the comment composer are client islands. The derivations live in
+ * `creator-page-model.ts`; the section pieces in `creator-page-sections.tsx`.
  */
 export type CreatorPageViewProps = {
   page: CreatorPage;
@@ -83,42 +71,24 @@ export function CreatorPageView({
   viewer,
   structuredData,
 }: CreatorPageViewProps) {
-  // "Your links" → the socials row (design-out: required on every creator
-  // header). Label = the platform; the website reads as its hostname.
-  const socials = links.map((link) => ({
-    platform: link.platform,
-    href: link.url,
-    label:
-      link.platform === "website"
-        ? new URL(link.url).hostname.replace(/^www\./, "")
-        : link.platform.charAt(0).toUpperCase() + link.platform.slice(1),
-  }));
-
-  // Hidden posts (brief 07) never reach visitors — only the dashboard shows
-  // them. Category chips filter the rest (ADR-0010); "All" holds everything.
-  const visiblePosts = page.posts.filter((post) => post.hiddenAt === null);
-  // A shelf can also hold products the creator sells or recommends directly,
-  // with no post behind them (design §"two kinds of thing, one wall"). Products
-  // already tagged inside a post are shown via that post — not twice.
-  const standaloneProducts = allProducts.filter((product) => product.postCount === 0);
-  const activeCategory = page.categories.find((c) => c.id === category) ?? null;
-  const posts = activeCategory
-    ? visiblePosts.filter((post) => post.categoryId === activeCategory.id)
-    : visiblePosts;
-  const products = activeCategory
-    ? standaloneProducts.filter((product) => product.categoryId === activeCategory.id)
-    : standaloneProducts;
-  const shopCount = posts.length + products.length;
-  // "41 things tagged" — tag instances inside posts, which is what the phrase
-  // means; the standalone products are already counted on their own.
-  const thingsTagged = posts.reduce((total, post) => total + post.products.length, 0);
+  const {
+    socials,
+    posts,
+    products,
+    activeCategory,
+    shopCount,
+    thingsCount,
+    defaultAsProfileId,
+    cover,
+  } = buildCreatorPageModel({
+    page,
+    allProducts,
+    links,
+    category,
+    identities: viewer.identities,
+  });
 
   const { membership } = viewer;
-  // ADR-0009 default: on your own page you speak as the profile; the picker
-  // lets a member choose otherwise, per comment.
-  const defaultAsProfileId = viewer.identities.some((identity) => identity.id === page.id)
-    ? page.id
-    : null;
 
   const follow = (
     <FollowButton
@@ -127,12 +97,6 @@ export function CreatorPageView({
       initiallyFollowing={viewer.following}
     />
   );
-
-
-  // Stored, resolved at the read (ADR-0026): the drawer writes them, the
-  // repository resolves nulls against the header style.
-  const cover = page.coverStyle;
-  const thingsCount = thingsTagged + products.length;
 
   return (
     <main data-accent={page.accent} className="pb-14">
@@ -148,46 +112,14 @@ export function CreatorPageView({
         avatarUrl={page.avatarUrl}
         action={membership ? null : follow}
       />
-      {/* The pill nav morphs into this page's verbs (ADR-0026 §6): the way
-          back to Explore, Follow (or the owner's Dashboard), and Share. */}
-      <PillNavOverride>
-        <Link
-          href="/explore"
-          className="text-nav-foreground text-pico tracking-eyebrow flex items-center gap-2 pl-2 font-mono font-bold uppercase"
-        >
-          <span aria-hidden>←</span> Explore
-        </Link>
-        <PillNavDivider />
-        {membership ? (
-          <Button variant="action" className="px-5" asChild>
-            <Link href={{ pathname: "/dashboard", query: { profile: page.id } }}>Dashboard</Link>
-          </Button>
-        ) : (
-          follow
-        )}
-        <PageShare
-          handle={page.username}
-          displayName={page.displayName}
-          avatarUrl={page.avatarUrl}
-          meta={`${posts.length} posts · ${thingsCount} things`}
-          trigger="circle"
-          className={pillNavCircle}
-        />
-      </PillNavOverride>
-      {/* The cover: band and none run edge to edge above the measure; the
-          tile treatment sits inside it (v2 §Layout). */}
-      {cover === "tile" ? (
-        <div className={cn(measure(), "pt-3")}>
-          <CreatorCover
-            treatment="tile"
-            tall={page.headerStyle === "centred"}
-            url={page.coverUrl}
-            badge={thingsCount > 0 ? `${thingsCount} things live` : null}
-          />
-        </div>
-      ) : (
-        <CreatorCover treatment={cover} tall={page.headerStyle === "centred"} url={page.coverUrl} greeting={page.greeting} />
-      )}
+      <CreatorPageNav
+        page={page}
+        membership={membership}
+        follow={follow}
+        postsCount={posts.length}
+        thingsCount={thingsCount}
+      />
+      <CreatorPageCover page={page} cover={cover} thingsCount={thingsCount} />
       <div className={measure()}>
         <CreatorHeader
           handle={page.username}
@@ -223,29 +155,8 @@ export function CreatorPageView({
             }}
           />
         ) : null}
-        {!viewer.signedIn ? (
-          // The anon band (v2): shopping never needs an account — say it once,
-          // quietly, with the one door for follow/comment.
-          <div className="border-border bg-card rounded-row mb-4 flex flex-wrap items-center justify-between gap-3 border px-4 py-3.5">
-            <p className="text-muted-foreground text-label leading-normal">
-              Shopping this page never needs an account.{" "}
-              <b className="text-foreground font-semibold">Sign in only to follow or comment.</b>
-            </p>
-            <Button variant="secondary" size="sm" asChild>
-              <Link href="/signin">Sign in</Link>
-            </Button>
-          </div>
-        ) : null}
-        {viewer.hasBusiness && !membership ? (
-          // A band that belongs to one viewer only (v2 §.band-biz): accent
-          // border, the one collab door.
-          <PageBand layout="stack" className="border-primary">
-            <p className="text-primary text-pico tracking-eyebrow pb-2 font-mono font-bold uppercase">
-              You own a business
-            </p>
-            <RequestCollabForm profileId={page.id} />
-          </PageBand>
-        ) : null}
+        {!viewer.signedIn ? <AnonBand /> : null}
+        {viewer.hasBusiness && !membership ? <BusinessBand profileId={page.id} /> : null}
         {/* The "Shelves" label belongs to ShelfChips now; the page had one too. */}
         {page.categories.length > 0 ? (
           <div className="mt-2.5">

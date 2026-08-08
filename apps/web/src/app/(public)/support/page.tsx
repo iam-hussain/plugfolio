@@ -59,9 +59,9 @@ export default async function SupportPage({
         Support &amp; feedback
       </h1>
       <p className="text-muted-foreground text-copy mt-2 max-w-[62ch] leading-[1.6]">
-        No account needed — if you&apos;re locked out you can still reach us here. Lost
-        verification mails, username disputes, merges, deletions — or tell us what&apos;s
-        annoying you and what you&apos;d like built.
+        No account needed — if you&apos;re locked out you can still reach us here. Lost verification
+        mails, username disputes, merges, deletions — or tell us what&apos;s annoying you and what
+        you&apos;d like built.
       </p>
 
       {/* v2: the form beside the "what happens next" card, so the promise sits

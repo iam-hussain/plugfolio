@@ -1,4 +1,12 @@
-import { createTwilioMailer, type AuthMailer } from "@plugfolio/core";
+import {
+  makeBusinessCollabDeps,
+  makeProfileIdentityDeps,
+  makeProfileLinkDeps,
+  makeProfileManagerDeps,
+  selectAuthMailer,
+  systemClock,
+  type AuthMailer,
+} from "@plugfolio/core";
 import {
   createAppSettingsRepository,
   createReportWriteRepository,
@@ -64,7 +72,7 @@ export const repositories = {
   productWrites: createProductWriteRepository(),
 };
 
-export const clock = { now: () => new Date() };
+export const clock = systemClock;
 
 export const shopperSocialDeps = {
   follows: repositories.follows,
@@ -75,13 +83,8 @@ export const shopperSocialDeps = {
 
 export const watchlistDeps = { watchlist: repositories.watchlist };
 
-export const businessCollabDeps = {
-  businesses: repositories.businesses,
-  requirements: repositories.requirements,
-  collabs: repositories.collabs,
-  profiles: repositories.profiles,
-  now: clock.now,
-};
+/** Service-dependency bundles — shapes defined once in @plugfolio/core (§6). */
+export const businessCollabDeps = makeBusinessCollabDeps(repositories, clock.now);
 
 export const creatorContentDeps = {
   profiles: repositories.profiles,
@@ -93,21 +96,21 @@ export const creatorContentDeps = {
   metadata: createOgMetadataGateway(),
 };
 
-export const profileManagerDeps = {
+export const profileManagerDeps = makeProfileManagerDeps({
   profiles: repositories.profiles,
   managers: repositories.managers,
   users: repositories.users,
-};
+});
 
-export const profileLinkDeps = {
+export const profileLinkDeps = makeProfileLinkDeps({
   profiles: repositories.profiles,
   profileLinks: repositories.profileLinks,
-};
+});
 
-export const profileIdentityDeps = {
+export const profileIdentityDeps = makeProfileIdentityDeps({
   profiles: repositories.profiles,
   identity: repositories.profileIdentity,
-};
+});
 
 // Image uploads (ADR-0023): wired only when S3 is configured, so a dev without
 // credentials boots fine and the route reports uploads as unavailable.
@@ -138,15 +141,14 @@ const consoleMailer: AuthMailer = {
 };
 
 // Real transport when configured (ADR-0015); links log to the console in dev.
-export const mailer: AuthMailer = !env.EMAIL_FROM
-  ? consoleMailer
-  : env.TWILIO_API_KEY_SID && env.TWILIO_API_KEY_SECRET
-    ? createTwilioMailer({
-        apiKeySid: env.TWILIO_API_KEY_SID,
-        apiKeySecret: env.TWILIO_API_KEY_SECRET,
-        from: env.EMAIL_FROM,
-      })
-    : consoleMailer;
+export const mailer: AuthMailer = selectAuthMailer(
+  {
+    from: env.EMAIL_FROM,
+    apiKeySid: env.TWILIO_API_KEY_SID,
+    apiKeySecret: env.TWILIO_API_KEY_SECRET,
+  },
+  consoleMailer,
+);
 
 export const accountAuthDeps = {
   accounts: createAuthAccountRepository(),

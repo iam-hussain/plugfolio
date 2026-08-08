@@ -53,11 +53,11 @@ export function ShelfChip({ selected, asChild, className, ...props }: ShelfChipP
       aria-current={selected ? "true" : undefined}
       className={cn(
         // v2 chip: 11px-radius, Inter 13/600; selected fills with the accent.
-        "border-border-strong text-foreground/80 rounded-md text-label",
+        "border-border-strong text-foreground/80 text-label rounded-md",
         "inline-flex min-h-10 flex-none items-center gap-1.5 whitespace-nowrap border px-[15px] py-[9px] font-semibold no-underline",
         "ease-design hover:border-primary hover:text-primary transition-colors duration-200",
         selected &&
-          "bg-primary border-transparent text-primary-foreground hover:text-primary-foreground",
+          "bg-primary text-primary-foreground hover:text-primary-foreground border-transparent",
         className,
       )}
       {...props}

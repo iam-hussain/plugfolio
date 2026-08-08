@@ -22,6 +22,7 @@ import {
 import { cva } from "class-variance-authority";
 import type { Route } from "next";
 import Link from "next/link";
+import { formatNumber } from "@/lib/format-number";
 
 /**
  * The Traffic screen (v2, `Plugfolio v2.dc.html` §Traffic) — range chips, the
@@ -45,8 +46,6 @@ const rangeChip = cva(
   },
 );
 
-const number = new Intl.NumberFormat("en");
-
 export function TrafficScreen({
   summary,
   range,
@@ -67,8 +66,8 @@ export function TrafficScreen({
     <>
       <div className="flex flex-wrap items-end justify-between gap-3.5">
         <Hint className="mb-0 max-w-[520px]">
-          Every figure is a counted event. Nothing is estimated, and we never see a sale — so
-          there is no earnings number here.
+          Every figure is a counted event. Nothing is estimated, and we never see a sale — so there
+          is no earnings number here.
         </Hint>
         <nav aria-label="Range" className="flex gap-1.5 overflow-x-auto">
           {TRAFFIC_RANGES.map((option) => (
@@ -87,12 +86,12 @@ export function TrafficScreen({
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Views" value={number.format(summary.totalViews)}>
+        <Stat label="Views" value={formatNumber(summary.totalViews)}>
           A page, post or thing opening.
         </Stat>
         <Stat
           label="Taps out"
-          value={<span className="text-primary">{number.format(summary.totalTaps)}</span>}
+          value={<span className="text-primary">{formatNumber(summary.totalTaps)}</span>}
         >
           Someone leaving for a retailer.
         </Stat>
@@ -113,7 +112,7 @@ export function TrafficScreen({
         </Stat>
         <Stat
           label="Code copies"
-          value={number.format(summary.totalCodeCopies)}
+          value={formatNumber(summary.totalCodeCopies)}
           provenance={<Provenance kind="untracked">Redemption not tracked</Provenance>}
         >
           It happens where we cannot see.
@@ -162,8 +161,8 @@ export function TrafficScreen({
               <RankList>
                 <RankRow
                   title="Your page"
-                  secondary={number.format(surface.profile)}
-                  value={number.format(surface.profile)}
+                  secondary={formatNumber(surface.profile)}
+                  value={formatNumber(surface.profile)}
                 />
               </RankList>
               {summary.byPost.length > 0 ? (
@@ -177,8 +176,8 @@ export function TrafficScreen({
                         key={post.postId}
                         title={post.caption ?? "Untitled post"}
                         gone={!post.caption}
-                        secondary={number.format(post.views)}
-                        value={number.format(post.taps)}
+                        secondary={formatNumber(post.views)}
+                        value={formatNumber(post.taps)}
                       />
                     ))}
                   </RankList>
@@ -194,8 +193,8 @@ export function TrafficScreen({
                       <RankRow
                         key={product.productId}
                         title={product.title}
-                        secondary={number.format(product.views)}
-                        value={number.format(product.taps)}
+                        secondary={formatNumber(product.views)}
+                        value={formatNumber(product.taps)}
                       />
                     ))}
                   </RankList>
@@ -209,7 +208,7 @@ export function TrafficScreen({
 
             <DashCard className="mt-0">
               <DashCardTitle className="text-body">Where it came from</DashCardTitle>
-              <Hint className="mb-0 mt-1.5 text-label">
+              <Hint className="text-label mb-0 mt-1.5">
                 The link that brought each view, as the browser reported it.
               </Hint>
               <ul className="mt-3.5 flex flex-col gap-3">
@@ -218,7 +217,7 @@ export function TrafficScreen({
                     <span className="flex items-baseline justify-between gap-2.5">
                       <span className="text-label font-semibold">{source.source}</span>
                       <span className="text-muted-foreground text-nano font-mono tabular-nums">
-                        {number.format(source.views)} ·{" "}
+                        {formatNumber(source.views)} ·{" "}
                         {summary.totalViews > 0
                           ? Math.round((source.views / summary.totalViews) * 100)
                           : 0}

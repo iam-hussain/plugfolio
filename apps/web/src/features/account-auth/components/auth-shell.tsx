@@ -36,7 +36,7 @@ export function AuthShell({
     // primary button and ring inside inherits it from the tokens.
     <div
       data-role={role}
-      className="relative min-h-dvh [--color-primary:78_100%_62%] [--color-primary-foreground:250_27%_9%] [--ring:78_100%_62%] lg:flex lg:items-stretch"
+      className="relative min-h-dvh [--color-primary-foreground:250_27%_9%] [--color-primary:78_100%_62%] [--ring:78_100%_62%] lg:flex lg:items-stretch"
     >
       {/* ── pane one — the ink panel: DESKTOP ONLY. The design's narrow
           layout has no ink band; the brand lockup rides above the card
@@ -71,8 +71,8 @@ export function AuthShell({
           {children}
         </div>
         <p className="text-faint text-micro mt-[18px] max-w-[380px] text-center leading-[1.6]">
-          Shopping never asks for any of this. An account is only for following, saving,
-          commenting, selling or hiring.
+          Shopping never asks for any of this. An account is only for following, saving, commenting,
+          selling or hiring.
         </p>
         <Link
           href="/explore"

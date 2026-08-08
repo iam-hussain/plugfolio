@@ -15,13 +15,7 @@ import { updateMemberImage } from "../api";
  * saving it onto the account is one PATCH. Sessions are database-backed, so
  * the top bar shows the new face on the refresh.
  */
-export function MemberPhotoForm({
-  image,
-  handle,
-}: {
-  image: string | null;
-  handle: string;
-}) {
+export function MemberPhotoForm({ image, handle }: { image: string | null; handle: string }) {
   const router = useRouter();
   const [current, setCurrent] = useState(image);
   const save = useMutation({
@@ -40,11 +34,7 @@ export function MemberPhotoForm({
           {handle.charAt(0).toUpperCase()}
         </AvatarFallback>
       </Avatar>
-      <ImageCropUpload
-        kind="avatar"
-        onUploaded={(url) => save.mutate(url)}
-        label="Upload photo"
-      />
+      <ImageCropUpload kind="avatar" onUploaded={(url) => save.mutate(url)} label="Upload photo" />
       {current ? (
         <Button
           type="button"

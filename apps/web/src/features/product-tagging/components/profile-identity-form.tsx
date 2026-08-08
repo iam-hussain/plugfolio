@@ -119,7 +119,7 @@ export function ProfileIdentityForm({
             </div>
           ) : null}
           {coverUrl.trim() ? (
-            <span className="border-border rounded-lg block aspect-[2.5/1] w-full max-w-[420px] overflow-hidden border">
+            <span className="border-border block aspect-[2.5/1] w-full max-w-[420px] overflow-hidden rounded-lg border">
               {/* eslint-disable-next-line @next/next/no-img-element -- ponytail: unoptimized until image domains are pinned */}
               <img src={coverUrl} alt="Cover preview" className="size-full object-cover" />
             </span>

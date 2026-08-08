@@ -65,7 +65,7 @@ export function ForgotScreen() {
           type="submit"
           variant="action"
           disabled={submit.isPending}
-          className="font-display rounded-lg mt-[18px] h-[50px] w-full"
+          className="font-display mt-[18px] h-[50px] w-full rounded-lg"
         >
           {submit.isPending ? "Sending…" : "Send the reset link"}
         </Button>

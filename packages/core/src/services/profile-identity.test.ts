@@ -10,7 +10,11 @@ function makeDeps(role: "admin" | "manager" | null) {
   const profiles = {
     listAccessibleByUser: vi
       .fn()
-      .mockResolvedValue(role ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null, role }] : []),
+      .mockResolvedValue(
+        role
+          ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null, role }]
+          : [],
+      ),
   } as unknown as ProfileRepository;
   const identity: ProfileIdentityRepository = {
     get: vi.fn().mockResolvedValue({ displayName: null, avatarUrl: null, bio: null }),

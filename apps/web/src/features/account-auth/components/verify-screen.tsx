@@ -48,7 +48,7 @@ export function VerifyScreen({ token }: VerifyScreenProps) {
           <p className="text-muted-foreground text-copy leading-[1.6]">
             Email verified. Taking you to sign-in…
           </p>
-          <Button variant="action" asChild className="font-display rounded-lg h-[50px]">
+          <Button variant="action" asChild className="font-display h-[50px] rounded-lg">
             <Link href="/signin">Continue to sign in →</Link>
           </Button>
         </AuthStatus>
@@ -104,7 +104,7 @@ export function VerifyScreen({ token }: VerifyScreenProps) {
                     <InputOTPSlot
                       key={index}
                       index={index}
-                      className="border-border-strong bg-active rounded-md h-[52px] w-full border font-mono text-body font-bold"
+                      className="border-border-strong bg-active text-body h-[52px] w-full rounded-md border font-mono font-bold"
                     />
                   ))}
                 </InputOTPGroup>
@@ -131,11 +131,10 @@ export function VerifyScreen({ token }: VerifyScreenProps) {
               className="h-auto border-0 bg-transparent px-1 font-semibold"
             />
           </div>
-          <div className="border-border text-muted-foreground text-micro rounded-md mt-2.5 border p-3 leading-[1.55]">
-            <b className="text-foreground font-semibold">This is a login name, not a page.</b> It
-            is how you sign in and how you appear when you follow or comment. It gives you no
-            public page — a shoppable page gets its own address later, from a social handle you
-            connect.
+          <div className="border-border text-muted-foreground text-micro mt-2.5 rounded-md border p-3 leading-[1.55]">
+            <b className="text-foreground font-semibold">This is a login name, not a page.</b> It is
+            how you sign in and how you appear when you follow or comment. It gives you no public
+            page — a shoppable page gets its own address later, from a social handle you connect.
           </div>
           <p className="text-faint text-micro mt-[7px]">
             3–30 characters: letters, numbers, dots, dashes.
@@ -145,7 +144,7 @@ export function VerifyScreen({ token }: VerifyScreenProps) {
         {verify.isError ? (
           <p
             role="alert"
-            className="border-destructive text-muted-foreground text-label mt-3 rounded-panel border p-3 leading-[1.55]"
+            className="border-destructive text-muted-foreground text-label rounded-panel mt-3 border p-3 leading-[1.55]"
           >
             {verify.error.message}
           </p>
@@ -154,14 +153,17 @@ export function VerifyScreen({ token }: VerifyScreenProps) {
           type="submit"
           variant="action"
           disabled={verify.isPending}
-          className="font-display rounded-lg mt-[18px] h-[50px] w-full"
+          className="font-display mt-[18px] h-[50px] w-full rounded-lg"
         >
           {verify.isPending ? "Verifying…" : "Verify and continue"}
         </Button>
       </form>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5">
-        <Link href={token ? "/verify" : "/signin"} className="text-foreground text-label font-semibold">
+        <Link
+          href={token ? "/verify" : "/signin"}
+          className="text-foreground text-label font-semibold"
+        >
           {token ? "Type the six digits instead" : "Have the link? Use it"}
         </Link>
         <span className="text-faint text-micro">Links last 24 hours, codes 15 minutes.</span>

@@ -127,6 +127,9 @@ describe.skipIf(!url)("TrafficRepository (integration)", () => {
       byPost: [],
       byProduct: [],
       byCode: [],
+      series: [],
+      sources: [],
+      viewsBySurface: { profile: 0, post: 0, product: 0 },
     });
   });
 });

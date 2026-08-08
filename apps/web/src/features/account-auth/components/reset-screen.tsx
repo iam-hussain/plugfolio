@@ -48,8 +48,8 @@ export function ResetScreen({ token }: ResetScreenProps) {
       </h1>
       {token ? (
         <p className="text-muted-foreground text-copy mt-2 text-pretty leading-[1.6]">
-          Pick something you have not used elsewhere. Setting it verifies your email and signs
-          you in.
+          Pick something you have not used elsewhere. Setting it verifies your email and signs you
+          in.
         </p>
       ) : (
         <p className="text-muted-foreground text-copy mt-2.5 leading-[1.5]">
@@ -102,7 +102,7 @@ export function ResetScreen({ token }: ResetScreenProps) {
             type="submit"
             variant="action"
             disabled={submit.isPending || mismatch || !password}
-            className="font-display rounded-lg mt-[18px] h-[50px] w-full"
+            className="font-display mt-[18px] h-[50px] w-full rounded-lg"
           >
             {submit.isPending ? "Saving…" : "Save and sign in"}
           </Button>

@@ -11,9 +11,9 @@ import {
   isFollowingProfile,
   listProfileProducts,
 } from "@plugfolio/core";
-import { CreatorPageView } from "@/features/creator-page";
-import { breadcrumbList } from "@/lib/structured-data";
-import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { CreatorPageView, toSocials } from "@/features/creator-page";
+import { profilePage } from "@/lib/structured-data";
+import { SITE_NAME } from "@/lib/site";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
 
@@ -92,43 +92,10 @@ export default async function CreatorPage({
       listProfileProducts({ creatorPages: repositories.creatorPages }, page.username),
     ]);
 
-  // "Your links" → the socials row (design-out: required on every creator
-  // header). Label = the platform; the website reads as its hostname.
-  const socials = links.map((link) => ({
-    platform: link.platform,
-    href: link.url,
-    label:
-      link.platform === "website"
-        ? new URL(link.url).hostname.replace(/^www\./, "")
-        : link.platform.charAt(0).toUpperCase() + link.platform.slice(1),
-  }));
-
   // ProfilePage + breadcrumb JSON-LD (SEO/AEO) — public facts only, nothing
-  // session-derived. `sameAs` ties this page to the creator's other platforms,
-  // which is how entity/answer engines connect them to one person.
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "ProfilePage",
-        "@id": `${SITE_URL}/${page.username}`,
-        mainEntity: {
-          "@type": "Person",
-          name: page.displayName ?? `@${page.username}`,
-          alternateName: `@${page.username}`,
-          identifier: page.username,
-          url: `${SITE_URL}/${page.username}`,
-          ...(page.bio ? { description: page.bio } : {}),
-          ...(page.avatarUrl?.startsWith("http") ? { image: page.avatarUrl } : {}),
-          ...(socials.length > 0 ? { sameAs: socials.map((social) => social.href) } : {}),
-        },
-      },
-      breadcrumbList([
-        { name: SITE_NAME, path: "/" },
-        { name: `@${page.username}`, path: `/${page.username}` },
-      ]),
-    ],
-  };
+  // session-derived. The socials feed `sameAs`; the view derives the same row
+  // from the same links via `toSocials`, so the two never drift.
+  const structuredData = profilePage(page, toSocials(links));
 
   return (
     <CreatorPageView

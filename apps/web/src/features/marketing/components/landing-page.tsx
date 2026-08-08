@@ -82,7 +82,7 @@ const eyebrow = "text-faint text-pico tracking-eyebrow font-mono uppercase";
 function NoLoginChip() {
   return (
     <span className="bg-accent text-accent-foreground rounded-pill text-pico tracking-eyebrow inline-flex items-center gap-2 py-1.5 pl-2 pr-3 font-mono font-bold uppercase">
-      <span aria-hidden className="bg-accent-foreground size-1.5 rounded-pill" />
+      <span aria-hidden className="bg-accent-foreground rounded-pill size-1.5" />
       No login to shop
     </span>
   );
@@ -201,7 +201,7 @@ export function LandingPage() {
                 <li key={creator.name}>
                   <Link
                     href="/explore"
-                    className="border-border bg-card rounded-tile block overflow-hidden border transition-[transform,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary"
+                    className="border-border bg-card rounded-tile hover:border-primary block overflow-hidden border transition-[transform,border-color] duration-150 hover:-translate-y-0.5"
                   >
                     <span className="block h-[126px] overflow-hidden">
                       <Image
@@ -272,7 +272,7 @@ export function LandingPage() {
               <Link
                 key={door.eyebrow}
                 href={door.href}
-                className="border-border bg-card rounded-sheet block border p-[22px] transition-[transform,border-color] duration-150 hover:-translate-y-0.5 hover:border-primary"
+                className="border-border bg-card rounded-sheet hover:border-primary block border p-[22px] transition-[transform,border-color] duration-150 hover:-translate-y-0.5"
               >
                 <p className="text-primary text-pico tracking-eyebrow font-mono uppercase">
                   {door.eyebrow}

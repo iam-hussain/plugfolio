@@ -1,4 +1,4 @@
-import { createTwilioMailer, type AuthMailer } from "@plugfolio/core";
+import { selectAuthMailer, systemClock, type AuthMailer } from "@plugfolio/core";
 import {
   createAdminAnalyticsRepository,
   createAdminAuditRepository,
@@ -46,7 +46,7 @@ export const repositories = {
   users: createUserRepository(),
 };
 
-export const clock = { now: () => new Date() };
+export const clock = systemClock;
 
 const consoleMailer: AuthMailer = {
   async sendVerification(email, url) {
@@ -63,15 +63,14 @@ const consoleMailer: AuthMailer = {
 };
 
 /** Real transport when configured (ADR-0015); console fallback in dev. */
-export const mailer: AuthMailer = !env.EMAIL_FROM
-  ? consoleMailer
-  : env.TWILIO_API_KEY_SID && env.TWILIO_API_KEY_SECRET
-    ? createTwilioMailer({
-        apiKeySid: env.TWILIO_API_KEY_SID,
-        apiKeySecret: env.TWILIO_API_KEY_SECRET,
-        from: env.EMAIL_FROM,
-      })
-    : consoleMailer;
+export const mailer: AuthMailer = selectAuthMailer(
+  {
+    from: env.EMAIL_FROM,
+    apiKeySid: env.TWILIO_API_KEY_SID,
+    apiKeySecret: env.TWILIO_API_KEY_SECRET,
+  },
+  consoleMailer,
+);
 
 /** The member-moderation dependency bundle, wired once. */
 export const adminMembersDeps = {

@@ -13,33 +13,17 @@ import {
   cn,
   CreatorByline,
   measure,
-  OffPlatformNote,
-  OwnBadge,
-  PageBand,
-  PageBandText,
-  ProductBuy,
   ProductDetail,
-  ProductInStoreNote,
-  ProductMedia,
-  ProductPrice,
-  ProductSource,
-  ProductTitle,
-  ProductWhere,
 } from "@plugfolio/ui";
 import type { Route } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import {
-  PillNavOverride,
-  pillNavActionQuiet,
-  pillNavCircle,
-} from "@/components/chrome/pill-nav";
+import { PillNavOverride, pillNavActionQuiet, pillNavCircle } from "@/components/chrome/pill-nav";
 import { CommentsSection, WatchButton } from "@/features/shopper-account";
 import { JsonLd } from "@/components/json-ld";
 import { formatPrice } from "@/lib/format-price";
 import { retailerName } from "@/lib/retailer-name";
-import { CouponBlock } from "./coupon-block";
 import { CreatorContextBar } from "./creator-context-bar";
+import { ProductDetailInfo, ProductDetailMedia, ProductTrafficBand } from "./product-page-sections";
 import { ProductTapButton } from "./product-tap-button";
 import { ViewBeacon } from "./view-beacon";
 
@@ -48,7 +32,9 @@ import { ViewBeacon } from "./view-beacon";
  * with a way back.
  *
  * The route above it loads and nothing else (§5: `app/` is thin). The buy path
- * stays account-free (ADR-0002, §2.2); a session only enriches.
+ * stays account-free (ADR-0002, §2.2); a session only enriches. The detail
+ * columns, the coupon block and the traffic band live in
+ * `product-page-sections.tsx`.
  */
 export type ProductPageViewProps = {
   page: CreatorPage;
@@ -176,113 +162,17 @@ export function ProductPageView({
         }
       />
 
-      {/* The owner sees this product's numbers where they're looking at the
-          product (DESIGN product.html §.band-v). Visitors never do. Copies are
-          counted; whether a code was redeemed at a counter is not, and the band
-          says so rather than letting the number imply a sale (§2.3). */}
-      {traffic ? (
-        <PageBand>
-          <PageBandText
-            title={`${traffic.taps} ${traffic.taps === 1 ? "tap" : "taps"} tracked · ${traffic.codeCopies} code ${traffic.codeCopies === 1 ? "copy" : "copies"}`}
-          >
-            Copies are counted; whether a code was redeemed in a shop is not.
-          </PageBandText>
-          <Button variant="action" asChild>
-            <Link href={{ pathname: "/dashboard", query: { profile: page.id } }}>
-              See all traffic
-            </Link>
-          </Button>
-        </PageBand>
-      ) : null}
+      {traffic ? <ProductTrafficBand page={page} traffic={traffic} /> : null}
 
       <ProductDetail>
-        <ProductMedia>
-          {product.imageUrl ? (
-            /* ponytail: unoptimized until the social-import pipeline pins image domains */
-            <Image
-              src={product.imageUrl}
-              alt={product.title}
-              width={900}
-              height={900}
-              unoptimized
-              priority
-              className="block aspect-square w-full object-cover"
-            />
-          ) : null}
-        </ProductMedia>
-
-        <div>
-          {own ? <OwnBadge>Their own product</OwnBadge> : null}
-          <ProductTitle>{product.title}</ProductTitle>
-          <ProductPrice>{price}</ProductPrice>
-          <ProductWhere>
-            {inStoreOnly ? (
-              <>
-                <b>In-store offer</b> · no link, use the code
-              </>
-            ) : (
-              <>
-                <b>{own ? "Their own product" : "Affiliate pick"}</b> · opens{" "}
-                {retailerName(product.affiliateUrl!)}
-              </>
-            )}
-          </ProductWhere>
-
-          {/* Copy, then go — the coupon is always above the action (ADR-0011). */}
-          {product.couponCode ? (
-            <CouponBlock
-              productId={product.id}
-              postId={product.fromPost?.id}
-              couponCode={product.couponCode}
-              offerEndsAt={product.offerEndsAt}
-              inStoreNote={product.inStoreNote}
-              hasLink={!!product.affiliateUrl}
-            />
-          ) : null}
-
-          {inStoreOnly ? (
-            <ProductInStoreNote>
-              {product.inStoreNote ??
-                "Show the code at the counter. We can't track in-store redemption, so this one is on trust."}
-            </ProductInStoreNote>
-          ) : (
-            <ProductBuy>
-              <ProductTapButton
-                productId={product.id}
-                postId={product.fromPost?.id}
-                affiliateUrl={product.affiliateUrl!}
-                source="product"
-                label={own ? "Shop their store" : "Buy"}
-              />
-            </ProductBuy>
-          )}
-
-          <OffPlatformNote>
-            {inStoreOnly
-              ? "Payment settles off-platform · show the code in store"
-              : `Payment settles off-platform · opens ${own ? "their store" : "the retailer"}`}
-          </OffPlatformNote>
-
-          {product.fromPost ? (
-            <ProductSource
-              asChild
-              title="Open the post"
-              thumb={
-                /* ponytail: unoptimized until the social-import pipeline pins image domains */
-                <Image
-                  src={product.fromPost.mediaUrl}
-                  alt=""
-                  width={116}
-                  height={116}
-                  unoptimized
-                  className="size-full object-cover"
-                />
-              }
-            >
-              <Link href={`/${page.username}/post/${product.fromPost.id}`} />
-            </ProductSource>
-          ) : null}
-        </div>
+        <ProductDetailMedia product={product} />
+        <ProductDetailInfo
+          page={page}
+          product={product}
+          own={own}
+          inStoreOnly={inStoreOnly}
+          price={price}
+        />
       </ProductDetail>
 
       <CommentsSection

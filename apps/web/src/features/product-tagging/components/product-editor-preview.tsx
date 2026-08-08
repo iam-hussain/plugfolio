@@ -4,6 +4,7 @@ import type { ProductKind } from "@plugfolio/core";
 import { Pill, PreviewCard, PreviewNoImage } from "@plugfolio/ui";
 import Image from "next/image";
 import { formatPrice } from "@/lib/format-price";
+import { hostname } from "@/lib/retailer-name";
 
 /** The product as the editor knows it. Absent = create, present = edit. */
 export type EditableProduct = {
@@ -75,7 +76,7 @@ export function ProductEditorPreview({
       where={
         <>
           {kind === "own" ? "Their own product" : "Affiliate pick"}
-          {hasLink ? ` · opens ${hostOf(affiliateUrl) ?? "your link"}` : ""}
+          {hasLink ? ` · opens ${hostname(affiliateUrl) ?? "your link"}` : ""}
         </>
       }
       marks={
@@ -87,13 +88,4 @@ export function ProductEditorPreview({
       }
     />
   );
-}
-
-/** "opens Nykaa" — the retailer, not the URL. */
-function hostOf(url: string): string | null {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return null;
-  }
 }

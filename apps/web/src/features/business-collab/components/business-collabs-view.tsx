@@ -51,8 +51,8 @@ export function BusinessCollabsView({ business, requirements, collabs }: Busines
   return (
     <BusinessChrome>
       <BusinessPageHeader title="Collabs">
-        Two doors. Post a brief and let creators come to you, or go find one and ask. Either way
-        it ends in one thread — and the money settles off-platform.
+        Two doors. Post a brief and let creators come to you, or go find one and ask. Either way it
+        ends in one thread — and the money settles off-platform.
       </BusinessPageHeader>
 
       {/* The two doors (v2, ADR-0026): the only decisions this screen asks. */}

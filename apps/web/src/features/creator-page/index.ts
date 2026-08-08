@@ -15,3 +15,4 @@ export { recordTap, type RecordedTap } from "./api";
 export { CreatorPageView, type CreatorPageViewProps } from "./components/creator-page-view";
 export { ProductPageView, type ProductPageViewProps } from "./components/product-page-view";
 export { PostPageView, type PostPageViewProps } from "./components/post-page-view";
+export { toSocials, type SocialLink } from "./to-socials";

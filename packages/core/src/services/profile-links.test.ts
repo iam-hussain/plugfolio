@@ -12,7 +12,9 @@ function makeDeps(stored: Parameters<ProfileLinkRepository["replaceAll"]>[1] = [
     listByUser: vi
       .fn()
       .mockImplementation(async (userId: string) =>
-        userId === OWNER ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null }] : [],
+        userId === OWNER
+          ? [{ id: PROFILE_ID, username: "lena", displayName: null, avatarUrl: null }]
+          : [],
       ),
   } as unknown as ProfileRepository;
   const profileLinks: ProfileLinkRepository = {

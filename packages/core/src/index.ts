@@ -11,6 +11,16 @@ export { DEVICE_COOKIE, verifyDeviceToken, issueDeviceToken } from "./auth/devic
 // The guessable-secret guard: admin sign-in (ADR-0014), verify codes (ADR-0024)
 export { createFailureLimit, type FailureLimit } from "./auth/rate-limit";
 
+// Composition helpers — shared wiring for every app's composition root (§6)
+export {
+  systemClock,
+  makeBusinessCollabDeps,
+  makeProfileLinkDeps,
+  makeProfileIdentityDeps,
+  makeProfileManagerDeps,
+  selectAuthMailer,
+} from "./composition/wiring";
+
 // Domain
 export type { OutboundTap, NewOutboundTap, TapSource } from "./domain/tap";
 
@@ -67,6 +77,7 @@ export type {
   ProfileContentCounts,
 } from "./ports/profile-repository";
 export type { ManagerRepository, ManagerView, UserRepository } from "./ports/manager-repository";
+export type { SessionRepository } from "./ports/session-repository";
 export type {
   ConnectionReadRepository,
   PostWriteRepository,
@@ -75,13 +86,6 @@ export type {
   ProductMetadataGateway,
 } from "./ports/creator-content-repository";
 export type { ImageSpec, ProcessedImage, ImageProcessor, ImageStore } from "./ports/image-storage";
-export {
-  uploadKind,
-  type UploadKind,
-  IMAGE_SPECS,
-  MAX_UPLOAD_BYTES,
-  sniffImageMime,
-} from "./schemas/image-upload";
 export { uploadImage, type UploadImageDeps, type UploadedImage } from "./services/upload-image";
 export type {
   SocialProvider,
@@ -119,48 +123,8 @@ export type {
   CollabMessageView,
 } from "./ports/business-collab-repository";
 
-// Schemas
-export {
-  recordOutboundTapInput,
-  type RecordOutboundTapInput,
-  type RecordOutboundTapCommand,
-} from "./schemas/tap";
-export {
-  recordCodeCopyInput,
-  type RecordCodeCopyInput,
-  type RecordCodeCopyCommand,
-} from "./schemas/code-copy";
-export { recordViewInput, type RecordViewInput, type RecordViewCommand } from "./schemas/view";
-export {
-  followProfileInput,
-  type FollowProfileInput,
-  addCommentInput,
-  type AddCommentInput,
-} from "./schemas/shopper-social";
-export {
-  pageAccent,
-  pageCoverStyle,
-  type PageCoverStyle,
-  pageLinkMode,
-  type PageLinkMode,
-  resolveCoverStyle,
-  type PageAccent,
-  pageHeaderStyle,
-  type PageHeaderStyle,
-  pageGridStyle,
-  type PageGridStyle,
-  pageGreeting,
-  PAGE_APPEARANCE_DEFAULTS,
-} from "./schemas/page-appearance";
-export {
-  reactionValue,
-  type ReactionValue,
-  reactToCommentInput,
-  type ReactToCommentInput,
-  commentSort,
-  type CommentSort,
-} from "./schemas/comment-reaction";
-export { createAdPlacementInput, type CreateAdPlacementInput } from "./schemas/ad-placement";
+// Schemas — the Zod boundary (§6.4), one sub-barrel
+export * from "./schemas";
 export {
   getLiveAdPlacement,
   listAdPlacements,
@@ -169,71 +133,6 @@ export {
   ADS_FLAG,
   type AdPlacementDeps,
 } from "./services/ad-placements";
-export {
-  followSort,
-  type FollowSort,
-  followingQuery,
-  type FollowingQuery,
-} from "./schemas/following";
-export {
-  watchKind,
-  type WatchKind,
-  watchTargetInput,
-  type WatchTargetInput,
-} from "./schemas/watchlist";
-export {
-  createBusinessInput,
-  type CreateBusinessInput,
-  postRequirementInput,
-  type PostRequirementInput,
-  approachRequirementInput,
-  type ApproachRequirementInput,
-  requestCollabInput,
-  type RequestCollabInput,
-  collabMessageInput,
-  type CollabMessageInput,
-  proposeTermsInput,
-  type ProposeTermsInput,
-} from "./schemas/business-collab";
-export {
-  createPostInput,
-  type CreatePostInput,
-  productKind,
-  type ProductKind,
-  tagProductInput,
-  type TagProductInput,
-  updateProductInput,
-  type UpdateProductInput,
-  setProductCouponInput,
-  type SetProductCouponInput,
-  updatePostInput,
-  type UpdatePostInput,
-  postMediaKind,
-  type PostMediaKind,
-  createProductInput,
-  type CreateProductInput,
-  connectProductInput,
-  type ConnectProductInput,
-  createCategoryInput,
-  type CreateCategoryInput,
-  updateCategoryInput,
-  type UpdateCategoryInput,
-  setPostCategoryInput,
-  type SetPostCategoryInput,
-  setPostHiddenInput,
-  type SetPostHiddenInput,
-  setProductCategoryInput,
-  type SetProductCategoryInput,
-} from "./schemas/creator-content";
-export { updateMemberHandleInput,
-  updateMemberImageInput, type UpdateMemberHandleInput } from "./schemas/member-handle";
-export {
-  socialPlatform,
-  type SocialPlatform,
-  SOCIAL_PLATFORM_ORDER,
-  setProfileLinksInput,
-  type SetProfileLinksInput,
-} from "./schemas/profile-links";
 export { type ProfileLinkRepository, type ProfileLinkView } from "./ports/profile-link-repository";
 export {
   getProfileLinks,
@@ -241,10 +140,6 @@ export {
   setProfileLinks,
   type ProfileLinkDeps,
 } from "./services/profile-links";
-export {
-  updateProfileIdentityInput,
-  type UpdateProfileIdentityInput,
-} from "./schemas/profile-identity";
 export {
   type ProfileIdentity,
   type PageAppearance,
@@ -256,22 +151,6 @@ export {
   deleteProfile,
   type ProfileIdentityDeps,
 } from "./services/profile-identity";
-export {
-  registerInput,
-  type RegisterInput,
-  credentialsInput,
-  type CredentialsInput,
-  adminCredentialsInput,
-  type AdminCredentialsInput,
-  emailOnlyInput,
-  type EmailOnlyInput,
-  identifierInput,
-  type IdentifierInput,
-  verifyEmailInput,
-  type VerifyEmailInput,
-  resetPasswordInput,
-  type ResetPasswordInput,
-} from "./schemas/account-auth";
 
 // Services (use-cases)
 export { recordOutboundTap, type RecordOutboundTapDeps } from "./services/record-outbound-tap";
@@ -420,19 +299,12 @@ export {
   dismissReport,
   type AdminReportsDeps,
 } from "./services/admin-reports";
-export { createReportInput, type CreateReportInput } from "./schemas/report";
 export {
   createReport,
   type CreateReportDeps,
   type NewReport,
   type ReportWriteRepository,
 } from "./services/reports";
-export {
-  supportCategory,
-  type SupportCategory,
-  createSupportTicketInput,
-  type CreateSupportTicketInput,
-} from "./schemas/support";
 export type {
   SupportTicketStatus,
   NewSupportTicket,
@@ -481,7 +353,6 @@ export {
   releaseProfileUsername,
   type AdminProfilesDeps,
 } from "./services/admin-profiles";
-export { releaseUsernameInput, type ReleaseUsernameInput } from "./schemas/admin";
 export { generateProfileUsername } from "./services/creator-content";
 export {
   searchComments,

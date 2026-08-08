@@ -29,14 +29,12 @@ export {
 } from "./repositories/auth-account-repository";
 export { createSessionRepository } from "./repositories/session-repository";
 export { createManagerRepository, createUserRepository } from "./repositories/manager-repository";
-export {
-  createAdminUserRepository,
-  createAdminAuditRepository,
-  createAppSettingsRepository,
-  createAdminMemberRepository,
-  createAdminReportRepository,
-  createAdminOverviewRepository,
-} from "./repositories/admin-repository";
+export { createAdminUserRepository } from "./repositories/admin-user-repository";
+export { createAdminAuditRepository } from "./repositories/admin-audit-repository";
+export { createAppSettingsRepository } from "./repositories/app-settings-repository";
+export { createAdminMemberRepository } from "./repositories/admin-member-repository";
+export { createAdminReportRepository } from "./repositories/admin-report-repository";
+export { createAdminOverviewRepository } from "./repositories/admin-overview-repository";
 export {
   createAdminProfileRepository,
   createAdminContentRepository,

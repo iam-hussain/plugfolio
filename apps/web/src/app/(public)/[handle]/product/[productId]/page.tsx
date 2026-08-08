@@ -12,14 +12,8 @@ import {
 import { ProductPageView } from "@/features/creator-page";
 import { formatPrice } from "@/lib/format-price";
 import { isFeatureEnabled } from "@plugfolio/core";
-import { breadcrumbList } from "@/lib/structured-data";
-import { SITE_NAME, SITE_URL } from "@/lib/site";
-
-/** JSON-LD wants absolute URLs; page media may be a site-relative path. */
-function absoluteUrl(url: string | null): string | undefined {
-  if (!url) return undefined;
-  return url.startsWith("http") ? url : `${SITE_URL}${url}`;
-}
+import { breadcrumbList, product as productLdBuilder } from "@/lib/structured-data";
+import { SITE_NAME } from "@/lib/site";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
 
@@ -115,25 +109,14 @@ export default async function ProductPage({
   // known, plus the breadcrumb trail. Only what the page already shows — the
   // price is the display price, the image is the one on screen.
   const productPath = `/${page.username}/product/${product.id}`;
-  const productLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.title,
-    ...(absoluteUrl(product.imageUrl) ? { image: absoluteUrl(product.imageUrl) } : {}),
-    description: `${product.title}, tagged by @${page.username} on ${SITE_NAME}.`,
-    brand: { "@type": "Brand", name: `@${page.username}` },
-    ...(product.priceCents !== null
-      ? {
-          offers: {
-            "@type": "Offer",
-            price: (product.priceCents / 100).toFixed(2),
-            priceCurrency: product.currency.toUpperCase(),
-            availability: "https://schema.org/InStock",
-            url: `${SITE_URL}${productPath}`,
-          },
-        }
-      : {}),
-  };
+  const productLd = productLdBuilder({
+    title: product.title,
+    imageUrl: product.imageUrl,
+    priceCents: product.priceCents,
+    currency: product.currency,
+    creatorUsername: page.username,
+    path: productPath,
+  });
   const crumbs = breadcrumbList([
     { name: SITE_NAME, path: "/" },
     { name: `@${page.username}`, path: `/${page.username}` },

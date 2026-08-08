@@ -48,8 +48,8 @@ export function WatchlistPage({ items }: WatchlistPageProps) {
               </Button>
             }
           >
-            Tap the bookmark on any post or thing and it lands here, still showing who put you
-            onto it. Buying never needs an account — this is just your own shelf.
+            Tap the bookmark on any post or thing and it lands here, still showing who put you onto
+            it. Buying never needs an account — this is just your own shelf.
           </EmptyState>
         </div>
       ) : (
@@ -79,14 +79,14 @@ export function WatchlistPage({ items }: WatchlistPageProps) {
                     {item.kind === "post" ? (
                       <Link
                         href={`/${item.creator.username}/post/${item.id}`}
-                        className="text-label mt-1.5 block overflow-hidden font-medium leading-[1.4] no-underline [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
+                        className="text-label mt-1.5 block overflow-hidden font-medium leading-[1.4] no-underline [-webkit-box-orient:vertical] [-webkit-line-clamp:2] [display:-webkit-box]"
                       >
                         {item.title}
                       </Link>
                     ) : (
                       <Link
                         href={`/${item.creator.username}/product/${item.id}`}
-                        className="text-label mt-1.5 block overflow-hidden font-medium leading-[1.4] no-underline [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
+                        className="text-label mt-1.5 block overflow-hidden font-medium leading-[1.4] no-underline [-webkit-box-orient:vertical] [-webkit-line-clamp:2] [display:-webkit-box]"
                       >
                         {item.title}
                       </Link>

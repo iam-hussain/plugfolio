@@ -1,6 +1,4 @@
-import type { Metadata, Route } from "next";
-import Image from "next/image";
-import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import {
   getCreatorPage,
@@ -9,23 +7,7 @@ import {
   listMyCategories,
   listProfileProducts,
 } from "@plugfolio/core";
-import {
-  Button,
-  DashBody,
-  DashCard,
-  DashCardHead,
-  DashCardNote,
-  DashCardTitle,
-  PageHead,
-  PageHeadActions,
-  PageHeadTitle,
-  Provenance,
-  Stat,
-  UseRow,
-  UsesList,
-} from "@plugfolio/ui";
-import { ChevronLeft, ImageOff } from "lucide-react";
-import { ProductEditor } from "@/features/product-tagging";
+import { ProductEditorView } from "@/features/product-tagging";
 import { pickActiveProfile } from "@/lib/pick-active-profile";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -39,8 +21,6 @@ export const metadata: Metadata = { title: "Edit product" };
 
 type Params = { productId: string };
 type SearchParams = { profile?: string };
-
-const number = new Intl.NumberFormat("en");
 
 export default async function ProductEditPage({
   params,
@@ -71,7 +51,6 @@ export default async function ProductEditPage({
   if (!product) notFound();
 
   const measured = traffic.byProduct.find((row) => row.productId === product.id);
-  const libraryHref = `/dashboard/products?profile=${active.id}` as Route;
   // Used by, not owned by. Taken from the page read, which already carries
   // every post with its tagged products.
   const usedOn = (page?.posts ?? []).filter((post) =>
@@ -80,120 +59,14 @@ export default async function ProductEditPage({
   const tapsByPost = new Map(traffic.byPost.map((row) => [row.postId, row.taps]));
 
   return (
-    <>
-      <PageHead>
-        <PageHeadTitle
-          eyebrow={
-            <Link href={libraryHref} className="inline-flex items-center gap-1 no-underline">
-              <ChevronLeft className="size-3.5" aria-hidden />
-              All products
-            </Link>
-          }
-        >
-          {product.title}
-        </PageHeadTitle>
-        <PageHeadActions>
-          <Button variant="outline" asChild>
-            <Link href={`/${active.username}/product/${product.id}` as Route}>View as visitor</Link>
-          </Button>
-        </PageHeadActions>
-      </PageHead>
-
-      <DashBody>
-        <ProductEditor
-          profileId={active.id}
-          categories={categories}
-          libraryHref={libraryHref}
-          product={{
-            id: product.id,
-            title: product.title,
-            kind: product.kind,
-            sourceUrl: product.sourceUrl,
-            affiliateUrl: product.affiliateUrl,
-            couponCode: product.couponCode,
-            offerEndsAt: product.offerEndsAt,
-            inStoreNote: product.inStoreNote,
-            imageUrl: product.imageUrl,
-            priceCents: product.priceCents,
-            currency: product.currency,
-            categoryId: product.categoryId,
-          }}
-        />
-
-        {/* Two figures, two provenances. They were one line reading "221
-            Tracked / Plus 71 code copies — redemption is not tracked", which
-            buried the second number in a sentence and attached its caveat to
-            nothing in particular. Each stands on its own now. */}
-        <DashCard>
-          <DashCardHead>
-            <DashCardTitle>Traffic</DashCardTitle>
-          </DashCardHead>
-          <div className="grid gap-3 md:grid-cols-3">
-            <Stat
-              label="Views"
-              value={number.format(measured?.views ?? 0)}
-              provenance={<Provenance kind="tracked">Tracked</Provenance>}
-            >
-              This product&rsquo;s page opening.
-            </Stat>
-            <Stat
-              label="Taps"
-              value={number.format(measured?.taps ?? 0)}
-              provenance={<Provenance kind="tracked">Tracked</Provenance>}
-            >
-              Someone left for the retailer from this product.
-            </Stat>
-            {product.couponCode ? (
-              <Stat
-                label="Code copies"
-                value={number.format(measured?.codeCopies ?? 0)}
-                provenance={<Provenance kind="untracked">Redemption not tracked</Provenance>}
-              >
-                We count the copy. What happens at the checkout is the retailer&rsquo;s side.
-              </Stat>
-            ) : null}
-          </div>
-        </DashCard>
-
-        {usedOn.length > 0 ? (
-          <DashCard>
-            <DashCardHead>
-              <DashCardTitle>On these posts</DashCardTitle>
-              <DashCardNote>{usedOn.length} · editing here changes all of them</DashCardNote>
-            </DashCardHead>
-            <UsesList>
-              {usedOn.map((post) => (
-                <UseRow
-                  key={post.id}
-                  asChild
-                  image={
-                    <span className="bg-active rounded-image relative size-10 flex-none overflow-hidden">
-                      {post.mediaUrl ? (
-                        <Image
-                          src={post.mediaUrl}
-                          alt=""
-                          fill
-                          unoptimized
-                          sizes="40px"
-                          className="object-cover"
-                        />
-                      ) : (
-                        <span className="text-faint grid size-full place-items-center">
-                          <ImageOff className="size-4" aria-hidden />
-                        </span>
-                      )}
-                    </span>
-                  }
-                  title={post.caption ?? "Untitled post"}
-                  count={`${number.format(tapsByPost.get(post.id) ?? 0)} taps`}
-                >
-                  <Link href={`/dashboard/posts/${post.id}?profile=${active.id}` as Route} />
-                </UseRow>
-              ))}
-            </UsesList>
-          </DashCard>
-        ) : null}
-      </DashBody>
-    </>
+    <ProductEditorView
+      profileId={active.id}
+      username={active.username}
+      product={product}
+      categories={categories}
+      measured={measured}
+      usedOn={usedOn}
+      tapsByPost={tapsByPost}
+    />
   );
 }

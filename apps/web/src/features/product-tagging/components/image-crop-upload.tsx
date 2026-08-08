@@ -10,10 +10,8 @@ import {
   DialogTitle,
   Slider,
 } from "@plugfolio/ui";
-import { useMutation } from "@tanstack/react-query";
 import { Upload } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { uploadImage } from "../api";
+import { useImageCrop } from "../hooks/use-image-crop";
 
 /**
  * Pick a file → frame it yourself → upload (ADR-0023). The dialog is a
@@ -22,22 +20,13 @@ import { uploadImage } from "../api";
  * to the kind's box FIRST, so the server's centre-crop merely normalizes
  * (resize, watermark, WebP) and never re-frames.
  *
- * A canvas, not a transformed <img>, on purpose: the pan/zoom is imperative
- * drawing, so no inline styles (§7) and no cropper dependency.
+ * The pan/zoom/upload logic lives in `useImageCrop`; this file is the button
+ * and the framing dialog.
  */
 export type ImageCropUploadProps = {
   kind: UploadKind;
   onUploaded: (url: string) => void;
   label?: string;
-};
-
-/** Output boxes, mirroring core's IMAGE_SPECS — literal here because a value
-    import from @plugfolio/core would drag node:crypto into the bundle. */
-const BOXES: Record<UploadKind, { width: number; height: number }> = {
-  avatar: { width: 400, height: 400 },
-  product: { width: 800, height: 800 },
-  post: { width: 1080, height: 1350 },
-  cover: { width: 1600, height: 640 },
 };
 
 const FRAME_CLASS: Record<UploadKind, string> = {
@@ -48,70 +37,18 @@ const FRAME_CLASS: Record<UploadKind, string> = {
 };
 
 export function ImageCropUpload({ kind, onUploaded, label = "Upload" }: ImageCropUploadProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [zoom, setZoom] = useState(1);
-  // Pan in canvas pixels, clamped so the picture always covers the frame.
-  const pan = useRef({ x: 0, y: 0 });
-  const drag = useRef<{ x: number; y: number } | null>(null);
-  const box = BOXES[kind];
-
-  const draw = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !image) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-    const cover = Math.max(box.width / image.width, box.height / image.height);
-    const scale = cover * zoom;
-    const drawn = { width: image.width * scale, height: image.height * scale };
-    // Clamp the pan so no edge shows.
-    const maxX = (drawn.width - box.width) / 2;
-    const maxY = (drawn.height - box.height) / 2;
-    pan.current.x = Math.min(maxX, Math.max(-maxX, pan.current.x));
-    pan.current.y = Math.min(maxY, Math.max(-maxY, pan.current.y));
-    context.clearRect(0, 0, box.width, box.height);
-    context.drawImage(
-      image,
-      (box.width - drawn.width) / 2 + pan.current.x,
-      (box.height - drawn.height) / 2 + pan.current.y,
-      drawn.width,
-      drawn.height,
-    );
-  }, [image, zoom, box.width, box.height]);
-
-  useEffect(() => {
-    draw();
-  }, [draw]);
-
-  const upload = useMutation({
-    mutationFn: async () => {
-      const canvas = canvasRef.current;
-      if (!canvas) throw new Error("Nothing to crop");
-      const blob = await new Promise<Blob | null>((resolve) =>
-        canvas.toBlob(resolve, "image/jpeg", 0.92),
-      );
-      if (!blob) throw new Error("Could not read the crop");
-      const file = new File([blob], `${kind}.jpg`, { type: "image/jpeg" });
-      return uploadImage(kind, file);
-    },
-    onSuccess: (url) => {
-      onUploaded(url);
-      setImage(null);
-    },
-  });
-
-  const openFile = (file: File) => {
-    const url = URL.createObjectURL(file);
-    const next = new Image();
-    next.onload = () => {
-      pan.current = { x: 0, y: 0 };
-      setZoom(1);
-      setImage(next);
-      URL.revokeObjectURL(url);
-    };
-    next.src = url;
-  };
+  const {
+    inputRef,
+    canvasRef,
+    image,
+    setImage,
+    zoom,
+    setZoom,
+    box,
+    upload,
+    openFile,
+    pointerHandlers,
+  } = useImageCrop({ kind, onUploaded });
 
   return (
     <div className="flex flex-col gap-1">
@@ -153,28 +90,13 @@ export function ImageCropUpload({ kind, onUploaded, label = "Upload" }: ImageCro
               Drag to move, zoom to focus. What you see here is exactly what shows.
             </DialogDescription>
           </DialogHeader>
-          <div className={`${FRAME_CLASS[kind]} bg-active rounded-lg w-full overflow-hidden`}>
+          <div className={`${FRAME_CLASS[kind]} bg-active w-full overflow-hidden rounded-lg`}>
             <canvas
               ref={canvasRef}
               width={box.width}
               height={box.height}
               className="size-full cursor-move touch-none"
-              onPointerDown={(event) => {
-                event.currentTarget.setPointerCapture(event.pointerId);
-                drag.current = { x: event.clientX, y: event.clientY };
-              }}
-              onPointerMove={(event) => {
-                if (!drag.current) return;
-                // Screen pixels → canvas pixels, so the picture tracks the finger.
-                const ratio = box.width / event.currentTarget.clientWidth;
-                pan.current.x += (event.clientX - drag.current.x) * ratio;
-                pan.current.y += (event.clientY - drag.current.y) * ratio;
-                drag.current = { x: event.clientX, y: event.clientY };
-                draw();
-              }}
-              onPointerUp={() => {
-                drag.current = null;
-              }}
+              {...pointerHandlers}
             />
           </div>
           <div className="flex items-center gap-3">

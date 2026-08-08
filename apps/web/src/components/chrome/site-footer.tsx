@@ -47,10 +47,7 @@ export function SiteFooter(_props: SiteFooterProps = {}) {
   return (
     <footer className="border-border border-t">
       <div
-        className={cn(
-          measure(),
-          "grid grid-cols-2 gap-6 pb-8 pt-6 lg:grid-cols-[2fr_1fr_1fr_1fr]",
-        )}
+        className={cn(measure(), "grid grid-cols-2 gap-6 pb-8 pt-6 lg:grid-cols-[2fr_1fr_1fr_1fr]")}
       >
         <div className="col-span-2 lg:col-span-1">
           <Link

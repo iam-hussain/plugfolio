@@ -1,7 +1,7 @@
 import type { FollowSort, FollowedCreator } from "@plugfolio/core";
 import { Button, cn, EmptyState, LastLooked, measure } from "@plugfolio/ui";
 import Link from "next/link";
-import { sinceLabel } from "@/lib/follow-labels";
+import { sinceLabel } from "../follow-labels";
 import { FollowingControls } from "./following-controls";
 import { FollowingList } from "./following-list";
 
@@ -20,8 +20,8 @@ import { FollowingList } from "./following-list";
  * is the denominator for every count below it.
  *
  * Presentational: the route reads, this composes. This file holds the shell and
- * the two empty states — the groups are `FollowingList`, the wording is
- * `lib/follow-labels`.
+ * the two empty states — the groups are `FollowingList`, the wording is this
+ * feature's `follow-labels`.
  */
 export type FollowingPageProps = {
   rows: readonly FollowedCreator[];
@@ -60,8 +60,8 @@ export function FollowingPage({
         {followedTotal > 0 && since ? <LastLooked>{sinceLabel(since, now)}</LastLooked> : null}
       </div>
       <p className="text-muted-foreground text-copy mt-2 max-w-[460px] leading-[1.55]">
-        A list, not a feed. Every route out of here goes to that creator&apos;s own page —
-        nothing is merged into a stream you buy from.
+        A list, not a feed. Every route out of here goes to that creator&apos;s own page — nothing
+        is merged into a stream you buy from.
       </p>
 
       {followedTotal === 0 ? (

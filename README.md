@@ -22,16 +22,20 @@ deferred:
 
 ## Repository
 
-A monorepo — pnpm workspaces + Turborepo ([ADR-0005](./docs/adr/0005-monorepo-structure.md)).
+A monorepo — pnpm workspaces + Turborepo ([ADR-0005](./docs/adr/0005-monorepo-structure.md)). Three deployables over shared packages:
 
 ```
-apps/web         # the v1 deployable — Next.js App Router (RSC)
+apps/web         # the public + creator + business app — Next.js App Router (RSC); owns Auth.js, proxies /api/* to apps/api
+apps/api         # the standalone REST API (Hono) — thin controllers over core services; mobile clients hit this directly (ADR-0008)
+apps/admin       # internal ops console (Next.js) — talks to the DB directly via core + db, separate AdminUser identity (ADR-0014)
 packages/core    # framework-free domain: services, Zod schemas, repository interfaces
-packages/db      # Prisma schema + client + repository implementations
-packages/ui      # shadcn/ui primitives, themed via tokens
-packages/tokens  # "Charged Violet" design tokens
+packages/db      # Prisma schema + client + repository implementations (the only place Prisma is imported)
+packages/ui      # shadcn/ui primitives + shared visual components, themed via tokens
+packages/tokens  # "Plugfolio v2" design tokens (ADR-0026)
 packages/config  # shared tsconfig / tailwind / eslint / prettier presets
 ```
+
+**How they talk.** A public shopper page renders on the server in `apps/web` and calls the read services in `packages/core` directly — no HTTP hop. Every write (and the future native app) goes through the versioned REST API in `apps/api`; `apps/web` proxies `/api/*` to it so both share one path. `apps/admin` skips the API and reads/writes the database through `core` + `db`. All three wire the same domain services to Prisma repositories in their own `server/container.ts` composition root.
 
 ## Getting started
 
@@ -47,7 +51,15 @@ cp packages/db/.env.example packages/db/.env    # DATABASE_URL for Prisma CLI
 pnpm db:generate                                # generate the Prisma client
 pnpm --filter @plugfolio/db db:migrate          # apply migrations to your database
 pnpm --filter @plugfolio/db db:seed             # seed @lena + a tappable product
-pnpm dev                                         # run the web app, then visit /lena
+pnpm dev                                         # run every app (turbo), then visit /lena
+```
+
+Run a single app instead of the whole graph:
+
+```bash
+pnpm --filter @plugfolio/web dev                # the public + creator + business app
+pnpm --filter @plugfolio/api dev                # the standalone REST API
+pnpm --filter @plugfolio/admin dev              # the internal ops console
 ```
 
 Common tasks (Turborepo runs them across the graph):
@@ -62,7 +74,8 @@ pnpm --filter @plugfolio/web test:e2e   # Playwright shopper journeys
 
 ## Status
 
-Scaffold in place: the monorepo, shared packages, and one end-to-end vertical slice
-(`recordOutboundTap`: route handler → service → repository) build and test green, with
-an initial migration + seed, Playwright shopper e2e, and a DB-backed integration test in
-CI. Feature slices land next. See [`CLAUDE.md`](./CLAUDE.md) before contributing.
+The v1 journeys are built across all three apps — the no-login shopper surface, the
+creator back room (posts, product tagging, categories, traffic), business collabs, shopper
+accounts (follow, watchlist, comments), and the internal ops console — on the v2 visual
+system ([ADR-0026](./docs/adr/0026-v2-visual-redesign.md)). Unit tests (Vitest) and the
+Playwright shopper journeys run green in CI. See [`CLAUDE.md`](./CLAUDE.md) before contributing.
