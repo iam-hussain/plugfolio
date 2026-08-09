@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0C0A14; }
+  a { color: #C6FF3D; text-decoration: none; }
+  a:hover { color: #d9ff7a; }
+  @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+  @keyframes pulseDot { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .35; transform: scale(.7);} }
+  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  ::selection { background: #C6FF3D; color: #12101C; }
+  input::placeholder { color: rgba(255,255,255,0.34); }
+  @media (max-width: 860px) {
+    .pf-hero { grid-template-columns: 1fr !important; }
+    .pf-hero-visual { order: -1; margin-bottom: 8px; }
+    .pf-hero-visual > div:last-child { max-width: 300px !important; }
+  }
+</style>
+</helmet>
+
+<div style="font-family:'Inter',sans-serif; background:radial-gradient(120% 90% at 78% -8%, #2A1364 0%, #150F2E 42%, #0C0A14 100%); color:#F5F4F8; min-height:100vh; position:relative; overflow:hidden;">
+
+  <!-- ambient glows -->
+  <div style="position:absolute; top:-160px; right:-120px; width:520px; height:520px; border-radius:50%; background:radial-gradient(circle, rgba(124,58,237,0.55), transparent 66%); filter:blur(30px); pointer-events:none;"></div>
+  <div style="position:absolute; bottom:-220px; left:-140px; width:560px; height:560px; border-radius:50%; background:radial-gradient(circle, rgba(198,255,61,0.14), transparent 64%); filter:blur(36px); pointer-events:none;"></div>
+  <div style="position:absolute; inset:0; opacity:0.4; pointer-events:none; background-image:radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size:38px 38px;"></div>
+
+  <div style="position:relative; max-width:1120px; margin:0 auto; padding:28px 24px 72px;">
+
+    <!-- top bar -->
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:11px;">
+        <div style="width:34px; height:34px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+        <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.045em; display:flex; align-items:flex-end; color:#fff;">plugfolio<span style="width:5px;height:5px;border-radius:50%;background:#C6FF3D;margin-left:2px;margin-bottom:6px;"></span></div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; padding:7px 14px; border:1px solid rgba(198,255,61,0.35); border-radius:999px; background:rgba(198,255,61,0.07);">
+        <span style="width:8px; height:8px; border-radius:50%; background:#C6FF3D; animation:pulseDot 1.8s ease-in-out infinite;"></span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#C6FF3D;">In development</span>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="pf-hero" style="padding-top:80px; padding-bottom:20px; display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,0.85fr); gap:48px; align-items:center;">
+    <div style="min-width:0;">
+      <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.28em; text-transform:uppercase; color:#A78BFA; margin-bottom:26px;">Launching soon</div>
+      <h1 style="font-family:'Sora',sans-serif; font-weight:800; font-size:clamp(44px, 8vw, 88px); line-height:0.98; letter-spacing:-0.045em; color:#fff; text-wrap:balance;">Shop from<br>creators you<br><span style="background:linear-gradient(90deg,#C6FF3D,#A78BFA,#C6FF3D); background-size:200% auto; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:shimmer 6s linear infinite;">follow.</span></h1>
+      <p style="font-family:'Sora',sans-serif; font-weight:500; font-size:clamp(19px,2.6vw,26px); letter-spacing:-0.02em; color:rgba(245,244,248,0.86); margin-top:26px; max-width:600px; line-height:1.3; text-wrap:pretty;">Turn your content into commerce. Every post becomes shoppable — and shopping never needs an account.</p>
+
+      <!-- waitlist -->
+      <div style="margin-top:40px; max-width:520px;">
+        <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; align-items:center; gap:14px; padding:18px 22px; border-radius:16px; background:rgba(198,255,61,0.1); border:1px solid rgba(198,255,61,0.4);">
+            <div style="width:38px; height:38px; border-radius:50%; background:#C6FF3D; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#12101C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div>
+              <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:17px; color:#fff;">You're on the list.</div>
+              <div style="font-size:14px; color:rgba(245,244,248,0.7); margin-top:2px;">We'll email {{ savedEmail }} the moment early access opens.</div>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(245,244,248,0.55); margin-bottom:12px;">Get early access</div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <input type="email" value="{{ email }}" onInput="{{ onEmail }}" onKeyDown="{{ onKey }}" placeholder="you@email.com" style="flex:1; min-width:220px; height:54px; padding:0 20px; border-radius:14px; border:1px solid rgba(255,255,255,0.16); background:rgba(255,255,255,0.05); color:#fff; font-family:'Inter',sans-serif; font-size:16px; outline:none;">
+              <button onClick="{{ onSubmit }}" style="height:54px; padding:0 26px; border:none; border-radius:14px; background:#C6FF3D; color:#12101C; font-family:'Sora',sans-serif; font-weight:700; font-size:16px; letter-spacing:-0.01em; cursor:pointer; white-space:nowrap;" style-hover="background:#d9ff7a;">Notify me →</button>
+            </div>
+            <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:'Inter',sans-serif; font-size:13px; color:#FF6B5C; margin-top:9px;">Please enter a valid email address.</div>
+            </sc-if>
+            <div style="font-size:13px; color:rgba(245,244,248,0.5); margin-top:11px;">No spam. Just one email when we go live.</div>
+          </div>
+        </sc-if>
+      </div>
+    </div><!-- /hero text col -->
+
+    <!-- hero visual: floating shoppable post -->
+    <div class="pf-hero-visual" style="min-width:0; position:relative; display:flex; justify-content:center; align-items:center;">
+      <div style="position:absolute; width:320px; height:320px; border-radius:50%; background:radial-gradient(circle, rgba(198,255,61,0.16), transparent 68%); filter:blur(20px);"></div>
+      <div style="position:relative; width:100%; max-width:340px; animation:floaty 6s ease-in-out infinite;">
+        <div style="background:rgba(255,255,255,0.045); border:1px solid rgba(255,255,255,0.12); border-radius:26px; padding:16px; backdrop-filter:blur(8px); box-shadow:0 40px 80px -30px rgba(0,0,0,0.7);">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+            <div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#7C3AED,#A78BFA);"></div>
+            <div style="flex:1;">
+              <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:14px; color:#fff;">@yourcreator</div>
+              <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.06em; color:rgba(245,244,248,0.5);">SHOPPABLE POST</div>
+            </div>
+            <div style="width:22px; height:22px;"><dc-import name="PlugMark" body="rgba(255,255,255,0.6)" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+          </div>
+          <div style="aspect-ratio:4/5; border-radius:16px; background:linear-gradient(150deg,#2A1364,#4C1D95 55%,#1a1230); position:relative; overflow:hidden; display:flex; align-items:flex-end; padding:14px;">
+            <div style="position:absolute; top:14px; right:14px; display:flex; align-items:center; gap:5px; padding:6px 10px; border-radius:999px; background:rgba(12,10,20,0.55); backdrop-filter:blur(4px);">
+              <span style="width:6px; height:6px; border-radius:50%; background:#C6FF3D;"></span>
+              <span style="font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.1em; color:#fff; text-transform:uppercase;">3 items</span>
+            </div>
+            <div style="width:100%; background:rgba(12,10,20,0.72); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:10px 12px; display:flex; align-items:center; gap:10px;">
+              <div style="width:40px; height:40px; border-radius:9px; background:linear-gradient(135deg,#C6FF3D,#8fd41f); flex-shrink:0;"></div>
+              <div style="flex:1; min-width:0;">
+                <div style="font-family:'Sora',sans-serif; font-weight:600; font-size:13px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Everyday Tote</div>
+                <div style="font-family:'Inter',sans-serif; font-size:12px; color:rgba(245,244,248,0.6);">₹1,499</div>
+              </div>
+              <div style="padding:7px 14px; border-radius:999px; background:#C6FF3D; color:#12101C; font-family:'Sora',sans-serif; font-weight:700; font-size:12px; white-space:nowrap;">Buy</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px; margin-top:14px; padding:0 4px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-4-.9L3 20l1-4a8.4 8.4 0 0 1-.9-4 8.5 8.5 0 0 1 17 0z"></path></svg>
+            <div style="flex:1;"></div>
+            <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.08em; color:rgba(245,244,248,0.45);">NO ACCOUNT NEEDED</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div><!-- /hero grid -->
+
+    <!-- WHAT IT IS -->
+    <div style="margin-top:96px; padding-top:44px; border-top:1px solid rgba(255,255,255,0.08);">
+      <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:#A78BFA; margin-bottom:18px;">What is Plugfolio</div>
+      <p style="font-family:'Sora',sans-serif; font-weight:500; font-size:clamp(22px,3.4vw,34px); line-height:1.32; letter-spacing:-0.025em; color:#fff; max-width:900px; text-wrap:pretty;">A creator turns their feed into a page where <span style="color:#C6FF3D;">every post is shoppable</span>. A follower taps a post and buys in three taps — no account, no friction. Payment settles off-platform; you keep your audience and your links.</p>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div style="margin-top:88px;">
+      <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:#A78BFA; margin-bottom:28px;">How it works · three roles</div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(258px,1fr)); gap:18px;">
+        <sc-for list="{{ roles }}" as="r" hint-placeholder-count="3">
+          <div style="padding:26px 24px 30px; border-radius:20px; background:rgba(255,255,255,0.035); border:1px solid rgba(255,255,255,0.09); position:relative; overflow:hidden;">
+            <div style="width:46px; height:46px; border-radius:13px; background:{{ r.chipBg }}; display:flex; align-items:center; justify-content:center; margin-bottom:20px; color:{{ r.chipFg }};">{{ r.icon }}</div>
+            <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:20px; letter-spacing:-0.02em; color:#fff;">{{ r.title }}</div>
+            <div style="font-size:14.5px; line-height:1.6; color:rgba(245,244,248,0.66); margin-top:10px;">{{ r.body }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- TEAM -->
+    <div style="margin-top:88px; padding:40px 34px; border-radius:24px; background:linear-gradient(135deg, rgba(124,58,237,0.22), rgba(198,255,61,0.05)); border:1px solid rgba(255,255,255,0.1);">
+      <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:#A78BFA; margin-bottom:22px;">The team</div>
+      <div style="display:flex; align-items:center; gap:22px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div style="width:60px; height:60px; border-radius:50%; background:#7C3AED; display:flex; align-items:center; justify-content:center; font-family:'Sora',sans-serif; font-weight:700; font-size:24px; color:#fff; flex-shrink:0;">1</div>
+          <div>
+            <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:19px; color:#fff;">One founder</div>
+            <div style="font-size:14px; color:rgba(245,244,248,0.62); font-family:'Space Mono',monospace; letter-spacing:0.02em;">Design · Product · Engineering</div>
+          </div>
+        </div>
+        <div style="font-family:'Sora',sans-serif; font-weight:600; font-size:26px; color:rgba(255,255,255,0.3);">+</div>
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div style="width:60px; height:60px; border-radius:50%; background:#C6FF3D; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#12101C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2v1h1a3 3 0 0 1 3 3v1h1a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-1v1a3 3 0 0 1-3 3h-1v1a2 2 0 0 1-4 0v-1H9a3 3 0 0 1-3-3v-1H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h1V8a3 3 0 0 1 3-3h1V4a2 2 0 0 1 2-2z"></path><circle cx="9.5" cy="11.5" r="1.3" fill="#12101C"></circle><circle cx="14.5" cy="11.5" r="1.3" fill="#12101C"></circle></svg>
+          </div>
+          <div>
+            <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:19px; color:#fff;">AI, building alongside</div>
+            <div style="font-size:14px; color:rgba(245,244,248,0.62); font-family:'Space Mono',monospace; letter-spacing:0.02em;">Prototyping · Code · Copy</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:14.5px; line-height:1.6; color:rgba(245,244,248,0.6); margin-top:26px; max-width:640px; text-wrap:pretty;">Small on purpose. Plugfolio is built lean — one person and an AI partner shipping fast toward a v1 that stays honest: no login to shop, and no money touched on-platform.</p>
+    </div>
+
+    <!-- CONTACT / FOOTER -->
+    <div style="margin-top:80px; padding-top:34px; border-top:1px solid rgba(255,255,255,0.08); display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:#A78BFA; margin-bottom:14px;">Get in touch</div>
+        <div style="font-family:'Sora',sans-serif; font-weight:600; font-size:20px; color:#fff;">Contact coming soon</div>
+        <div style="font-size:14px; color:rgba(245,244,248,0.6); margin-top:6px; max-width:360px;">Socials and a hello@ address land the day we launch. Join the list above to be first to know.</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:24px; height:24px;"><dc-import name="PlugMark" body="rgba(255,255,255,0.5)" prong="rgba(255,255,255,0.5)" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.06em; color:rgba(245,244,248,0.4);">© 2026 Plugfolio · Building in public</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { email: '', submitted: false, savedEmail: '', error: false };
+
+  svg(paths) {
+    const h = React.createElement;
+    return h('svg', { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' },
+      paths.map((p, i) => h('path', { key: i, d: p })));
+  }
+  icons() {
+    return {
+      shopper: this.svg(['M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z', 'M3 6h18', 'M16 10a4 4 0 0 1-8 0']),
+      creator: this.svg(['M12 20h9', 'M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z']),
+      business: this.svg(['M2 9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z', 'M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16'])
+    };
+  }
+
+  renderVals() {
+    const ic = this.icons();
+    return {
+      email: this.state.email,
+      submitted: this.state.submitted,
+      notSubmitted: !this.state.submitted,
+      savedEmail: this.state.savedEmail,
+      error: this.state.error,
+      onEmail: (e) => this.setState({ email: e.target.value, error: false }),
+      onKey: (e) => { if (e.key === 'Enter') this.submit(); },
+      onSubmit: () => this.submit(),
+      roles: [
+        { title: 'Shoppers', chipBg: 'rgba(198,255,61,0.14)', chipFg: '#C6FF3D', icon: ic.shopper,
+          body: 'Tap a post, see the product, buy in three taps. No account, ever — an account is never the price of shopping.' },
+        { title: 'Creators', chipBg: 'rgba(124,58,237,0.28)', chipFg: '#C6a7FA', icon: ic.creator,
+          body: 'Tag your posts once and your whole feed goes shoppable. Buy links forward to your own affiliate & stores — you keep the audience.' },
+        { title: 'Businesses', chipBg: 'rgba(255,107,92,0.16)', chipFg: '#FF9d92', icon: ic.business,
+          body: 'Post what you need, open a collab thread with creators, agree on terms. Everything settles off-platform, out in the open.' }
+      ]
+    };
+  }
+
+  submit() {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!re.test(this.state.email.trim())) { this.setState({ error: true }); return; }
+    this.setState({ submitted: true, savedEmail: this.state.email.trim() });
+  }
+}
+</script>
+</body>
+</html>

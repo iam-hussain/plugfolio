@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#050409}
+  a{text-decoration:none;color:#A78BFA}
+  a:hover{color:#C6FF3D}
+  @keyframes pfsCredits{0%{transform:translateY(0)}100%{transform:translateY(-50%)}}
+  @keyframes pfsBob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</helmet>
+
+<div style="background:#050409; color:#F5F4F8; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip;">
+
+  <div data-el="topbar" style="position:fixed; top:0; left:0; right:0; z-index:60; opacity:0; pointer-events:none; transform:translateY(-8px); transition:opacity .35s ease, transform .35s ease; background:rgba(5,4,9,.82); backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.08);">
+    <div style="display:flex; align-items:center; gap:14px; padding:11px clamp(18px,5vw,48px);">
+      <div onClick="{{ goTop }}" style="display:flex; align-items:center; gap:9px; cursor:pointer;">
+        <div style="width:24px;height:24px;"><dc-import name="PlugMark" body="#F5F4F8" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+        <div style="font-family:'Sora',sans-serif; font-size:18px; font-weight:700; letter-spacing:-0.045em; display:flex; align-items:flex-end;">plugfolio<span style="width:4px;height:4px;border-radius:1px;background:#C6FF3D;margin-left:3px;margin-bottom:4px;"></span></div>
+      </div>
+      <div style="flex:1;"></div>
+      <span style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; color:#8A8598;">A short film about a tap</span>
+    </div>
+  </div>
+
+  <!-- ACT 0 · TITLE CARD -->
+  <div data-el="s1" data-screen-label="Title card" style="height:190vh;">
+    <div style="position:sticky; top:0; height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+      <div data-el="barTop" style="position:absolute; top:0; left:0; right:0; height:0; background:#000; z-index:5;"></div>
+      <div data-el="barBot" style="position:absolute; bottom:0; left:0; right:0; height:0; background:#000; z-index:5;"></div>
+      <div data-el="s1group" style="display:flex; flex-direction:column; align-items:center; gap:26px; text-align:center; padding:0 20px; will-change:transform,opacity;">
+        <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:#8A8598;">23:47 &middot; a tuesday &middot; your feed</div>
+        <div data-el="s1title" style="font-family:'Sora',sans-serif; font-weight:800; line-height:1.02; font-size:clamp(40px,7.4vw,104px); letter-spacing:.06em; text-wrap:balance; will-change:letter-spacing;">You weren't<br>even shopping.</div>
+        <div style="font-size:15px; color:#A5A1B5; max-width:420px; line-height:1.6;">Then a post walked by with everything in it priced. This is what happens in the next nine seconds.</div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span onClick="{{ goCredits }}" style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:14px; font-weight:600; color:#12101C; background:#C6FF3D; padding:13px 24px; border-radius:999px; transition:transform .15s ease;">Skip to the pages &rarr;</span>
+          <span onClick="{{ goFrames }}" style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:14px; font-weight:600; border:1px solid rgba(245,244,248,.3); padding:13px 24px; border-radius:999px; transition:transform .15s ease;">Roll film</span>
+        </div>
+      </div>
+      <div data-el="s1cue" style="position:absolute; bottom:30px; left:0; right:0; display:flex; flex-direction:column; align-items:center; gap:8px; color:#8A8598; z-index:6;">
+        <span style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.24em; text-transform:uppercase;">Scroll to play</span>
+        <svg style="animation:pfsBob 1.6s ease-in-out infinite;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 9l7 7 7-7"></path></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT 1 · THREE FRAMES -->
+  <div data-el="s2" data-screen-label="Three frames" style="height:360vh; margin-top:-70vh; position:relative; z-index:2; background:#000;">
+    <div style="position:sticky; top:0; height:100vh; overflow:hidden;">
+      <div data-el="f0" style="position:absolute; inset:0; opacity:0; will-change:opacity,transform;">
+        <image-slot id="pfk-f0" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1400&q=80&auto=format&fit=crop" credit="Photo by Tamara Bellis on Unsplash" credit-href="https://unsplash.com/@tamarabellis" shape="rect" fit="cover" placeholder="creator post — night fit check" style="width:100%;height:100%;display:block;position:absolute;inset:0;"></image-slot>
+        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,0) 35%, rgba(0,0,0,.78) 82%);"></div>
+        <div style="position:absolute; left:0; right:0; bottom:9vh; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; padding:0 22px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:#C6FF3D;">Frame 01 &mdash; the post</div>
+          <div style="font-family:'Sora',sans-serif; font-size:clamp(24px,3.8vw,44px); font-weight:700; letter-spacing:-.03em;">A fit check, like every other night.</div>
+          <div style="font-size:13.5px; color:rgba(245,244,248,.72);">Except this one lives on her plugfolio page.</div>
+        </div>
+      </div>
+      <div data-el="f1" style="position:absolute; inset:0; opacity:0; will-change:opacity,transform;">
+        <image-slot id="pfk-f1" src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=1400&q=80&auto=format&fit=crop" credit="Photo on Unsplash" credit-href="https://unsplash.com" shape="rect" fit="cover" placeholder="close-up — linen overshirt" style="width:100%;height:100%;display:block;position:absolute;inset:0;"></image-slot>
+        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,0) 35%, rgba(0,0,0,.78) 82%);"></div>
+        <div data-el="f1tag" style="position:absolute; left:50%; top:38%; transform:translateX(-50%) scale(.7); opacity:0; display:flex; align-items:center; gap:8px; background:#fff; color:#12101C; border-radius:999px; padding:9px 15px 9px 10px; font-size:13px; font-weight:600; box-shadow:0 14px 40px -12px rgba(0,0,0,.6); will-change:transform,opacity;"><span style="width:8px;height:8px;border-radius:50%;background:#7C3AED;"></span>Linen overshirt &middot; &#8377;2,190</div>
+        <div style="position:absolute; left:0; right:0; bottom:9vh; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; padding:0 22px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:#C6FF3D;">Frame 02 &mdash; the tap</div>
+          <div style="font-family:'Sora',sans-serif; font-size:clamp(24px,3.8vw,44px); font-weight:700; letter-spacing:-.03em;">Every thing in it, named and priced.</div>
+          <div style="font-size:13.5px; color:rgba(245,244,248,.72);">No search. No &ldquo;link pls&rdquo; in the comments.</div>
+        </div>
+      </div>
+      <div data-el="f2" style="position:absolute; inset:0; opacity:0; display:flex; align-items:center; justify-content:center; background:#0C0B12; will-change:opacity,transform;">
+        <div style="width:min(560px,88vw); display:flex; flex-direction:column; gap:0; border:1px solid #262134; border-radius:18px; overflow:hidden; background:#16131F; box-shadow:0 40px 100px -40px rgba(0,0,0,.8);">
+          <div style="display:flex; align-items:center; gap:8px; padding:12px 14px; border-bottom:1px solid #262134;">
+            <span style="width:9px;height:9px;border-radius:50%;background:#3A3550;"></span><span style="width:9px;height:9px;border-radius:50%;background:#3A3550;"></span><span style="width:9px;height:9px;border-radius:50%;background:#3A3550;"></span>
+            <span style="flex:1; margin-left:8px; font-family:'Space Mono',monospace; font-size:11px; color:#A5A1B5; background:#0C0B12; border-radius:8px; padding:6px 12px;">oakandthread.com/linen-overshirt</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px; padding:18px;">
+            <div style="width:64px; height:64px; border-radius:12px; overflow:hidden; flex-shrink:0;"><image-slot id="pfk-f2p" src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300&q=80&auto=format&fit=crop" credit="Photo on Unsplash" credit-href="https://unsplash.com" shape="rounded" fit="cover" placeholder="product" style="width:100%;height:100%;display:block;"></image-slot></div>
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:14px; font-weight:600;">Linen overshirt</div>
+              <div style="font-family:'Sora',sans-serif; font-size:17px; font-weight:700; margin-top:3px;">&#8377;2,190</div>
+            </div>
+            <span style="font-family:'Sora',sans-serif; font-size:13px; font-weight:600; color:#fff; background:#7C3AED; padding:11px 20px; border-radius:999px;">Add to bag</span>
+          </div>
+          <div style="padding:0 18px 16px; font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:#8A8598;">&larr; you are now on the retailer's site. we waved goodbye one tap ago.</div>
+        </div>
+        <div style="position:absolute; left:0; right:0; bottom:9vh; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; padding:0 22px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:#C6FF3D;">Frame 03 &mdash; the exit</div>
+          <div style="font-family:'Sora',sans-serif; font-size:clamp(24px,3.8vw,44px); font-weight:700; letter-spacing:-.03em;">Their checkout. Their receipt.</div>
+          <div style="font-size:13.5px; color:rgba(245,244,248,.72);">We never see your card. The creator is credited by the retailer.</div>
+        </div>
+      </div>
+      <div style="position:absolute; top:24px; left:0; right:0; display:flex; justify-content:center; gap:8px; z-index:6;">
+        <span data-dot="0" style="width:26px; height:3px; border-radius:2px; background:rgba(245,244,248,.25);"></span>
+        <span data-dot="1" style="width:26px; height:3px; border-radius:2px; background:rgba(245,244,248,.25);"></span>
+        <span data-dot="2" style="width:26px; height:3px; border-radius:2px; background:rgba(245,244,248,.25);"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT 2 · ONE CARD, THREE FACES -->
+  <div data-el="s3" data-screen-label="Three faces" style="height:320vh; position:relative; z-index:3; background:#050409;">
+    <div style="position:sticky; top:0; height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:clamp(28px,6vw,90px); flex-wrap:wrap; padding:0 clamp(18px,5vw,60px);">
+      <div style="width:min(400px,90vw); display:flex; flex-direction:column; gap:14px;">
+        <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:#C6FF3D;">Character study &middot; face {{ faceNum }} / 3</div>
+        <div style="font-family:'Sora',sans-serif; font-size:clamp(26px,3.6vw,42px); font-weight:700; letter-spacing:-.035em; line-height:1.08;">{{ face.title }}</div>
+        <div style="font-size:14.5px; line-height:1.65; color:#A5A1B5; text-wrap:pretty;">{{ face.body }}</div>
+        <div style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.08em; color:#8A8598;">{{ face.note }}</div>
+      </div>
+      <div data-el="s3card" style="width:min(320px,86vw); border:1px solid #262134; border-radius:24px; background:#16131F; overflow:hidden; will-change:transform; box-shadow:0 50px 110px -50px rgba(0,0,0,.9);">
+        <div style="height:250px; position:relative;">
+          <image-slot id="pfk-card" src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=700&q=80&auto=format&fit=crop" credit="Photo on Unsplash" credit-href="https://unsplash.com" shape="rect" fit="cover" placeholder="linen overshirt" style="width:100%;height:100%;display:block;"></image-slot>
+          <sc-if value="{{ faceOwn }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; top:10px; left:10px; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.08em; text-transform:uppercase; background:rgba(18,16,28,.85); color:#F5F4F8; padding:5px 9px; border-radius:999px;">Their own product</span></sc-if>
+        </div>
+        <div style="padding:15px 16px 17px;">
+          <div style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.1em; color:#8A8598;">@mayarao</div>
+          <div style="font-size:14.5px; font-weight:600; margin-top:5px;">Linen overshirt &mdash; thrifted find</div>
+          <sc-if value="{{ faceCode }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:center; gap:8px; margin-top:11px;">
+              <span onClick="{{ copyCode }}" style="font-family:'Space Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:.06em; background:#C6FF3D; color:#12101C; padding:7px 11px; border-radius:8px; cursor:pointer; white-space:nowrap;">{{ codeLabel }}</span>
+              <span style="font-size:11px; color:#8A8598;">Valid till 30 Aug</span>
+            </div>
+          </sc-if>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px;">
+            <span style="font-family:'Sora',sans-serif; font-size:17px; font-weight:700;">&#8377;2,190</span>
+            <span style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:13px; font-weight:600; color:#fff; background:#7C3AED; padding:10px 18px; border-radius:999px; transition:transform .15s ease; white-space:nowrap;">{{ face.cta }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT 3 · THE LEDGER -->
+  <div data-screen-label="The ledger" style="background:#050409; padding:16vh clamp(18px,5vw,60px); position:relative; z-index:4;">
+    <div style="max-width:1020px; margin:0 auto;">
+      <div data-rev="0" style="text-align:center;">
+        <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:#8A8598;">Interlude &mdash; the ledger</div>
+        <div style="font-family:'Sora',sans-serif; font-size:clamp(28px,4.4vw,52px); font-weight:700; letter-spacing:-.04em; margin-top:12px;">Two very short lists.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin-top:44px;">
+        <div data-slide="l" style="border:1px solid #262134; border-radius:24px; background:#16131F; padding:26px; will-change:transform,opacity;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#C6FF3D;">What we count</div>
+          <div style="display:flex; flex-direction:column; gap:0; margin-top:16px;">
+            <div style="display:flex; justify-content:space-between; gap:12px; padding:13px 0; border-bottom:1px solid #262134; font-size:14px;"><span>Taps out to retailers</span><span style="font-family:'Space Mono',monospace; font-size:11px; color:#8A8598;">counted</span></div>
+            <div style="display:flex; justify-content:space-between; gap:12px; padding:13px 0; border-bottom:1px solid #262134; font-size:14px;"><span>Coupon code copies</span><span style="font-family:'Space Mono',monospace; font-size:11px; color:#8A8598;">counted</span></div>
+            <div style="display:flex; justify-content:space-between; gap:12px; padding:13px 0; font-size:14px;"><span>In-store code copies</span><span style="font-family:'Space Mono',monospace; font-size:11px; color:#8A8598;">redemption not tracked</span></div>
+          </div>
+        </div>
+        <div data-slide="r" style="border:1px solid #262134; border-radius:24px; background:#16131F; padding:26px; will-change:transform,opacity;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#FF6B5C;">What we never see</div>
+          <div style="display:flex; flex-direction:column; gap:0; margin-top:16px;">
+            <div style="display:flex; justify-content:space-between; gap:12px; padding:13px 0; border-bottom:1px solid #262134; font-size:14px;"><span>Your card</span><span style="font-family:'Space Mono',monospace; font-size:11px; color:#8A8598;">never</span></div>
+            <div style="display:flex; justify-content:space-between; gap:12px; padding:13px 0; border-bottom:1px solid #262134; font-size:14px;"><span>Your cart or address</span><span style="font-family:'Space Mono',monospace; font-size:11px; color:#8A8598;">never</span></div>
+            <div style="display:flex; justify-content:space-between; gap:12px; padding:13px 0; font-size:14px;"><span>A login, just to shop</span><span style="font-family:'Space Mono',monospace; font-size:11px; color:#8A8598;">never asked</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT 4 · END CREDITS -->
+  <div data-el="credits" data-screen-label="End credits" style="background:#000; padding:14vh 0 10vh; position:relative; z-index:5; overflow:hidden;">
+    <div data-rev="1" style="text-align:center; padding:0 20px;">
+      <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:#8A8598;">End credits &mdash; pages live tonight</div>
+      <div style="font-family:'Sora',sans-serif; font-size:clamp(26px,4vw,46px); font-weight:700; letter-spacing:-.04em; margin-top:12px;">Starring, in order of appearance</div>
+    </div>
+    <div style="height:52vh; overflow:hidden; margin-top:40px; -webkit-mask-image:linear-gradient(180deg,transparent,#000 18%,#000 82%,transparent); mask-image:linear-gradient(180deg,transparent,#000 18%,#000 82%,transparent);">
+      <div style="display:flex; flex-direction:column; align-items:center; gap:0; animation:pfsCredits 26s linear infinite;">
+        <sc-for list="{{ credits }}" as="c" hint-placeholder-count="6">
+          <div style-hover="opacity:.7" style="cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; padding:20px 0; text-align:center; transition:opacity .15s ease;">
+            <div style="font-family:'Sora',sans-serif; font-size:clamp(22px,3vw,34px); font-weight:700; letter-spacing:-.03em;">{{ c.name }}</div>
+            <div style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#8A8598;">{{ c.role }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA + FOOTER -->
+  <div data-screen-label="Join" style="background:#000; padding:20px clamp(18px,5vw,48px) 40px; position:relative; z-index:6;">
+    <div data-rev="2" style="background:#C6FF3D; color:#12101C; border-radius:34px; padding:clamp(40px,7vw,80px) clamp(22px,5vw,64px); display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center;">
+      <div style="width:56px; height:56px;"><dc-import name="PlugMark" body="#12101C" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+      <div style="font-family:'Sora',sans-serif; font-size:clamp(30px,5.4vw,68px); font-weight:700; letter-spacing:-.045em; line-height:1.02; text-wrap:balance;">Roll your own credits.</div>
+      <div style="font-size:15px; color:rgba(18,16,28,.75); max-width:460px; line-height:1.6;">One link in your bio. Every post becomes the shop. Shopping never needs an account.</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+        <span style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:15px; font-weight:600; background:#12101C; color:#C6FF3D; padding:14px 26px; border-radius:999px; transition:transform .15s ease;">Claim your handle</span>
+        <span onClick="{{ goTop }}" style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:15px; font-weight:600; border:1px solid rgba(18,16,28,.4); padding:14px 26px; border-radius:999px; transition:transform .15s ease;">Watch it again</span>
+      </div>
+    </div>
+    <div data-rev="3" style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,.1); margin-top:36px; padding:24px 4px 10px;">
+      <div>
+        <div style="font-family:'Sora',sans-serif; font-size:17px; font-weight:700; letter-spacing:-.045em;">plugfolio</div>
+        <div style="font-size:12.5px; color:#8A8598; margin-top:6px; line-height:1.5;">Shoppable creator pages.<br>Payment settles at the retailer &mdash; never here.</div>
+      </div>
+      <div style="display:flex; gap:20px; font-size:13px; color:#A5A1B5; flex-wrap:wrap;">
+        <span style="cursor:pointer;">Explore</span><span style="cursor:pointer;">Following</span><span style="cursor:pointer;">Support &amp; feedback</span><span style="cursor:pointer;">Privacy</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;motion&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;cinematic&quot;, &quot;options&quot;: [&quot;cinematic&quot;, &quot;subtle&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Motion&quot;},
+  &quot;letterbox&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 14, &quot;min&quot;: 0, &quot;max&quot;: 22, &quot;step&quot;: 1, &quot;unit&quot;: &quot;vh&quot;, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Motion&quot;}
+}">
+class Component extends DCLogic {
+  state = { face: 0, copied: false };
+
+  renderVals() {
+    const faces = [
+      { title: 'The affiliate face.', cta: 'Buy', body: 'The default. Someone else\u2019s product \u2014 the creator earns a commission from the retailer when you buy. Notice what\u2019s missing: any commission math. The shopper never sees it.', note: 'photo \u00b7 title \u00b7 price \u00b7 one Buy. nothing else.' },
+      { title: 'Her own product.', cta: 'Shop their store', body: 'Same card, two honest changes: a quiet \u201cTheir own product\u201d tag, and the button now reads \u201cShop their store\u201d \u2014 because that\u2019s where it goes. No commission language anywhere.', note: 'trust is a label, not a banner.' },
+      { title: 'A coupon rides along.', cta: 'Buy', body: 'Not a third card \u2014 an offer riding on the first two. Tap the code, it copies, the chip says so inline. When it expires it collapses to \u201cOffer ended\u201d and the product stays put.', note: 'in-store codes carry a note: redemption not tracked.' },
+    ];
+    const f = faces[this.state.face] || faces[0];
+    const credits = [
+      { name: 'Maya Rao', role: 'thrift & everyday fashion \u00b7 126 things' },
+      { name: 'Dev Iyer', role: 'desk setups & tech \u00b7 84 things' },
+      { name: 'Sana Sheikh', role: 'skincare, honestly \u00b7 93 things' },
+      { name: 'Ravi Menon', role: 'running gear \u00b7 58 things' },
+      { name: 'Anaya Kapoor', role: 'home kitchen \u00b7 71 things' },
+      { name: 'Leo D\u2019Souza', role: 'analog photography \u00b7 39 things' },
+    ];
+    return {
+      face: f,
+      faceNum: String(this.state.face + 1),
+      faceOwn: this.state.face === 1,
+      faceCode: this.state.face === 2,
+      codeLabel: this.state.copied ? 'Copied \u2713' : 'MAYA10',
+      copyCode: () => {
+        try { navigator.clipboard.writeText('MAYA10'); } catch (e) {}
+        clearTimeout(this._ct);
+        this.setState({ copied: true });
+        this._ct = setTimeout(() => this.setState({ copied: false }), 2400);
+      },
+      credits: credits.concat(credits),
+      goTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+      goFrames: () => this.sTo('s2', innerHeight * 0.7),
+      goCredits: () => this.sTo('credits', 0),
+    };
+  }
+
+  sTo(name, off) {
+    const el = document.querySelector(`[data-el="${name}"]`);
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY + (off || 0), behavior: 'smooth' });
+  }
+
+  grabRefs() {
+    this.$ = {};
+    document.querySelectorAll('[data-el]').forEach(el => { this.$[el.getAttribute('data-el')] = el; });
+    this.dots = Array.from(document.querySelectorAll('[data-dot]'));
+    this.revs = Array.from(document.querySelectorAll('[data-rev]'));
+    this.slides = Array.from(document.querySelectorAll('[data-slide]'));
+  }
+
+  componentDidMount() {
+    this.grabRefs();
+    this.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this._onScroll = () => {
+      if (this._tick) return;
+      this._tick = true;
+      requestAnimationFrame(() => { this._tick = false; this.apply(); });
+    };
+    addEventListener('scroll', this._onScroll, { passive: true });
+    addEventListener('resize', this._onScroll, { passive: true });
+    this.apply();
+  }
+  componentDidUpdate() { this.grabRefs(); this.apply(); }
+  componentWillUnmount() {
+    removeEventListener('scroll', this._onScroll);
+    removeEventListener('resize', this._onScroll);
+    clearTimeout(this._ct);
+  }
+
+  apply() {
+    const $ = this.$;
+    if (!$ || !$.s1group) return;
+    const vh = innerHeight;
+    const M = (this.props.motion ?? 'cinematic') === 'subtle' ? 0.55 : 1;
+    const R = this.reduced;
+    const seg = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
+    const ez = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const prog = el => { const r = el.getBoundingClientRect(); return Math.min(1, Math.max(0, -r.top / (r.height - vh))); };
+
+    // title card: letterbox closes in, tracking tightens
+    const p1 = R ? 0 : prog($.s1);
+    const bar = ez(seg(p1, 0.1, 0.85)) * (this.props.letterbox ?? 14) * M;
+    $.barTop.style.height = bar + 'vh';
+    $.barBot.style.height = bar + 'vh';
+    $.s1title.style.letterSpacing = (0.06 - 0.1 * ez(seg(p1, 0, 0.8))) + 'em';
+    $.s1group.style.opacity = String(1 - ez(seg(p1, 0.62, 0.98)));
+    $.s1group.style.transform = `scale(${1 + 0.12 * M * ez(seg(p1, 0, 1))})`;
+    $.s1cue.style.opacity = String(Math.max(0, 1 - seg(p1, 0.02, 0.12)));
+
+    const show = scrollY > $.s1.offsetHeight - vh * 1.02;
+    $.topbar.style.opacity = show ? 1 : 0;
+    $.topbar.style.transform = show ? 'translateY(0)' : 'translateY(-8px)';
+    $.topbar.style.pointerEvents = show ? 'auto' : 'none';
+
+    // three frames crossfade
+    const p2 = R ? 1 : prog($.s2);
+    const win = [[0.02, 0.38], [0.34, 0.68], [0.64, 1.03]];
+    let active = 2;
+    for (let i = 0; i < 3; i++) {
+      const el = $['f' + i]; if (!el) continue;
+      const [a, b] = win[i];
+      const o = R ? (i === 2 ? 1 : 0) : Math.min(seg(p2, a, a + 0.06), 1 - seg(p2, b - 0.06, b));
+      el.style.opacity = o;
+      el.style.transform = `scale(${1.04 - 0.04 * ez(seg(p2, a, b))})`;
+      if (o > 0.5) active = i;
+      el.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
+    }
+    if ($.f1tag) {
+      const t = R ? 1 : ez(seg(p2, 0.42, 0.5));
+      $.f1tag.style.opacity = t;
+      $.f1tag.style.transform = `translateX(-50%) scale(${0.7 + 0.3 * t})`;
+    }
+    this.dots.forEach((d, i) => { d.style.background = i === active ? '#C6FF3D' : 'rgba(245,244,248,.25)'; });
+
+    // three faces: switch face by progress
+    const p3 = R ? 0.9 : prog($.s3);
+    const face = p3 < 0.34 ? 0 : p3 < 0.67 ? 1 : 2;
+    if (face !== this.state.face) this.setState({ face });
+    if ($.s3card) {
+      const wob = Math.sin(p3 * Math.PI * 3) * 1.6 * M;
+      $.s3card.style.transform = R ? 'none' : `rotate(${wob}deg) translateY(${(1 - ez(seg(p3, 0, 0.12))) * 40}px)`;
+    }
+
+    // reveals + side slides
+    const scrollH = document.body.scrollHeight;
+    const revealE = (el, i) => {
+      const r = el.getBoundingClientRect();
+      const minTop = Math.max(0, r.top + scrollY - (scrollH - vh));
+      const start = vh * (0.98 - (i % 3) * 0.03);
+      const end = Math.max(vh * 0.62, minTop);
+      return R || start <= end ? 1 : ez(Math.min(1, Math.max(0, (start - r.top) / (start - end))));
+    };
+    this.revs.forEach((el, i) => {
+      const e = revealE(el, i);
+      el.style.opacity = e;
+      el.style.transform = `translateY(${(1 - e) * 44 * M}px)`;
+    });
+    this.slides.forEach((el, i) => {
+      const e = revealE(el, i);
+      const dir = el.getAttribute('data-slide') === 'l' ? -1 : 1;
+      el.style.opacity = e;
+      el.style.transform = `translateX(${(1 - e) * 70 * M * dir}px)`;
+    });
+  }
+}
+</script>
+</body>
+</html>

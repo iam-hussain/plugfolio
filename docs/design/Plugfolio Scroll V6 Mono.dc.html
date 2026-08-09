@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#FFFFFF}
+  a{text-decoration:none;color:#5B21B6}
+  a:hover{color:#7C3AED}
+  @keyframes pfmBlink{0%,55%{opacity:1}56%,100%{opacity:0}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</helmet>
+
+<div style="background:#FFFFFF; color:#12101C; font-family:'Space Mono',monospace; -webkit-font-smoothing:antialiased; overflow-x:clip;">
+  <div style="max-width:1080px; margin:0 auto; padding:0 clamp(18px,5vw,48px);">
+
+    <!-- FILE HEADER -->
+    <div data-screen-label="File header" style="padding-top:34px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; border-bottom:1px solid #12101C; padding-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:9px;">
+          <div style="width:20px;height:20px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+          <span style="font-size:11px; font-weight:700; letter-spacing:.26em; text-transform:uppercase;">Plugfolio</span>
+        </div>
+        <span style="font-size:10.5px; letter-spacing:.12em; color:#726E85;">PRODUCT-TRUTHS.txt &middot; v1.0 &middot; 2026-08-07</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); border-bottom:1px solid rgba(18,16,28,.16);">
+        <div style="padding:12px 0; font-size:10.5px; letter-spacing:.1em; color:#726E85;">STATUS: <span style="color:#12101C; font-weight:700;">LIVE</span> <span style="display:inline-block; width:7px; height:11px; background:#7C3AED; vertical-align:-1px; animation:pfmBlink 1.2s steps(1) infinite;"></span></div>
+        <div style="padding:12px 0; font-size:10.5px; letter-spacing:.1em; color:#726E85;">SCOPE: shoppable creator pages</div>
+        <div style="padding:12px 0; font-size:10.5px; letter-spacing:.1em; color:#726E85;">MONEY HANDLED: 0.00</div>
+      </div>
+    </div>
+
+    <!-- TITLE -->
+    <div data-rev="0" data-screen-label="Title" style="padding:clamp(56px,10vh,110px) 0 clamp(40px,7vh,72px);">
+      <div style="font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:#726E85;">Eight statements. Each one testable.</div>
+      <h1 style="font-family:'Sora',sans-serif; font-size:clamp(40px,7.6vw,96px); font-weight:800; letter-spacing:-.05em; line-height:.98; margin:16px 0 0; max-width:820px; text-wrap:balance;">Things that stay true<span style="color:#7C3AED;">.</span></h1>
+      <div style="font-family:'Inter',sans-serif; font-size:16px; line-height:1.65; color:#726E85; max-width:520px; margin-top:20px;">No launch adjectives, no growth verbs. Just the rules this product is built to keep &mdash; written down so you can hold us to them.</div>
+    </div>
+
+    <!-- THE TRUTHS -->
+    <div data-screen-label="The truths" style="border-top:1px solid #12101C;">
+      <sc-for list="{{ truths }}" as="t" hint-placeholder-count="8">
+        <div data-rev="1" style="display:grid; grid-template-columns:minmax(56px,80px) minmax(0,1fr) auto; gap:clamp(12px,3vw,32px); align-items:start; padding:clamp(22px,4vh,34px) 0; border-bottom:1px solid rgba(18,16,28,.16);">
+          <div style="font-size:clamp(20px,3vw,30px); font-weight:700; color:#B9B4C7; line-height:1.15;">{{ t.n }}</div>
+          <div>
+            <div style="font-family:'Sora',sans-serif; font-size:clamp(19px,2.6vw,27px); font-weight:700; letter-spacing:-.03em; line-height:1.15;">{{ t.title }}</div>
+            <div style="font-family:'Inter',sans-serif; font-size:14.5px; line-height:1.65; color:#726E85; margin-top:8px; max-width:560px; text-wrap:pretty;">{{ t.body }}</div>
+          </div>
+          <span style="font-size:9.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; border:1px solid #12101C; padding:6px 10px; border-radius:3px; white-space:nowrap; margin-top:4px;">{{ t.tag }}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- FIGURE · THE CARD, DRAWN IN TEXT -->
+    <div data-screen-label="Card diagram" style="padding:clamp(60px,10vh,110px) 0 0;">
+      <div data-rev="0">
+        <div style="font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:#726E85;">Appendix A &mdash; the product card, drawn in text</div>
+        <div style="font-family:'Sora',sans-serif; font-size:clamp(24px,3.6vw,40px); font-weight:700; letter-spacing:-.035em; margin-top:12px;">One card. Three honest faces.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin-top:32px;">
+        <div data-rev="1" style="border:1px solid #12101C; border-radius:4px; padding:18px; display:flex; flex-direction:column; gap:11px;">
+          <div style="font-size:9.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#726E85;">Face 1 / affiliate &middot; the default</div>
+          <div style="border:1px dashed rgba(18,16,28,.35); border-radius:3px; height:88px; display:flex; align-items:center; justify-content:center; font-size:10.5px; color:#9A96AB;">[ photo ]</div>
+          <div style="font-size:12px;">linen overshirt</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px;"><span style="font-weight:700;">&#8377;2,190</span><span style="border:1px solid #12101C; padding:5px 12px; border-radius:999px; font-size:10.5px; font-weight:700;">BUY &rarr;</span></div>
+          <div style="font-size:10px; color:#9A96AB; line-height:1.6;">no label. commission paid by the retailer, invisible here.</div>
+        </div>
+        <div data-rev="2" style="border:1px solid #12101C; border-radius:4px; padding:18px; display:flex; flex-direction:column; gap:11px;">
+          <div style="font-size:9.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#726E85;">Face 2 / their own product</div>
+          <div style="border:1px dashed rgba(18,16,28,.35); border-radius:3px; height:88px; display:flex; align-items:center; justify-content:center; position:relative; font-size:10.5px; color:#9A96AB;">[ photo ]<span style="position:absolute; top:6px; left:6px; font-size:8.5px; letter-spacing:.1em; text-transform:uppercase; background:#12101C; color:#fff; padding:3px 7px; border-radius:2px;">their own product</span></div>
+          <div style="font-size:12px;">maya studio scrunchie set</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px;"><span style="font-weight:700;">&#8377;640</span><span style="border:1px solid #12101C; padding:5px 12px; border-radius:999px; font-size:10.5px; font-weight:700;">SHOP THEIR STORE &rarr;</span></div>
+          <div style="font-size:10px; color:#9A96AB; line-height:1.6;">two changes only: a quiet tag + an honest button. zero commission language.</div>
+        </div>
+        <div data-rev="3" style="border:1px solid #12101C; border-radius:4px; padding:18px; display:flex; flex-direction:column; gap:11px;">
+          <div style="font-size:9.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#726E85;">Face 3 / + a coupon rides on 1 or 2</div>
+          <div style="border:1px dashed rgba(18,16,28,.35); border-radius:3px; height:88px; display:flex; align-items:center; justify-content:center; font-size:10.5px; color:#9A96AB;">[ photo ]</div>
+          <div style="font-size:12px;">everyday canvas tote</div>
+          <div style="display:flex; align-items:center; gap:8px;"><span onClick="{{ copyCode }}" style="cursor:pointer; font-size:10.5px; font-weight:700; letter-spacing:.06em; background:#12101C; color:#fff; padding:6px 10px; border-radius:3px;">{{ codeLabel }}</span><span style="font-size:10px; color:#9A96AB;">valid till 30 aug</span></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px;"><span style="font-weight:700;">&#8377;990</span><span style="border:1px solid #12101C; padding:5px 12px; border-radius:999px; font-size:10.5px; font-weight:700;">BUY &rarr;</span></div>
+          <div style="font-size:10px; color:#9A96AB; line-height:1.6;">expiry &rarr; chip becomes &ldquo;offer ended&rdquo;. card returns to its normal face.</div>
+        </div>
+      </div>
+      <div data-rev="4" style="font-size:10.5px; color:#726E85; margin-top:14px; line-height:1.7;">fig. A1 &mdash; not pictured, by design: cart, checkout, payment, QR redemption, bundles. they don't exist.</div>
+    </div>
+
+    <!-- CHANGELOG -->
+    <div data-screen-label="Changelog" style="padding:clamp(60px,10vh,110px) 0 0;">
+      <div data-rev="0" style="font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:#726E85;">Appendix B &mdash; changelog</div>
+      <div style="border-top:1px solid #12101C; margin-top:14px;">
+        <div data-rev="1" style="display:grid; grid-template-columns:minmax(88px,120px) 1fr; gap:16px; padding:16px 0; border-bottom:1px solid rgba(18,16,28,.16); font-size:12.5px; line-height:1.6;"><span style="color:#726E85;">v1.1</span><span style="font-family:'Inter',sans-serif; font-size:14px;">Coupons shipped &mdash; codes, expiries, in-store notes. Auto-apply and tracked redemption deliberately not shipped.</span></div>
+        <div data-rev="2" style="display:grid; grid-template-columns:minmax(88px,120px) 1fr; gap:16px; padding:16px 0; border-bottom:1px solid rgba(18,16,28,.16); font-size:12.5px; line-height:1.6;"><span style="color:#726E85;">v1.0</span><span style="font-family:'Inter',sans-serif; font-size:14px;">Pages, posts, tags, one bio link. Collab threads for brands; both sides accept terms, payment settles off-platform.</span></div>
+        <div data-rev="3" style="display:grid; grid-template-columns:minmax(88px,120px) 1fr; gap:16px; padding:16px 0; border-bottom:1px solid rgba(18,16,28,.16); font-size:12.5px; line-height:1.6;"><span style="color:#726E85;">v0.x</span><span style="font-family:'Inter',sans-serif; font-size:14px;">A cart was considered for eleven minutes. It did not survive review.</span></div>
+      </div>
+    </div>
+
+    <!-- SIGN-OFF -->
+    <div data-screen-label="Sign-off" style="padding:clamp(60px,10vh,110px) 0 44px;">
+      <div data-rev="0" style="border:1px solid #12101C; border-radius:4px; padding:clamp(28px,5vh,48px) clamp(20px,4vw,40px); display:flex; flex-direction:column; gap:18px;">
+        <div style="font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:#726E85;">$ verify these claims yourself</div>
+        <div style="font-family:'Sora',sans-serif; font-size:clamp(24px,4vw,44px); font-weight:700; letter-spacing:-.04em; line-height:1.08; max-width:640px; text-wrap:balance;">Open any live page. Count the login walls you hit. <span style="color:#7C3AED;">Expected result: 0.</span></div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <span style-hover="background:#5B21B6" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:14px; font-weight:600; background:#7C3AED; color:#fff; padding:13px 24px; border-radius:999px; transition:background .15s ease;">Run the test &rarr;</span>
+          <span style-hover="background:rgba(18,16,28,.05)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:14px; font-weight:600; border:1px solid #12101C; padding:13px 24px; border-radius:999px; transition:background .15s ease;">Claim your handle</span>
+        </div>
+        <div style="font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#9A96AB;">shopping never needs an account &middot; payment settles off-platform</div>
+      </div>
+      <div data-rev="1" style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-top:32px; padding-top:20px; border-top:1px solid rgba(18,16,28,.16);">
+        <div style="display:flex; align-items:center; gap:9px;">
+          <div style="width:18px;height:18px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+          <span style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; letter-spacing:-.045em;">plugfolio</span>
+        </div>
+        <div style="display:flex; gap:20px; font-size:11px; letter-spacing:.06em; color:#726E85; flex-wrap:wrap;">
+          <span style="cursor:pointer;">explore</span><span style="cursor:pointer;">following</span><span style="cursor:pointer;">support</span><span style="cursor:pointer;">privacy</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;reveals&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Motion&quot;}
+}">
+class Component extends DCLogic {
+  state = { copied: false };
+
+  renderVals() {
+    return {
+      truths: [
+        { n: '01', title: 'Shopping never needs an account.', tag: 'Guarantee', body: 'Browse, tap, buy \u2014 as a complete stranger. The optional account unlocks exactly two verbs, follow and comment, and nothing else hides behind it.' },
+        { n: '02', title: 'We handle no money.', tag: 'Guarantee', body: 'No cart, no checkout, no wallet, no payout. There is nothing here to enter a card into.' },
+        { n: '03', title: 'Every Buy is a tap out.', tag: 'Mechanic', body: 'The button hands you to the retailer\u2019s own store via the creator\u2019s affiliate link. The retailer credits the creator; the only thing we measure is the tap.' },
+        { n: '04', title: 'A creator\u2019s own product says so.', tag: 'Label', body: 'Their items carry a quiet \u201cTheir own product\u201d tag, and the button reads \u201cShop their store\u201d \u2014 because that\u2019s where it goes.' },
+        { n: '05', title: 'Coupons expire honestly.', tag: 'Behavior', body: 'A dead code collapses to \u201cOffer ended\u201d and the card returns to normal. Products never disappear because a deal did.' },
+        { n: '06', title: 'In-store copies aren\u2019t inflated.', tag: 'Honesty', body: 'Counter codes are counted as copies and labeled \u201credemption not tracked\u201d in the creator\u2019s numbers. We don\u2019t guess at what we can\u2019t see.' },
+        { n: '07', title: 'Collab money settles off-platform.', tag: 'Policy', body: 'Brands and creators agree on content, price and deadline in one thread. Both accept terms; the payment happens between them, not through us.' },
+        { n: '08', title: 'One link is the whole store.', tag: 'Default', body: 'plugfolio.app/handle. Posts import themselves, tags make them shoppable, the bio link does the rest.' },
+      ],
+      codeLabel: this.state.copied ? 'COPIED \u2713' : 'MAYA10',
+      copyCode: () => {
+        try { navigator.clipboard.writeText('MAYA10'); } catch (e) {}
+        clearTimeout(this._ct);
+        this.setState({ copied: true });
+        this._ct = setTimeout(() => this.setState({ copied: false }), 2400);
+      },
+    };
+  }
+
+  grabRefs() { this.revs = Array.from(document.querySelectorAll('[data-rev]')); }
+
+  componentDidMount() {
+    this.grabRefs();
+    this.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this._onScroll = () => {
+      if (this._tick) return;
+      this._tick = true;
+      requestAnimationFrame(() => { this._tick = false; this.apply(); });
+    };
+    addEventListener('scroll', this._onScroll, { passive: true });
+    addEventListener('resize', this._onScroll, { passive: true });
+    this.apply();
+  }
+  componentDidUpdate() { this.grabRefs(); this.apply(); }
+  componentWillUnmount() {
+    removeEventListener('scroll', this._onScroll);
+    removeEventListener('resize', this._onScroll);
+    clearTimeout(this._ct);
+  }
+
+  apply() {
+    if (!(this.props.reveals ?? true)) { this.revs.forEach(el => { el.style.opacity = 1; el.style.transform = 'none'; }); return; }
+    const vh = innerHeight;
+    const R = this.reduced;
+    const ez = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const scrollH = document.body.scrollHeight;
+    this.revs.forEach((el, i) => {
+      const r = el.getBoundingClientRect();
+      const minTop = Math.max(0, r.top + scrollY - (scrollH - vh));
+      const start = vh * (0.99 - (i % 3) * 0.02);
+      const end = Math.max(vh * 0.7, minTop);
+      const e = R || start <= end ? 1 : ez(Math.min(1, Math.max(0, (start - r.top) / (start - end))));
+      el.style.opacity = 0.1 + 0.9 * e;
+      el.style.transform = `translateY(${(1 - e) * 18}px)`;
+    });
+  }
+}
+</script>
+</body>
+</html>

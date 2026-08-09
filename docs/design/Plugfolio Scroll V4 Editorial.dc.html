@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#F5F4F8}
+  a{text-decoration:none;color:#5B21B6}
+  a:hover{color:#7C3AED}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</helmet>
+
+<div style="background:#F5F4F8; color:#12101C; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip;">
+
+  <!-- MASTHEAD -->
+  <div data-screen-label="Masthead" style="padding:26px clamp(18px,6vw,72px) 0;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; border-bottom:2px solid #12101C; padding-bottom:14px;">
+      <div style="display:flex; align-items:center; gap:9px;">
+        <div style="width:22px;height:22px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.3em; text-transform:uppercase;">Plugfolio Journal</span>
+      </div>
+      <span style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#726E85;">Issue 01 &mdash; Aug 2026</span>
+    </div>
+    <div data-rev="0" style="padding:clamp(48px,9vh,110px) 0 clamp(36px,6vh,70px); text-align:center;">
+      <div style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.26em; text-transform:uppercase; color:#726E85;">An essay in four chapters</div>
+      <h1 style="font-family:'Sora',sans-serif; font-size:clamp(44px,8.5vw,120px); font-weight:800; letter-spacing:-.05em; line-height:.98; margin:18px 0 0; text-wrap:balance;">The Honest<br>Storefront<span style="color:#7C3AED;">.</span></h1>
+      <div style="font-size:16px; line-height:1.65; color:#726E85; max-width:520px; margin:24px auto 0; text-wrap:pretty;">On what happens when a creator&rsquo;s page stops pretending to be a mall &mdash; and starts telling the truth about every button on it.</div>
+    </div>
+    <div data-rev="1" style="display:flex; justify-content:center; gap:clamp(16px,4vw,44px); flex-wrap:wrap; border-top:1px solid rgba(18,16,28,.14); border-bottom:1px solid rgba(18,16,28,.14); padding:14px 0;">
+      <span style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:#726E85;"><span style="color:#7C3AED; font-weight:700;">I</span> &mdash; The link is broken</span>
+      <span style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:#726E85;"><span style="color:#7C3AED; font-weight:700;">II</span> &mdash; A page, not a platform</span>
+      <span style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:#726E85;"><span style="color:#7C3AED; font-weight:700;">III</span> &mdash; Money we don't touch</span>
+      <span style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:#726E85;"><span style="color:#7C3AED; font-weight:700;">IV</span> &mdash; A coupon, printed honestly</span>
+    </div>
+  </div>
+
+  <!-- CHAPTER I -->
+  <div data-screen-label="Chapter I" style="padding:clamp(60px,11vh,130px) clamp(18px,6vw,72px) 0; max-width:1140px; margin:0 auto;">
+    <div style="display:grid; grid-template-columns:minmax(90px,1fr) minmax(0,3fr); gap:clamp(18px,4vw,56px);">
+      <div data-rev="0" style="font-family:'Sora',sans-serif; font-size:clamp(56px,9vw,130px); font-weight:800; line-height:.9; color:#DAD5E6;">I</div>
+      <div>
+        <div data-rev="1">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:#7C3AED;">Chapter one</div>
+          <h2 style="font-family:'Sora',sans-serif; font-size:clamp(28px,4.4vw,54px); font-weight:700; letter-spacing:-.04em; line-height:1.04; margin:12px 0 0;">The link in bio is broken.</h2>
+        </div>
+        <div data-rev="2" style="columns:2 300px; column-gap:44px; margin-top:28px; font-size:15.5px; line-height:1.75; color:#3B3749;">
+          <p style="margin:0 0 18px;"><span style="font-family:'Sora',sans-serif; font-size:44px; font-weight:700; float:left; line-height:.85; padding:4px 10px 0 0; color:#7C3AED;">E</span>very night, under every good post, the same forty-seven comments arrive: <em>link pls</em>. The creator answers a dozen, gives up, and pins a bio link that leads to&hellip; a list of links. The shopper taps through three pages, loses the thread, and buys nothing. Everyone did everything right, and it still didn&rsquo;t work.</p>
+          <p style="margin:0 0 18px;">The problem was never enthusiasm. It was plumbing. The post and the product live in different buildings, and the shopper is asked to walk between them &mdash; usually through a signup form.</p>
+          <p style="margin:0;">Plugfolio&rsquo;s answer is small and stubborn: put the products back inside the post, and never put a door in front of a person holding money.</p>
+        </div>
+      </div>
+    </div>
+    <figure data-rev="3" style="margin:clamp(40px,7vh,72px) 0 0; display:grid; grid-template-columns:2fr 1fr; gap:14px; align-items:end;">
+      <div data-par="0" style="height:clamp(240px,44vh,440px); overflow:hidden; will-change:transform;"><image-slot id="pfe-f1" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&q=80&auto=format&fit=crop" credit="Photo by Tamara Bellis on Unsplash" credit-href="https://unsplash.com/@tamarabellis" shape="rect" fit="cover" placeholder="the post that starts it" style="width:100%;height:100%;display:block;"></image-slot></div>
+      <figcaption style="font-family:'Space Mono',monospace; font-size:11px; line-height:1.7; color:#726E85; padding-bottom:6px;">fig. 01 &mdash; the post that starts it. comments: &ldquo;link pls&rdquo; &times;47, answered &times;12, bought &times;0.</figcaption>
+    </figure>
+  </div>
+
+  <!-- CHAPTER II -->
+  <div data-screen-label="Chapter II" style="padding:clamp(60px,11vh,130px) clamp(18px,6vw,72px) 0; max-width:1140px; margin:0 auto;">
+    <div style="display:grid; grid-template-columns:minmax(90px,1fr) minmax(0,3fr); gap:clamp(18px,4vw,56px);">
+      <div data-rev="0" style="font-family:'Sora',sans-serif; font-size:clamp(56px,9vw,130px); font-weight:800; line-height:.9; color:#DAD5E6;">II</div>
+      <div>
+        <div data-rev="1">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:#7C3AED;">Chapter two</div>
+          <h2 style="font-family:'Sora',sans-serif; font-size:clamp(28px,4.4vw,54px); font-weight:700; letter-spacing:-.04em; line-height:1.04; margin:12px 0 0;">A page, not a platform.</h2>
+        </div>
+        <div data-rev="2" style="columns:2 300px; column-gap:44px; margin-top:28px; font-size:15.5px; line-height:1.75; color:#3B3749;">
+          <p style="margin:0 0 18px;">One creator, one page, one link. The posts import themselves from Instagram or YouTube; the creator points at the things in them and names a price. That&rsquo;s the whole shop.</p>
+          <p style="margin:0 0 18px;">The radical part is who gets in: everyone, immediately. A visitor can browse, tap and buy without ever making an account. The optional account exists for exactly two verbs &mdash; <em>follow</em> and <em>comment</em> &mdash; and nothing else is behind it.</p>
+          <p style="margin:0;">The same page shows four faces: to a stranger, to a signed-in follower, to a business scouting a collab, to the owner with edit tools. But the buy path is identical in all four. No viewer is ever the wrong kind of viewer.</p>
+        </div>
+      </div>
+    </div>
+    <figure data-rev="3" style="margin:clamp(40px,7vh,72px) 0 0; display:grid; grid-template-columns:1fr 2fr; gap:14px; align-items:start;">
+      <figcaption style="font-family:'Space Mono',monospace; font-size:11px; line-height:1.7; color:#726E85; padding-top:6px;">fig. 02 &mdash; one page, four viewers, zero walls. the buy button is the same in every version.</figcaption>
+      <div data-par="1" style="height:clamp(240px,44vh,440px); overflow:hidden; will-change:transform;"><image-slot id="pfe-f2" src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1200&q=80&auto=format&fit=crop" credit="Photo on Unsplash" credit-href="https://unsplash.com" shape="rect" fit="cover" placeholder="a creator page as a shop window" style="width:100%;height:100%;display:block;"></image-slot></div>
+    </figure>
+  </div>
+
+  <!-- CHAPTER III -->
+  <div data-screen-label="Chapter III" style="padding:clamp(60px,11vh,130px) clamp(18px,6vw,72px) 0; max-width:1140px; margin:0 auto;">
+    <div style="display:grid; grid-template-columns:minmax(90px,1fr) minmax(0,3fr); gap:clamp(18px,4vw,56px);">
+      <div data-rev="0" style="font-family:'Sora',sans-serif; font-size:clamp(56px,9vw,130px); font-weight:800; line-height:.9; color:#DAD5E6;">III</div>
+      <div>
+        <div data-rev="1">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:#7C3AED;">Chapter three</div>
+          <h2 style="font-family:'Sora',sans-serif; font-size:clamp(28px,4.4vw,54px); font-weight:700; letter-spacing:-.04em; line-height:1.04; margin:12px 0 0;">Money we don&rsquo;t touch.</h2>
+        </div>
+        <div data-rev="2" style="columns:2 300px; column-gap:44px; margin-top:28px; font-size:15.5px; line-height:1.75; color:#3B3749;">
+          <p style="margin:0 0 18px;">There is no cart on Plugfolio, and no checkout, because there is no till. Every Buy button is a polite exit: it hands the shopper to the retailer&rsquo;s own store, where the retailer&rsquo;s own checkout does what it has always done.</p>
+          <p style="margin:0;">The creator is credited by that retailer through an affiliate link &mdash; not by the shopper, and not by us. When a brand and a creator strike a deal in a collab thread, the payment settles off-platform too. We are, on purpose, the least interesting part of the transaction.</p>
+        </div>
+      </div>
+    </div>
+    <div data-rev="3" style="margin:clamp(44px,8vh,80px) auto 0; max-width:820px; border-top:2px solid #12101C; border-bottom:2px solid #12101C; padding:clamp(28px,5vh,48px) 8px; text-align:center;">
+      <div style="font-family:'Sora',sans-serif; font-size:clamp(24px,3.8vw,42px); font-weight:700; letter-spacing:-.035em; line-height:1.2; text-wrap:balance;">&ldquo;We never see your card. The only thing we measure is the tap out.&rdquo;</div>
+      <div style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:#726E85; margin-top:16px;">house rule no. 2 &mdash; v1 handles no money</div>
+    </div>
+    <div data-rev="4" style="margin:clamp(36px,6vh,60px) auto 0; max-width:820px;">
+      <div style="display:grid; grid-template-columns:1fr auto; border-top:1px solid rgba(18,16,28,.14);">
+        <div style="padding:13px 4px; font-size:14.5px; border-bottom:1px solid rgba(18,16,28,.14);">Taps out to retailers</div><div style="padding:13px 4px; font-family:'Space Mono',monospace; font-size:11px; color:#726E85; border-bottom:1px solid rgba(18,16,28,.14); text-align:right;">counted</div>
+        <div style="padding:13px 4px; font-size:14.5px; border-bottom:1px solid rgba(18,16,28,.14);">Coupon code copies</div><div style="padding:13px 4px; font-family:'Space Mono',monospace; font-size:11px; color:#726E85; border-bottom:1px solid rgba(18,16,28,.14); text-align:right;">counted</div>
+        <div style="padding:13px 4px; font-size:14.5px; border-bottom:1px solid rgba(18,16,28,.14);">Your card, cart, address</div><div style="padding:13px 4px; font-family:'Space Mono',monospace; font-size:11px; color:#726E85; border-bottom:1px solid rgba(18,16,28,.14); text-align:right;">never seen</div>
+        <div style="padding:13px 4px; font-size:14.5px;">A login, just to shop</div><div style="padding:13px 4px; font-family:'Space Mono',monospace; font-size:11px; color:#726E85; text-align:right;">never asked</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAPTER IV -->
+  <div data-screen-label="Chapter IV" style="padding:clamp(60px,11vh,130px) clamp(18px,6vw,72px) 0; max-width:1140px; margin:0 auto;">
+    <div style="display:grid; grid-template-columns:minmax(90px,1fr) minmax(0,3fr); gap:clamp(18px,4vw,56px);">
+      <div data-rev="0" style="font-family:'Sora',sans-serif; font-size:clamp(56px,9vw,130px); font-weight:800; line-height:.9; color:#DAD5E6;">IV</div>
+      <div>
+        <div data-rev="1">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:#7C3AED;">Chapter four</div>
+          <h2 style="font-family:'Sora',sans-serif; font-size:clamp(28px,4.4vw,54px); font-weight:700; letter-spacing:-.04em; line-height:1.04; margin:12px 0 0;">A coupon, printed honestly.</h2>
+        </div>
+        <div data-rev="2" style="columns:2 300px; column-gap:44px; margin-top:28px; font-size:15.5px; line-height:1.75; color:#3B3749;">
+          <p style="margin:0 0 18px;">A deal is the most persuasive sentence on any card, which is exactly why it must not lie. On Plugfolio a coupon is not a third kind of product &mdash; it rides on a normal card. Tap the code and it copies; the chip says <em>Copied ✓</em> right where you tapped it.</p>
+          <p style="margin:0;">Some codes work at a counter instead of a checkout &mdash; those say so, plainly, and their copies are labeled <em>redemption not tracked</em> in the creator&rsquo;s own numbers. And when an offer expires, it doesn&rsquo;t vanish: it folds into a quiet &ldquo;Offer ended&rdquo; and the product goes on being a product.</p>
+        </div>
+      </div>
+    </div>
+    <figure data-rev="3" style="margin:clamp(44px,8vh,80px) auto 0; max-width:920px; display:grid; grid-template-columns:minmax(260px,380px) minmax(240px,1fr); gap:clamp(24px,4vw,48px); align-items:center; justify-content:center;">
+      <div style="border:1px solid rgba(18,16,28,.16); border-radius:24px; background:#fff; overflow:hidden; box-shadow:0 30px 70px -45px rgba(18,16,28,.35);">
+        <div style="height:210px;"><image-slot id="pfe-f4" src="https://images.unsplash.com/photo-1591561954557-26941169b49e?w=700&q=80&auto=format&fit=crop" credit="Photo on Unsplash" credit-href="https://unsplash.com" shape="rect" fit="cover" placeholder="canvas tote" style="width:100%;height:100%;display:block;"></image-slot></div>
+        <div style="padding:16px 18px 18px;">
+          <div style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.1em; color:#9A96AB;">@mayarao</div>
+          <div style="font-size:14.5px; font-weight:600; margin-top:5px;">Everyday canvas tote</div>
+          <div style="display:flex; align-items:center; gap:8px; margin-top:11px;">
+            <span onClick="{{ copyCode }}" style="position:relative; font-family:'Space Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:.06em; background:#C6FF3D; color:#12101C; padding:7px 11px; border-radius:8px; cursor:pointer;">{{ codeLabel }}<span style="position:absolute; top:-9px; right:-9px; width:19px; height:19px; border-radius:50%; background:#7C3AED; color:#fff; font-size:10.5px; font-weight:700; display:flex; align-items:center; justify-content:center; font-family:'Inter',sans-serif;">1</span></span>
+            <span style="position:relative; font-size:11px; color:#726E85;">Valid till 30 Aug<span style="position:absolute; top:-11px; right:-19px; width:19px; height:19px; border-radius:50%; background:#7C3AED; color:#fff; font-size:10.5px; font-weight:700; display:flex; align-items:center; justify-content:center;">2</span></span>
+          </div>
+          <div style="position:relative; font-size:11.5px; color:#726E85; margin-top:9px; padding-right:24px;">Show at the counter &mdash; Indiranagar store<span style="position:absolute; top:-4px; right:0; width:19px; height:19px; border-radius:50%; background:#7C3AED; color:#fff; font-size:10.5px; font-weight:700; display:flex; align-items:center; justify-content:center;">3</span></div>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px;">
+            <span style="font-family:'Sora',sans-serif; font-size:16px; font-weight:700;">&#8377;990</span>
+            <span style="font-family:'Sora',sans-serif; font-size:13px; font-weight:600; color:#fff; background:#7C3AED; padding:9px 16px; border-radius:999px;">Buy</span>
+          </div>
+        </div>
+      </div>
+      <figcaption style="font-family:'Space Mono',monospace; font-size:11.5px; line-height:2.1; color:#3B3749;">
+        fig. 03 &mdash; anatomy of an honest offer<br>
+        <span style="color:#7C3AED; font-weight:700;">1</span> &nbsp;the code chip &mdash; tap to copy, confirms inline<br>
+        <span style="color:#7C3AED; font-weight:700;">2</span> &nbsp;the expiry, stated up front<br>
+        <span style="color:#7C3AED; font-weight:700;">3</span> &nbsp;the in-store note &mdash; copies marked &ldquo;redemption not tracked&rdquo;<br>
+        <span style="color:#9A96AB;">after 30 aug: chip collapses to &ldquo;Offer ended&rdquo;; the tote remains.</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <!-- COLOPHON / CTA -->
+  <div data-screen-label="Colophon" style="padding:clamp(70px,12vh,140px) clamp(18px,6vw,72px) 40px; max-width:1140px; margin:0 auto;">
+    <div data-rev="0" style="border-top:2px solid #12101C; padding-top:clamp(36px,6vh,60px); display:flex; flex-direction:column; align-items:center; gap:20px; text-align:center;">
+      <div style="width:48px; height:48px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+      <div style="font-family:'Sora',sans-serif; font-size:clamp(28px,5vw,60px); font-weight:700; letter-spacing:-.045em; line-height:1.04; text-wrap:balance;">The storefront is honest.<br>Go see one.</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+        <span style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:15px; font-weight:600; color:#fff; background:#7C3AED; padding:14px 26px; border-radius:999px; transition:transform .15s ease;">Visit a live page &rarr;</span>
+        <span style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:15px; font-weight:600; border:1px solid rgba(18,16,28,.3); padding:14px 26px; border-radius:999px; transition:transform .15s ease;">Claim your handle</span>
+      </div>
+      <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#9A96AB; line-height:2;">Set in Sora, Inter &amp; Space Mono &middot; no cart was built in the making of this page<br>shopping never needs an account</div>
+    </div>
+    <div data-rev="1" style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; border-top:1px solid rgba(18,16,28,.14); margin-top:44px; padding:24px 4px 10px;">
+      <div style="font-family:'Sora',sans-serif; font-size:17px; font-weight:700; letter-spacing:-.045em;">plugfolio</div>
+      <div style="display:flex; gap:20px; font-size:13px; color:#726E85; flex-wrap:wrap;">
+        <span style="cursor:pointer;">Explore</span><span style="cursor:pointer;">Following</span><span style="cursor:pointer;">Support &amp; feedback</span><span style="cursor:pointer;">Privacy</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;parallax&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Motion&quot;}
+}">
+class Component extends DCLogic {
+  state = { copied: false };
+
+  renderVals() {
+    return {
+      codeLabel: this.state.copied ? 'Copied \u2713' : 'MAYA10',
+      copyCode: () => {
+        try { navigator.clipboard.writeText('MAYA10'); } catch (e) {}
+        clearTimeout(this._ct);
+        this.setState({ copied: true });
+        this._ct = setTimeout(() => this.setState({ copied: false }), 2400);
+      },
+    };
+  }
+
+  grabRefs() {
+    this.revs = Array.from(document.querySelectorAll('[data-rev]'));
+    this.pars = Array.from(document.querySelectorAll('[data-par]'));
+  }
+
+  componentDidMount() {
+    this.grabRefs();
+    this.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this._onScroll = () => {
+      if (this._tick) return;
+      this._tick = true;
+      requestAnimationFrame(() => { this._tick = false; this.apply(); });
+    };
+    addEventListener('scroll', this._onScroll, { passive: true });
+    addEventListener('resize', this._onScroll, { passive: true });
+    this.apply();
+  }
+  componentDidUpdate() { this.grabRefs(); this.apply(); }
+  componentWillUnmount() {
+    removeEventListener('scroll', this._onScroll);
+    removeEventListener('resize', this._onScroll);
+    clearTimeout(this._ct);
+  }
+
+  apply() {
+    const vh = innerHeight;
+    const R = this.reduced;
+    const ez = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const scrollH = document.body.scrollHeight;
+    this.revs.forEach((el, i) => {
+      const r = el.getBoundingClientRect();
+      const minTop = Math.max(0, r.top + scrollY - (scrollH - vh));
+      const start = vh * (0.98 - (i % 3) * 0.03);
+      const end = Math.max(vh * 0.66, minTop);
+      const e = R || start <= end ? 1 : ez(Math.min(1, Math.max(0, (start - r.top) / (start - end))));
+      el.style.opacity = e;
+      el.style.transform = `translateY(${(1 - e) * 34}px)`;
+    });
+    if (this.props.parallax ?? true) {
+      this.pars.forEach(el => {
+        const img = el.firstElementChild;
+        if (!img) return;
+        const r = el.getBoundingClientRect();
+        const t = (r.top + r.height / 2 - vh / 2) / vh;
+        img.style.transform = R ? 'none' : `translateY(${t * 26}px) scale(1.08)`;
+      });
+    }
+  }
+}
+</script>
+</body>
+</html>

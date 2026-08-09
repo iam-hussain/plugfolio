@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<meta name="design_doc_mode" content="canvas">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0}
+  .fo-cta{transition:transform .14s ease, opacity .15s ease; cursor:pointer;}
+  .fo-cta:hover{transform:translateY(-1px); opacity:.92;}
+</style>
+</helmet>
+
+<div style="background:#0F0D17; font-family:'Inter',sans-serif; color:#F5F4F8; padding:48px; display:flex; flex-direction:column; gap:44px; min-height:100vh;">
+
+  <div style="max-width:760px;">
+    <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#A78BFA; margin-bottom:10px;">Explore filters &mdash; directions</div>
+    <div style="font-family:'Sora',sans-serif; font-size:30px; font-weight:800; letter-spacing:-0.03em;">Four ways the filter bar could feel.</div>
+    <div style="font-size:15px; color:#9A94A6; line-height:1.6; margin-top:10px;">Each keeps the same controls &mdash; niche, region, following, sort, verified &mdash; but changes the interaction model. Tell me a number (1a&ndash;1d) to take into the prototype.</div>
+  </div>
+
+  <!-- ============ TURN 1 ============ -->
+  <section style="display:flex; flex-direction:column; gap:30px;">
+
+    <!-- 1a : Unified command bar -->
+    <div id="1a" style="border:1px solid rgba(255,255,255,0.08); border-radius:22px; padding:28px; background:#14121C;">
+      <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:20px;">
+        <span style="font-family:'Space Mono',monospace; font-size:12px; font-weight:700; color:#12101C; background:#C6FF3D; padding:3px 10px; border-radius:100px;">1a</span>
+        <div style="font-family:'Sora',sans-serif; font-size:19px; font-weight:700;">Command bar</div>
+        <div style="font-size:13px; color:#9A94A6;">One continuous surface &mdash; search and every filter live in a single rail, split by hairlines.</div>
+      </div>
+      <div style="display:flex; align-items:stretch; border:1px solid rgba(255,255,255,0.12); border-radius:16px; background:#1B1826; overflow:hidden; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:11px; padding:16px 18px; flex:1; min-width:230px;">
+          <span style="width:17px;height:17px;flex-shrink:0;border:2px solid #9A94A6;border-radius:50%;position:relative;display:inline-block;"><span style="position:absolute;right:-4px;bottom:-3px;width:8px;height:2px;background:#9A94A6;transform:rotate(45deg);border-radius:2px;"></span></span>
+          <span style="font-size:15px; color:#7E7889;">Search creators, products, or niches</span>
+        </div>
+        <div style="display:flex; align-items:center; border-left:1px solid rgba(255,255,255,0.1);">
+          <div class="fo-cta" style="display:flex; flex-direction:column; gap:1px; padding:12px 20px; border-right:1px solid rgba(255,255,255,0.1);"><span style="font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:#7E7889;">Region</span><span style="font-size:14px; font-weight:600;">All &#9662;</span></div>
+          <div class="fo-cta" style="display:flex; flex-direction:column; gap:1px; padding:12px 20px; border-right:1px solid rgba(255,255,255,0.1);"><span style="font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:#7E7889;">Following</span><span style="font-size:14px; font-weight:600;">Any &#9662;</span></div>
+          <div class="fo-cta" style="display:flex; flex-direction:column; gap:1px; padding:12px 20px;"><span style="font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:#7E7889;">Sort</span><span style="font-size:14px; font-weight:600;">Trending &#9662;</span></div>
+        </div>
+        <div class="fo-cta" style="display:flex; align-items:center; gap:8px; padding:0 22px; background:#C6FF3D; color:#12101C;"><span style="width:15px;height:15px;border:1.5px solid #12101C;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;">&check;</span><span style="font-size:14px; font-weight:700;">Verified</span></div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; background:#7C3AED; color:#fff;">All</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Fitness</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Beauty</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Food</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Tech</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Home</span>
+      </div>
+    </div>
+
+    <!-- 1b : Active-chips + Filters trigger -->
+    <div id="1b" style="border:1px solid rgba(255,255,255,0.08); border-radius:22px; padding:28px; background:#14121C;">
+      <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:20px;">
+        <span style="font-family:'Space Mono',monospace; font-size:12px; font-weight:700; color:#12101C; background:#C6FF3D; padding:3px 10px; border-radius:100px;">1b</span>
+        <div style="font-family:'Sora',sans-serif; font-size:19px; font-weight:700;">Filters button + active chips</div>
+        <div style="font-size:13px; color:#9A94A6;">Collapses controls behind one trigger with a count. Active picks show as removable chips &mdash; scales to any number of filters.</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:11px; border:1px solid rgba(255,255,255,0.12); border-radius:14px; background:#1B1826; padding:0 16px; margin-bottom:16px;">
+        <span style="width:17px;height:17px;flex-shrink:0;border:2px solid #9A94A6;border-radius:50%;position:relative;display:inline-block;"><span style="position:absolute;right:-4px;bottom:-3px;width:8px;height:2px;background:#9A94A6;transform:rotate(45deg);border-radius:2px;"></span></span>
+        <span style="flex:1; font-size:15px; color:#7E7889; padding:15px 0;">Search creators, products, or niches</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <div class="fo-cta" style="display:inline-flex; align-items:center; gap:9px; border:1px solid #7C3AED; background:rgba(124,58,237,0.14); color:#C4B5FD; border-radius:100px; padding:9px 15px;">
+          <span style="display:flex; flex-direction:column; gap:2.5px; width:14px;"><span style="height:2px;background:currentColor;border-radius:2px;"></span><span style="height:2px;width:9px;background:currentColor;border-radius:2px;"></span><span style="height:2px;width:12px;background:currentColor;border-radius:2px;"></span></span>
+          <span style="font-size:13.5px; font-weight:700;">Filters</span>
+          <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; background:#7C3AED; color:#fff; width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;">2</span>
+        </div>
+        <span class="fo-cta" style="display:inline-flex; align-items:center; gap:8px; font-family:'Space Mono',monospace; font-size:12px; font-weight:700; background:#1B1826; border:1px solid rgba(255,255,255,0.14); color:#F5F4F8; border-radius:100px; padding:8px 10px 8px 14px;">Europe <span style="opacity:.6;">&times;</span></span>
+        <span class="fo-cta" style="display:inline-flex; align-items:center; gap:8px; font-family:'Space Mono',monospace; font-size:12px; font-weight:700; background:#C6FF3D; color:#12101C; border-radius:100px; padding:8px 10px 8px 14px;">Verified &times;</span>
+        <span class="fo-cta" style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; color:#A78BFA; padding:8px 4px;">Clear all</span>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; background:#7C3AED; color:#fff;">All</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Fitness</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Beauty</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Food</span>
+      </div>
+    </div>
+
+    <!-- 1c : Segmented controls -->
+    <div id="1c" style="border:1px solid rgba(255,255,255,0.08); border-radius:22px; padding:28px; background:#14121C;">
+      <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:20px;">
+        <span style="font-family:'Space Mono',monospace; font-size:12px; font-weight:700; color:#12101C; background:#C6FF3D; padding:3px 10px; border-radius:100px;">1c</span>
+        <div style="font-family:'Sora',sans-serif; font-size:19px; font-weight:700;">Segmented &amp; visible</div>
+        <div style="font-size:13px; color:#9A94A6;">Every option is on screen &mdash; sort &amp; following become inline segmented toggles. Zero clicks to see what's available.</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:11px; border:1px solid rgba(255,255,255,0.12); border-radius:14px; background:#1B1826; padding:0 16px; margin-bottom:18px;">
+        <span style="width:17px;height:17px;flex-shrink:0;border:2px solid #9A94A6;border-radius:50%;position:relative;display:inline-block;"><span style="position:absolute;right:-4px;bottom:-3px;width:8px;height:2px;background:#9A94A6;transform:rotate(45deg);border-radius:2px;"></span></span>
+        <span style="flex:1; font-size:15px; color:#7E7889; padding:15px 0;">Search creators, products, or niches</span>
+      </div>
+      <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; background:#7C3AED; color:#fff;">All</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Fitness</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Beauty</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Food</span>
+        <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; padding:7px 14px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); color:#9A94A6;">Tech</span>
+      </div>
+      <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-end;">
+        <div>
+          <div style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:0.12em; text-transform:uppercase; color:#7E7889; margin-bottom:7px;">Sort</div>
+          <div style="display:inline-flex; background:#1B1826; border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:3px;">
+            <span style="font-size:12.5px; font-weight:600; padding:7px 13px; border-radius:7px; background:#7C3AED; color:#fff;">Trending</span>
+            <span style="font-size:12.5px; font-weight:600; padding:7px 13px; border-radius:7px; color:#9A94A6;">Active</span>
+            <span style="font-size:12.5px; font-weight:600; padding:7px 13px; border-radius:7px; color:#9A94A6;">Followers</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:0.12em; text-transform:uppercase; color:#7E7889; margin-bottom:7px;">Following</div>
+          <div style="display:inline-flex; background:#1B1826; border:1px solid rgba(255,255,255,0.12); border-radius:10px; padding:3px;">
+            <span style="font-size:12.5px; font-weight:600; padding:7px 13px; border-radius:7px; background:#7C3AED; color:#fff;">Any</span>
+            <span style="font-size:12.5px; font-weight:600; padding:7px 13px; border-radius:7px; color:#9A94A6;">&lt;50K</span>
+            <span style="font-size:12.5px; font-weight:600; padding:7px 13px; border-radius:7px; color:#9A94A6;">50&ndash;200K</span>
+            <span style="font-size:12.5px; font-weight:600; padding:7px 13px; border-radius:7px; color:#9A94A6;">200K+</span>
+          </div>
+        </div>
+        <div class="fo-cta" style="display:inline-flex; align-items:center; gap:9px; border:1px solid #C6FF3D; background:rgba(198,255,61,0.12); border-radius:10px; padding:9px 14px;">
+          <span style="width:28px;height:16px;border-radius:100px;background:#C6FF3D;position:relative;"><span style="position:absolute;top:2px;left:14px;width:12px;height:12px;border-radius:50%;background:#12101C;"></span></span>
+          <span style="font-size:13px; font-weight:700; color:#C6FF3D;">Verified only</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1d : Current (for reference) -->
+    <div id="1d" style="border:1px dashed rgba(255,255,255,0.14); border-radius:22px; padding:28px; background:#14121C;">
+      <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:20px;">
+        <span style="font-family:'Space Mono',monospace; font-size:12px; font-weight:700; color:#9A94A6; border:1px solid rgba(255,255,255,0.2); padding:3px 10px; border-radius:100px;">1d</span>
+        <div style="font-family:'Sora',sans-serif; font-size:19px; font-weight:700;">Current (labeled pills)</div>
+        <div style="font-size:13px; color:#9A94A6;">What's live now &mdash; here for comparison.</div>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <label style="display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(255,255,255,0.14); border-radius:100px; padding:8px 14px; background:#1B1826;"><span style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase; color:#7E7889;">Region</span><span style="font-size:13px; font-weight:600;">All &#9662;</span></label>
+        <label style="display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(255,255,255,0.14); border-radius:100px; padding:8px 14px; background:#1B1826;"><span style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase; color:#7E7889;">Following</span><span style="font-size:13px; font-weight:600;">Any &#9662;</span></label>
+        <label style="display:inline-flex; align-items:center; gap:8px; border:1px solid rgba(255,255,255,0.14); border-radius:100px; padding:8px 14px; background:#1B1826;"><span style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase; color:#7E7889;">Sort</span><span style="font-size:13px; font-weight:600;">Trending &#9662;</span></label>
+        <span style="display:inline-flex; align-items:center; gap:9px; font-size:13px; font-weight:600; color:#9A94A6; padding:6px 15px 6px 8px; border-radius:100px; border:1px solid rgba(255,255,255,0.14); background:#1B1826;"><span style="width:28px;height:16px;border-radius:100px;background:rgba(255,255,255,0.16);position:relative;"><span style="position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;"></span></span>Verified only</span>
+      </div>
+    </div>
+
+  </section>
+</div>
+</x-dc>
+</body>
+</html>

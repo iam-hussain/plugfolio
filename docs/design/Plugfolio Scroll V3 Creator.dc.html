@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#7C3AED}
+  a{text-decoration:none;color:#7C3AED}
+  a:hover{color:#5B21B6}
+  @keyframes pfvBlink{0%,55%{opacity:1}56%,100%{opacity:0}}
+  @keyframes pfvBob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</helmet>
+
+<div style="background:#F5F4F8; color:#12101C; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip;">
+
+  <div data-el="topbar" style="position:fixed; top:0; left:0; right:0; z-index:60; opacity:0; pointer-events:none; transform:translateY(-8px); transition:opacity .35s ease, transform .35s ease; background:rgba(245,244,248,.85); backdrop-filter:blur(14px); border-bottom:1px solid rgba(18,16,28,.09);">
+    <div style="display:flex; align-items:center; gap:14px; padding:11px clamp(18px,5vw,48px);">
+      <div onClick="{{ goTop }}" style="display:flex; align-items:center; gap:9px; cursor:pointer;">
+        <div style="width:24px;height:24px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+        <div style="font-family:'Sora',sans-serif; font-size:18px; font-weight:700; letter-spacing:-0.045em; display:flex; align-items:flex-end;">plugfolio<span style="width:4px;height:4px;border-radius:1px;background:#7C3AED;margin-left:3px;margin-bottom:4px;"></span></div>
+      </div>
+      <div style="flex:1;"></div>
+      <span onClick="{{ goClaim }}" style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:13px; font-weight:600; color:#fff; background:#7C3AED; padding:9px 18px; border-radius:999px; transition:transform .15s ease;">Claim your handle</span>
+    </div>
+  </div>
+
+  <!-- HERO · FOR CREATORS -->
+  <div data-el="s1" data-screen-label="Hero" style="height:150vh; background:#7C3AED; color:#F5F4F8;">
+    <div style="position:sticky; top:0; height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+      <div data-el="s1group" style="display:flex; flex-direction:column; align-items:center; gap:24px; text-align:center; padding:0 20px; will-change:transform,opacity;">
+        <span style="display:inline-flex; align-items:center; gap:8px; padding:6px 12px 6px 8px; border-radius:999px; background:#C6FF3D; color:#12101C; font-family:'Space Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;"><span style="width:6px;height:6px;border-radius:50%;background:#12101C;"></span>For creators</span>
+        <div style="display:flex; align-items:flex-end; gap:14px;">
+          <div style="width:clamp(40px,4.6vw,56px); height:clamp(40px,4.6vw,56px);"><dc-import name="PlugMark" body="#F5F4F8" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+          <div style="font-family:'Sora',sans-serif; font-weight:700; letter-spacing:-0.045em; font-size:clamp(28px,3.6vw,44px); display:flex; align-items:flex-end; line-height:1;">plugfolio<span style="width:.14em;height:.14em;border-radius:2px;background:#C6FF3D;margin-left:.07em;margin-bottom:.09em;"></span></div>
+        </div>
+        <div style="font-family:'Sora',sans-serif; font-weight:700; letter-spacing:-0.05em; line-height:.98; font-size:clamp(40px,6.8vw,92px); text-wrap:balance;">You post.<br><span style="color:#C6FF3D;">Your page sells.</span></div>
+        <div style="font-size:15px; color:rgba(245,244,248,.78); max-width:440px; line-height:1.6;">Tag your things once and every reel becomes a shop window. Here&rsquo;s your first hour live, minute by minute.</div>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center;">
+          <span onClick="{{ goClaim }}" style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:15px; font-weight:600; background:#12101C; color:#F5F4F8; padding:14px 26px; border-radius:999px; transition:transform .15s ease;">Claim your handle</span>
+          <span onClick="{{ goTimer }}" style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:15px; font-weight:600; border:1px solid rgba(245,244,248,.4); padding:14px 26px; border-radius:999px; transition:transform .15s ease;">Watch hour one &darr;</span>
+        </div>
+      </div>
+      <div data-el="s1cue" style="position:absolute; bottom:26px; left:0; right:0; display:flex; flex-direction:column; align-items:center; gap:8px; color:rgba(245,244,248,.7);">
+        <span style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.22em; text-transform:uppercase;">hour one &middot; scroll</span>
+        <svg style="animation:pfvBob 1.6s ease-in-out infinite;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 9l7 7 7-7"></path></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIRST HOUR LIVE -->
+  <div data-el="s2" data-screen-label="First hour" style="height:420vh; background:#F5F4F8; position:relative; z-index:2;">
+    <div style="position:sticky; top:0; height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:clamp(24px,6vw,90px); flex-wrap:wrap; padding:0 clamp(18px,5vw,60px);">
+      <div style="display:flex; flex-direction:column; gap:12px; align-items:flex-start;">
+        <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:#726E85;">Your first hour live &mdash; taps out</div>
+        <div data-el="timer" style="font-family:'Sora',sans-serif; font-size:clamp(64px,11vw,150px); font-weight:800; letter-spacing:-0.05em; line-height:1; font-variant-numeric:tabular-nums; color:#12101C;">000</div>
+        <div style="width:min(300px,70vw); height:4px; border-radius:2px; background:#E2DFEA; overflow:hidden;"><div data-el="tfill" style="height:100%; width:0%; background:#7C3AED; border-radius:2px;"></div></div>
+        <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#726E85;">live &rarr; first tap &rarr; first copy &rarr; first hello</div>
+      </div>
+      <div style="position:relative; width:min(440px,90vw); height:min(430px,70vh);">
+        <div data-step="0" style="position:absolute; inset:0; opacity:0; display:flex; flex-direction:column; justify-content:center; will-change:transform,opacity;">
+          <div style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; padding:26px; box-shadow:0 30px 70px -40px rgba(18,16,28,.3);">
+            <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#7C3AED;">00:00 &middot; you&rsquo;re live</div>
+            <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-.03em; margin-top:10px;">One link in your bio.</div>
+            <div style="display:flex; align-items:center; gap:10px; margin-top:16px; flex-wrap:wrap;">
+              <span style="font-family:'Space Mono',monospace; font-size:13px; background:#F5F4F8; border:1px solid #E2DFEA; padding:11px 16px; border-radius:999px;">plugfolio.app/mayarao</span>
+              <span style="display:inline-flex; align-items:center; gap:7px; font-family:'Space Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; background:#C6FF3D; color:#12101C; padding:8px 12px; border-radius:999px;"><span style="width:6px;height:6px;border-radius:50%;background:#12101C; animation:pfvBlink 1.2s steps(1) infinite;"></span>Live</span>
+            </div>
+            <div style="font-size:13px; color:#726E85; margin-top:12px;">Deep breath. Now watch the counter on the left.</div>
+          </div>
+        </div>
+        <div data-step="1" style="position:absolute; inset:0; opacity:0; display:flex; flex-direction:column; justify-content:center; will-change:transform,opacity;">
+          <div style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; padding:26px; box-shadow:0 30px 70px -40px rgba(18,16,28,.3);">
+            <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#7C3AED;">00:09 &middot; first tap out</div>
+            <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-.03em; margin-top:10px;">Someone just left for the retailer.</div>
+            <div style="display:flex; align-items:center; gap:12px; margin-top:16px; border:1px solid #E2DFEA; border-radius:16px; padding:12px;">
+              <div style="width:56px; height:64px; border-radius:10px; overflow:hidden; flex-shrink:0;"><image-slot id="pfc-tap" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=300&q=80&auto=format&fit=crop" credit="Photo by Tamara Bellis on Unsplash" credit-href="https://unsplash.com/@tamarabellis" shape="rounded" fit="cover" placeholder="product" style="width:100%;height:100%;display:block;"></image-slot></div>
+              <div style="flex:1;"><div style="font-size:13.5px; font-weight:600;">Linen overshirt</div><div style="font-size:12.5px; color:#726E85;">&#8377;2,190 &middot; The Folk Store</div></div>
+              <span style="font-family:'Sora',sans-serif; font-size:12.5px; font-weight:600; color:#fff; background:#7C3AED; padding:8px 14px; border-radius:999px;">Buy &rarr;</span>
+            </div>
+            <div style="font-size:13px; color:#726E85; margin-top:12px;">The tap lands on your dashboard. Nothing about the shopper does.</div>
+          </div>
+        </div>
+        <div data-step="2" style="position:absolute; inset:0; opacity:0; display:flex; flex-direction:column; justify-content:center; will-change:transform,opacity;">
+          <div style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; padding:26px; box-shadow:0 30px 70px -40px rgba(18,16,28,.3);">
+            <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#7C3AED;">00:24 &middot; first code copy</div>
+            <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-.03em; margin-top:10px;">MAYA10, copied at a counter.</div>
+            <div style="display:flex; align-items:center; gap:10px; margin-top:16px; flex-wrap:wrap;">
+              <span style="font-family:'Space Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.06em; background:#12101C; color:#C6FF3D; padding:9px 13px; border-radius:8px;">MAYA10 &middot; Copied &#10003;</span>
+              <span style="font-size:12px; color:#9A96AB;">in-store &middot; redemption not tracked</span>
+            </div>
+            <div style="font-size:13px; color:#726E85; margin-top:12px;">Counted beside taps in Earnings &mdash; labeled honestly.</div>
+          </div>
+        </div>
+        <div data-step="3" style="position:absolute; inset:0; opacity:0; display:flex; flex-direction:column; justify-content:center; will-change:transform,opacity;">
+          <div style="background:#12101C; color:#F5F4F8; border-radius:24px; padding:26px; box-shadow:0 30px 70px -40px rgba(18,16,28,.45);">
+            <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#C6FF3D;">00:58 &middot; first hello</div>
+            <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-.03em; margin-top:10px;">A brand opens a collab thread.</div>
+            <div style="font-size:13.5px; color:rgba(245,244,248,.65); margin-top:14px; line-height:1.6;">Content, price, deadline &mdash; one thread. You both accept the terms; payment settles off-platform.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETUP REWIND -->
+  <div data-screen-label="The setup" style="background:#EFEAFB; padding:14vh clamp(18px,5vw,60px); position:relative; z-index:3;">
+    <div style="max-width:1060px; margin:0 auto;">
+      <div data-rev="0">
+        <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:#5B21B6;">Rewind &mdash; before that hour</div>
+        <div style="font-family:'Sora',sans-serif; font-size:clamp(28px,4.4vw,52px); font-weight:700; letter-spacing:-.04em; margin-top:10px;">The setup was five minutes.</div>
+        <div style="font-size:15px; color:#726E85; max-width:520px; line-height:1.6; margin-top:10px;">Four screens between signing in and that link in your bio. No storefront builder, no product uploads &mdash; your posts are the store.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:38px;">
+        <div data-rev="1" style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; padding:22px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#7C3AED;">00:12 &middot; connect</div>
+          <div style="font-family:'Sora',sans-serif; font-size:18px; font-weight:700; letter-spacing:-.03em; margin-top:8px;">One OAuth screen.</div>
+          <div style="font-size:13px; line-height:1.55; color:#726E85; margin-top:8px;">Instagram or YouTube. We only read what&rsquo;s already public &mdash; nothing posts on your behalf.</div>
+        </div>
+        <div data-rev="2" style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; padding:22px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#7C3AED;">01:03 &middot; import</div>
+          <div style="font-family:'Sora',sans-serif; font-size:18px; font-weight:700; letter-spacing:-.03em; margin-top:8px;">Posts walk in by themselves.</div>
+          <div style="font-size:13px; line-height:1.55; color:#726E85; margin-top:8px;">Reels, posts, videos &mdash; already laid out on your page, waiting for tags.</div>
+        </div>
+        <div data-rev="3" style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; padding:22px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#7C3AED;">02:40 &middot; tag</div>
+          <div style="font-family:'Sora',sans-serif; font-size:18px; font-weight:700; letter-spacing:-.03em; margin-top:8px;">Point at the things.</div>
+          <div style="font-size:13px; line-height:1.55; color:#726E85; margin-top:8px;">Affiliate link or your own product &mdash; a toggle, not a form. Coupons ride along if you add one.</div>
+        </div>
+        <div data-rev="1" style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; padding:22px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#7C3AED;">04:58 &middot; live</div>
+          <div style="font-family:'Sora',sans-serif; font-size:18px; font-weight:700; letter-spacing:-.03em; margin-top:8px;">One link in your bio.</div>
+          <div style="font-size:13px; line-height:1.55; color:#726E85; margin-top:8px;">plugfolio.app/you. Your followers tap it and shop &mdash; they never make an account.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PEEK -->
+  <div data-screen-label="Then it moves" style="background:#F5F4F8; padding:15vh clamp(18px,5vw,60px); position:relative; z-index:3;">
+    <div style="max-width:1060px; margin:0 auto;">
+      <div data-rev="0">
+        <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:#726E85;">Day two onward</div>
+        <div style="font-family:'Sora',sans-serif; font-size:clamp(28px,4.4vw,52px); font-weight:700; letter-spacing:-.04em; margin-top:10px;">Then you watch it move.</div>
+        <div style="font-size:15px; color:#726E85; max-width:520px; line-height:1.6; margin-top:10px;">The dashboard counts only what really happened: taps out to retailers and coupon copies. No vanity reach, nothing inflated.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; margin-top:38px;">
+        <div data-rev="1" style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; padding:24px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#726E85;">Taps out &middot; yesterday</div>
+          <div data-count="1284" style="font-family:'Sora',sans-serif; font-size:52px; font-weight:800; letter-spacing:-.04em; font-variant-numeric:tabular-nums; margin-top:8px;">0</div>
+          <div style="font-size:12.5px; color:#9A96AB; margin-top:4px;">every one landed on a retailer's page</div>
+        </div>
+        <div data-rev="2" style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; padding:24px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#726E85;">Code copies</div>
+          <div data-count="312" style="font-family:'Sora',sans-serif; font-size:52px; font-weight:800; letter-spacing:-.04em; font-variant-numeric:tabular-nums; margin-top:8px;">0</div>
+          <div style="font-size:12.5px; color:#9A96AB; margin-top:4px;">41 in-store &mdash; <span style="font-family:'Space Mono',monospace; font-size:11px;">redemption not tracked</span></div>
+        </div>
+        <div data-rev="3" style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; padding:24px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#726E85;">Top things</div>
+          <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+            <div><div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600;"><span>Linen overshirt</span><span style="font-variant-numeric:tabular-nums; color:#726E85;">412</span></div><div style="height:6px; border-radius:3px; background:#EFEAFB; margin-top:6px; overflow:hidden;"><div data-bar="92" style="height:100%; width:0%; background:#7C3AED; border-radius:3px;"></div></div></div>
+            <div><div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600;"><span>Canvas tote</span><span style="font-variant-numeric:tabular-nums; color:#726E85;">268</span></div><div style="height:6px; border-radius:3px; background:#EFEAFB; margin-top:6px; overflow:hidden;"><div data-bar="60" style="height:100%; width:0%; background:#7C3AED; border-radius:3px;"></div></div></div>
+            <div><div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600;"><span>Scrunchie set</span><span style="font-variant-numeric:tabular-nums; color:#726E85;">150</span></div><div style="height:6px; border-radius:3px; background:#EFEAFB; margin-top:6px; overflow:hidden;"><div data-bar="34" style="height:100%; width:0%; background:#7C3AED; border-radius:3px;"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OWN STORE + COLLABS -->
+  <div data-screen-label="Your store too" style="background:#EFEAFB; padding:14vh clamp(18px,5vw,60px); position:relative; z-index:4;">
+    <div style="max-width:1060px; margin:0 auto;">
+      <div data-rev="0">
+        <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:#5B21B6;">Beyond affiliate</div>
+        <div style="font-family:'Sora',sans-serif; font-size:clamp(28px,4.4vw,52px); font-weight:700; letter-spacing:-.04em; margin-top:10px;">Sell your own things too.</div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin-top:38px; align-items:start;">
+        <div data-rev="1" style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; overflow:hidden;">
+          <div style="height:210px; position:relative;">
+            <image-slot id="pfv-own" src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=700&q=80&auto=format&fit=crop" credit="Photo on Unsplash" credit-href="https://unsplash.com" shape="rect" fit="cover" placeholder="scrunchie set — creator's own line" style="width:100%;height:100%;display:block;"></image-slot>
+            <span style="position:absolute; top:10px; left:10px; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.08em; text-transform:uppercase; background:rgba(18,16,28,.85); color:#F5F4F8; padding:5px 9px; border-radius:999px;">Their own product</span>
+          </div>
+          <div style="padding:16px 18px 18px;">
+            <div style="font-size:14.5px; font-weight:600;">Maya Studio scrunchie set</div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px;">
+              <span style="font-family:'Sora',sans-serif; font-size:17px; font-weight:700;">&#8377;640</span>
+              <span style="font-family:'Sora',sans-serif; font-size:13px; font-weight:600; color:#fff; background:#7C3AED; padding:10px 18px; border-radius:999px;">Shop their store</span>
+            </div>
+            <div style="font-size:12px; color:#9A96AB; margin-top:10px;">Same card, honest label, button goes to your store. No commission language.</div>
+          </div>
+        </div>
+        <div data-rev="2" style="display:flex; flex-direction:column; gap:14px;">
+          <div style="background:#fff; border:1px solid #E2DFEA; border-radius:24px; padding:24px;">
+            <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#5B21B6;">Coupons ride along</div>
+            <div style="font-size:14px; line-height:1.6; color:#726E85; margin-top:8px;">Add a code, an expiry, or an in-store note to any product. Expired offers collapse to &ldquo;Offer ended&rdquo; &mdash; the product never disappears.</div>
+            <div style="display:flex; align-items:center; gap:8px; margin-top:14px;">
+              <span onClick="{{ copyCode }}" style="font-family:'Space Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:.06em; background:#12101C; color:#C6FF3D; padding:7px 11px; border-radius:8px; cursor:pointer;">{{ codeLabel }}</span>
+              <span style="font-size:11.5px; color:#9A96AB;">Valid till 30 Aug &middot; tap to copy</span>
+            </div>
+          </div>
+          <div style="background:#12101C; color:#F5F4F8; border-radius:24px; padding:24px;">
+            <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#C6FF3D;">And when brands call</div>
+            <div style="font-size:14px; line-height:1.6; color:rgba(245,244,248,.72); margin-top:8px;">Businesses post requirements, you answer. One thread for content, price and deadline &mdash; both sides accept terms. Payment settles off-platform.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLAIM CTA + FOOTER -->
+  <div data-el="claim" data-screen-label="Claim" style="background:#F5F4F8; padding:20px clamp(18px,5vw,48px) 40px; position:relative; z-index:5;">
+    <div data-rev="0" style="background:#7C3AED; color:#F5F4F8; border-radius:34px; padding:clamp(40px,7vw,84px) clamp(22px,5vw,64px); display:flex; flex-direction:column; align-items:center; gap:22px; text-align:center;">
+      <div style="width:56px; height:56px;"><dc-import name="PlugMark" body="#F5F4F8" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+      <div style="font-family:'Sora',sans-serif; font-size:clamp(30px,5.4vw,68px); font-weight:700; letter-spacing:-.045em; line-height:1.02; text-wrap:balance;">Your five minutes<br>start whenever.</div>
+      <div style="display:flex; align-items:center; gap:0; background:rgba(245,244,248,.12); border:1px solid rgba(245,244,248,.25); border-radius:999px; padding:6px 6px 6px 20px; flex-wrap:wrap; justify-content:center;">
+        <span style="font-family:'Space Mono',monospace; font-size:13.5px; color:rgba(245,244,248,.75);">plugfolio.app/</span>
+        <span style="font-family:'Space Mono',monospace; font-size:13.5px; color:#F5F4F8;">yourname<span style="display:inline-block; width:8px; height:16px; background:#C6FF3D; margin-left:2px; vertical-align:-2px; animation:pfvBlink 1.1s steps(1) infinite;"></span></span>
+        <span style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:14px; font-weight:600; background:#C6FF3D; color:#12101C; padding:11px 22px; border-radius:999px; margin-left:14px; transition:transform .15s ease;">Claim it</span>
+      </div>
+      <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:rgba(245,244,248,.6);">Email sign-in &middot; up to 5 profiles &middot; invite 3 managers</div>
+    </div>
+    <div data-rev="1" style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; border-top:1px solid rgba(18,16,28,.1); margin-top:36px; padding:24px 4px 10px;">
+      <div>
+        <div style="font-family:'Sora',sans-serif; font-size:17px; font-weight:700; letter-spacing:-.045em;">plugfolio</div>
+        <div style="font-size:12.5px; color:#9A96AB; margin-top:6px; line-height:1.5;">Shoppable creator pages.<br>Your followers never need an account to shop.</div>
+      </div>
+      <div style="display:flex; gap:20px; font-size:13px; color:#726E85; flex-wrap:wrap;">
+        <span style="cursor:pointer;">Explore</span><span style="cursor:pointer;">For business</span><span style="cursor:pointer;">Support &amp; feedback</span><span style="cursor:pointer;">Privacy</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;firstHourTaps&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 247, &quot;min&quot;: 50, &quot;max&quot;: 999, &quot;step&quot;: 1, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Story&quot;}
+}">
+class Component extends DCLogic {
+  state = { copied: false };
+
+  renderVals() {
+    return {
+      codeLabel: this.state.copied ? 'Copied \u2713' : 'MAYA10',
+      copyCode: () => {
+        try { navigator.clipboard.writeText('MAYA10'); } catch (e) {}
+        clearTimeout(this._ct);
+        this.setState({ copied: true });
+        this._ct = setTimeout(() => this.setState({ copied: false }), 2400);
+      },
+      goTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+      goTimer: () => this.sTo('s2', innerHeight * 0.5),
+      goClaim: () => this.sTo('claim', 0),
+    };
+  }
+
+  sTo(name, off) {
+    const el = document.querySelector(`[data-el="${name}"]`);
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY + (off || 0), behavior: 'smooth' });
+  }
+
+  grabRefs() {
+    this.$ = {};
+    document.querySelectorAll('[data-el]').forEach(el => { this.$[el.getAttribute('data-el')] = el; });
+    this.steps = Array.from(document.querySelectorAll('[data-step]'));
+    this.revs = Array.from(document.querySelectorAll('[data-rev]'));
+    this.counts = Array.from(document.querySelectorAll('[data-count]'));
+    this.bars = Array.from(document.querySelectorAll('[data-bar]'));
+  }
+
+  componentDidMount() {
+    this.grabRefs();
+    this.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this._onScroll = () => {
+      if (this._tick) return;
+      this._tick = true;
+      requestAnimationFrame(() => { this._tick = false; this.apply(); });
+    };
+    addEventListener('scroll', this._onScroll, { passive: true });
+    addEventListener('resize', this._onScroll, { passive: true });
+    this.apply();
+  }
+  componentDidUpdate() { this.grabRefs(); this.apply(); }
+  componentWillUnmount() {
+    removeEventListener('scroll', this._onScroll);
+    removeEventListener('resize', this._onScroll);
+    clearTimeout(this._ct);
+  }
+
+  apply() {
+    const $ = this.$;
+    if (!$ || !$.s1group) return;
+    const vh = innerHeight;
+    const R = this.reduced;
+    const seg = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
+    const ez = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const prog = el => { const r = el.getBoundingClientRect(); return Math.min(1, Math.max(0, -r.top / (r.height - vh))); };
+
+    const p1 = R ? 0 : prog($.s1);
+    $.s1group.style.opacity = String(1 - ez(seg(p1, 0.4, 0.95)));
+    $.s1group.style.transform = `translateY(${-ez(seg(p1, 0, 1)) * 60}px)`;
+    $.s1cue.style.opacity = String(Math.max(0, 1 - seg(p1, 0.02, 0.2)));
+
+    const show = scrollY > $.s1.offsetHeight - vh * 1.02;
+    $.topbar.style.opacity = show ? 1 : 0;
+    $.topbar.style.transform = show ? 'translateY(0)' : 'translateY(-8px)';
+    $.topbar.style.pointerEvents = show ? 'auto' : 'none';
+
+    // five-minute timer scrub
+    const p2 = R ? 1 : prog($.s2);
+    const taps = Math.round(ez(seg(p2, 0.02, 0.96)) * (this.props.firstHourTaps ?? 247));
+    if ($.timer) $.timer.textContent = String(taps).padStart(3, '0');
+    if ($.tfill) $.tfill.style.width = (seg(p2, 0.02, 0.96) * 100) + '%';
+    const win = [[0.02, 0.3], [0.27, 0.53], [0.5, 0.78], [0.75, 1.03]];
+    this.steps.forEach(el => {
+      const i = +el.getAttribute('data-step');
+      const [a, b] = win[i];
+      const o = R ? (i === 3 ? 1 : 0) : Math.min(seg(p2, a, a + 0.05), 1 - seg(p2, b - 0.05, b));
+      el.style.opacity = o;
+      el.style.transform = `translateY(${(1 - o) * 26}px)`;
+      el.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
+    });
+
+    // reveals + counters + bars
+    const scrollH = document.body.scrollHeight;
+    const revealE = (el, i) => {
+      const r = el.getBoundingClientRect();
+      const minTop = Math.max(0, r.top + scrollY - (scrollH - vh));
+      const start = vh * (0.98 - (i % 3) * 0.03);
+      const end = Math.max(vh * 0.62, minTop);
+      return R || start <= end ? 1 : ez(Math.min(1, Math.max(0, (start - r.top) / (start - end))));
+    };
+    this.revs.forEach((el, i) => {
+      const e = revealE(el, i);
+      el.style.opacity = e;
+      el.style.transform = `translateY(${(1 - e) * 40}px)`;
+    });
+    this.counts.forEach(el => {
+      const e = revealE(el, 0);
+      el.textContent = Math.round(+el.getAttribute('data-count') * e).toLocaleString('en-IN');
+    });
+    this.bars.forEach(el => {
+      const e = revealE(el, 1);
+      el.style.width = (+el.getAttribute('data-bar') * e) + '%';
+    });
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#F5F4F8}
+  a{text-decoration:none;color:#7C3AED}
+  a:hover{color:#5B21B6}
+  @keyframes pfsBob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</helmet>
+
+<div data-pfs-root style="{{ rootVars }} background:#F5F4F8; color:#12101C; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip;">
+
+  <!-- fixed top bar -->
+  <div data-el="topbar" style="position:fixed; top:0; left:0; right:0; z-index:60; opacity:0; pointer-events:none; transform:translateY(-8px); transition:opacity .35s ease, transform .35s ease; background:rgba(245,244,248,.82); backdrop-filter:blur(14px); border-bottom:1px solid #E7E4F0;">
+    <div style="display:flex; align-items:center; gap:14px; padding:11px clamp(18px,5vw,48px);">
+      <div onClick="{{ goTop }}" style="display:flex; align-items:center; gap:9px; cursor:pointer;">
+        <div style="width:24px;height:24px;"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+        <div style="font-family:'Sora',sans-serif; font-size:18px; font-weight:700; letter-spacing:-0.045em; display:flex; align-items:flex-end;">plugfolio<span style="width:4px;height:4px;border-radius:1px;background:var(--accent,#7C3AED);margin-left:3px;margin-bottom:4px;"></span></div>
+      </div>
+      <div style="flex:1;"></div>
+      <span onClick="{{ goWall }}" style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:13px; font-weight:600; color:#fff; background:var(--accent,#7C3AED); padding:9px 18px; border-radius:999px; transition:transform .15s ease;">Start shopping &rarr;</span>
+    </div>
+  </div>
+
+  <!-- SCENE 1 · ZOOM HERO -->
+  <div data-el="s1" data-screen-label="Hero" style="height:170vh;">
+    <div style="position:sticky; top:0; height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+      <div data-el="s1group" style="display:flex; flex-direction:column; align-items:center; gap:22px; text-align:center; padding:0 20px; will-change:transform,opacity;">
+        <span style="display:inline-flex; align-items:center; gap:8px; padding:6px 12px 6px 8px; border-radius:999px; background:#C6FF3D; color:#12101C; font-family:'Space Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;"><span style="width:6px;height:6px;border-radius:50%;background:#12101C;"></span>No login to shop</span>
+        <div style="display:flex; align-items:flex-end; gap:14px;">
+          <div style="width:clamp(40px,4.6vw,56px); height:clamp(40px,4.6vw,56px);"><dc-import name="PlugMark" body="#7C3AED" prong="#12101C" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+          <div style="font-family:'Sora',sans-serif; font-weight:700; letter-spacing:-0.045em; font-size:clamp(28px,3.6vw,44px); display:flex; align-items:flex-end; line-height:1;">plugfolio<span style="width:.14em;height:.14em;border-radius:2px;background:var(--accent,#7C3AED);margin-left:.07em;margin-bottom:.09em;"></span></div>
+        </div>
+        <div style="font-family:'Sora',sans-serif; font-weight:700; letter-spacing:-0.05em; line-height:.96; font-size:clamp(42px,7.2vw,100px); text-wrap:balance;">Every post they make,<br><span style="color:var(--accent,#7C3AED);">buyable.</span></div>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px;">
+          <span onClick="{{ goWall }}" style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:15px; font-weight:600; color:#fff; background:var(--accent,#7C3AED); padding:14px 26px; border-radius:999px; transition:transform .15s ease;">Start shopping &rarr;</span>
+          <span onClick="{{ goHow }}" style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:15px; font-weight:600; border:1px solid #CDC9DC; padding:14px 26px; border-radius:999px; transition:transform .15s ease;">See how it works</span>
+        </div>
+        <div style="font-size:13.5px; color:#726E85; max-width:400px; line-height:1.55;">Tap any post, see what's in it, finish at the retailer. No cart, no card, no account.</div>
+      </div>
+      <div data-el="s1cue" style="position:absolute; bottom:26px; left:0; right:0; display:flex; flex-direction:column; align-items:center; gap:8px; color:#726E85;">
+        <span style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.22em; text-transform:uppercase;">Scroll</span>
+        <svg style="animation:pfsBob 1.6s ease-in-out infinite;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 9l7 7 7-7"></path></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 2 · PHONE DE-ZOOM -->
+  <div data-el="s2" data-screen-label="Tap to shop" style="height:380vh; background:#FFFFFF; margin-top:-60vh; position:relative; z-index:2;">
+    <div style="position:sticky; top:0; height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center; padding-top:10vh;">
+      <div style="position:absolute; top:5vh; left:0; right:0; z-index:5; height:110px; pointer-events:none;">
+        <div data-el="s2step0" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; gap:10px; opacity:0; text-align:center; padding:0 20px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#726E85;">01 / Find</div>
+          <div style="font-family:'Sora',sans-serif; font-size:clamp(22px,3.4vw,38px); font-weight:700; letter-spacing:-.03em;">One link in their bio.</div>
+        </div>
+        <div data-el="s2step1" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; gap:10px; opacity:0; text-align:center; padding:0 20px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#726E85;">02 / Tap</div>
+          <div style="font-family:'Sora',sans-serif; font-size:clamp(22px,3.4vw,38px); font-weight:700; letter-spacing:-.03em;">Every thing in the post, priced.</div>
+        </div>
+        <div data-el="s2step2" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; gap:10px; opacity:0; text-align:center; padding:0 20px;">
+          <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#726E85;">03 / Buy</div>
+          <div style="font-family:'Sora',sans-serif; font-size:clamp(22px,3.4vw,38px); font-weight:700; letter-spacing:-.03em;">Finish at the retailer.</div>
+        </div>
+      </div>
+      <div data-el="s2phone" style="height:min(62vh,600px); aspect-ratio:9/19; background:#12101C; border-radius:46px; padding:10px; box-shadow:0 60px 120px -40px rgba(18,16,28,.5); transform:scale(2.35); will-change:transform; flex-shrink:0;">
+        <div style="position:relative; width:100%; height:100%; border-radius:37px; overflow:hidden; background:#221E33;">
+          <image-slot id="pfs-post" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&amp;q=80&amp;auto=format&amp;fit=crop" credit="Photo by Tamara Bellis on Unsplash" credit-href="https://unsplash.com/@tamarabellis" shape="rect" fit="cover" placeholder="creator post — outfit photo" style="width:100%;height:100%;display:block;position:absolute;inset:0;"></image-slot>
+          <div style="position:absolute; top:10px; left:50%; margin-left:-42px; width:84px; height:20px; border-radius:999px; background:#12101C;"></div>
+          <div data-el="s2tag0" style="position:absolute; left:10%; top:28%; opacity:0; transform:scale(.6); display:flex; align-items:center; gap:7px; background:#fff; color:#12101C; border-radius:999px; padding:7px 12px 7px 8px; font-size:clamp(9.5px,2.7vw,11.5px); font-weight:600; box-shadow:0 10px 26px -10px rgba(18,16,28,.45); will-change:transform,opacity;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent,#7C3AED);"></span>Linen overshirt &middot; &#8377;2,190</div>
+          <div data-el="s2tag1" style="position:absolute; right:8%; top:46%; opacity:0; transform:scale(.6); display:flex; align-items:center; gap:7px; background:#fff; color:#12101C; border-radius:999px; padding:7px 12px 7px 8px; font-size:clamp(9.5px,2.7vw,11.5px); font-weight:600; box-shadow:0 10px 26px -10px rgba(18,16,28,.45); will-change:transform,opacity;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent,#7C3AED);"></span>Canvas tote &middot; &#8377;990</div>
+          <div data-el="s2tag2" style="position:absolute; left:14%; top:62%; opacity:0; transform:scale(.6); display:flex; align-items:center; gap:7px; background:#fff; color:#12101C; border-radius:999px; padding:7px 12px 7px 8px; font-size:clamp(9.5px,2.7vw,11.5px); font-weight:600; box-shadow:0 10px 26px -10px rgba(18,16,28,.45); will-change:transform,opacity;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent,#7C3AED);"></span>Trail runners &middot; &#8377;4,499</div>
+          <div data-el="s2sheet" style="position:absolute; left:8px; right:8px; bottom:8px; transform:translateY(112%); background:#fff; color:#12101C; border-radius:26px; padding:11px; will-change:transform;">
+            <div style="display:flex; align-items:center; gap:11px;">
+              <div style="width:46px; height:46px; border-radius:12px; overflow:hidden; flex-shrink:0;"><image-slot id="pfs-sheetthumb" src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=300&amp;q=80&amp;auto=format&amp;fit=crop" credit="Photo by Tamara Bellis on Unsplash" credit-href="https://unsplash.com/@tamarabellis" shape="rounded" fit="cover" placeholder="product" style="width:100%;height:100%;display:block;"></image-slot></div>
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:12.5px; font-weight:600; line-height:1.3;">Linen overshirt</div>
+                <div style="font-family:'Sora',sans-serif; font-size:14px; font-weight:700; margin-top:2px;">&#8377;2,190</div>
+              </div>
+              <span style="font-family:'Sora',sans-serif; font-size:13px; font-weight:600; color:#fff; background:var(--accent,#7C3AED); padding:10px 18px; border-radius:999px;">Buy</span>
+            </div>
+            <div style="font-size:10.5px; color:#726E85; margin-top:9px;">Opens the retailer's store &mdash; no cart, no account here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 3 · SCRUBBED PRODUCT RAIL -->
+  <div data-el="s3" data-screen-label="Product rail" style="height:300vh; background:#F5F4F8; margin-top:-60vh; position:relative; z-index:3;">
+    <div style="position:sticky; top:0; height:100vh; overflow:hidden; display:flex; flex-direction:column; justify-content:center; gap:36px;">
+      <div style="padding:0 clamp(18px,6vw,72px);">
+        <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#726E85;">Everything they've shown you</div>
+        <div style="font-family:'Sora',sans-serif; font-size:clamp(28px,4.5vw,54px); font-weight:700; letter-spacing:-.04em; margin-top:10px;">The whole feed, priced.</div>
+      </div>
+      <div data-el="s3track" style="display:flex; gap:16px; padding:0 clamp(18px,6vw,72px); width:max-content; will-change:transform;">
+        <sc-for list="{{ rail }}" as="k" hint-placeholder-count="6">
+          <div style="width:min(300px,72vw); flex-shrink:0; border:1px solid #E7E4F0; border-radius:24px; background:#fff; overflow:hidden;">
+            <div style="height:290px; position:relative;">
+              <image-slot id="{{ k.slot }}" src="{{ k.img }}" credit="Photo on Unsplash" credit-href="{{ k.img }}" shape="rect" fit="cover" placeholder="{{ k.ph }}" style="width:100%;height:100%;display:block;"></image-slot>
+              <sc-if value="{{ k.own }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; top:10px; left:10px; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.08em; text-transform:uppercase; background:rgba(18,16,28,.82); color:#F5F4F8; padding:5px 9px; border-radius:999px;">Their own product</span></sc-if>
+            </div>
+            <div style="padding:14px 15px 16px;">
+              <div style="font-family:'Space Mono',monospace; font-size:9.5px; letter-spacing:.1em; color:#9A96AB;">{{ k.by }}</div>
+              <div style="font-size:14px; font-weight:600; margin-top:5px; line-height:1.35;">{{ k.title }}</div>
+              <sc-if value="{{ k.hasCode }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; align-items:center; gap:8px; margin-top:10px;">
+                  <span onClick="{{ k.copy }}" style="font-family:'Space Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.06em; background:#C6FF3D; color:#12101C; padding:6px 10px; border-radius:8px; cursor:pointer; white-space:nowrap;">{{ k.codeLabel }}</span>
+                  <span style="font-size:11px; color:#9A96AB;">{{ k.exp }}</span>
+                </div>
+              </sc-if>
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px;">
+                <span style="font-family:'Sora',sans-serif; font-size:16px; font-weight:700;">{{ k.price }}</span>
+                <span style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:13px; font-weight:600; color:#fff; background:var(--accent,#7C3AED); padding:9px 16px; border-radius:999px; transition:transform .15s ease; white-space:nowrap;">{{ k.cta }}</span>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 4 · MANIFESTO -->
+  <div data-el="s4" data-screen-label="Manifesto" style="height:320vh; background:#12101C; color:#F5F4F8; margin-top:-60vh; position:relative; z-index:4;">
+    <div style="position:sticky; top:0; height:100vh; overflow:hidden;">
+      <div data-el="s4l0" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transform:scale(.86); font-family:'Sora',sans-serif; font-size:clamp(44px,10vw,140px); font-weight:700; letter-spacing:-.04em; will-change:transform,opacity;">No cart.</div>
+      <div data-el="s4l1" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transform:scale(.86); font-family:'Sora',sans-serif; font-size:clamp(44px,10vw,140px); font-weight:700; letter-spacing:-.04em; will-change:transform,opacity;">No checkout.</div>
+      <div data-el="s4l2" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transform:scale(.86); font-family:'Sora',sans-serif; font-size:clamp(44px,10vw,140px); font-weight:700; letter-spacing:-.04em; will-change:transform,opacity;">No wallet.</div>
+      <div data-el="s4end" style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; opacity:0; transform:translateY(30px); text-align:center; padding:0 22px; will-change:transform,opacity;">
+        <div style="font-family:'Sora',sans-serif; font-size:clamp(32px,6vw,80px); font-weight:700; letter-spacing:-.04em; line-height:1.05; text-wrap:balance;">We <span style="color:#C6FF3D;">never</span> see your card.</div>
+        <div style="font-size:15px; line-height:1.65; color:rgba(245,244,248,.68); max-width:560px; text-wrap:pretty;">Every Buy hands you to the retailer's own store. The creator is credited by that retailer &mdash; not by you, and not by us. The only thing we measure is the tap out.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE 5 · CREATOR WALL (parallax) -->
+  <div data-el="wall" data-screen-label="Creator wall" style="background:#F5F4F8; padding:110px 0 30px; overflow:hidden;">
+    <div data-rev="4" style="text-align:center; padding:0 20px;">
+      <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:#726E85;">Live right now</div>
+      <div style="font-family:'Sora',sans-serif; font-size:clamp(28px,4.5vw,52px); font-weight:700; letter-spacing:-.04em; margin-top:10px;">Shop someone's page.</div>
+    </div>
+    <div style="display:flex; gap:14px; justify-content:safe center; padding:48px clamp(18px,6vw,72px); overflow-x:auto;">
+      <sc-for list="{{ wallCols }}" as="col" hint-placeholder-count="3">
+        <div data-par="{{ col.i }}" style="{{ col.style }} flex:0 0 min(300px,62vw); display:flex; flex-direction:column; gap:14px; will-change:transform;">
+          <sc-for list="{{ col.cards }}" as="c" hint-placeholder-count="2">
+            <div style-hover="transform:translateY(-2px)" style="cursor:pointer; border:1px solid #E7E4F0; border-radius:22px; background:#fff; overflow:hidden; transition:transform .15s ease;">
+              <div style="{{ c.imgStyle }}"><image-slot id="{{ c.slot }}" src="{{ c.img }}" credit="Photo on Unsplash" credit-href="{{ c.img }}" shape="rect" fit="cover" placeholder="{{ c.ph }}" style="width:100%;height:100%;display:block;"></image-slot></div>
+              <div style="padding:13px 14px 15px;">
+                <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:600; letter-spacing:-.02em;">{{ c.name }}</div>
+                <div style="font-size:12.5px; color:#726E85; margin-top:2px;">{{ c.cat }}</div>
+                <div style="font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; color:#9A96AB; margin-top:10px;">{{ c.things }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- CTA + FOOTER -->
+  <div data-el="cta" data-screen-label="Join" style="background:#F5F4F8; padding:20px clamp(18px,5vw,48px) 40px;">
+    <div data-rev="0" style="background:#12101C; color:#F5F4F8; border-radius:34px; padding:clamp(40px,7vw,84px) clamp(22px,5vw,64px); display:flex; flex-direction:column; align-items:center; gap:22px; text-align:center;">
+      <div style="width:60px; height:60px;"><dc-import name="PlugMark" body="#F5F4F8" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+      <div style="font-family:'Sora',sans-serif; font-size:clamp(34px,6vw,76px); font-weight:700; letter-spacing:-.045em; line-height:1; text-wrap:balance;">One link. Everything <span style="color:#C6FF3D;">shoppable.</span></div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+        <span onClick="{{ goWall }}" style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:15px; font-weight:600; background:#C6FF3D; color:#12101C; padding:14px 26px; border-radius:999px; transition:transform .15s ease;">Start shopping &rarr;</span>
+        <span style-hover="transform:translateY(-1px)" style="cursor:pointer; font-family:'Sora',sans-serif; font-size:15px; font-weight:600; border:1px solid rgba(245,244,248,.3); padding:14px 26px; border-radius:999px; transition:transform .15s ease;">Claim your handle</span>
+      </div>
+      <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:rgba(245,244,248,.55);">Shopping never needs an account</div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; margin-top:12px;">
+      <div data-rev="1" style="border:1px solid #E7E4F0; border-radius:22px; background:#fff; padding:22px;">
+        <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent,#7C3AED);">For creators</div>
+        <div style="font-family:'Sora',sans-serif; font-size:20px; font-weight:700; letter-spacing:-.03em; margin-top:10px;">Your reel, shoppable in five minutes</div>
+        <div style="font-size:14px; line-height:1.55; color:#726E85; margin-top:8px;">Connect Instagram or YouTube, your posts import themselves, tag the things, drop one link in your bio.</div>
+        <div style="margin-top:14px; font-size:14px; font-weight:600; color:var(--accent,#7C3AED);">Claim your handle &rarr;</div>
+      </div>
+      <div data-rev="2" style="border:1px solid #E7E4F0; border-radius:22px; background:#fff; padding:22px;">
+        <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent,#7C3AED);">For business</div>
+        <div style="font-family:'Sora',sans-serif; font-size:20px; font-weight:700; letter-spacing:-.03em; margin-top:10px;">Brief it once, hear from creators</div>
+        <div style="font-size:14px; line-height:1.55; color:#726E85; margin-top:8px;">Post a requirement or approach a creator directly. One thread for content, price and deadline. Payment settles off-platform.</div>
+        <div style="margin-top:14px; font-size:14px; font-weight:600; color:var(--accent,#7C3AED);">Open collabs &rarr;</div>
+      </div>
+    </div>
+    <div data-rev="3" style="display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; border-top:1px solid #E7E4F0; margin-top:40px; padding:24px 4px 10px;">
+      <div>
+        <div style="font-family:'Sora',sans-serif; font-size:17px; font-weight:700; letter-spacing:-.045em;">plugfolio</div>
+        <div style="font-size:12.5px; color:#9A96AB; margin-top:6px; line-height:1.5;">Shoppable creator pages.<br>Shopping never needs an account.</div>
+      </div>
+      <div style="display:flex; gap:20px; font-size:13px; color:#726E85; flex-wrap:wrap;">
+        <span style="cursor:pointer;">Explore</span><span style="cursor:pointer;">Following</span><span style="cursor:pointer;">Support &amp; feedback</span><span style="cursor:pointer;">Privacy</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;accent&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#7C3AED&quot;, &quot;options&quot;: [&quot;#7C3AED&quot;, &quot;#5B21B6&quot;, &quot;#FF6B5C&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Brand&quot;},
+  &quot;zoom&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 13, &quot;min&quot;: 4, &quot;max&quot;: 18, &quot;step&quot;: 1, &quot;unit&quot;: &quot;\u00d7&quot;, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Motion&quot;},
+  &quot;motion&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;cinematic&quot;, &quot;options&quot;: [&quot;cinematic&quot;, &quot;subtle&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Motion&quot;}
+}">
+class Component extends DCLogic {
+  state = { copied: null };
+
+  renderVals() {
+    const acc = this.props.accent ?? '#7C3AED';
+    const U = id => `https://images.unsplash.com/${id}?w=700&q=80&auto=format&fit=crop`;
+    const rail = [
+      { slot:'pfs-r1', img:U('photo-1596755094514-f87e34085b2c'), ph:'thrifted linen overshirt', by:'@mayarao', title:'Linen overshirt — thrifted find', price:'\u20B92,190', cta:'Buy' },
+      { slot:'pfs-r2', img:U('photo-1591561954557-26941169b49e'), ph:'canvas tote bag', by:'@mayarao', title:'Everyday canvas tote', price:'\u20B9990', cta:'Buy', code:'MAYA10', exp:'Valid till 30 Aug' },
+      { slot:'pfs-r3', img:U('photo-1507473885765-e6ed057f782c'), ph:'warm desk lamp', by:'@deviyer', title:'Desk lamp, warm white', price:'\u20B93,450', cta:'Buy' },
+      { slot:'pfs-r4', img:U('photo-1522337660859-02fbefca4702'), ph:'scrunchie set flat lay', by:'@mayarao', title:'Maya Studio scrunchie set', price:'\u20B9640', cta:'Shop their store', own:true },
+      { slot:'pfs-r5', img:U('photo-1542291026-7eec264c27ff'), ph:'trail running shoes', by:'@ravimenon', title:'Trail runners, wide fit', price:'\u20B94,499', cta:'Buy' },
+      { slot:'pfs-r6', img:U('photo-1495474472287-4d71bcdd2085'), ph:'ceramic pour-over set', by:'@anayakapoor', title:'Ceramic pour-over set', price:'\u20B92,850', cta:'Buy' },
+    ].map(k => ({
+      ...k,
+      own: !!k.own,
+      hasCode: !!k.code,
+      codeLabel: k.code ? (this.state.copied === k.code ? 'Copied \u2713' : k.code) : '',
+      exp: k.exp || '',
+      copy: k.code ? () => this.copyCode(k.code) : null,
+    }));
+    const wc = (slot, img, ph, name, cat, things, h) => ({ slot, img:U(img), ph, name, cat, things, imgStyle: `height:${h}px;` });
+    const wallCols = [
+      { i:'0', style:'', cards:[ wc('pfs-w1','photo-1441984904996-e0b6ba687e04','thrift outfit cover','Maya Rao','Thrift & everyday fashion','126 things tagged',224), wc('pfs-w2','photo-1476480862126-209bfaa8edc8','running trail cover','Ravi Menon','Running gear','58 things tagged',186) ] },
+      { i:'1', style:'margin-top:56px;', cards:[ wc('pfs-w3','photo-1547394765-185e1e68f34e','desk setup cover','Dev Iyer','Desk setups & tech','84 things tagged',196), wc('pfs-w4','photo-1556911220-e15b29be8c8f','home kitchen cover','Anaya Kapoor','Home kitchen','71 things tagged',236) ] },
+      { i:'2', style:'', cards:[ wc('pfs-w5','photo-1556228720-195a672e8a03','skincare shelf cover','Sana Sheikh','Skincare, honestly','93 things tagged',208), wc('pfs-w6','photo-1526170375885-4d8ecf77b99f','analog camera cover','Leo D\u2019Souza','Analog photography','39 things tagged',216) ] },
+    ];
+    return {
+      rootVars: `--accent:${acc};`,
+      rail, wallCols,
+      goTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+      goHow: () => this.sTo('s2', innerHeight * 0.6),
+      goWall: () => this.sTo('wall', 0),
+    };
+  }
+
+  copyCode(code) {
+    try { navigator.clipboard.writeText(code); } catch (e) {}
+    clearTimeout(this._ct);
+    this.setState({ copied: code });
+    this._ct = setTimeout(() => this.setState({ copied: null }), 2400);
+  }
+
+  sTo(name, off) {
+    const el = document.querySelector(`[data-el="${name}"]`);
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY + (off || 0), behavior: 'smooth' });
+  }
+
+  grabRefs() {
+    this.$ = {};
+    document.querySelectorAll('[data-el]').forEach(el => { this.$[el.getAttribute('data-el')] = el; });
+    this.pars = Array.from(document.querySelectorAll('[data-par]'));
+    this.revs = Array.from(document.querySelectorAll('[data-rev]'));
+  }
+
+  componentDidMount() {
+    this.grabRefs();
+    this.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this._onScroll = () => {
+      if (this._tick) return;
+      this._tick = true;
+      requestAnimationFrame(() => { this._tick = false; this.apply(); });
+    };
+    addEventListener('scroll', this._onScroll, { passive: true });
+    addEventListener('resize', this._onScroll, { passive: true });
+    this.apply();
+  }
+
+  componentDidUpdate() { this.grabRefs(); this.apply(); }
+  componentWillUnmount() {
+    removeEventListener('scroll', this._onScroll);
+    removeEventListener('resize', this._onScroll);
+    clearTimeout(this._ct);
+  }
+
+  apply() {
+    const $ = this.$;
+    if (!$ || !$.s1group) return;
+    const vh = innerHeight;
+    const M = (this.props.motion ?? 'cinematic') === 'subtle' ? 0.55 : 1;
+    const R = this.reduced;
+    const seg = (p, a, b) => Math.min(1, Math.max(0, (p - a) / (b - a)));
+    const ez = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const prog = el => { const r = el.getBoundingClientRect(); return Math.min(1, Math.max(0, -r.top / (r.height - vh))); };
+
+    // Scene 1 — hero dives through as you scroll
+    const p1 = R ? 0 : prog($.s1);
+    const dive = ez(seg(p1, 0.08, 1));
+    const zEnd = 1 + ((this.props.zoom ?? 13) / 9) * M;
+    $.s1group.style.transform = `scale(${1 + (zEnd - 1) * dive})`;
+    $.s1group.style.opacity = String(1 - ez(seg(p1, 0.55, 0.98)));
+    $.s1cue.style.opacity = String(Math.max(0, 1 - seg(p1, 0.02, 0.12)));
+
+    // top bar
+    const show = scrollY > $.s1.offsetHeight - vh * 1.02;
+    $.topbar.style.opacity = show ? 1 : 0;
+    $.topbar.style.transform = show ? 'translateY(0)' : 'translateY(-8px)';
+    $.topbar.style.pointerEvents = show ? 'auto' : 'none';
+
+    // Scene 2 — phone de-zoom
+    const p2 = R ? 1 : prog($.s2);
+    const e2 = ez(seg(p2, 0, 0.28));
+    const entry2 = R ? 0 : Math.max(0, $.s2.getBoundingClientRect().top);
+    $.s2phone.style.transform = `translateY(${-entry2 / 2}px) scale(${1 + 1.35 * M * (1 - e2)})`;
+    const sw = [[0.18, 0.38], [0.38, 0.6], [0.6, 1.03]];
+    for (let i = 0; i < 3; i++) {
+      const el = $['s2step' + i]; if (!el) continue;
+      const [a, b] = sw[i];
+      const o = R ? (i === 2 ? 1 : 0) : Math.min(seg(p2, a, a + 0.05), 1 - seg(p2, b - 0.05, b));
+      el.style.opacity = o;
+      el.style.transform = `translateY(${(1 - o) * 12}px)`;
+    }
+    for (let i = 0; i < 3; i++) {
+      const el = $['s2tag' + i]; if (!el) continue;
+      const t = R ? 1 : ez(seg(p2, 0.36 + i * 0.055, 0.46 + i * 0.055));
+      el.style.opacity = t;
+      el.style.transform = `scale(${0.6 + 0.4 * t})`;
+    }
+    const sh = R ? 1 : ez(seg(p2, 0.62, 0.78));
+    $.s2sheet.style.transform = `translateY(${(1 - sh) * 112}%)`;
+
+    // Scene 3 — scrubbed rail
+    const p3 = R ? 0 : prog($.s3);
+    const tr = $.s3track;
+    if (tr) {
+      const max = Math.max(0, tr.scrollWidth - tr.parentElement.clientWidth);
+      tr.style.transform = `translateX(${-seg(p3, 0.05, 0.95) * max}px)`;
+    }
+
+    // Scene 4 — manifesto
+    const p4 = R ? 1 : prog($.s4);
+    const lw = [[0.03, 0.3], [0.28, 0.55], [0.53, 0.78]];
+    for (let i = 0; i < 3; i++) {
+      const el = $['s4l' + i]; if (!el) continue;
+      const [a, b] = lw[i];
+      const o = R ? 0 : Math.min(seg(p4, a, a + 0.06), 1 - seg(p4, b - 0.06, b));
+      el.style.opacity = o;
+      el.style.transform = `scale(${0.86 + 0.24 * seg(p4, a, b)})`;
+    }
+    const eo = R ? 1 : ez(seg(p4, 0.76, 0.88));
+    $.s4end.style.opacity = eo;
+    $.s4end.style.transform = `translateY(${(1 - eo) * 30}px)`;
+
+    // scroll-in reveals (CTA card, role cards, footer, wall header)
+    if (!this.revs || !this.revs.length) this.revs = Array.from(document.querySelectorAll('[data-rev]'));
+    const scrollH = document.body.scrollHeight;
+    this.revs.forEach(el => {
+      const i = +el.getAttribute('data-rev') || 0;
+      const r = el.getBoundingClientRect();
+      // lowest r.top this element can ever reach (at max scroll) — ensures e hits 1 even for the footer
+      const minTop = Math.max(0, r.top + scrollY - (scrollH - vh));
+      const start = vh * (0.98 - (i % 3) * 0.03);
+      const end = Math.max(vh * 0.62, minTop);
+      const e = R || start <= end ? 1 : ez(Math.min(1, Math.max(0, (start - r.top) / (start - end))));
+      el.style.opacity = e;
+      el.style.transform = `translateY(${(1 - e) * 48 * M}px) scale(${0.965 + 0.035 * e})`;
+    });
+
+    // parallax wall
+    if (!this.pars || !this.pars.length) this.pars = Array.from(document.querySelectorAll('[data-par]'));
+    const spd = [-40, 34, -56];
+    this.pars.forEach(col => {
+      const i = +col.getAttribute('data-par') || 0;
+      const pr = col.parentElement.getBoundingClientRect();
+      const t = (pr.top + pr.height / 2 - vh / 2) / vh;
+      col.style.transform = R ? 'none' : `translateY(${(col.style.marginTop ? 0 : 0) + t * spd[i] * M}px)`;
+    });
+  }
+}
+</script>
+</body>
+</html>

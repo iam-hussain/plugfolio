@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  a { color: #7C3AED; text-decoration: none; }
+  a:hover { color: #5B21B6; }
+  @keyframes grow { 0%,100% { transform: translateY(6px) scaleY(.86); } 50% { transform: translateY(0) scaleY(1); } }
+  @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+  @keyframes popin { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.12); } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes sweep { 0% { transform: translateX(-120%); } 100% { transform: translateX(320%); } }
+  @keyframes blink { 0%,60% { opacity: 1; } 61%,100% { opacity: .25; } }
+  @keyframes hop { 0%,100% { transform: translateY(0) scaleY(1); } 12% { transform: translateY(0) scaleY(.86) scaleX(1.06); } 40% { transform: translateY(-26px) scaleY(1.06) scaleX(.96); } 70% { transform: translateY(0) scaleY(.92) scaleX(1.04); } }
+  @keyframes shadow { 0%,100% { transform: scaleX(1); opacity:.4; } 40% { transform: scaleX(.62); opacity:.18; } 70% { transform: scaleX(1.1); opacity:.5; } }
+  @keyframes wink { 0%,90%,100% { transform: scaleY(1); } 94% { transform: scaleY(.1); } }
+  @keyframes wiggleL { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-9deg); } }
+  @keyframes wiggleR { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(9deg); } }
+  @keyframes sparkflash { 0%,70%,100% { opacity:0; transform:scale(.4); } 82% { opacity:1; transform:scale(1.2); } }
+</style>
+</helmet>
+
+<div style="background:#12101C; font-family:'Inter',sans-serif; color:#F5F4F8; min-height:100vh;">
+
+  <!-- ======= TOP BAR ======= -->
+  <div style="border-bottom:1px solid #262234; padding:18px 48px; display:flex; align-items:center; justify-content:space-between;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div style="width:28px; height:28px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+      <div style="font-family:'Sora',sans-serif; font-size:19px; font-weight:700; letter-spacing:-0.045em; display:flex; align-items:flex-end;">plugfolio<span style="width:5px; height:5px; border-radius:1.5px; background:#C6FF3D; margin-left:3px; margin-bottom:4px;"></span></div>
+    </div>
+    <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:#8C8798;">Motion concept &middot; creator film &middot; for review</div>
+  </div>
+
+  <!-- ======= HERO ======= -->
+  <div style="max-width:1180px; margin:0 auto; padding:80px 48px 56px; display:grid; grid-template-columns:1.15fr .85fr; gap:56px; align-items:center;">
+    <div>
+      <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.22em; text-transform:uppercase; color:#C6FF3D; margin-bottom:22px;">Concept 01 &middot; before we animate</div>
+      <div style="font-family:'Sora',sans-serif; font-size:60px; font-weight:800; letter-spacing:-0.05em; line-height:0.98;">The plug that<br>grows sales.</div>
+      <div style="font-size:18px; color:#B7B2C4; line-height:1.6; margin-top:24px; max-width:520px;">A ~30&ndash;35s film told from the <span style="color:#F5F4F8; font-weight:600;">creator&rsquo;s point of view</span> &mdash; ending the hunt for that one product buried in an old post. All your plugs, grouped into one always-current, shoppable profile. Below is the story, the character, the look and the motion. Nothing is rendered yet &mdash; this is the pitch.</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:30px;">
+        <div style="font-family:'Space Mono',monospace; font-size:11px; padding:8px 14px; border:1px solid #3A3550; border-radius:100px; color:#B7B2C4;">confident</div>
+        <div style="font-family:'Space Mono',monospace; font-size:11px; padding:8px 14px; border:1px solid #3A3550; border-radius:100px; color:#B7B2C4;">energetic</div>
+        <div style="font-family:'Space Mono',monospace; font-size:11px; padding:8px 14px; border:1px solid #3A3550; border-radius:100px; color:#B7B2C4;">premium</div>
+        <div style="font-family:'Space Mono',monospace; font-size:11px; padding:8px 14px; border:1px solid #3A3550; border-radius:100px; color:#B7B2C4;">kinetic type</div>
+      </div>
+    </div>
+    <!-- animated hero frame (a live taste of the motion) -->
+    <div style="position:relative; width:248px; height:440px; margin:0 auto; border-radius:28px; overflow:hidden; background:linear-gradient(160deg,#5B21B6,#7C3AED 55%,#2B1466); border:1px solid #3A3550; box-shadow:0 30px 80px rgba(0,0,0,.5);">
+      <div style="position:absolute; inset:0; opacity:.5; background:radial-gradient(120px 120px at 78% 22%, rgba(198,255,61,.4), transparent);"></div>
+      <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-58%); width:96px; height:96px; animation:floaty 4s ease-in-out infinite;">
+        <div style="animation:grow 2.4s ease-in-out infinite; transform-origin:50% 100%;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+      </div>
+      <div style="position:absolute; left:0; top:0; bottom:0; width:60px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent); animation:sweep 3.2s ease-in-out infinite;"></div>
+      <div style="position:absolute; left:22px; right:22px; bottom:26px;">
+        <div style="font-family:'Sora',sans-serif; font-size:22px; font-weight:700; letter-spacing:-0.03em; line-height:1.1;">your reel is now<br>shoppable<span style="display:inline-block; width:2px; height:20px; background:#C6FF3D; margin-left:3px; vertical-align:-3px; animation:blink 1s steps(1) infinite;"></span></div>
+        <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.1em; color:rgba(255,255,255,.7); margin-top:10px;">LIVE PREVIEW OF THE MOTION FEEL</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= LOGO CHARACTER (TWO-CHARACTER CAST) ======= -->
+  <div style="max-width:1180px; margin:0 auto; padding:44px 48px; border-top:1px solid #262234;">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:30px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#C6FF3D;">The cast &middot; two marks, one story</div>
+        <div style="font-family:'Sora',sans-serif; font-size:30px; font-weight:700; letter-spacing:-0.03em; margin-top:8px;">The mark, alive &mdash; &times;2.</div>
+      </div>
+      <div style="font-size:14px; color:#8C8798; max-width:460px;">Same PlugMark, two shades. A <span style="color:#F5F4F8;">violet</span> mark plays the <span style="color:#F5F4F8;">creator</span> and a lighter <span style="color:#C9B8FF;">violet-tint</span> mark plays the <span style="color:#C9B8FF;">follower</span>. They act out every beat together &mdash; the plug literally passes between them as a lime spark.</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1.35fr 1fr; gap:22px;">
+      <!-- big animated two-character stage -->
+      <div style="position:relative; background:linear-gradient(160deg,#241a3f,#12101C); border:1px solid #2A2540; border-radius:20px; padding:40px 32px 34px; overflow:hidden;">
+        <div style="position:absolute; inset:0; opacity:.5; background:radial-gradient(200px 160px at 50% 26%, rgba(124,58,237,.4), transparent);"></div>
+
+        <div style="position:relative; display:flex; align-items:flex-end; justify-content:center; gap:60px; min-height:220px;">
+          <!-- CREATOR -->
+          <div style="position:relative; width:130px; text-align:center;">
+            <div style="position:absolute; top:-8px; right:2px; width:24px; height:24px; border-radius:6px; background:#C6FF3D; animation:sparkflash 3s ease-in-out infinite;"></div>
+            <div style="position:relative; animation:hop 3s cubic-bezier(.5,0,.3,1) infinite; transform-origin:50% 100%;">
+              <div style="position:relative; width:130px; height:130px; margin:0 auto;">
+                <dc-import name="PlugMark" body="#7C3AED" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import>
+                <div style="position:absolute; left:34%; top:58%; width:17px; height:19px; border-radius:50%; background:#12101C; animation:wink 3s ease-in-out infinite; transform-origin:center;"><div style="position:absolute; top:2.5px; left:3px; width:7px; height:7px; border-radius:50%; background:#fff;"></div><div style="position:absolute; bottom:3px; right:3px; width:3px; height:3px; border-radius:50%; background:#fff; opacity:.8;"></div></div>
+                <div style="position:absolute; left:52%; top:58%; width:17px; height:19px; border-radius:50%; background:#12101C; animation:wink 3s ease-in-out infinite; transform-origin:center;"><div style="position:absolute; top:2.5px; left:3px; width:7px; height:7px; border-radius:50%; background:#fff;"></div><div style="position:absolute; bottom:3px; right:3px; width:3px; height:3px; border-radius:50%; background:#fff; opacity:.8;"></div></div>
+              </div>
+            </div>
+            <div style="width:96px; height:12px; border-radius:50%; background:#000; margin:6px auto 0; animation:shadow 3s cubic-bezier(.5,0,.3,1) infinite;"></div>
+            <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:#C6FF3D; margin-top:10px;">Creator</div>
+          </div>
+
+          <!-- the plug passing between them -->
+          <div style="position:absolute; left:50%; top:44%; transform:translate(-50%,-50%); display:flex; align-items:center; gap:5px;">
+            <div style="width:7px; height:7px; border-radius:50%; background:#C6FF3D; animation:blink 1s steps(1) infinite;"></div>
+            <div style="width:7px; height:7px; border-radius:50%; background:#C6FF3D; opacity:.6; animation:blink 1s steps(1) .2s infinite;"></div>
+            <div style="width:7px; height:7px; border-radius:50%; background:#C6FF3D; opacity:.35; animation:blink 1s steps(1) .4s infinite;"></div>
+          </div>
+
+          <!-- FOLLOWER -->
+          <div style="position:relative; width:110px; text-align:center;">
+            <div style="position:relative; animation:hop 3s cubic-bezier(.5,0,.3,1) 1.2s infinite; transform-origin:50% 100%;">
+              <div style="position:relative; width:110px; height:110px; margin:0 auto;">
+                <dc-import name="PlugMark" body="#A78BFA" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import>
+                <div style="position:absolute; left:34%; top:58%; width:15px; height:17px; border-radius:50%; background:#12101C; animation:wink 3s ease-in-out 1.2s infinite; transform-origin:center;"><div style="position:absolute; top:2px; left:2.5px; width:6px; height:6px; border-radius:50%; background:#fff;"></div><div style="position:absolute; bottom:2.5px; right:2.5px; width:2.5px; height:2.5px; border-radius:50%; background:#fff; opacity:.8;"></div></div>
+                <div style="position:absolute; left:52%; top:58%; width:15px; height:17px; border-radius:50%; background:#12101C; animation:wink 3s ease-in-out 1.2s infinite; transform-origin:center;"><div style="position:absolute; top:2px; left:2.5px; width:6px; height:6px; border-radius:50%; background:#fff;"></div><div style="position:absolute; bottom:2.5px; right:2.5px; width:2.5px; height:2.5px; border-radius:50%; background:#fff; opacity:.8;"></div></div>
+              </div>
+            </div>
+            <div style="width:80px; height:11px; border-radius:50%; background:#000; margin:6px auto 0; animation:shadow 3s cubic-bezier(.5,0,.3,1) 1.2s infinite;"></div>
+            <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:#C9B8FF; margin-top:10px;">Follower</div>
+          </div>
+        </div>
+
+        <!-- wordmark lockup on stage -->
+        <div style="position:relative; display:flex; align-items:center; justify-content:center; gap:12px; margin-top:26px; padding-top:22px; border-top:1px solid #2A2540;">
+          <div style="width:24px; height:24px;"><dc-import name="PlugMark" body="#FFFFFF" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+          <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.045em; display:flex; align-items:flex-end;">plugfolio<span style="width:6px; height:6px; border-radius:1.5px; background:#C6FF3D; margin-left:4px; margin-bottom:5px; animation:sparkflash 3s ease-in-out infinite;"></span></div>
+        </div>
+      </div>
+
+      <!-- cast + behaviour notes -->
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="background:#1A1727; border:1px solid #2A2540; border-radius:16px; padding:18px 20px;">
+          <div style="display:flex; align-items:center; gap:14px;"><div style="width:40px; height:40px; flex-shrink:0;"><dc-import name="PlugMark" body="#7C3AED" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div><div><div style="font-family:'Sora',sans-serif; font-weight:700; font-size:14px;">The Creator <span style="color:#8C8798; font-weight:400; font-family:'Space Mono',monospace; font-size:10px;">&middot; violet</span></div><div style="font-size:12.5px; color:#B7B2C4; margin-top:2px;">Leads the story. Tags, curates, sparks the plug.</div></div></div>
+        </div>
+        <div style="background:#1A1727; border:1px solid #2A2540; border-radius:16px; padding:18px 20px;">
+          <div style="display:flex; align-items:center; gap:14px;"><div style="width:40px; height:40px; flex-shrink:0;"><dc-import name="PlugMark" body="#A78BFA" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div><div><div style="font-family:'Sora',sans-serif; font-weight:700; font-size:14px;">The Follower <span style="color:#8C8798; font-weight:400; font-family:'Space Mono',monospace; font-size:10px;">&middot; violet tint</span></div><div style="font-size:12.5px; color:#B7B2C4; margin-top:2px;">Reacts &mdash; hunts, lights up, buys, follows.</div></div></div>
+        </div>
+        <div style="background:#1A1727; border:1px solid #2A2540; border-radius:16px; padding:16px 20px;">
+          <div style="display:flex; align-items:center; gap:14px;"><div style="width:40px; height:40px; border-radius:9px; background:#C6FF3D; flex-shrink:0; animation:sparkflash 2s ease-in-out infinite;"></div><div><div style="font-family:'Sora',sans-serif; font-weight:700; font-size:14px;">The spark = the plug</div><div style="font-size:12.5px; color:#B7B2C4; margin-top:2px;">Lime spark passes creator &rarr; follower on every win.</div></div></div>
+        </div>
+        <div style="background:#1A1727; border:1px solid #2A2540; border-radius:16px; padding:16px 20px;">
+          <div style="display:flex; align-items:center; gap:14px;"><div style="width:40px; height:40px; flex-shrink:0; animation:hop 2s cubic-bezier(.5,0,.3,1) infinite; transform-origin:bottom;"><dc-import name="PlugMark" body="#7C3AED" prong="#C6FF3D" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div><div><div style="font-family:'Sora',sans-serif; font-weight:700; font-size:14px;">Hop, wiggle &amp; wink</div><div style="font-size:12.5px; color:#B7B2C4; margin-top:2px;">Springy antennae + bounce carry the transitions.</div></div></div>
+        </div>
+        <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798; line-height:1.5; padding:4px 4px 0;">Rule kept: &lt;24px both collapse to the flat mark. Characters live in the film, not the app UI.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= STORYBOARD ======= -->
+  <div style="max-width:1180px; margin:0 auto; padding:44px 48px 24px; border-top:1px solid #262234;">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:34px;">
+      <div>
+        <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#C6FF3D;">A &middot; The story</div>
+        <div style="font-family:'Sora',sans-serif; font-size:30px; font-weight:700; letter-spacing:-0.03em; margin-top:8px;">8 beats, ~35 seconds</div>
+      </div>
+      <div style="font-size:14px; color:#8C8798; max-width:420px;">Each frame below is a stand-in for a scene &mdash; real screens from your prototype drop in where the grey placeholders are.</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px;">
+      <sc-for list="{{ scenes }}" as="s" hint-placeholder-count="8">
+        <div style="background:#1A1727; border:1px solid #2A2540; border-radius:18px; overflow:hidden; display:flex; flex-direction:column;">
+          <div style="position:relative; aspect-ratio:16/10; background:{{ s.bg }}; overflow:hidden;">
+            <div style="position:absolute; top:10px; left:10px; font-family:'Space Mono',monospace; font-size:10px; font-weight:700; color:#12101C; background:#C6FF3D; padding:3px 8px; border-radius:100px;">{{ s.no }}</div>
+            <div style="position:absolute; top:10px; right:10px; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.06em; color:rgba(255,255,255,.75); background:rgba(0,0,0,.28); padding:3px 7px; border-radius:100px;">{{ s.time }}</div>
+            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:14px; text-align:center; font-family:'Sora',sans-serif; font-weight:700; letter-spacing:-0.02em; font-size:17px; color:{{ s.fg }}; line-height:1.12;">{{ s.frame }}</div>
+          </div>
+          <div style="padding:14px 15px 16px;">
+            <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; letter-spacing:-0.02em;">{{ s.title }}</div>
+            <div style="font-size:12.5px; color:#B7B2C4; line-height:1.5; margin-top:6px;">{{ s.desc }}</div>
+            <div style="font-family:'Space Mono',monospace; font-size:10px; color:#8C8798; line-height:1.5; margin-top:10px; border-top:1px solid #2A2540; padding-top:9px;"><span style="color:#C6FF3D;">MOTION</span> {{ s.motion }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- ======= LOOK + MOTION + FORMATS ======= -->
+  <div style="max-width:1180px; margin:0 auto; padding:52px 48px; display:grid; grid-template-columns:1fr 1fr; gap:22px;">
+
+    <!-- Look -->
+    <div style="background:#1A1727; border:1px solid #2A2540; border-radius:20px; padding:28px;">
+      <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#C6FF3D;">B &middot; The look</div>
+      <div style="font-family:'Sora',sans-serif; font-size:22px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">On-brand, all the way</div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <div style="flex:1;"><div style="height:52px; border-radius:10px; background:#7C3AED;"></div><div style="font-family:'Space Mono',monospace; font-size:9px; color:#8C8798; margin-top:6px;">VIOLET</div></div>
+        <div style="flex:1;"><div style="height:52px; border-radius:10px; background:#5B21B6;"></div><div style="font-family:'Space Mono',monospace; font-size:9px; color:#8C8798; margin-top:6px;">DEEP</div></div>
+        <div style="flex:1;"><div style="height:52px; border-radius:10px; background:#C6FF3D;"></div><div style="font-family:'Space Mono',monospace; font-size:9px; color:#8C8798; margin-top:6px;">LIME</div></div>
+        <div style="flex:1;"><div style="height:52px; border-radius:10px; background:#12101C; border:1px solid #2A2540;"></div><div style="font-family:'Space Mono',monospace; font-size:9px; color:#8C8798; margin-top:6px;">INK</div></div>
+        <div style="flex:1;"><div style="height:52px; border-radius:10px; background:#F5F4F8;"></div><div style="font-family:'Space Mono',monospace; font-size:9px; color:#8C8798; margin-top:6px;">CANVAS</div></div>
+      </div>
+      <div style="font-size:14px; color:#B7B2C4; line-height:1.6; margin-top:20px;">Dark ink base for punch, violet gradients for depth, <span style="color:#C6FF3D;">lime reserved for the money moments</span> (tap, tag pop, code copy). Big <span style="color:#F5F4F8;">Sora</span> kinetic type, Inter for UI, Space Mono captions. Real prototype screens &mdash; not stock &mdash; keep it honest and credible.</div>
+    </div>
+
+    <!-- Motion -->
+    <div style="background:#1A1727; border:1px solid #2A2540; border-radius:20px; padding:28px;">
+      <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#C6FF3D;">C &middot; The motion</div>
+      <div style="font-family:'Sora',sans-serif; font-size:22px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">Snappy, spring-driven, quick cuts</div>
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:20px;">
+        <div style="display:flex; gap:12px; align-items:flex-start;"><div style="font-family:'Space Mono',monospace; font-size:11px; color:#C6FF3D; width:74px; flex-shrink:0;">PACE</div><div style="font-size:13.5px; color:#B7B2C4; line-height:1.5;">2&ndash;4s per beat, cut on the beat of an upbeat track. Never sleepy.</div></div>
+        <div style="display:flex; gap:12px; align-items:flex-start;"><div style="font-family:'Space Mono',monospace; font-size:11px; color:#C6FF3D; width:74px; flex-shrink:0;">EASING</div><div style="font-size:13.5px; color:#B7B2C4; line-height:1.5;">Springy overshoot on pops &amp; taps; smooth glides between screens.</div></div>
+        <div style="display:flex; gap:12px; align-items:flex-start;"><div style="font-family:'Space Mono',monospace; font-size:11px; color:#C6FF3D; width:74px; flex-shrink:0;">SIGNATURE</div><div style="font-size:13.5px; color:#B7B2C4; line-height:1.5;">The PlugMark prongs <span style="color:#F5F4F8;">grow upward</span> as the recurring transition device.</div></div>
+        <div style="display:flex; gap:12px; align-items:flex-start;"><div style="font-family:'Space Mono',monospace; font-size:11px; color:#C6FF3D; width:74px; flex-shrink:0;">DEVICE</div><div style="font-size:13.5px; color:#B7B2C4; line-height:1.5;">Phone-in-hand tilts &amp; taps; UI elements animate in layer by layer.</div></div>
+      </div>
+      <div style="font-family:'Space Mono',monospace; font-size:11px; color:#8C8798; margin-top:20px; border-top:1px solid #2A2540; padding-top:14px;">Fidelity: <span style="color:#F5F4F8;">motion-graphics explainer</span> (UI + kinetic type), not filmed footage.</div>
+    </div>
+  </div>
+
+  <!-- ======= FORMATS / USAGE ======= -->
+  <div style="max-width:1180px; margin:0 auto; padding:0 48px 52px;">
+    <div style="background:linear-gradient(150deg,#241a3f,#1A1727); border:1px solid #2A2540; border-radius:20px; padding:32px;">
+      <div style="font-family:'Space Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#C6FF3D;">D &middot; Yes &mdash; built for ads &amp; social</div>
+      <div style="font-family:'Sora',sans-serif; font-size:22px; font-weight:700; letter-spacing:-0.02em; margin-top:8px; max-width:640px;">Designed to be cut into every format you run.</div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:26px;">
+        <div style="background:#12101C; border:1px solid #2A2540; border-radius:14px; padding:20px; display:flex; gap:16px; align-items:center;">
+          <div style="width:38px; height:66px; border-radius:6px; background:linear-gradient(160deg,#7C3AED,#2B1466); flex-shrink:0;"></div>
+          <div><div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px;">9:16</div><div style="font-size:12px; color:#B7B2C4; margin-top:3px; line-height:1.4;">Reels, TikTok, Stories, Shorts</div></div>
+        </div>
+        <div style="background:#12101C; border:1px solid #2A2540; border-radius:14px; padding:20px; display:flex; gap:16px; align-items:center;">
+          <div style="width:54px; height:54px; border-radius:6px; background:linear-gradient(160deg,#7C3AED,#2B1466); flex-shrink:0;"></div>
+          <div><div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px;">1:1</div><div style="font-size:12px; color:#B7B2C4; margin-top:3px; line-height:1.4;">Feed posts, carousels, IG ads</div></div>
+        </div>
+        <div style="background:#12101C; border:1px solid #2A2540; border-radius:14px; padding:20px; display:flex; gap:16px; align-items:center;">
+          <div style="width:72px; height:41px; border-radius:6px; background:linear-gradient(160deg,#7C3AED,#2B1466); flex-shrink:0;"></div>
+          <div><div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px;">16:9</div><div style="font-size:12px; color:#B7B2C4; margin-top:3px; line-height:1.4;">YouTube, site hero, pre-roll</div></div>
+        </div>
+      </div>
+      <div style="display:flex; gap:26px; flex-wrap:wrap; margin-top:24px; font-size:13.5px; color:#B7B2C4; line-height:1.55;">
+        <div style="flex:1; min-width:220px;"><span style="color:#C6FF3D; font-family:'Space Mono',monospace; font-size:11px;">CUT-DOWNS</span><br>A 6s hook and a 15s cut fall out of the same timeline for paid ads.</div>
+        <div style="flex:1; min-width:220px;"><span style="color:#C6FF3D; font-family:'Space Mono',monospace; font-size:11px;">CAPTIONS</span><br>Kinetic type doubles as burned-in captions &mdash; works muted, which is how social plays.</div>
+        <div style="flex:1; min-width:220px;"><span style="color:#C6FF3D; font-family:'Space Mono',monospace; font-size:11px;">END CARD</span><br>Fixed logo + CTA lockup so every cut ends on brand.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= NEXT STEP ======= -->
+  <div style="max-width:1180px; margin:0 auto; padding:8px 48px 90px;">
+    <div style="border:1px dashed #3A3550; border-radius:20px; padding:30px 34px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+      <div style="max-width:640px;">
+        <div style="font-family:'Sora',sans-serif; font-size:20px; font-weight:700; letter-spacing:-0.02em;">If this matches what you pictured &mdash; I&rsquo;ll animate it.</div>
+        <div style="font-size:14px; color:#B7B2C4; line-height:1.6; margin-top:8px;">Next I build the real timeline: scenes sequenced to a beat, prototype screens dropped in, spring motion and kinetic type. Tell me the length (30s vs a tighter 15s), whether you want a voiceover or type-only, and which format is priority (9:16 first?).</div>
+      </div>
+      <div style="font-family:'Space Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:#12101C; background:#C6FF3D; padding:12px 20px; border-radius:100px; white-space:nowrap;">Say the word &rarr;</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      scenes: [
+        { no:'01', time:'0:00', bg:'#1F1B2E', fg:'#F5F4F8', frame:'"which video was that jacket in again?"', title:'The hunt', desc:'A follower loved something you plugged \u2014 now they\u2019re scrubbing weeks of old posts trying to find it.', motion:'Reels scroll past in a blur; a finger scrubs; Sparky peeks in, confused, antennae wiggling.' },
+        { no:'02', time:'0:05', bg:'#241a3f', fg:'#FF6B5C', frame:'expired \u00b7 out of stock \u00b7 link changed', title:'\u2026and it\u2019s gone', desc:'They finally find the post \u2014 but the product moved, sold out, or the link is dead. Sale lost.', motion:'Coral stamps slam over a product; the old link cracks; Sparky droops.' },
+        { no:'03', time:'0:10', bg:'linear-gradient(160deg,#5B21B6,#7C3AED)', fg:'#FFFFFF', frame:'one profile. every plug.', title:'Enter Plugfolio', desc:'Sparky hops in, spark fires \u2014 every product you\u2019ve ever recommended, pulled into one place.', motion:'Prongs grow into arrows; scattered tags fly in and snap into a tidy grid.' },
+        { no:'04', time:'0:15', bg:'#12101C', fg:'#C6FF3D', frame:'your referrals, grouped', title:'One marketplace', desc:'All your picks become a browsable shop \u2014 like a storefront of everything you vouch for.', motion:'Product cards tile in row by row; category chips slide across the top.' },
+        { no:'05', time:'0:20', bg:'linear-gradient(160deg,#7C3AED,#2B1466)', fg:'#FFFFFF', frame:'your take \u00b7 reviews \u00b7 comments', title:'Your voice sells', desc:'Each product carries your note, your review, follower comments \u2014 not a faceless listing.', motion:'A card flips to reveal your quote; comment bubbles stack; a spark on the like.' },
+        { no:'06', time:'0:25', bg:'#1F1B2E', fg:'#F5F4F8', frame:'always current \u2014 never a dead link', title:'Kept fresh', desc:'Change a product once and it updates everywhere. No hunting, no expired plugs.', motion:'A card swaps its product live; a green \u201cupdated\u201d tick pulses; Sparky nods.' },
+        { no:'07', time:'0:30', bg:'#12101C', fg:'#C6FF3D', frame:'tap \u00b7 see \u00b7 buy \u2014 no login', title:'They buy, direct', desc:'Followers browse your profile and buy straight from it. Three taps, no account, no wall.', motion:'Three quick cuts count the taps; \u201cno login\u201d stamps in; spark on the buy.' },
+        { no:'08', time:'0:34', bg:'linear-gradient(150deg,#5B21B6,#12101C)', fg:'#FFFFFF', frame:'all your plugs. one profile.', title:'End card', desc:'Sparky lands center with the lockup + CTA \u2014 the fixed brand close every cut ends on.', motion:'Mark hops to center, tagline resolves, URL fades up. Hold.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

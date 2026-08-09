@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0}
+  a{text-decoration:none;color:var(--accent)}
+  a:hover{opacity:.85}
+  input::placeholder,textarea::placeholder{color:var(--faint)}
+  input:focus,textarea:focus{border-color:var(--accent)!important}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-thumb{background:rgba(128,128,128,.3);border-radius:6px}
+  .ad-nav{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--muted);font-size:13.5px;font-weight:500;transition:background .12s,color .12s;white-space:nowrap;}
+  .ad-nav:hover{background:var(--surface2);color:var(--text);}
+  .ad-nav-active{background:var(--accentSoft);color:var(--accent);font-weight:600;}
+  .ad-table{width:100%;border-collapse:collapse;}
+  .ad-th{text-align:left;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:700;padding:11px 14px;border-bottom:1px solid var(--border);}
+  .ad-td{padding:8px 14px;height:44px;font-size:13.5px;color:var(--text);border-bottom:1px solid var(--border);vertical-align:middle;}
+  .ad-row:hover .ad-td{background:var(--surface2);}
+  .ad-mono{font-family:'Space Mono',monospace;font-size:12px;}
+  .ad-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .ad-num{font-variant-numeric:tabular-nums;}
+  .ad-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;line-height:1.5;padding:2px 8px;border-radius:6px;white-space:nowrap;}
+  .ad-b-outline{border:1px solid var(--border2);color:var(--muted);}
+  .ad-b-secondary{background:var(--accentSoft);color:var(--accent);}
+  .ad-b-default{background:var(--accent);color:var(--accentFg);}
+  .ad-b-danger{background:var(--dangerSoft);color:var(--danger);}
+  .ad-btn{display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:7px;cursor:pointer;border:1px solid transparent;transition:background .12s,opacity .12s;white-space:nowrap;}
+  .ad-btn-primary{background:var(--accent);color:var(--accentFg);}
+  .ad-btn-secondary{background:var(--surface);color:var(--text);border-color:var(--border2);}
+  .ad-btn-secondary:hover{background:var(--surface2);}
+  .ad-btn-ghost{background:transparent;color:var(--muted);}
+  .ad-btn-ghost:hover{background:var(--surface2);color:var(--text);}
+  .ad-btn-destructive{background:transparent;color:var(--danger);border-color:var(--dangerBorder);}
+  .ad-btn-destructive:hover{background:var(--dangerSoft);}
+  .ad-btn-danger-solid{background:var(--danger);color:var(--dangerFg);}
+  .ad-btn-primary:hover,.ad-btn-danger-solid:hover{opacity:.9;}
+  .ad-btn-off{opacity:.4;pointer-events:none;}
+  .ad-chk{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;vertical-align:middle;}
+  .ad-select{appearance:none;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:8px 30px 8px 12px;font-size:13px;color:var(--text);cursor:pointer;font-family:'Inter',sans-serif;outline:none;}
+  .ad-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;}
+  .ad-tile{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;cursor:pointer;transition:transform .12s,box-shadow .16s;}
+  .ad-tile:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(18,16,28,.08);}
+  .ad-input{width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-size:13.5px;color:var(--text);outline:none;font-family:'Inter',sans-serif;}
+  .ad-empty{padding:30px 14px;text-align:center;color:var(--faint);font-size:13px;}
+  .ad-alert{display:flex;gap:11px;align-items:flex-start;background:var(--dangerSoft);border:1px solid var(--dangerBorder);border-radius:10px;padding:12px 14px;margin-bottom:16px;}
+  .ad-eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:700;}
+  @keyframes adshim{0%{opacity:.5}50%{opacity:1}100%{opacity:.5}}
+  .ad-sk{background:var(--surface2);border-radius:6px;animation:adshim 1.2s ease-in-out infinite;}
+  .ad-pager{display:flex;align-items:center;justify-content:space-between;padding:16px 2px 2px;flex-wrap:wrap;gap:12px;}
+  .ad-pg{min-width:30px;height:30px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text);}
+  .ad-pg:hover{background:var(--surface2);}
+  .ad-pg-active{background:var(--accent);color:var(--accentFg);border-color:var(--accent);}
+  .ad-scrim{position:fixed;inset:0;background:rgba(10,8,18,.5);display:flex;align-items:center;justify-content:center;z-index:60;padding:20px;}
+</style>
+</helmet>
+
+<div style="{{ rootVars }} min-height:100vh; font-family:'Inter',sans-serif; color:var(--text); background:var(--bg); transition:background .2s,color .2s;">
+
+  <!-- ============ SIGN IN ============ -->
+  <sc-if value="{{ isSignin }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:var(--surface2);">
+      <div class="ad-card" style="max-width:384px; width:100%; padding:32px 28px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:22px;">
+          <div style="width:30px; height:30px;"><dc-import name="PlugMark" body="{{ plugBody }}" prong="{{ plugProng }}" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+          <div style="font-family:'Sora',sans-serif; font-size:21px; font-weight:700; letter-spacing:-0.045em; display:flex; align-items:flex-end;">plugfolio<span style="width:5px;height:5px;border-radius:1px;background:var(--accent);margin:0 0 5px 2px;"></span></div>
+        </div>
+        <div class="ad-eyebrow" style="color:var(--accent);">Plugfolio</div>
+        <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:4px;">Admin</div>
+        <div style="font-size:13.5px; color:var(--muted); line-height:1.55; margin-top:8px;">Operators only. Sign in with your admin credentials.</div>
+
+        <sc-if value="{{ signErr }}" hint-placeholder-val="{{ false }}">
+          <div class="ad-alert" style="margin-top:18px; margin-bottom:0;">
+            <span style="color:var(--danger); display:flex; margin-top:1px;">{{ icAlert }}</span>
+            <div style="font-size:13px; color:var(--text); font-weight:500;">Wrong email or password.</div>
+          </div>
+        </sc-if>
+
+        <div style="margin-top:22px;">
+          <label style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:7px;">Email</label>
+          <input class="ad-input" placeholder="you@plugfolio.com" style="padding:12px 13px;">
+        </div>
+        <div style="margin-top:14px;">
+          <label style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:7px;">Password</label>
+          <input class="ad-input" type="password" placeholder="••••••••••" style="padding:12px 13px;">
+        </div>
+        <button class="ad-btn ad-btn-primary" onClick="{{ onSignIn }}" style="width:100%; justify-content:center; margin-top:20px; padding:12px; font-family:'Sora',sans-serif; font-size:15px;">Sign in</button>
+        <div style="font-size:11.5px; color:var(--faint); line-height:1.5; margin-top:16px; text-align:center;">Accounts are provisioned by an existing operator.</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ APP ============ -->
+  <sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex; min-height:100vh;">
+
+      <!-- sidebar -->
+      <aside style="width:{{ sidebarW }}; flex-shrink:0; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; transition:width .16s;">
+        <div style="padding:18px 14px 14px; display:flex; align-items:center; gap:10px; min-height:62px;">
+          <div style="width:28px; height:28px; flex-shrink:0;"><dc-import name="PlugMark" body="{{ plugBody }}" prong="{{ plugProng }}" hint-size="100%,100%" style="width:100%;height:100%;display:block;"></dc-import></div>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-family:'Sora',sans-serif; font-size:18px; font-weight:700; letter-spacing:-0.045em; line-height:1; display:flex; align-items:flex-end;">plugfolio<span style="width:4px;height:4px;border-radius:1px;background:var(--accent);margin:0 0 4px 2px;"></span></div>
+              <div class="ad-eyebrow" style="margin-top:3px; color:var(--accent);">Admin</div>
+            </div>
+          </sc-if>
+        </div>
+
+        <nav style="flex:1; overflow-y:auto; padding:4px 10px 10px;">
+          <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="6">
+            <sc-if value="{{ g.showLabel }}" hint-placeholder-val="{{ false }}">
+              <div class="ad-eyebrow" style="padding:14px 10px 6px;">{{ g.label }}</div>
+            </sc-if>
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
+              <div class="ad-nav {{ it.activeCls }}" onClick="{{ it.on }}" title="{{ it.label }}" style="margin-top:2px;">
+                <span style="display:flex;">{{ it.iconEl }}</span>
+                <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span>{{ it.label }}</span></sc-if>
+              </div>
+            </sc-for>
+          </sc-for>
+        </nav>
+
+        <div style="border-top:1px solid var(--border); padding:12px 12px;">
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:12px; color:var(--faint); padding:2px 8px 8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">ops@plugfolio.com</div>
+          </sc-if>
+          <div class="ad-nav" onClick="{{ onSignOut }}" title="Sign out">
+            <span style="display:flex;">{{ icSignout }}</span>
+            <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span>Sign out</span></sc-if>
+          </div>
+        </div>
+      </aside>
+
+      <!-- main -->
+      <main style="flex:1; min-width:0; display:flex; flex-direction:column;">
+        <div style="height:48px; flex-shrink:0; border-bottom:1px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:space-between; padding:0 18px; position:sticky; top:0; z-index:20;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <button class="ad-btn ad-btn-ghost" onClick="{{ onToggleCollapse }}" style="padding:6px;">{{ icPanel }}</button>
+            <div style="font-family:'Sora',sans-serif; font-size:14.5px; font-weight:600; letter-spacing:-0.01em;">{{ pageTitle }}</div>
+          </div>
+          <button class="ad-btn ad-btn-ghost" onClick="{{ onToggleTheme }}" style="padding:6px;" title="Toggle theme">{{ icTheme }}</button>
+        </div>
+
+        <div style="padding:24px; flex:1; overflow-x:auto;">
+
+          <sc-if value="{{ showSelBar }}" hint-placeholder-val="{{ false }}">
+            <div style="position:sticky; top:0; z-index:15; display:flex; align-items:center; justify-content:space-between; gap:16px; background:var(--accentSoft); border:1px solid var(--border2); border-radius:10px; padding:9px 12px; margin-bottom:16px;">
+              <div style="display:flex; align-items:center; gap:10px;"><button class="ad-btn ad-btn-ghost" onClick="{{ onClearSel }}" style="padding:5px;">{{ icClose }}</button><span class="ad-num" style="font-weight:700; font-size:13.5px;">{{ selCount }} selected</span></div>
+              <button class="ad-btn ad-btn-danger-solid" onClick="{{ onBulk }}">{{ bulkVerb }}</button>
+            </div>
+          </sc-if>
+
+          <!-- DASHBOARD -->
+          <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+            <div style="max-width:1200px;">
+              <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em; margin-bottom:4px;">Dashboard</div>
+              <div style="font-size:13.5px; color:var(--muted); margin-bottom:20px;">The daily glance — what is moving, what is on fire.</div>
+              <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px;">
+                <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="8">
+                  <div class="ad-tile" onClick="{{ t.on }}">
+                    <div class="ad-eyebrow">{{ t.label }}</div>
+                    <div class="ad-num" style="font-family:'Sora',sans-serif; font-size:28px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">{{ t.value }}</div>
+                    <div style="font-size:12px; color:var(--muted); margin-top:4px;">{{ t.delta }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div class="ad-card" style="margin-top:20px; padding:18px 20px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                  <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700;">Recent activity</div>
+                  <span onClick="{{ goAudit }}" style="font-family:'Space Mono',monospace; font-size:11px; color:var(--accent); cursor:pointer;">View audit log →</span>
+                </div>
+                <sc-for list="{{ recent }}" as="a" hint-placeholder-count="5">
+                  <div style="display:flex; align-items:center; gap:14px; padding:10px 0; border-top:1px solid var(--border);">
+                    <span class="ad-mono ad-num" style="color:var(--faint); flex-shrink:0; width:118px;">{{ a.when }}</span>
+                    <span class="ad-mono" style="color:var(--accent); flex-shrink:0;">{{ a.action }}</span>
+                    <span style="font-size:12.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ a.detail }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- MEMBERS -->
+          <sc-if value="{{ isMembers }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+              <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Members</div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <select class="ad-select"><option>All statuses</option><option>Active</option><option>Unverified</option><option>Suspended</option></select>
+                <div style="position:relative;"><span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--faint); display:flex;">{{ icSearch }}</span><input class="ad-input" style="padding-left:34px; width:240px;" placeholder="Search email / @handle / name"></div>
+                <button class="ad-btn ad-btn-secondary">Search</button>
+                <button class="ad-btn ad-btn-ghost" style="margin-left:2px;">{{ icDownload }} Export CSV</button>
+              </div>
+            </div>
+            <div class="ad-card" style="overflow:hidden;">
+              <table class="ad-table">
+                <thead><tr><th class="ad-th" style="width:34px;"><input type="checkbox" class="ad-chk" checked="{{ allChecked }}" onChange="{{ onSelAll }}"></th><th class="ad-th">Member</th><th class="ad-th">@handle</th><th class="ad-th">Roles</th><th class="ad-th">Status</th><th class="ad-th">Joined</th><th class="ad-th"></th></tr></thead>
+                <tbody>
+                  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">{{ skeletonEl }}</sc-if>
+                  <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><tr><td class="ad-empty" colspan="7">No members match.</td></tr></sc-if>
+                  <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+                    <sc-for list="{{ members }}" as="r" hint-placeholder-count="6">
+                      <tr class="ad-row">
+                        <td class="ad-td" style="width:34px;"><input type="checkbox" class="ad-chk" checked="{{ r.checked }}" onChange="{{ r.onToggle }}"></td>
+                        <td class="ad-td" onClick="{{ r.onOpen }}" style="cursor:pointer;"><div style="font-weight:600;">{{ r.email }}</div><div class="ad-sub">{{ r.name }}</div></td>
+                        <td class="ad-td ad-mono" style="color:var(--muted);">{{ r.handle }}</td>
+                        <td class="ad-td"><sc-if value="{{ r.hasRole }}" hint-placeholder-val="{{ true }}"><span class="ad-badge ad-b-secondary">{{ r.roleText }}</span></sc-if></td>
+                        <td class="ad-td"><span class="ad-badge {{ r.statusCls }}">{{ r.statusText }}</span></td>
+                        <td class="ad-td ad-num" style="color:var(--muted);">{{ r.joined }}</td>
+                        <td class="ad-td" style="text-align:right;"><sc-for list="{{ r.actions }}" as="a" hint-placeholder-count="1"><button class="ad-btn {{ a.cls }}" onClick="{{ a.on }}">{{ a.label }}</button></sc-for></td>
+                      </tr>
+                    </sc-for>
+                  </sc-if>
+                </tbody>
+              </table>
+            </div>
+            <div class="ad-pager"><div class="ad-num" style="font-size:12px; color:var(--muted);">Showing 1–25 of 4,182</div><div style="display:flex; gap:6px; align-items:center;"><button class="ad-pg">{{ icPrev }}</button><button class="ad-pg ad-pg-active">1</button><button class="ad-pg">2</button><button class="ad-pg">3</button><span style="color:var(--faint); padding:0 4px;">…</span><button class="ad-pg">168</button><button class="ad-pg">{{ icNext }}</button></div></div>
+          </sc-if>
+
+          <!-- PROFILES -->
+          <sc-if value="{{ isProfiles }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+              <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Profiles</div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <select class="ad-select"><option>All statuses</option><option>Live</option><option>Suspended</option><option>Owner suspended</option></select>
+                <div style="position:relative;"><span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--faint); display:flex;">{{ icSearch }}</span><input class="ad-input" style="padding-left:34px; width:230px;" placeholder="Search username / owner email"></div>
+                <button class="ad-btn ad-btn-secondary">Search</button>
+                <button class="ad-btn ad-btn-ghost" style="margin-left:2px;">{{ icDownload }} Export CSV</button>
+              </div>
+            </div>
+            <sc-if value="{{ profileErr }}" hint-placeholder-val="{{ false }}">
+              <div class="ad-alert">
+                <span style="color:var(--danger); display:flex; margin-top:1px;">{{ icAlert }}</span>
+                <div style="flex:1;"><div style="font-size:13px; font-weight:600; color:var(--text);">Username not released</div><div style="font-size:12.5px; color:var(--muted); margin-top:2px;">That username is already taken. Pick another and try again.</div></div>
+                <button class="ad-btn ad-btn-ghost" onClick="{{ onDismissErr }}" style="padding:4px;">{{ icClose }}</button>
+              </div>
+            </sc-if>
+            <div class="ad-card" style="overflow:hidden;">
+              <table class="ad-table">
+                <thead><tr><th class="ad-th">Username</th><th class="ad-th">Owner</th><th class="ad-th">Content</th><th class="ad-th">Status</th><th class="ad-th"></th></tr></thead>
+                <tbody>
+                  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">{{ skeletonEl }}</sc-if>
+                  <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><tr><td class="ad-empty" colspan="5">No profiles match.</td></tr></sc-if>
+                  <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+                    <sc-for list="{{ profiles }}" as="r" hint-placeholder-count="5">
+                      <tr class="ad-row">
+                        <td class="ad-td ad-mono" onClick="{{ r.onOpen }}" style="font-weight:700; color:var(--text); cursor:pointer;">{{ r.username }}</td>
+                        <td class="ad-td"><div>{{ r.owner }}</div><sc-if value="{{ r.hasManagers }}" hint-placeholder-val="{{ false }}"><div class="ad-sub">{{ r.managers }}</div></sc-if></td>
+                        <td class="ad-td ad-num" style="color:var(--muted);">{{ r.content }}</td>
+                        <td class="ad-td"><span class="ad-badge {{ r.statusCls }}">{{ r.statusText }}</span></td>
+                        <td class="ad-td" style="text-align:right;"><sc-for list="{{ r.actions }}" as="a" hint-placeholder-count="2"><button class="ad-btn {{ a.cls }}" onClick="{{ a.on }}" style="margin-left:6px;">{{ a.label }}</button></sc-for></td>
+                      </tr>
+                    </sc-for>
+                  </sc-if>
+                </tbody>
+              </table>
+            </div>
+            <div class="ad-pager"><div class="ad-num" style="font-size:12px; color:var(--muted);">Showing 1–25 of 5,905</div><div style="display:flex; gap:6px; align-items:center;"><button class="ad-pg">{{ icPrev }}</button><button class="ad-pg ad-pg-active">1</button><button class="ad-pg">2</button><button class="ad-pg">3</button><span style="color:var(--faint); padding:0 4px;">…</span><button class="ad-pg">237</button><button class="ad-pg">{{ icNext }}</button></div></div>
+          </sc-if>
+
+          <!-- POSTS -->
+          <sc-if value="{{ isPosts }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+              <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Posts</div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <div style="position:relative;"><span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--faint); display:flex;">{{ icSearch }}</span><input class="ad-input" style="padding-left:34px; width:260px;" placeholder="Search caption / profile"></div>
+                <button class="ad-btn ad-btn-secondary">Search</button>
+                <button class="ad-btn ad-btn-ghost" style="margin-left:2px;">{{ icDownload }} Export CSV</button>
+              </div>
+            </div>
+            <div class="ad-card" style="overflow:hidden;">
+              <table class="ad-table">
+                <thead><tr><th class="ad-th" style="width:34px;"><input type="checkbox" class="ad-chk" checked="{{ allChecked }}" onChange="{{ onSelAll }}"></th><th class="ad-th">Post</th><th class="ad-th">Profile</th><th class="ad-th">Products</th><th class="ad-th">When</th><th class="ad-th"></th></tr></thead>
+                <tbody>
+                  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">{{ skeletonEl }}</sc-if>
+                  <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><tr><td class="ad-empty" colspan="6">No posts match.</td></tr></sc-if>
+                  <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+                    <sc-for list="{{ posts }}" as="r" hint-placeholder-count="5">
+                      <tr class="ad-row">
+                        <td class="ad-td" style="width:34px;"><input type="checkbox" class="ad-chk" checked="{{ r.checked }}" onChange="{{ r.onToggle }}"></td>
+                        <td class="ad-td" style="max-width:420px;"><div style="font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ r.caption }}</div><a href="#" class="ad-mono" style="font-size:11px; color:var(--accent);">View media ↗</a></td>
+                        <td class="ad-td ad-mono" style="color:var(--muted);">{{ r.profile }}</td>
+                        <td class="ad-td ad-num" style="color:var(--muted);">{{ r.products }}</td>
+                        <td class="ad-td ad-num" style="color:var(--muted);">{{ r.when }}</td>
+                        <td class="ad-td" style="text-align:right;"><button class="ad-btn ad-btn-destructive" onClick="{{ r.onRemove }}">Remove</button></td>
+                      </tr>
+                    </sc-for>
+                  </sc-if>
+                </tbody>
+              </table>
+            </div>
+            <div class="ad-pager"><div class="ad-num" style="font-size:12px; color:var(--muted);">Showing 1–25 of 38,410</div><div style="display:flex; gap:6px; align-items:center;"><button class="ad-pg">{{ icPrev }}</button><button class="ad-pg ad-pg-active">1</button><button class="ad-pg">2</button><button class="ad-pg">3</button><span style="color:var(--faint); padding:0 4px;">…</span><button class="ad-pg">1537</button><button class="ad-pg">{{ icNext }}</button></div></div>
+          </sc-if>
+
+          <!-- PRODUCTS -->
+          <sc-if value="{{ isProducts }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+              <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Products</div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <select class="ad-select"><option>All products</option><option>Has coupon</option><option>Expired coupon</option></select>
+                <div style="position:relative;"><span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--faint); display:flex;">{{ icSearch }}</span><input class="ad-input" style="padding-left:34px; width:230px;" placeholder="Search title / profile"></div>
+                <button class="ad-btn ad-btn-secondary">Search</button>
+                <button class="ad-btn ad-btn-ghost" style="margin-left:2px;">{{ icDownload }} Export CSV</button>
+              </div>
+            </div>
+            <div class="ad-card" style="overflow:hidden;">
+              <table class="ad-table">
+                <thead><tr><th class="ad-th" style="width:34px;"><input type="checkbox" class="ad-chk" checked="{{ allChecked }}" onChange="{{ onSelAll }}"></th><th class="ad-th">Product</th><th class="ad-th">Profile</th><th class="ad-th">Kind</th><th class="ad-th">Coupon</th><th class="ad-th"></th></tr></thead>
+                <tbody>
+                  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">{{ skeletonEl }}</sc-if>
+                  <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><tr><td class="ad-empty" colspan="6">No products match.</td></tr></sc-if>
+                  <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+                    <sc-for list="{{ products }}" as="r" hint-placeholder-count="6">
+                      <tr class="ad-row">
+                        <td class="ad-td" style="width:34px;"><input type="checkbox" class="ad-chk" checked="{{ r.checked }}" onChange="{{ r.onToggle }}"></td>
+                        <td class="ad-td"><div style="font-weight:500;">{{ r.title }}</div><div class="ad-sub ad-mono">{{ r.price }} · <a href="#" style="color:var(--accent);">Outbound link ↗</a></div></td>
+                        <td class="ad-td ad-mono" style="color:var(--muted);">{{ r.profile }}</td>
+                        <td class="ad-td"><span class="ad-badge ad-b-outline">{{ r.kind }}</span></td>
+                        <td class="ad-td">
+                          <sc-if value="{{ r.hasCoupon }}" hint-placeholder-val="{{ false }}"><span class="ad-badge ad-b-secondary ad-mono">{{ r.couponCode }}</span> <sc-if value="{{ r.couponExpired }}" hint-placeholder-val="{{ false }}"><span class="ad-badge ad-b-danger">Expired</span></sc-if></sc-if>
+                          <sc-if value="{{ r.noCoupon }}" hint-placeholder-val="{{ true }}"><span style="color:var(--faint);">—</span></sc-if>
+                        </td>
+                        <td class="ad-td" style="text-align:right;"><sc-for list="{{ r.actions }}" as="a" hint-placeholder-count="1"><button class="ad-btn {{ a.cls }}" onClick="{{ a.on }}" style="margin-left:6px;">{{ a.label }}</button></sc-for></td>
+                      </tr>
+                    </sc-for>
+                  </sc-if>
+                </tbody>
+              </table>
+            </div>
+            <div class="ad-pager"><div class="ad-num" style="font-size:12px; color:var(--muted);">Showing 1–25 of 61,238</div><div style="display:flex; gap:6px; align-items:center;"><button class="ad-pg">{{ icPrev }}</button><button class="ad-pg ad-pg-active">1</button><button class="ad-pg">2</button><button class="ad-pg">3</button><span style="color:var(--faint); padding:0 4px;">…</span><button class="ad-pg">2450</button><button class="ad-pg">{{ icNext }}</button></div></div>
+          </sc-if>
+
+          <!-- COMMENTS -->
+          <sc-if value="{{ isComments }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+              <div><div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Comments</div><div style="font-size:12.5px; color:var(--muted); margin-top:3px;">Newest-first moderation stream.</div></div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <div style="position:relative;"><span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--faint); display:flex;">{{ icSearch }}</span><input class="ad-input" style="padding-left:34px; width:260px;" placeholder="Search text / author / page"></div>
+                <button class="ad-btn ad-btn-secondary">Search</button>
+                <button class="ad-btn ad-btn-ghost" style="margin-left:2px;">{{ icDownload }} Export CSV</button>
+              </div>
+            </div>
+            <div class="ad-card" style="overflow:hidden;">
+              <table class="ad-table">
+                <thead><tr><th class="ad-th" style="width:34px;"><input type="checkbox" class="ad-chk" checked="{{ allChecked }}" onChange="{{ onSelAll }}"></th><th class="ad-th">Comment</th><th class="ad-th">By</th><th class="ad-th">On</th><th class="ad-th">When</th><th class="ad-th"></th></tr></thead>
+                <tbody>
+                  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">{{ skeletonEl }}</sc-if>
+                  <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><tr><td class="ad-empty" colspan="6">No comments match.</td></tr></sc-if>
+                  <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+                    <sc-for list="{{ comments }}" as="r" hint-placeholder-count="6">
+                      <tr class="ad-row">
+                        <td class="ad-td" style="width:34px;"><input type="checkbox" class="ad-chk" checked="{{ r.checked }}" onChange="{{ r.onToggle }}"></td>
+                        <td class="ad-td" style="max-width:420px;"><div style="line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">{{ r.body }}</div><sc-if value="{{ r.hasReplies }}" hint-placeholder-val="{{ false }}"><div class="ad-sub">{{ r.replies }}</div></sc-if></td>
+                        <td class="ad-td"><sc-if value="{{ r.isBrand }}" hint-placeholder-val="{{ false }}"><span class="ad-badge ad-b-secondary ad-mono">{{ r.author }}</span></sc-if><sc-if value="{{ r.isPerson }}" hint-placeholder-val="{{ true }}"><span class="ad-mono" style="color:var(--muted);">{{ r.author }}</span></sc-if></td>
+                        <td class="ad-td" style="color:var(--muted); font-size:12.5px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ r.on }}</td>
+                        <td class="ad-td ad-num ad-mono" style="color:var(--faint); font-size:11.5px;">{{ r.when }}</td>
+                        <td class="ad-td" style="text-align:right;"><button class="ad-btn ad-btn-destructive" onClick="{{ r.onDelete }}">Delete</button></td>
+                      </tr>
+                    </sc-for>
+                  </sc-if>
+                </tbody>
+              </table>
+            </div>
+            <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:18px 0 4px;">
+                <button class="ad-btn ad-btn-secondary" style="padding:9px 22px;">Load more</button>
+                <span class="ad-mono" style="font-size:11px; color:var(--faint);">Showing 25 of 4,006</span>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <!-- BUSINESSES -->
+          <sc-if value="{{ isBusinesses }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+              <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Businesses</div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <div style="position:relative;"><span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--faint); display:flex;">{{ icSearch }}</span><input class="ad-input" style="padding-left:34px; width:280px;" placeholder="Search name / description / owner"></div>
+                <button class="ad-btn ad-btn-secondary">Search</button>
+                <button class="ad-btn ad-btn-ghost" style="margin-left:2px;">{{ icDownload }} Export CSV</button>
+              </div>
+            </div>
+            <div class="ad-card" style="overflow:hidden;">
+              <table class="ad-table">
+                <thead><tr><th class="ad-th">Business</th><th class="ad-th">Owner</th><th class="ad-th">Activity</th><th class="ad-th">Status</th><th class="ad-th"></th></tr></thead>
+                <tbody>
+                  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">{{ skeletonEl }}</sc-if>
+                  <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><tr><td class="ad-empty" colspan="5">No businesses match.</td></tr></sc-if>
+                  <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+                    <sc-for list="{{ businesses }}" as="r" hint-placeholder-count="5">
+                      <tr class="ad-row">
+                        <td class="ad-td" style="max-width:340px;"><div style="font-weight:600;">{{ r.name }}</div><div class="ad-sub" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ r.desc }}</div></td>
+                        <td class="ad-td" style="color:var(--muted); font-size:13px;">{{ r.owner }}</td>
+                        <td class="ad-td ad-num" style="color:var(--muted);">{{ r.activity }}</td>
+                        <td class="ad-td"><span class="ad-badge {{ r.statusCls }}">{{ r.statusText }}</span></td>
+                        <td class="ad-td" style="text-align:right;"><sc-if value="{{ r.hasLogo }}" hint-placeholder-val="{{ true }}"><button class="ad-btn ad-btn-ghost" onClick="{{ r.onClear }}">Clear logo</button></sc-if><sc-if value="{{ r.noLogo }}" hint-placeholder-val="{{ false }}"><span style="color:var(--faint); font-size:12px;">No logo</span></sc-if></td>
+                      </tr>
+                    </sc-for>
+                  </sc-if>
+                </tbody>
+              </table>
+            </div>
+            <div class="ad-pager"><div class="ad-num" style="font-size:12px; color:var(--muted);">Showing 1–25 of 214</div><div style="display:flex; gap:6px; align-items:center;"><button class="ad-pg">{{ icPrev }}</button><button class="ad-pg ad-pg-active">1</button><button class="ad-pg">2</button><button class="ad-pg">3</button><span style="color:var(--faint); padding:0 4px;">…</span><button class="ad-pg">9</button><button class="ad-pg">{{ icNext }}</button></div></div>
+          </sc-if>
+
+          <!-- REQUIREMENTS -->
+          <sc-if value="{{ isRequirements }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+              <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Requirements</div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <div style="position:relative;"><span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--faint); display:flex;">{{ icSearch }}</span><input class="ad-input" style="padding-left:34px; width:280px;" placeholder="Search title / brief / business"></div>
+                <button class="ad-btn ad-btn-secondary">Search</button>
+                <button class="ad-btn ad-btn-ghost" style="margin-left:2px;">{{ icDownload }} Export CSV</button>
+              </div>
+            </div>
+            <div class="ad-card" style="overflow:hidden;">
+              <table class="ad-table">
+                <thead><tr><th class="ad-th">Brief</th><th class="ad-th">Business</th><th class="ad-th">Budget</th><th class="ad-th">Deadline</th><th class="ad-th">Approaches</th><th class="ad-th"></th></tr></thead>
+                <tbody>
+                  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">{{ skeletonEl }}</sc-if>
+                  <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><tr><td class="ad-empty" colspan="6">No requirements match.</td></tr></sc-if>
+                  <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+                    <sc-for list="{{ requirements }}" as="r" hint-placeholder-count="5">
+                      <tr class="ad-row">
+                        <td class="ad-td" style="max-width:360px;"><div style="font-weight:500;">{{ r.title }}</div><div class="ad-sub" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ r.brief }}</div></td>
+                        <td class="ad-td" style="font-size:13px;">{{ r.business }}</td>
+                        <td class="ad-td ad-num" style="color:var(--muted);">{{ r.budget }}</td>
+                        <td class="ad-td ad-num" style="color:var(--muted);">{{ r.deadline }}</td>
+                        <td class="ad-td ad-num" style="color:var(--muted);">{{ r.approaches }}</td>
+                        <td class="ad-td" style="text-align:right;"><button class="ad-btn ad-btn-destructive" onClick="{{ r.onRemove }}">Remove</button></td>
+                      </tr>
+                    </sc-for>
+                  </sc-if>
+                </tbody>
+              </table>
+            </div>
+            <div class="ad-pager"><div class="ad-num" style="font-size:12px; color:var(--muted);">Showing 1–25 of 88</div><div style="display:flex; gap:6px; align-items:center;"><button class="ad-pg">{{ icPrev }}</button><button class="ad-pg ad-pg-active">1</button><button class="ad-pg">2</button><button class="ad-pg">3</button><span style="color:var(--faint); padding:0 4px;">…</span><button class="ad-pg">4</button><button class="ad-pg">{{ icNext }}</button></div></div>
+          </sc-if>
+
+          <!-- COLLABS -->
+          <sc-if value="{{ isCollabs }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+              <div><div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Collabs</div><div style="font-size:12.5px; color:var(--muted); margin-top:3px;">Read-only oversight — a bad actor in a thread is handled by suspending the member.</div></div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <div style="position:relative;"><span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--faint); display:flex;">{{ icSearch }}</span><input class="ad-input" style="padding-left:34px; width:280px;" placeholder="Search business / profile"></div>
+                <button class="ad-btn ad-btn-secondary">Search</button>
+                <button class="ad-btn ad-btn-ghost" style="margin-left:2px;">{{ icDownload }} Export CSV</button>
+              </div>
+            </div>
+            <div class="ad-card" style="overflow:hidden;">
+              <table class="ad-table">
+                <thead><tr><th class="ad-th">Business ↔ Creator</th><th class="ad-th">Source</th><th class="ad-th">Messages</th><th class="ad-th">State</th><th class="ad-th">Started</th></tr></thead>
+                <tbody>
+                  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">{{ skeletonEl }}</sc-if>
+                  <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><tr><td class="ad-empty" colspan="5">No collabs match.</td></tr></sc-if>
+                  <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+                    <sc-for list="{{ collabs }}" as="r" hint-placeholder-count="5">
+                      <tr class="ad-row" onClick="{{ r.onOpen }}" style="cursor:pointer;">
+                        <td class="ad-td"><span style="font-weight:500;">{{ r.biz }}</span> <span style="color:var(--faint);">↔</span> <span class="ad-mono" style="color:var(--muted);">{{ r.creator }}</span></td>
+                        <td class="ad-td" style="color:var(--muted); font-size:13px;">{{ r.source }}</td>
+                        <td class="ad-td ad-num" style="color:var(--muted);">{{ r.messages }}</td>
+                        <td class="ad-td"><span class="ad-badge {{ r.stateCls }}">{{ r.stateText }}</span></td>
+                        <td class="ad-td ad-num" style="color:var(--muted);">{{ r.started }}</td>
+                      </tr>
+                    </sc-for>
+                  </sc-if>
+                </tbody>
+              </table>
+            </div>
+            <div class="ad-pager"><div class="ad-num" style="font-size:12px; color:var(--muted);">Showing 1–25 of 143</div><div style="display:flex; gap:6px; align-items:center;"><button class="ad-pg">{{ icPrev }}</button><button class="ad-pg ad-pg-active">1</button><button class="ad-pg">2</button><button class="ad-pg">3</button><span style="color:var(--faint); padding:0 4px;">…</span><button class="ad-pg">6</button><button class="ad-pg">{{ icNext }}</button></div></div>
+          </sc-if>
+
+          <!-- ANALYTICS -->
+          <sc-if value="{{ isAnalytics }}" hint-placeholder-val="{{ false }}">
+            <div style="max-width:1100px;">
+              <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Analytics</div>
+              <div style="font-size:13.5px; color:var(--muted); margin:4px 0 20px;">Projections over the append-only tap and code-copy events — the same truth Earnings reads.</div>
+              <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px;">
+                <sc-for list="{{ anTiles }}" as="t" hint-placeholder-count="4">
+                  <div class="ad-card" style="padding:16px 18px;">
+                    <div class="ad-eyebrow">{{ t.label }}</div>
+                    <div class="ad-num" style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.02em; margin-top:8px;">{{ t.value }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+                <div class="ad-card" style="padding:18px 20px;">
+                  <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; margin-bottom:8px;">Top profiles · 30d</div>
+                  <sc-for list="{{ topProfiles }}" as="p" hint-placeholder-count="10">
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-top:1px solid var(--border);">
+                      <span class="ad-mono" style="color:var(--muted);">{{ p.name }}</span>
+                      <span class="ad-num" style="font-weight:600;">{{ p.taps }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div class="ad-card" style="padding:18px 20px;">
+                  <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; margin-bottom:8px;">Top products · 30d</div>
+                  <sc-for list="{{ topProducts }}" as="p" hint-placeholder-count="10">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:7px 0; border-top:1px solid var(--border);">
+                      <div style="min-width:0;"><div style="font-size:13px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ p.title }}</div><div class="ad-mono ad-sub">{{ p.profile }}</div></div>
+                      <span class="ad-num" style="font-weight:600; flex-shrink:0;">{{ p.taps }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div class="ad-card" style="padding:18px 20px; margin-top:16px; max-width:520px;">
+                <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; margin-bottom:12px;">Tap sources · 30d</div>
+                <sc-for list="{{ tapSources }}" as="s" hint-placeholder-count="3">
+                  <div style="margin-bottom:12px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; font-size:13px; margin-bottom:5px;"><span style="text-transform:capitalize;">{{ s.label }}</span><span class="ad-num" style="color:var(--muted);">{{ s.count }} · {{ s.pct }}</span></div>
+                    <div style="height:8px; border-radius:100px; background:var(--surface2); overflow:hidden;"><div style="height:100%; width:{{ s.pct }}; background:var(--accent); border-radius:100px;"></div></div>
+                  </div>
+                </sc-for>
+              </div>
+              <div class="ad-card" style="padding:18px 20px; margin-top:16px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                  <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700;">Taps · last 30 days</div>
+                  <div style="display:flex; gap:14px; font-size:11px; color:var(--muted);"><span style="display:inline-flex; align-items:center; gap:5px;"><span style="width:9px; height:9px; border-radius:2px; background:var(--accent);"></span>Taps</span></div>
+                </div>
+                <div style="display:flex; align-items:flex-end; gap:3px; height:140px;">
+                  <sc-for list="{{ trendBars }}" as="b" hint-placeholder-count="30">
+                    <div style="flex:1; height:100%; display:flex; align-items:flex-end;" title="Day {{ b.label }}"><div style="width:100%; height:{{ b.h }}; background:var(--accent); border-radius:3px 3px 0 0; opacity:.85;"></div></div>
+                  </sc-for>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-family:'Space Mono',monospace; font-size:10px; color:var(--faint); margin-top:8px;"><span>30d ago</span><span>Today</span></div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- SETTINGS -->
+          <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+            <div style="max-width:768px;">
+              <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em; margin-bottom:20px;">Settings</div>
+              <div class="ad-card" style="padding:22px 24px;">
+                <div style="font-family:'Sora',sans-serif; font-size:16px; font-weight:700;">Reserved usernames</div>
+                <div style="font-size:13px; color:var(--muted); line-height:1.55; margin:6px 0 14px;">Names no member handle — and, when username claiming lands, no profile username — may take.</div>
+                <div class="ad-eyebrow" style="margin-bottom:8px;">Always blocked</div>
+                <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;">
+                  <sc-for list="{{ reserved }}" as="w" hint-placeholder-count="12"><span class="ad-badge ad-b-outline ad-mono" style="opacity:.75;">{{ w }}</span></sc-for>
+                </div>
+                <div class="ad-eyebrow" style="margin-bottom:8px;">Admin additions</div>
+                <textarea class="ad-input ad-mono" rows="4" style="resize:vertical; line-height:1.6;">early-access
+launch
+press</textarea>
+                <div style="margin-top:14px;"><button class="ad-btn ad-btn-primary">Save reserved usernames</button></div>
+              </div>
+              <div class="ad-card" style="padding:22px 24px; margin-top:16px;">
+                <div style="font-family:'Sora',sans-serif; font-size:16px; font-weight:700;">Feature flags</div>
+                <div style="font-size:13px; color:var(--muted); line-height:1.55; margin:6px 0 14px;">Removing a flag returns the feature to its built-in default.</div>
+                <table class="ad-table">
+                  <thead><tr><th class="ad-th">Flag</th><th class="ad-th">State</th><th class="ad-th"></th></tr></thead>
+                  <tbody>
+                    <sc-for list="{{ flags }}" as="f" hint-placeholder-count="3">
+                      <tr class="ad-row">
+                        <td class="ad-td ad-mono">{{ f.name }}</td>
+                        <td class="ad-td"><span class="ad-badge {{ f.stateCls }}">{{ f.stateText }}</span></td>
+                        <td class="ad-td" style="text-align:right;"><button class="ad-btn ad-btn-secondary">{{ f.toggleLabel }}</button><button class="ad-btn ad-btn-ghost" onClick="{{ f.onRemove }}" style="margin-left:6px;">Remove</button></td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+                <div style="display:flex; gap:8px; margin-top:14px;"><input class="ad-input ad-mono" style="max-width:280px;" placeholder="new-flag-name"><button class="ad-btn ad-btn-secondary">Add flag (on)</button></div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- AUDIT -->
+          <sc-if value="{{ isAudit }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+              <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Audit log</div>
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <select class="ad-select"><option>All admins</option><option>ops@plugfolio.com</option><option>kay@plugfolio.com</option></select>
+                <select class="ad-select"><option>All actions</option><option>member.*</option><option>profile.*</option><option>product.*</option><option>settings.*</option></select>
+                <select class="ad-select"><option>Last 30 days</option><option>Last 7 days</option><option>Today</option><option>All time</option></select>
+                <button class="ad-btn ad-btn-ghost" style="margin-left:2px;">{{ icDownload }} Export CSV</button>
+              </div>
+            </div>
+            <div class="ad-card" style="overflow:hidden;">
+              <table class="ad-table">
+                <thead><tr><th class="ad-th">When</th><th class="ad-th">Admin</th><th class="ad-th">Action</th><th class="ad-th">Target</th><th class="ad-th">Detail</th></tr></thead>
+                <tbody>
+                  <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">{{ skeletonEl }}</sc-if>
+                  <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><tr><td class="ad-empty" colspan="5">Nothing yet — admin mutations land here.</td></tr></sc-if>
+                  <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+                    <sc-for list="{{ audit }}" as="r" hint-placeholder-count="7">
+                      <tr class="ad-row">
+                        <td class="ad-td ad-num ad-mono" style="color:var(--faint); white-space:nowrap;">{{ r.when }}</td>
+                        <td class="ad-td" style="color:var(--muted); font-size:12.5px;">{{ r.admin }}</td>
+                        <td class="ad-td ad-mono" style="color:var(--accent);">{{ r.action }}</td>
+                        <td class="ad-td ad-mono" style="color:var(--muted);">{{ r.target }}</td>
+                        <td class="ad-td" style="color:var(--muted); font-size:12.5px; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ r.detail }}</td>
+                      </tr>
+                    </sc-for>
+                  </sc-if>
+                </tbody>
+              </table>
+            </div>
+            <div class="ad-pager"><div class="ad-num" style="font-size:12px; color:var(--muted);">Showing 1–25 of 12,904</div><div style="display:flex; gap:6px; align-items:center;"><button class="ad-pg">{{ icPrev }}</button><button class="ad-pg ad-pg-active">1</button><button class="ad-pg">2</button><button class="ad-pg">3</button><span style="color:var(--faint); padding:0 4px;">…</span><button class="ad-pg">516</button><button class="ad-pg">{{ icNext }}</button></div></div>
+          </sc-if>
+
+          <!-- REPORTS -->
+          <sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+              <div><div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Reports</div><div style="font-size:12.5px; color:var(--muted); margin-top:3px;">Triage queue — oldest open first.</div></div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <select class="ad-select"><option>Open</option><option>Resolved</option><option>Dismissed</option><option>All</option></select>
+                <button class="ad-btn ad-btn-ghost">{{ icDownload }} Export CSV</button>
+              </div>
+            </div>
+            <div class="ad-card" style="overflow:hidden;">
+              <table class="ad-table">
+                <thead><tr><th class="ad-th">Reported</th><th class="ad-th">Reason</th><th class="ad-th">Reporter</th><th class="ad-th">Age</th><th class="ad-th">Status</th><th class="ad-th"></th></tr></thead>
+                <tbody>
+                  <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><tr><td class="ad-empty" colspan="6">No open reports — nothing in the queue.</td></tr></sc-if>
+                  <sc-if value="{{ hasData }}" hint-placeholder-val="{{ true }}">
+                    <sc-for list="{{ reports }}" as="r" hint-placeholder-count="4">
+                      <tr class="ad-row">
+                        <td class="ad-td" style="max-width:360px;"><div style="display:flex; gap:9px; align-items:flex-start;"><span style="color:var(--muted); display:flex; margin-top:1px;">{{ r.icon }}</span><div style="min-width:0;"><div class="ad-eyebrow" style="color:var(--faint);">{{ r.type }}</div><div style="font-size:13px; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ r.snippet }}</div></div></div></td>
+                        <td class="ad-td"><span class="ad-badge ad-b-outline">{{ r.cat }}</span><div class="ad-sub">{{ r.free }}</div></td>
+                        <td class="ad-td ad-mono" style="color:var(--muted); font-size:11.5px;">{{ r.reporter }}</td>
+                        <td class="ad-td ad-num" style="color:var(--muted);">{{ r.age }}</td>
+                        <td class="ad-td"><span class="ad-badge {{ r.statusCls }}">{{ r.statusText }}</span></td>
+                        <td class="ad-td" style="text-align:right; white-space:nowrap;"><button class="ad-btn ad-btn-ghost" onClick="{{ r.view }}">View target</button><button class="ad-btn ad-btn-secondary" onClick="{{ r.onResolve }}" style="margin-left:6px;">Resolve</button><button class="ad-btn ad-btn-ghost" onClick="{{ r.onDismiss }}" style="margin-left:6px;">Dismiss</button></td>
+                      </tr>
+                    </sc-for>
+                  </sc-if>
+                </tbody>
+              </table>
+            </div>
+            <div class="ad-pager"><div class="ad-num" style="font-size:12px; color:var(--muted);">Showing 1–25 of 11 open</div><div style="display:flex; gap:6px; align-items:center;"><button class="ad-pg">{{ icPrev }}</button><button class="ad-pg ad-pg-active">1</button><button class="ad-pg">{{ icNext }}</button></div></div>
+          </sc-if>
+
+          <!-- ADMINS -->
+          <sc-if value="{{ isAdmins }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+              <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Admins</div>
+              <button class="ad-btn ad-btn-primary" onClick="{{ onAddAdmin }}">Add admin</button>
+            </div>
+            <div class="ad-card" style="overflow:hidden;">
+              <table class="ad-table">
+                <thead><tr><th class="ad-th">Admin</th><th class="ad-th">Added</th><th class="ad-th">Last sign-in</th><th class="ad-th"></th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ admins }}" as="r" hint-placeholder-count="3">
+                    <tr class="ad-row">
+                      <td class="ad-td"><div style="font-weight:600;">{{ r.email }}</div><div class="ad-sub">{{ r.name }}</div></td>
+                      <td class="ad-td ad-num" style="color:var(--muted);">{{ r.added }}</td>
+                      <td class="ad-td ad-num" style="color:var(--muted);">{{ r.last }}</td>
+                      <td class="ad-td" style="text-align:right;">
+                        <button class="ad-btn ad-btn-ghost" onClick="{{ r.onReset }}">Reset password</button>
+                        <sc-if value="{{ r.self }}" hint-placeholder-val="{{ false }}"><button class="ad-btn ad-btn-destructive ad-btn-off" title="You cannot remove yourself" style="margin-left:6px;">Remove</button></sc-if>
+                        <sc-if value="{{ r.onRemove }}" hint-placeholder-val="{{ true }}"><button class="ad-btn ad-btn-destructive" onClick="{{ r.onRemove }}" style="margin-left:6px;">Remove</button></sc-if>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <div class="ad-card" style="padding:22px 24px; margin-top:16px; max-width:440px;">
+              <div style="font-family:'Sora',sans-serif; font-size:16px; font-weight:700;">Your account</div>
+              <div style="font-size:13px; color:var(--muted); margin:6px 0 14px;">Change your own password.</div>
+              <label style="display:block; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Current password</label>
+              <input class="ad-input" type="password" placeholder="••••••••••">
+              <label style="display:block; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:12px 0 6px;">New password</label>
+              <input class="ad-input" type="password" placeholder="••••••••••">
+              <div style="margin-top:14px;"><button class="ad-btn ad-btn-primary">Change password</button></div>
+            </div>
+          </sc-if>
+
+          <!-- MEMBER DETAIL -->
+          <sc-if value="{{ isMemberDetail }}" hint-placeholder-val="{{ false }}">
+            <div style="max-width:940px;">
+              <div onClick="{{ onBack }}" style="display:inline-flex; align-items:center; gap:7px; font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); cursor:pointer; margin-bottom:14px;">{{ icBack }} {{ backLabel }} / {{ dtMember.email }}</div>
+              <sc-if value="{{ dtMember.suspended }}" hint-placeholder-val="{{ false }}">
+                <div class="ad-alert"><span style="color:var(--danger); display:flex; margin-top:1px;">{{ icAlert }}</span><div style="font-size:13px; font-weight:600; color:var(--text);">This member is suspended — blocked from signing in, all owned profiles hidden.</div></div>
+              </sc-if>
+              <div class="ad-card" style="padding:22px 24px; display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:flex-start;">
+                <div>
+                  <div style="font-family:'Sora',sans-serif; font-size:22px; font-weight:700; letter-spacing:-0.02em;">{{ dtMember.email }}</div>
+                  <div style="font-size:13.5px; color:var(--muted); margin-top:4px;">{{ dtMember.name }} · <span class="ad-mono">{{ dtMember.handle }}</span></div>
+                  <div style="display:flex; gap:6px; margin-top:12px; flex-wrap:wrap;"><span class="ad-badge {{ dtMember.statusCls }}">{{ dtMember.statusText }}</span><sc-if value="{{ dtMember.hasRole }}" hint-placeholder-val="{{ true }}"><span class="ad-badge ad-b-secondary">{{ dtMember.roleText }}</span></sc-if></div>
+                </div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; position:relative;">
+                  <sc-if value="{{ dtMember.unverified }}" hint-placeholder-val="{{ false }}"><button class="ad-btn ad-btn-secondary" onClick="{{ onResend }}">Resend verification</button></sc-if>
+                  <button class="ad-btn ad-btn-secondary" onClick="{{ onPwReset }}">Send password reset</button>
+                  <button class="ad-btn ad-btn-secondary" onClick="{{ onResetHandle }}">Reset @handle</button>
+                  <sc-if value="{{ dtMember.suspended }}" hint-placeholder-val="{{ false }}"><button class="ad-btn ad-btn-secondary" onClick="{{ onUnsuspendMember }}">Unsuspend</button></sc-if>
+                  <sc-if value="{{ dtMember.suspended }}" hint-placeholder-val="{{ true }}"></sc-if>
+                  <sc-if value="{{ notSuspendedMember }}" hint-placeholder-val="{{ true }}"><button class="ad-btn ad-btn-destructive" onClick="{{ onReasonMember }}">Suspend</button></sc-if>
+                  <button class="ad-btn ad-btn-ghost" onClick="{{ onToggleMenu }}" style="padding:6px;">{{ icDots }}</button>
+                  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+                    <div class="ad-card" style="position:absolute; top:40px; right:0; z-index:30; padding:6px; min-width:170px; box-shadow:0 12px 30px rgba(10,8,18,.18);"><div onClick="{{ onDelAcct }}" style="display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:7px; cursor:pointer; color:var(--danger); font-size:13px; font-weight:600;">{{ icTrash }} Delete account</div></div>
+                  </sc-if>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+                <div class="ad-card" style="padding:18px 20px;">
+                  <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; margin-bottom:6px;">Profiles</div>
+                  <sc-for list="{{ dtMember.profiles }}" as="p" hint-placeholder-count="2">
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-top:1px solid var(--border);"><span class="ad-mono" style="font-weight:700;">{{ p.u }}</span><span class="ad-badge ad-b-secondary">{{ p.role }}</span></div>
+                  </sc-for>
+                </div>
+                <div class="ad-card" style="padding:18px 20px;">
+                  <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; margin-bottom:6px;">Connected socials</div>
+                  <sc-for list="{{ dtMember.socials }}" as="s" hint-placeholder-count="2">
+                    <div style="display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--border);"><span style="color:var(--muted); display:flex;">{{ s.icon }}</span><div style="flex:1;"><div style="font-size:13px; font-weight:500;">{{ s.prov }}</div><div class="ad-mono ad-sub">{{ s.handle }}</div></div><span class="ad-num" style="font-size:11px; color:var(--faint);">{{ s.date }}</span></div>
+                  </sc-for>
+                </div>
+                <div class="ad-card" style="padding:18px 20px;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;"><div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700;">Recent comments</div><span onClick="{{ goComments }}" style="font-family:'Space Mono',monospace; font-size:11px; color:var(--accent); cursor:pointer;">All →</span></div>
+                  <sc-for list="{{ dtMember.recent }}" as="c" hint-placeholder-count="3">
+                    <div style="padding:9px 0; border-top:1px solid var(--border);"><div style="font-size:13px;">{{ c.body }}</div><div class="ad-mono ad-sub">{{ c.when }}</div></div>
+                  </sc-for>
+                </div>
+                <div class="ad-card" style="padding:18px 20px;">
+                  <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; margin-bottom:6px;">Meta</div>
+                  <div style="display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid var(--border); font-size:13px;"><span style="color:var(--muted);">Joined</span><span class="ad-num">{{ dtMember.joined }}</span></div>
+                  <div style="display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid var(--border); font-size:13px;"><span style="color:var(--muted);">Member id</span><span class="ad-mono">{{ dtMember.id }}</span></div>
+                  <div style="display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid var(--border); font-size:13px;"><span style="color:var(--muted);">Follows</span><span class="ad-num">{{ dtMember.follows }}</span></div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- PROFILE DETAIL -->
+          <sc-if value="{{ isProfileDetail }}" hint-placeholder-val="{{ false }}">
+            <div style="max-width:940px;">
+              <div onClick="{{ onBack }}" style="display:inline-flex; align-items:center; gap:7px; font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); cursor:pointer; margin-bottom:14px;">{{ icBack }} {{ backLabel }} / {{ dtProfile.username }}</div>
+              <sc-if value="{{ dtProfile.suspended }}" hint-placeholder-val="{{ false }}">
+                <div class="ad-alert"><span style="color:var(--danger); display:flex; margin-top:1px;">{{ icAlert }}</span><div style="font-size:13px; font-weight:600; color:var(--text);">This page is not live to shoppers.</div></div>
+              </sc-if>
+              <div class="ad-card" style="padding:22px 24px; display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:flex-start;">
+                <div>
+                  <div class="ad-mono" style="font-size:22px; font-weight:700; letter-spacing:-0.01em;">{{ dtProfile.username }}</div>
+                  <div style="font-size:13.5px; color:var(--muted); margin-top:5px;">{{ dtProfile.owner }} <sc-if value="{{ dtProfile.hasManagers }}" hint-placeholder-val="{{ false }}"><span style="color:var(--faint);">· {{ dtProfile.managers }}</span></sc-if></div>
+                  <div style="margin-top:12px;"><span class="ad-badge {{ dtProfile.statusCls }}">{{ dtProfile.statusText }}</span></div>
+                </div>
+                <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
+                  <sc-if value="{{ dtProfile.live }}" hint-placeholder-val="{{ true }}"><button class="ad-btn ad-btn-secondary" onClick="{{ onViewPublic }}">{{ icExt }} View public page</button></sc-if>
+                  <button class="ad-btn ad-btn-secondary" onClick="{{ onReleaseProfile }}">Release username</button>
+                  <button class="ad-btn ad-btn-destructive" onClick="{{ onReasonProfile }}">Suspend</button>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:16px;">
+                <sc-for list="{{ dtProfile.stats }}" as="s" hint-placeholder-count="3">
+                  <div class="ad-card" style="padding:14px 16px;"><div class="ad-eyebrow">{{ s.label }}</div><div class="ad-num" style="font-family:'Sora',sans-serif; font-size:22px; font-weight:700; margin-top:6px;">{{ s.value }}</div></div>
+                </sc-for>
+              </div>
+              <div class="ad-card" style="padding:18px 20px; margin-top:16px;">
+                <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; margin-bottom:12px;">Posts · 12 newest</div>
+                <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:8px;">
+                  <sc-for list="{{ dtProfile.posts }}" as="p" hint-placeholder-count="12">
+                    <div style="position:relative; aspect-ratio:1; border-radius:8px; border:1px solid var(--border); background:repeating-linear-gradient(45deg,var(--surface2),var(--surface2) 7px,var(--bg) 7px,var(--bg) 14px); cursor:pointer;"><button class="ad-btn ad-btn-danger-solid" onClick="{{ onRemovePostDetail }}" style="position:absolute; top:4px; right:4px; padding:3px 7px; font-size:10px;">Remove</button></div>
+                  </sc-for>
+                </div>
+              </div>
+              <div class="ad-card" style="padding:18px 20px; margin-top:16px; overflow:hidden;">
+                <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; margin-bottom:8px;">Products</div>
+                <table class="ad-table">
+                  <thead><tr><th class="ad-th">Title</th><th class="ad-th">Kind</th><th class="ad-th">Coupon</th><th class="ad-th">Taps · 30d</th><th class="ad-th"></th></tr></thead>
+                  <tbody>
+                    <sc-for list="{{ dtProfile.products }}" as="p" hint-placeholder-count="3">
+                      <tr class="ad-row"><td class="ad-td" style="font-weight:500;">{{ p.title }}</td><td class="ad-td"><span class="ad-badge ad-b-outline">{{ p.kind }}</span></td><td class="ad-td ad-mono" style="color:var(--muted);">{{ p.coupon }}</td><td class="ad-td ad-num" style="color:var(--muted);">{{ p.taps }}</td><td class="ad-td" style="text-align:right;"><button class="ad-btn ad-btn-destructive" onClick="{{ onRemovePostDetail }}">Remove</button></td></tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+                <div class="ad-card" style="padding:18px 20px;">
+                  <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; margin-bottom:6px;">Managers</div>
+                  <sc-for list="{{ dtProfile.managersList }}" as="mg" hint-placeholder-count="2">
+                    <div style="display:flex; justify-content:space-between; padding:9px 0; border-top:1px solid var(--border); font-size:13px;"><span>{{ mg.email }}</span><span class="ad-num" style="color:var(--faint); font-size:11px;">{{ mg.date }}</span></div>
+                  </sc-for>
+                </div>
+                <div class="ad-card" style="padding:18px 20px;">
+                  <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; margin-bottom:10px;">Categories</div>
+                  <div style="display:flex; flex-wrap:wrap; gap:6px;"><sc-for list="{{ dtProfile.categories }}" as="cat" hint-placeholder-count="3"><span class="ad-badge ad-b-outline">{{ cat }}</span></sc-for></div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- COLLAB THREAD -->
+          <sc-if value="{{ isThread }}" hint-placeholder-val="{{ false }}">
+            <div style="max-width:760px; margin:0 auto;">
+              <div onClick="{{ onBack }}" style="display:inline-flex; align-items:center; gap:7px; font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); cursor:pointer; margin-bottom:14px;">{{ icBack }} {{ backLabel }}</div>
+              <div class="ad-card" style="padding:18px 20px; margin-bottom:16px;">
+                <div style="font-family:'Sora',sans-serif; font-size:18px; font-weight:700; letter-spacing:-0.01em;"><span>{{ threadHeader.biz }}</span> <span style="color:var(--faint);">↔</span> <span class="ad-mono">{{ threadHeader.creator }}</span></div>
+                <div style="display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap;"><span style="font-size:12.5px; color:var(--muted);">Source: {{ threadHeader.source }}</span><span class="ad-badge {{ threadHeader.stateCls }}">{{ threadHeader.stateText }}</span></div>
+              </div>
+              <sc-for list="{{ threadMsgs }}" as="msg" hint-placeholder-count="6">
+                <div style="display:flex; margin-bottom:14px; justify-content:{{ msg.justify }};">
+                  <div style="max-width:78%;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><span style="font-size:12px; font-weight:600;">{{ msg.name }}</span><span class="ad-badge ad-b-outline" style="font-size:9px; padding:1px 6px;">{{ msg.role }}</span><span class="ad-mono" style="font-size:10px; color:var(--faint);">{{ msg.when }}</span></div>
+                    <div style="font-size:13.5px; line-height:1.5; border:1px solid var(--border); border-radius:12px; padding:11px 14px; background:{{ msg.bubbleBg }};">{{ msg.body }} <button class="ad-btn ad-btn-ghost" onClick="{{ msg.onDel }}" style="padding:2px; margin-left:4px; vertical-align:middle;">{{ icTrash }}</button></div>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="text-align:center; font-family:'Space Mono',monospace; font-size:11px; color:var(--faint); padding:8px 0 4px;">Read-only oversight — admins never write into threads.</div>
+            </div>
+          </sc-if>
+
+        </div>
+      </main>
+    </div>
+  </sc-if>
+
+  <!-- ============ DIALOG ============ -->
+  <sc-if value="{{ dlgOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="ad-scrim" onClick="{{ onDlgCancel }}">
+      <div class="ad-card" style="max-width:440px; width:100%; padding:24px;" onClick="{{ stopProp }}">
+        <div style="display:flex; gap:14px; align-items:flex-start;">
+          <div style="width:38px; height:38px; border-radius:9px; {{ dlgIconStyle }} display:flex; align-items:center; justify-content:center; flex-shrink:0;">{{ dlgIconEl }}</div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-family:'Sora',sans-serif; font-size:17px; font-weight:700; letter-spacing:-0.01em;">{{ dlgTitle }}</div>
+            <div style="font-size:13.5px; color:var(--muted); line-height:1.55; margin-top:6px;">{{ dlgBody }}</div>
+
+            <sc-if value="{{ dlgIsReason }}" hint-placeholder-val="{{ false }}">
+              <label style="display:block; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:14px 0 6px;">Reason (required — recorded in the audit log)</label>
+              <textarea class="ad-input" rows="3" style="resize:vertical; line-height:1.5;" placeholder="Impersonation report #… / spam sweep / policy violation" value="{{ dlgReason }}" onInput="{{ onDlgReason }}"></textarea>
+            </sc-if>
+
+            <sc-if value="{{ dlgIsType }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px; color:var(--muted); line-height:1.6; margin-top:12px;">Deleted: profiles, posts, products, comments, follows. Surviving: recorded taps (as anonymous events).</div>
+              <label style="display:block; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:14px 0 6px;">Type <span style="color:var(--danger);">{{ dlgMatch }}</span> to confirm</label>
+              <input class="ad-input ad-mono" placeholder="{{ dlgMatch }}" value="{{ dlgTypeVal }}" onInput="{{ onDlgType }}">
+            </sc-if>
+
+            <sc-if value="{{ dlgIsAddAdmin }}" hint-placeholder-val="{{ false }}">
+              <label style="display:block; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:14px 0 6px;">Email</label>
+              <input class="ad-input" placeholder="name@plugfolio.com">
+              <label style="display:block; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:12px 0 6px;">Name</label>
+              <input class="ad-input" placeholder="Full name">
+            </sc-if>
+
+            <sc-if value="{{ dlgIsPrompt }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--surface2); border:1px solid var(--border); border-radius:9px; padding:12px; margin-top:14px; font-family:'Space Mono',monospace; font-size:12px; line-height:1.5;">
+                <div style="color:var(--faint);">Current — <span style="color:var(--text);">{{ dlgCurrent }}</span></div>
+                <div style="color:var(--faint); margin-top:6px;">Becomes — <span style="color:var(--text);">{{ dlgBecomes }}</span> — or the name you enter below</div>
+              </div>
+              <label style="display:block; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:14px 0 6px;">New username for this page</label>
+              <input class="ad-input ad-mono" value="{{ dlgValue }}" onInput="{{ onDlgInput }}">
+              <div style="font-size:11.5px; color:var(--faint); margin-top:7px; line-height:1.5;">3–30 characters: lowercase letters, numbers, dots, dashes. Keep the suggestion or type your own.</div>
+            </sc-if>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
+          <button class="ad-btn ad-btn-ghost" onClick="{{ onDlgCancel }}">Cancel</button>
+          <button class="ad-btn {{ dlgConfirmCls }}" onClick="{{ onDlgConfirm }}">{{ dlgConfirm }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ TOAST ============ -->
+  <sc-if value="{{ toastOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; right:22px; bottom:22px; z-index:80; display:flex; align-items:flex-start; gap:10px; background:var(--surface); border:1px solid var(--border2); border-radius:11px; padding:13px 16px; max-width:360px; box-shadow:0 14px 40px rgba(10,8,18,.22);">
+      <span style="display:flex; margin-top:1px; color:{{ toastAccent }};">{{ toastIcon }}</span>
+      <div style="font-size:13px; color:var(--text); line-height:1.45;">{{ toastText }}</div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: {&quot;width&quot;: 1360, &quot;height&quot;: 900},
+  &quot;theme&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;light&quot;, &quot;options&quot;: [&quot;light&quot;,&quot;dark&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Display&quot;},
+  &quot;startScreen&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;dashboard&quot;, &quot;options&quot;: [&quot;signin&quot;,&quot;dashboard&quot;,&quot;members&quot;,&quot;profiles&quot;,&quot;posts&quot;,&quot;products&quot;,&quot;comments&quot;,&quot;businesses&quot;,&quot;requirements&quot;,&quot;collabs&quot;,&quot;analytics&quot;,&quot;settings&quot;,&quot;audit&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Display&quot;},
+  &quot;demoState&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;data&quot;, &quot;options&quot;: [&quot;data&quot;,&quot;loading&quot;,&quot;empty&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;List states&quot;}
+}">
+class Component extends DCLogic {
+  state = { screen:null, theme:null, collapsed:false, dialog:null, profileErr:false, signErr:false, detail:null, toast:null, selected:[], menuOpen:false };
+
+  icon(name, size){
+    const P=d=>React.createElement('path',{d});
+    const C=(cx,cy,r)=>React.createElement('circle',{cx,cy,r});
+    const R=(x,y,w,h,rx)=>React.createElement('rect',{x,y,width:w,height:h,rx});
+    const M={
+      dashboard:[R(3,3,7,9,1),R(14,3,7,5,1),R(14,12,7,9,1),R(3,16,7,5,1)],
+      users:[P('M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'),C(9,7,4),P('M22 21v-2a4 4 0 0 0-3-3.87'),P('M16 3.13a4 4 0 0 1 0 7.75')],
+      usersq:[R(3,3,18,18,2),C(12,10,3),P('M7 20.66a5 5 0 0 1 10 0')],
+      image:[R(3,3,18,18,2),C(9,9,2),P('m21 15-3.09-3.09a2 2 0 0 0-2.83 0L6 21')],
+      bag:[P('M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z'),P('M3 6h18'),P('M16 10a4 4 0 0 1-8 0')],
+      msg:[P('M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z')],
+      briefcase:[R(2,7,20,14,2),P('M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16')],
+      clip:[R(8,2,8,4,1),P('M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'),P('M9 12h6'),P('M9 16h6')],
+      handshake:[P('m11 17 2 2a1 1 0 0 0 3-3'),P('m14 14 2.5 2.5a1 1 0 0 0 3-3l-3.9-3.9a3 3 0 0 0-4.2 0l-.9.9a1 1 0 0 1-3-3l2.8-2.8a5.8 5.8 0 0 1 7 -.9'),P('M21 4v4h-4'),P('M3 12l3 3')],
+      bar:[P('M3 3v18h18'),P('M18 17V9'),P('M13 17V6'),P('M8 17v-4')],
+      sliders:[P('M10 5H3'),P('M21 5h-6'),P('M8 12H3'),P('M21 12h-9'),P('M14 19H3'),P('M21 19h-3'),C(14,5,2),C(6,12,2),C(17,19,2)],
+      scroll:[P('M8 21h9a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14'),P('M4 17v2a2 2 0 0 0 2 2'),P('M9 8h6'),P('M9 12h6')],
+      logout:[P('M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'),P('m16 17 5-5-5-5'),P('M21 12H9')],
+      search:[C(11,11,8),P('m21 21-4.3-4.3')],
+      panel:[R(3,3,18,18,2),P('M9 3v18')],
+      sun:[C(12,12,4),P('M12 2v2'),P('M12 20v2'),P('m4.9 4.9 1.4 1.4'),P('m17.7 17.7 1.4 1.4'),P('M2 12h2'),P('M20 12h2'),P('m6.3 17.7-1.4 1.4'),P('m19.1 4.9-1.4 1.4')],
+      moon:[P('M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z')],
+      x:[P('M18 6 6 18'),P('M6 6l12 12')],
+      alert:[P('m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3Z'),P('M12 9v4'),P('M12 17h.01')],
+      chevL:[P('m15 18-6-6 6-6')],
+      chevR:[P('m9 18 6-6-6-6')],
+      shield:[P('M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z')],
+      flag:[P('M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z'),P('M4 22v-7')],
+      dots:[C(12,5,1),C(12,12,1),C(12,19,1)],
+      download:[P('M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'),P('M7 10l5 5 5-5'),P('M12 15V3')],
+      trash:[P('M3 6h18'),P('M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2')],
+      back:[P('M19 12H5'),P('M12 19l-7-7 7-7')],
+      checkc:[P('M22 11.08V12a10 10 0 1 1-5.93-9.14'),P('m22 4-10 10.01-3-3')],
+      plus:[P('M12 5v14'),P('M5 12h14')],
+      youtube:[R(2,5,20,14,4),P('m10 9 5 3-5 3z')],
+      insta:[R(2,2,20,20,5),C(12,12,4),C(17.5,6.5,0.4)],
+      ext:[P('M15 3h6v6'),P('M10 14 21 3'),P('M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6')]
+    };
+    const ch=(M[name]||[]).map((e,i)=>React.cloneElement(e,{key:i}));
+    return React.createElement('svg',{width:size||18,height:size||18,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:1.9,strokeLinecap:'round',strokeLinejoin:'round',style:{flexShrink:0,display:'block'}},ch);
+  }
+
+  go(s){ this.setState({screen:s, dialog:null, profileErr:false, detail:null, selected:[], menuOpen:false}); }
+  openMember(r){ this.setState({screen:'memberDetail', detail:r, selected:[], menuOpen:false, dialog:null}); }
+  openProfile(r){ this.setState({screen:'profileDetail', detail:r, selected:[], dialog:null}); }
+  openThread(r){ this.setState({screen:'thread', detail:r, selected:[], dialog:null}); }
+  openAlert(a){ this.setState({dialog:Object.assign({kind:'alert', danger:true}, a)}); }
+  openPrompt(){ this.setState({dialog:{kind:'prompt', isRelease:true, danger:true, current:'/gadget-guru', becomes:'creator-4f9d21ab', value:'creator-4f9d21ab', title:'Release username', body:'Frees /gadget-guru for its rightful owner — the lever for impersonation, squatting, and handle disputes. The page stays live at the new address; nothing is deleted; the freed name is claimable immediately. Recorded in the audit log.', confirm:'Release & rename', toast:'Username released'}}); }
+  openResetHandle(h){ const cur=h||'@maya'; this.setState({dialog:{kind:'prompt', danger:true, current:cur, becomes:'user-8f21a0c4', value:'user-8f21a0c4', title:'Reset handle', body:'Frees '+cur+' for reassignment — covers names grabbed before they were reserved. The account keeps everything; only the @handle changes. Recorded in the audit log.', confirm:'Reset handle', toast:'Handle reset'}}); }
+  openReason(kind){ const prof = kind==='profile'; this.setState({menuOpen:false, dialog:{kind:'reason', danger:true, reason:'', title: prof?'Suspend profile':'Suspend member', body: prof? 'Only this creator page goes dark for shoppers. The owner can still sign in and manage other pages. Reversible — nothing is deleted. Recorded in the audit log.' : 'They will be blocked from signing in and every profile they own is hidden from shoppers. Reversible — nothing is deleted. Recorded in the audit log.', confirm:'Suspend', toast:'Suspended'}}); }
+  openDelAccount(h){ const hh=h||'@maya'; this.setState({menuOpen:false, dialog:{kind:'delType', danger:true, match:hh, typeVal:'', title:'Delete account', body:'Permanently deletes this member and their profiles, posts, products, comments and follows. Recorded taps survive as anonymous events. This cannot be undone.', confirm:'Delete forever', toast:'Account deleted'}}); }
+  openAddAdmin(){ this.setState({dialog:{kind:'addAdmin', danger:false, title:'Add admin', body:'The invite email sets their password. New admins get full operator access.', confirm:'Send invite', toast:'Invite sent'}}); }
+  closeDlg(){ this.setState({dialog:null}); }
+  toggleMenu(){ this.setState(s=>({menuOpen:!s.menuOpen})); }
+  toggleSel(i){ this.setState(s=>{const a=s.selected.slice(); const k=a.indexOf(i); if(k>=0)a.splice(k,1); else a.push(i); return {selected:a};}); }
+  toggleSelAll(ids){ this.setState(s=>({selected: s.selected.length===ids.length ? [] : ids.slice()})); }
+  clearSel(){ this.setState({selected:[]}); }
+  showToast(kind,text){ if(this._tt) clearTimeout(this._tt); this.setState({toast:{kind,text}}); this._tt=setTimeout(()=>this.setState({toast:null}),3800); }
+  confirmDlg(){ const d=this.state.dialog; if(!d) return; if(d.kind==='reason' && !(d.reason||'').trim()) return; if(d.kind==='delType' && (d.typeVal||'')!==d.match) return; if(d.kind==='prompt' && d.isRelease){ this.setState({dialog:null, profileErr:true}); this.showToast('error','Username not released — that name is already taken'); return; } var t=d.toast||'Done'; if(d.kind==='reason' && d.reason){ t=t+' — '+d.reason.trim(); } this.setState({dialog:null}); this.showToast('success', t+' · recorded in the audit log'); }
+
+  renderVals(){
+    const screen = this.state.screen ?? this.props.startScreen ?? 'dashboard';
+    const theme = this.state.theme ?? this.props.theme ?? 'light';
+    const d = theme==='dark';
+    const collapsed = this.state.collapsed;
+    const demo = this.props.demoState ?? 'data';
+
+    const base = d
+      ? "--bg:#0E0C16;--surface:#161320;--surface2:#1A1726;--text:#F5F3FA;--muted:#B3AEC2;--faint:#8C8798;--border:#2A2735;--border2:#393546;--accent:#A78BFA;--accentFg:#12101C;--accentSoft:#241E33;--danger:#FF7A6B;--dangerFg:#12101C;--dangerSoft:rgba(255,122,107,.14);--dangerBorder:rgba(255,122,107,.34);"
+      : "--bg:#FFFFFF;--surface:#FFFFFF;--surface2:#FBFAFE;--text:#12101C;--muted:#54505F;--faint:#8C8798;--border:#ECE8F4;--border2:#D8D2E6;--accent:#7C3AED;--accentFg:#FFFFFF;--accentSoft:#EFEAFB;--danger:#C63626;--dangerFg:#FFFFFF;--dangerSoft:rgba(198,54,38,.09);--dangerBorder:rgba(198,54,38,.32);";
+
+    const nav = [
+      {label:'', items:[{k:'dashboard',label:'Dashboard',icon:'dashboard'}]},
+      {label:'People', items:[{k:'members',label:'Members',icon:'users'},{k:'profiles',label:'Profiles',icon:'usersq'}]},
+      {label:'Content', items:[{k:'posts',label:'Posts',icon:'image'},{k:'products',label:'Products',icon:'bag'},{k:'comments',label:'Comments',icon:'msg'},{k:'reports',label:'Reports',icon:'flag'}]},
+      {label:'Marketplace', items:[{k:'businesses',label:'Businesses',icon:'briefcase'},{k:'requirements',label:'Requirements',icon:'clip'},{k:'collabs',label:'Collabs',icon:'handshake'}]},
+      {label:'Insight', items:[{k:'analytics',label:'Analytics',icon:'bar'}]},
+      {label:'System', items:[{k:'admins',label:'Admins',icon:'shield'},{k:'settings',label:'Settings',icon:'sliders'},{k:'audit',label:'Audit log',icon:'scroll'}]}
+    ];
+    const navGroups = nav.map(g=>({
+      label:g.label,
+      showLabel: g.label!=='' && !collapsed,
+      items: g.items.map(it=>({
+        label:it.label,
+        iconEl:this.icon(it.icon,18),
+        activeCls: screen===it.k ? 'ad-nav-active' : '',
+        on:()=>this.go(it.k)
+      }))
+    }));
+
+    const titles = {dashboard:'Dashboard',members:'Members',profiles:'Profiles',posts:'Posts',products:'Products',comments:'Comments',reports:'Reports',businesses:'Businesses',requirements:'Requirements',collabs:'Collabs',analytics:'Analytics',admins:'Admins',settings:'Settings',audit:'Audit log',memberDetail:'Member',profileDetail:'Profile',thread:'Collab thread'};
+
+    const skeletonEl = React.createElement('tr',{},
+      React.createElement('td',{colSpan:9,style:{padding:'8px 14px'}},
+        [1,2,3,4,5].map(i=>React.createElement('div',{key:i,className:'ad-sk',style:{height:'16px',margin:'12px 0',width:(70+ (i*4)%25)+'%'}}))));
+
+    const susp = ()=>this.openAlert({title:'Suspend this member?', body:'They will be blocked from signing in and every profile they own is hidden from shoppers. This is reversible — nothing is deleted. Recorded in the audit log.', confirm:'Suspend'});
+    const unsusp = ()=>this.openAlert({title:'Unsuspend this member?', body:'They regain access and their profiles return to shoppers. Recorded in the audit log.', confirm:'Unsuspend', danger:false});
+
+    const members = [
+      {email:'maya@studio.co',name:'Maya Okafor',handle:'@mayamoves',hasRole:true,roleText:'Creator · 2',statusCls:'ad-b-outline',statusText:'Active',joined:'2025-11-02',suspended:false},
+      {email:'lena.b@gmail.com',name:'Lena Brooks',handle:'@lenab',hasRole:true,roleText:'Creator · 1',statusCls:'ad-b-danger',statusText:'Suspended',joined:'2026-01-14',suspended:true},
+      {email:'devon@northkit.com',name:'Devon Ray',handle:'@devonray',hasRole:true,roleText:'Business',statusCls:'ad-b-outline',statusText:'Active',joined:'2025-09-20',suspended:false},
+      {email:'ari.n@proton.me',name:'Ari Nakamura',handle:'@arikitchen',hasRole:true,roleText:'Creator · 3',statusCls:'ad-b-outline',statusText:'Unverified',joined:'2026-06-30',suspended:false},
+      {email:'sofia@outlook.com',name:'Sofia Marín',handle:'—',hasRole:false,roleText:'',statusCls:'ad-b-outline',statusText:'Active',joined:'2026-07-10',suspended:false},
+      {email:'tom.h@vervegear.com',name:'Tom Hale',handle:'@vervegear',hasRole:true,roleText:'Business',statusCls:'ad-b-outline',statusText:'Active',joined:'2025-12-01',suspended:false}
+    ].map((r,i)=>Object.assign(r,{idx:i, checked:this.state.selected.indexOf(i)>=0, onToggle:()=>this.toggleSel(i), onOpen:()=>this.openMember(r), actions: r.suspended ? [{label:'Unsuspend',cls:'ad-btn-secondary',on:unsusp}] : [{label:'Suspend',cls:'ad-btn-destructive',on:()=>this.openReason('member')}]}));
+
+    const relUser = ()=>this.openPrompt();
+    const suspPage = ()=>this.openAlert({title:'Suspend this page?', body:'Only this creator page goes dark for shoppers. The owner can still sign in and manage their other pages. Reversible — nothing is deleted. Recorded in the audit log.', confirm:'Suspend'});
+    const unsuspPage = ()=>this.openAlert({title:'Unsuspend this page?', body:'The page returns to shoppers at its current address. Recorded in the audit log.', confirm:'Unsuspend', danger:false});
+    const profiles = [
+      {username:'/gadget-guru',owner:'devon@northkit.com',hasManagers:false,managers:'',content:'12 posts · 8 products · 310 followers',statusCls:'ad-b-outline',statusText:'Live',pageSusp:false},
+      {username:'/maya',owner:'maya@studio.co',hasManagers:true,managers:'+2 managers',content:'48 posts · 22 products · 142K followers',statusCls:'ad-b-outline',statusText:'Live',pageSusp:false},
+      {username:'/lena-home',owner:'lena.b@gmail.com',hasManagers:false,managers:'',content:'20 posts · 15 products · 8.2K followers',statusCls:'ad-b-danger',statusText:'Owner suspended',pageSusp:false},
+      {username:'/ari-kitchen',owner:'ari.n@proton.me',hasManagers:false,managers:'',content:'9 posts · 6 products · 5.1K followers',statusCls:'ad-b-danger',statusText:'Suspended',pageSusp:true},
+      {username:'/verve-gear',owner:'tom.h@vervegear.com',hasManagers:false,managers:'',content:'4 posts · 30 products · 900 followers',statusCls:'ad-b-outline',statusText:'Live',pageSusp:false}
+    ].map(r=>Object.assign(r,{onOpen:()=>this.openProfile(r), actions:[
+      {label:'Release username',cls:'ad-btn-ghost',on:relUser},
+      r.pageSusp ? {label:'Unsuspend',cls:'ad-btn-secondary',on:unsuspPage} : {label:'Suspend',cls:'ad-btn-destructive',on:()=>this.openReason('profile')}
+    ]}));
+
+    const rmPost = ()=>this.openAlert({title:'Remove this post?', body:'The post and its media come off Plugfolio. Tagged products stay live and recorded taps survive. This cannot be undone. Recorded in the audit log.', confirm:'Remove post'});
+    const posts = [
+      {caption:'3 things in my gym bag right now',profile:'/maya',products:3,when:'2026-07-21'},
+      {caption:'Counter refresh — the full list below',profile:'/ari-kitchen',products:6,when:'2026-07-20'},
+      {caption:'Reupload of another creator\u2019s product shots',profile:'/gadget-guru',products:2,when:'2026-07-18'},
+      {caption:'Summer capsule, every link in one place',profile:'/lena-home',products:8,when:'2026-07-15'},
+      {caption:'Desk setup 2026 — what actually stayed',profile:'/verve-gear',products:4,when:'2026-07-12'}
+    ].map((r,i)=>Object.assign(r,{idx:i, checked:this.state.selected.indexOf(i)>=0, onToggle:()=>this.toggleSel(i), onRemove:rmPost}));
+
+    const clrCoupon = ()=>this.openAlert({title:'Clear this coupon?', body:'The code and offer are removed from the product. The product stays live. Recorded in the audit log.', confirm:'Clear coupon'});
+    const rmProduct = ()=>this.openAlert({title:'Remove this product?', body:'Removes the product and its recorded taps — the same cascade as a creator removing their own. This cannot be undone. Recorded in the audit log.', confirm:'Remove product'});
+    const products = [
+      {title:'Flux Seamless Leggings',price:'$68',profile:'/maya',kind:'Affiliate',hasCoupon:false,couponCode:'',couponExpired:false},
+      {title:'Ceramic Chef Knife',price:'$120',profile:'/ari-kitchen',kind:'Own',hasCoupon:true,couponCode:'ARI10',couponExpired:false},
+      {title:'Trail Runner GTX',price:'$145',profile:'/verve-gear',kind:'Affiliate',hasCoupon:true,couponCode:'SUMMER',couponExpired:true},
+      {title:'Linen Throw Blanket',price:'$54',profile:'/lena-home',kind:'Affiliate',hasCoupon:false,couponCode:'',couponExpired:false},
+      {title:'Wireless Buds Pro',price:'$99',profile:'/gadget-guru',kind:'Affiliate',hasCoupon:true,couponCode:'PLUG15',couponExpired:false},
+      {title:'Studio Ring Light',price:'$75',profile:'/maya',kind:'Own',hasCoupon:false,couponCode:'',couponExpired:false}
+    ].map((r,i)=>Object.assign(r,{idx:i, checked:this.state.selected.indexOf(i)>=0, onToggle:()=>this.toggleSel(i), noCoupon:!r.hasCoupon, actions: r.hasCoupon ? [{label:'Clear coupon',cls:'ad-btn-ghost',on:clrCoupon},{label:'Remove',cls:'ad-btn-destructive',on:rmProduct}] : [{label:'Remove',cls:'ad-btn-destructive',on:rmProduct}]}));
+
+    const delComment = ()=>this.openAlert({title:'Delete this comment?', body:'The comment and all of its replies are permanently deleted. This cannot be undone. Recorded in the audit log.', confirm:'Delete'});
+    const comments = [
+      {body:'Where did you get the belt? Been searching everywhere 😭',hasReplies:false,replies:'',isBrand:false,author:'@noorstyles',on:'/maya · Flux Seamless Leggings',when:'2026-07-23 09:14'},
+      {body:'Check my page for the SAME knife 40% cheaper 🔥🔥 link in bio',hasReplies:false,replies:'',isBrand:true,author:'/kitchen-deals',on:'/ari-kitchen · Ceramic Chef Knife',when:'2026-07-23 08:51'},
+      {body:'This changed my whole morning routine, thank you!',hasReplies:true,replies:'3 replies (deleted with it)',isBrand:false,author:'@devonray',on:'/lena-home · Linen Throw',when:'2026-07-22 20:02'},
+      {body:'Is this the older model or the 2026 one?',hasReplies:true,replies:'1 reply (deleted with it)',isBrand:false,author:'@sam.builds',on:'/gadget-guru · Wireless Buds Pro',when:'2026-07-22 18:30'},
+      {body:'DM me for a collab, huge audience waiting for you',hasReplies:false,replies:'',isBrand:true,author:'/growth-hub',on:'/maya · 3 things in my gym bag',when:'2026-07-22 12:10'},
+      {body:'Copped in seconds. Fit is true to size.',hasReplies:false,replies:'',isBrand:false,author:'@arikitchen',on:'/verve-gear · Trail Runner GTX',when:'2026-07-21 21:44'}
+    ].map((r,i)=>Object.assign(r,{idx:i, checked:this.state.selected.indexOf(i)>=0, onToggle:()=>this.toggleSel(i), isPerson:!r.isBrand, onDelete:delComment}));
+
+    const clrLogo = ()=>this.openAlert({title:'Clear this logo?', body:'The uploaded logo is removed and the business shows its default mark. Recorded in the audit log.', confirm:'Clear logo'});
+    const businesses = [
+      {name:'Verve Gear',desc:'Performance trail & running apparel.',owner:'tom.h@vervegear.com',activity:'3 requirements · 5 collabs',statusCls:'ad-b-outline',statusText:'Active',hasLogo:true},
+      {name:'NorthKit',desc:'Small-batch kitchen tools.',owner:'devon@northkit.com',activity:'1 requirement · 2 collabs',statusCls:'ad-b-outline',statusText:'Active',hasLogo:true},
+      {name:'Growth Hub',desc:'Creator growth agency.',owner:'grow@growthhub.io',activity:'0 requirements · 4 collabs',statusCls:'ad-b-danger',statusText:'Owner suspended',hasLogo:true},
+      {name:'SoundLab',desc:'Audio gear for makers.',owner:'hi@soundlab.co',activity:'2 requirements · 1 collab',statusCls:'ad-b-outline',statusText:'Active',hasLogo:false},
+      {name:'Homefolk',desc:'Textiles for calm homes.',owner:'studio@homefolk.com',activity:'1 requirement · 0 collabs',statusCls:'ad-b-outline',statusText:'Active',hasLogo:true}
+    ].map(r=>Object.assign(r,{noLogo:!r.hasLogo, onClear:clrLogo}));
+
+    const rmReq = ()=>this.openAlert({title:'Remove this requirement?', body:'The brief comes off the open board. Existing collab threads on it survive. Recorded in the audit log.', confirm:'Remove requirement'});
+    const requirements = [
+      {title:'Trail shoe launch — 3 reels',brief:'Outdoor creators for a spring launch push.',business:'Verve Gear',budget:'$2,000',deadline:'2026-08-15',approaches:6},
+      {title:'Knife skills series',brief:'Recurring collab, 4 videos over 2 months.',business:'NorthKit',budget:'—',deadline:'2026-09-01',approaches:2},
+      {title:'URGENT free product for a post!!',brief:'Send us your bank details to receive samples.',business:'Growth Hub',budget:'—',deadline:'—',approaches:0},
+      {title:'Home reset campaign',brief:'Cozy-home creators, autumn theme.',business:'Homefolk',budget:'$800',deadline:'2026-08-30',approaches:3},
+      {title:'Buds Pro unboxing',brief:'Tech reviewers, one long-form video.',business:'SoundLab',budget:'$1,200',deadline:'—',approaches:4}
+    ].map(r=>Object.assign(r,{onRemove:rmReq}));
+
+    const collabs = [
+      {biz:'Verve Gear',creator:'/maya',source:'Trail shoe launch — 3 reels',messages:14,stateCls:'ad-b-secondary',stateText:'Agreed',started:'2026-07-02'},
+      {biz:'NorthKit',creator:'/ari-kitchen',source:'Knife skills series',messages:22,stateCls:'ad-b-outline',stateText:'One side agreed',started:'2026-06-28'},
+      {biz:'SoundLab',creator:'/gadget-guru',source:'Direct reach-out',messages:6,stateCls:'ad-b-outline',stateText:'Negotiating',started:'2026-07-18'},
+      {biz:'Homefolk',creator:'/lena-home',source:'Home reset campaign',messages:9,stateCls:'ad-b-secondary',stateText:'Agreed',started:'2026-07-05'},
+      {biz:'SoundLab',creator:'/devon',source:'Buds Pro unboxing',messages:3,stateCls:'ad-b-outline',stateText:'Negotiating',started:'2026-07-20'}
+    ].map(r=>Object.assign(r,{onOpen:()=>this.openThread(r)}));
+
+    const audit = [
+      {when:'2026-07-23 19:04',admin:'ops@plugfolio.com',action:'member.suspend',target:'member:8823',detail:'lena.b@gmail.com — spam'},
+      {when:'2026-07-23 18:40',admin:'kay@plugfolio.com',action:'profile.releaseUsername',target:'profile:4471',detail:'gadget-guru → creator-4f9d21ab'},
+      {when:'2026-07-23 17:12',admin:'ops@plugfolio.com',action:'comment.delete',target:'comment:99120',detail:'brand spam: “Check my page…”'},
+      {when:'2026-07-23 15:55',admin:'kay@plugfolio.com',action:'product.remove',target:'product:5560',detail:'counterfeit outbound link'},
+      {when:'2026-07-23 14:03',admin:'ops@plugfolio.com',action:'settings.featureFlag',target:'flag:new-tagging',detail:'on'},
+      {when:'2026-07-23 11:20',admin:'kay@plugfolio.com',action:'business.clearLogo',target:'business:311',detail:'off-brand logo'},
+      {when:'2026-07-22 22:47',admin:'ops@plugfolio.com',action:'post.remove',target:'post:70233',detail:'stolen media'}
+    ];
+
+    const tiles = [
+      {label:'Members',value:'4,182',delta:'+36 this week',on:()=>this.go('members')},
+      {label:'Profiles',value:'5,905',delta:'+58 this week',on:()=>this.go('profiles')},
+      {label:'Businesses',value:'214',delta:'+4 this week',on:()=>this.go('businesses')},
+      {label:'Posts',value:'38,410',delta:'+512 this week',on:()=>this.go('posts')},
+      {label:'Products',value:'61,238',delta:'+740 this week',on:()=>this.go('products')},
+      {label:'Taps · 7d',value:'128,904',delta:'+12% vs prior',on:()=>this.go('analytics')},
+      {label:'Code copies · 7d',value:'9,431',delta:'+7% vs prior',on:()=>this.go('analytics')},
+      {label:'Comments · 7d',value:'4,006',delta:'+190 this week',on:()=>this.go('comments')},
+      {label:'Open reports',value:'11',delta:'triage queue',on:()=>this.go('reports')}
+    ];
+    const recent = audit.slice(0,5);
+
+    const anTiles = [
+      {label:'Taps · 7d',value:'128,904'},{label:'Taps · 30d',value:'512,660'},
+      {label:'Code copies · 7d',value:'9,431'},{label:'Code copies · 30d',value:'38,220'}
+    ];
+    const topProfiles = [['/maya','42,110'],['/ari-kitchen','31,540'],['/gadget-guru','28,900'],['/lena-home','19,220'],['/verve-gear','14,880'],['/noorstyles','12,340'],['/devon','9,870'],['/sam.builds','8,120'],['/kitchen-deals','6,540'],['/studio-fit','5,010']].map(x=>({name:x[0],taps:x[1]}));
+    const topProducts = [['Flux Seamless Leggings','/maya','18,220'],['Ceramic Chef Knife','/ari-kitchen','15,640'],['Wireless Buds Pro','/gadget-guru','12,900'],['Trail Runner GTX','/verve-gear','9,410'],['Linen Throw Blanket','/lena-home','7,880'],['Studio Ring Light','/maya','6,120'],['Cast Iron Skillet','/ari-kitchen','5,540'],['Merino Base Layer','/verve-gear','4,760'],['Desk Mat XL','/gadget-guru','3,980'],['Scented Candle Set','/lena-home','3,210']].map(x=>({title:x[0],profile:x[1],taps:x[2]}));
+    const tapSources = [{label:'profile',count:'312,700',pct:'61%'},{label:'post',count:'138,420',pct:'27%'},{label:'product',count:'61,540',pct:'12%'}];
+
+    const reserved = ['admin','api','dashboard','homepage','settings','signin','support','about','help','root','www','static','assets','blog'];
+    const rmFlag = ()=>this.openAlert({title:'Remove this flag?', body:'The feature returns to its built-in default. Recorded in the audit log.', confirm:'Remove flag'});
+    const flags = [
+      {name:'new-tagging',on:true},{name:'coupon-instore',on:true},{name:'desktop-grid-4col',on:false}
+    ].map(f=>({name:f.name, stateCls:f.on?'ad-b-secondary':'ad-b-outline', stateText:f.on?'On':'Off', toggleLabel:f.on?'Turn off':'Turn on', onRemove:rmFlag}));
+
+    // ---- admins ----
+    const rmAdmin=()=>this.openAlert({title:'Remove this admin?', body:'They lose all operator access immediately. Recorded in the audit log.', confirm:'Remove', toast:'Admin removed'});
+    const admins=[
+      {email:'ops@plugfolio.com',name:'You (Ops)',added:'2025-08-01',last:'2026-07-23',self:true},
+      {email:'kay@plugfolio.com',name:'Kay Mensah',added:'2025-09-15',last:'2026-07-22',self:false},
+      {email:'ravi@plugfolio.com',name:'Ravi Shah',added:'2026-01-10',last:'—',self:false}
+    ].map(a=>Object.assign(a,{onReset:()=>this.showToast('success','Password reset link sent to '+a.email), onRemove: a.self ? null : rmAdmin}));
+
+    // ---- reports ----
+    const reports=[
+      {icon:this.icon('msg',16),type:'Comment',snippet:'“Check my page for the SAME knife 40% cheaper…”',cat:'Spam',free:'obvious self-promo',reporter:'@arikitchen',age:'3h',statusCls:'ad-b-secondary',statusText:'Open',open:true,view:()=>this.go('comments')},
+      {icon:this.icon('bag',16),type:'Product',snippet:'Trail Runner GTX — counterfeit outbound link',cat:'Scam',free:'fake retailer domain',reporter:'Anonymous shopper',age:'6h',statusCls:'ad-b-secondary',statusText:'Open',open:true,view:()=>this.go('products')},
+      {icon:this.icon('usersq',16),type:'Profile',snippet:'/gadget-guru impersonating a brand',cat:'Impersonation',free:'not the official store',reporter:'@devonray',age:'1d',statusCls:'ad-b-secondary',statusText:'Open',open:true,view:()=>this.go('profiles')},
+      {icon:this.icon('image',16),type:'Post',snippet:'Reupload of stolen product shots',cat:'Offensive',free:'stolen media',reporter:'Anonymous shopper',age:'2d',statusCls:'ad-b-outline',statusText:'Resolved',open:false,view:()=>this.go('posts')}
+    ].map(r=>Object.assign(r,{onResolve:()=>this.showToast('success','Report resolved · recorded in the audit log'), onDismiss:()=>this.showToast('success','Report dismissed')}));
+
+    // ---- detail: member ----
+    const m = (screen==='memberDetail' && this.state.detail) ? this.state.detail : members[0];
+    const dtMember = {
+      email:m.email, name:m.name, handle:m.handle, hasRole:m.hasRole, roleText:m.roleText,
+      statusCls:m.statusCls, statusText:m.statusText, suspended:m.statusText==='Suspended', unverified:m.statusText==='Unverified',
+      joined:m.joined, id:'member:8823', follows:'312 following · 1,204 followers',
+      profiles:[{u:'/maya',role:'Owner'},{u:'/studio-fit',role:'Manager'}],
+      socials:[{prov:'YouTube',icon:this.icon('youtube',16),handle:'@mayamoves',date:'2025-11-04'},{prov:'Instagram',icon:this.icon('insta',16),handle:'@maya.moves',date:'2025-11-04'}],
+      recent:[{body:'Restocked! grab it fast 🏃',when:'2026-07-20'},{body:'thank you all 🥹',when:'2026-07-14'},{body:'code still works at checkout',when:'2026-07-09'}]
+    };
+    const onResetHandle=()=>this.openResetHandle(m.handle);
+    const onReasonMember=()=>this.openReason('member');
+    const onUnsuspendMember=()=>this.openAlert({title:'Unsuspend this member?', body:'They regain access and their profiles return to shoppers. Recorded in the audit log.', confirm:'Unsuspend', danger:false, toast:'Unsuspended'});
+    const onDelAcct=()=>this.openDelAccount(m.handle);
+    const onResend=()=>this.showToast('success','Verification email resent to '+m.email);
+    const onPwReset=()=>this.showToast('success','Password reset link sent to '+m.email);
+
+    // ---- detail: profile ----
+    const pf = (screen==='profileDetail' && this.state.detail) ? this.state.detail : profiles[0];
+    const dtProfile = {
+      username:pf.username, owner:pf.owner, hasManagers:pf.hasManagers, managers:pf.managers,
+      statusCls:pf.statusCls, statusText:pf.statusText, live:pf.statusText==='Live', suspended:pf.statusText!=='Live',
+      stats:[{label:'Followers',value:'142K'},{label:'Taps · 30d',value:'42,110'},{label:'Code copies · 30d',value:'3,120'}],
+      posts: Array.from({length:12},(_,i)=>({seed:'pfd'+i})),
+      products:[{title:'Flux Seamless Leggings',kind:'Affiliate',coupon:'—',taps:'18,220'},{title:'Studio Ring Light',kind:'Own',coupon:'PLUG15',taps:'6,120'},{title:'Merino Base Layer',kind:'Affiliate',coupon:'—',taps:'4,760'}],
+      managersList:[{email:'sam@studio.co',date:'2026-02-01'},{email:'lee@studio.co',date:'2026-03-12'}],
+      categories:['Fitness','Athleisure','Wellness']
+    };
+    const onReleaseProfile=()=>this.openPrompt();
+    const onReasonProfile=()=>this.openReason('profile');
+    const onViewPublic=()=>this.showToast('success','Opening public page in a new tab…');
+    const onRemovePostDetail=()=>this.openAlert({title:'Remove this post?', body:'The post and its media come off Plugfolio. Tagged products stay live. This cannot be undone. Recorded in the audit log.', confirm:'Remove post', toast:'Post removed'});
+
+    // ---- detail: collab thread ----
+    const cl = (screen==='thread' && this.state.detail) ? this.state.detail : collabs[0];
+    const threadHeader = {biz:cl.biz, creator:cl.creator, source:cl.source, stateCls:cl.stateCls, stateText:cl.stateText};
+    const threadMsgs = [
+      {name:cl.biz,role:'Business',side:false,when:'2026-07-02 10:04',body:'Hi! Loved your trail content. We are launching the GTX line and want 3 reels.'},
+      {name:cl.creator,role:'Creator',side:true,when:'2026-07-02 12:20',body:'Thanks for reaching out — I am interested. What is the budget and timeline?'},
+      {name:cl.biz,role:'Business',side:false,when:'2026-07-03 09:11',body:'$2,000 for 3 reels across August. Product ships this week.'},
+      {name:cl.creator,role:'Creator',side:true,when:'2026-07-03 15:40',body:'Works for me. Payment settles off-platform via my usual invoice?'},
+      {name:cl.biz,role:'Business',side:false,when:'2026-07-04 08:30',body:'Correct — settles off-platform. Sending terms now.'},
+      {name:cl.creator,role:'Creator',side:true,when:'2026-07-04 11:05',body:'Agreed on the terms. Excited to start!'}
+    ].map(msg=>Object.assign(msg,{justify: msg.side?'flex-end':'flex-start', bubbleBg: msg.side?'var(--accentSoft)':'var(--surface)', onDel:()=>this.openAlert({title:'Delete this message?', body:'The message is removed from the thread. This cannot be undone. Recorded in the audit log.', confirm:'Delete message', toast:'Message deleted'})}));
+
+    // ---- analytics trend ----
+    const trendRaw = Array.from({length:30},(_,i)=>Math.round(11000 + 4200*Math.sin(i/3.2) + i*140 + (i%4)*300));
+    const tmax = Math.max.apply(null, trendRaw);
+    const trendBars = trendRaw.map((v,i)=>({h:Math.round(v/tmax*100)+'%', label:(i+1)}));
+
+    // ---- bulk selection ----
+    const selCount = this.state.selected.length;
+    const isSelScreen = ['members','posts','products','comments'].indexOf(screen)>=0;
+    const lens = {members:members.length, posts:posts.length, products:products.length, comments:comments.length};
+    const curLen = lens[screen] || 0;
+    const allIds = Array.from({length:curLen},(_,i)=>i);
+    const bulkCfg = {
+      members:{verb:'Suspend', title:'Suspend '+selCount+' members?', confirm:'Suspend '+selCount, rev:'Reversible — nothing is deleted.'},
+      posts:{verb:'Remove', title:'Remove '+selCount+' posts?', confirm:'Remove '+selCount, rev:'This cannot be undone.'},
+      products:{verb:'Remove', title:'Remove '+selCount+' products?', confirm:'Remove '+selCount, rev:'This cannot be undone.'},
+      comments:{verb:'Delete', title:'Delete '+selCount+' comments?', confirm:'Delete '+selCount, rev:'This cannot be undone.'}
+    };
+    const bc = bulkCfg[screen] || {verb:''};
+
+    const dlg = this.state.dialog;
+
+    return {
+      rootVars: base,
+      plugBody: d ? '#FFFFFF' : '#7C3AED',
+      plugProng: d ? '#C6FF3D' : '#12101C',
+      isSignin: screen==='signin',
+      isApp: screen!=='signin',
+      showLabels: !collapsed,
+      sidebarW: collapsed ? '64px' : '244px',
+      navGroups,
+      pageTitle: titles[screen] || '',
+      signErr: this.state.signErr,
+      profileErr: this.state.profileErr,
+
+      isDashboard: screen==='dashboard', isMembers: screen==='members', isProfiles: screen==='profiles',
+      isPosts: screen==='posts', isProducts: screen==='products', isComments: screen==='comments',
+      isBusinesses: screen==='businesses', isRequirements: screen==='requirements', isCollabs: screen==='collabs',
+      isAnalytics: screen==='analytics', isSettings: screen==='settings', isAudit: screen==='audit',
+      isReports: screen==='reports', isAdmins: screen==='admins',
+      isMemberDetail: screen==='memberDetail', isProfileDetail: screen==='profileDetail', isThread: screen==='thread',
+
+      loading: demo==='loading', empty: demo==='empty', hasData: demo==='data',
+      skeletonEl,
+
+      members, profiles, posts, products, comments, businesses, requirements, collabs, audit,
+      tiles, recent, anTiles, topProfiles, topProducts, tapSources, reserved, flags,
+      admins, reports, trendBars,
+      dtMember, dtProfile, threadHeader, threadMsgs,
+
+      onResetHandle, onReasonMember, onUnsuspendMember, onDelAcct, onResend, onPwReset,
+      onReleaseProfile, onReasonProfile, onViewPublic, onRemovePostDetail,
+      onAddAdmin:()=>this.openAddAdmin(),
+      menuOpen: this.state.menuOpen, onToggleMenu:()=>this.toggleMenu(),
+      notSuspendedMember: !dtMember.suspended,
+      goComments:()=>this.go('comments'),
+      onBack:()=>this.go(screen==='memberDetail'?'members':screen==='profileDetail'?'profiles':'collabs'),
+      backLabel: screen==='memberDetail'?'Members':screen==='profileDetail'?'Profiles':'Collabs',
+
+      showSelBar: isSelScreen && selCount>0,
+      selCount, bulkVerb: bc.verb + (selCount?' '+selCount:''),
+      onClearSel:()=>this.clearSel(),
+      onBulk:()=> this.openAlert({title:bc.title, body:'The action applies to every selected row. '+bc.rev+' Recorded in the audit log.', confirm:bc.confirm, danger: screen!=='members', toast:bc.verb+(bc.verb.endsWith('e')?'d':'ed')+' '+selCount+' rows'}),
+      allChecked: curLen>0 && selCount===curLen,
+      onSelAll:()=>this.toggleSelAll(allIds),
+
+      toastOpen: !!this.state.toast,
+      toastText: this.state.toast ? this.state.toast.text : '',
+      toastKind: this.state.toast ? this.state.toast.kind : 'success',
+      toastIcon: this.icon(this.state.toast && this.state.toast.kind==='error' ? 'alert' : 'checkc', 18),
+      toastAccent: (this.state.toast && this.state.toast.kind==='error') ? 'var(--danger)' : 'var(--accent)',
+      icDownload: this.icon('download',15), icBack: this.icon('back',16), icDots: this.icon('dots',18),
+      icExt: this.icon('ext',14), icTrash: this.icon('trash',15),
+
+      icSearch:this.icon('search',16), icSignout:this.icon('logout',18), icPanel:this.icon('panel',18),
+      icTheme:this.icon(d?'sun':'moon',18), icAlert:this.icon('alert',18), icClose:this.icon('x',15),
+      icPrev:this.icon('chevL',16), icNext:this.icon('chevR',16),
+
+      onSignIn:()=>this.go('dashboard'),
+      onSignOut:()=>this.go('signin'),
+      onToggleTheme:()=>this.setState(s=>({theme:((s.theme??this.props.theme??'light')==='light')?'dark':'light'})),
+      onToggleCollapse:()=>this.setState(s=>({collapsed:!s.collapsed})),
+      onDismissErr:()=>this.setState({profileErr:false}),
+      goAudit:()=>this.go('audit'),
+
+      dlgOpen: !!dlg,
+      dlgIsPrompt: !!dlg && dlg.kind==='prompt',
+      dlgIsReason: !!dlg && dlg.kind==='reason',
+      dlgIsType: !!dlg && dlg.kind==='delType',
+      dlgIsAddAdmin: !!dlg && dlg.kind==='addAdmin',
+      dlgTitle: dlg?dlg.title:'',
+      dlgBody: dlg?dlg.body:'',
+      dlgConfirm: dlg?dlg.confirm:'',
+      dlgConfirmCls: ((dlg && dlg.danger===false) ? 'ad-btn-primary' : 'ad-btn-danger-solid') + (( (dlg&&dlg.kind==='reason'&&!(dlg.reason||'').trim()) || (dlg&&dlg.kind==='delType'&&(dlg.typeVal||'')!==dlg.match) ) ? ' ad-btn-off' : ''),
+      dlgIconEl: dlg ? this.icon(dlg.kind==='addAdmin'?'plus':'alert',18) : null,
+      dlgIconStyle: (dlg && dlg.danger===false) ? 'background:var(--accentSoft);color:var(--accent);' : 'background:var(--dangerSoft);color:var(--danger);',
+      dlgCurrent: dlg?dlg.current:'',
+      dlgBecomes: dlg?dlg.becomes:'',
+      dlgValue: dlg?dlg.value:'',
+      dlgReason: dlg?dlg.reason:'',
+      dlgMatch: dlg?dlg.match:'',
+      dlgTypeVal: dlg?dlg.typeVal:'',
+      onDlgCancel:()=>this.closeDlg(),
+      onDlgConfirm:()=>this.confirmDlg(),
+      onDlgInput:(e)=>{const v=e.target.value; this.setState(s=>({dialog:Object.assign({},s.dialog,{value:v})}));},
+      onDlgReason:(e)=>{const v=e.target.value; this.setState(s=>({dialog:Object.assign({},s.dialog,{reason:v})}));},
+      onDlgType:(e)=>{const v=e.target.value; this.setState(s=>({dialog:Object.assign({},s.dialog,{typeVal:v})}));},
+      stopProp:(e)=>e.stopPropagation()
+    };
+  }
+}
+</script>
+</body>
+</html>
