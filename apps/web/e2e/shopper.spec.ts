@@ -9,11 +9,12 @@ import { expect, test } from "@playwright/test";
 test("home page renders the value prop without a login wall", async ({ page }) => {
   await page.goto("/");
 
-  // The value-prop headline leads and the no-account promise is explicit (copy per
-  // the design-out landing); the shop entry is a plain link, never a wall.
-  await expect(page.getByRole("heading", { name: /the whole deck/i })).toBeVisible();
-  await expect(page.getByText(/no account needed to shop/i)).toBeVisible();
-  await expect(page.getByRole("link", { name: /explore creators/i }).first()).toBeVisible();
+  // The value-prop headline leads and the no-account promise is explicit (copy
+  // per the Scroll V3 Dual landing, ADR-0027); the shop entry is a plain link,
+  // never a wall.
+  await expect(page.getByRole("heading", { name: /tap the post/i })).toBeVisible();
+  await expect(page.getByText(/no account, no app, no cart in between/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: /^explore$/i }).first()).toBeVisible();
 });
 
 test("a creator page is reachable by handle with no account", async ({ page }) => {

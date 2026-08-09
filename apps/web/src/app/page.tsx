@@ -65,9 +65,9 @@ const structuredData = {
   ],
 };
 
-// The landing is a Persuade surface (DESIGN) that now carries the one shared
-// top bar (components/chrome) like every other page — so its account slot
-// reflects the session, same as /explore and the creator pages.
+// The landing is the Scroll V3 Dual scroll story (ADR-0027): shopper view by
+// default, with the creator/business sides one wipe away. It carries its own
+// scroll-revealed chrome instead of AppTopBar/SiteFooter.
 export default function HomePage() {
   return (
     <>

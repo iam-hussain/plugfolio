@@ -185,6 +185,10 @@ const preset = {
         "display-lg": ["clamp(1.625rem,4vw,2.75rem)", { lineHeight: "1.06" }],
         "display-xl": ["clamp(1.75rem,5vw,3.5rem)", { lineHeight: "1.04" }],
         "display-2xl": ["clamp(2rem,6.2vw,5rem)", { lineHeight: "1.02" }],
+        /* Oversized tabular stat figures (Scroll V3 Dual landing dashboard
+           peek: 52px desktop counters) — a number, not a headline, so it sits
+           between name-lg and the display steps. */
+        stat: ["clamp(2.125rem,4vw,3.25rem)", { lineHeight: "1" }],
       },
       borderRadius: {
         sm: "0.5rem",
@@ -265,6 +269,15 @@ const preset = {
           "80%": { opacity: "1" },
           "100%": { opacity: "1" },
         },
+        // Scroll V3 Dual landing: the caret/cursor blink and the scroll-cue bob.
+        "pf-blink": {
+          "0%, 55%": { opacity: "1" },
+          "56%, 100%": { opacity: "0" },
+        },
+        "pf-bob": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(6px)" },
+        },
       },
       animation: {
         "pull-l": "pf-pull-l 3.4s ease-in-out infinite",
@@ -275,6 +288,8 @@ const preset = {
         "pull-r-fast": "pf-pull-r 2.4s ease-in-out infinite",
         "spark-fast": "pf-spark 2.4s linear infinite",
         "flick-fast": "pf-flick 2.4s linear infinite",
+        blink: "pf-blink 1.1s steps(1) infinite",
+        bob: "pf-bob 1.6s ease-in-out infinite",
       },
       letterSpacing: {
         // Sora tracks tight at display sizes (-2% to -5%); Space Mono eyebrows
