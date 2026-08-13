@@ -101,7 +101,7 @@ export function ClaimSheet({ open, onOpenChange, action }: ClaimSheetProps) {
                 />
               </div>
               <div>
-                <FieldLabel htmlFor="claim-password">Password (min 8 characters)</FieldLabel>
+                <FieldLabel htmlFor="claim-password">Password (min 10 characters)</FieldLabel>
                 <PasswordInput
                   id="claim-password"
                   value={password}

@@ -76,10 +76,20 @@ export function createCommentRepository(db: PrismaClient = prisma): CommentRepos
    * the place that needs a denormalised counter.
    */
   async function page(
-    where: { profileId?: string; productId?: string | { isSet: false } },
+    target: { profileId?: string; productId?: string },
     query: CommentQuery,
   ): Promise<CommentPage> {
-    const topLevel = { ...where, parentId: { isSet: false } as const };
+    // Mongo stores an unset optional ref as null; Prisma's `{ isSet: false }`
+    // matches only *absent* fields, so "top-level" and "no product" must accept
+    // null too — the same gotcha the discovery repo hit with `hiddenAt`.
+    const parentTop = { OR: [{ parentId: null }, { parentId: { isSet: false } }] };
+    const productClause = target.productId
+      ? { productId: target.productId }
+      : { OR: [{ productId: null }, { productId: { isSet: false } }] };
+    const topLevel = {
+      ...(target.profileId ? { profileId: target.profileId } : {}),
+      AND: [parentTop, productClause],
+    };
     const ids = await db.comment.findMany({
       where: topLevel,
       select: { id: true, createdAt: true },
@@ -197,7 +207,7 @@ export function createCommentRepository(db: PrismaClient = prisma): CommentRepos
     },
 
     async listByProfile(profileId: string, query: CommentQuery): Promise<CommentPage> {
-      return page({ profileId, productId: { isSet: false } }, query);
+      return page({ profileId }, query);
     },
 
     async listByProduct(productId: string, query: CommentQuery): Promise<CommentPage> {

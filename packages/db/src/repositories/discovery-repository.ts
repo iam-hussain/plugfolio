@@ -98,6 +98,18 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
     },
 
     async listPosts(query: string, limit: number): Promise<readonly DiscoveryPost[]> {
+      // Filtering the to-one `profile` relation inside an OR makes Prisma emit a
+      // Mongo aggregation that `$size`s a null lookup and crashes the whole
+      // query. Resolve matching usernames to ids first, then match posts on the
+      // scalar `profileId` — the username lookup is the same one listCreators runs.
+      const matchingProfileIds = query
+        ? (
+            await db.profile.findMany({
+              where: { ...liveProfile, username: { contains: query, mode: "insensitive" } },
+              select: { id: true },
+            })
+          ).map((row) => row.id)
+        : [];
       const rows = await db.post.findMany({
         where: {
           // AND wrapper: visiblePost is an OR, and the query below also spreads
@@ -108,7 +120,7 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
             ? {
                 OR: [
                   { caption: { contains: query, mode: "insensitive" } },
-                  { profile: { username: { contains: query, mode: "insensitive" } } },
+                  ...(matchingProfileIds.length ? [{ profileId: { in: matchingProfileIds } }] : []),
                 ],
               }
             : undefined),

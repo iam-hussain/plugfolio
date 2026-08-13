@@ -113,9 +113,10 @@ export function useProductEditor({ profileId, product, libraryHref }: UseProduct
     },
     onSuccess: (created) => {
       // Back where the creator came from — the library, or the post whose
-      // connector sent them here.
+      // connector sent them here. refresh() as well so the shared dashboard
+      // layout re-counts (the "Things" tab badge is cached across the push).
       if (created) router.push(libraryHref);
-      else router.refresh();
+      router.refresh();
     },
   });
 

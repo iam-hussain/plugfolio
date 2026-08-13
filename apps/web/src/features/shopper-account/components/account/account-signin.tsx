@@ -33,7 +33,7 @@ export function AccountSignIn({ email, handle }: { email: string; handle: string
       <SettingRow
         label="Password"
         value="Set by you"
-        hint="At least 8 characters. We email a link so the change is confirmed from your inbox."
+        hint="At least 10 characters. We email a link so the change is confirmed from your inbox."
         action={
           <Button variant="secondary" asChild>
             <Link href="/forgot">Change password</Link>

@@ -27,6 +27,14 @@ export function defaultCoverTreatment(style: CreatorHeaderStyle): CreatorCoverTr
   return style === "compact" ? "none" : "tile";
 }
 
+/**
+ * "1 follower" / "2 followers". Counts arrive pre-formatted, so the only value
+ * that takes the singular is exactly "1" — a formatted "1.2k" is many.
+ */
+function unit(value: string, singular: string): string {
+  return `${value} ${value === "1" ? singular : `${singular}s`}`;
+}
+
 export type CreatorHeaderProps = {
   handle: string;
   displayName?: string | null;
@@ -254,12 +262,13 @@ export function CreatorHeader({
         </div>
       ) : null}
 
-      {/* Counts: compact collapses to one mono line; the others get the row. */}
+      {/* Counts: compact collapses to one mono line; the others get the row.
+          Singular only when the value is exactly "1" — "1.2k" stays plural. */}
       {style === "compact" ? (
         <p className="border-border text-muted-foreground text-nano mt-3.5 border-t pt-3.5 font-mono tracking-[0.08em]">
           {counts
-            ? `${counts.posts} posts · ${counts.things} things · ${followers} followers`
-            : `${followers} followers`}
+            ? `${unit(counts.posts, "post")} · ${unit(counts.things, "thing")} · ${unit(followers, "follower")}`
+            : unit(followers, "follower")}
         </p>
       ) : (
         <dl
