@@ -8,7 +8,7 @@ import {
   isWatched,
 } from "@plugfolio/core";
 import { PostPageView } from "@/features/creator-page";
-import { breadcrumbList } from "@/lib/structured-data";
+import { breadcrumbList, socialMediaPosting } from "@/lib/structured-data";
 import { SITE_NAME } from "@/lib/site";
 import { auth } from "@/server/auth";
 import { repositories } from "@/server/container";
@@ -33,7 +33,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     title,
     description,
     alternates: { canonical: path },
-    openGraph: { type: "article", url: path, title, description, images: [post.mediaUrl] },
+    // The share image is the generated media-led card (./opengraph-image.tsx).
+    openGraph: { type: "article", url: path, title, description },
   };
 }
 
@@ -69,10 +70,23 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
       )?.taps ?? 0)
     : null;
 
+  // SocialMediaPosting + breadcrumbs (SEO/AEO) — the media, the caption, the
+  // author, and each tagged product as a mention; public facts only.
+  const postPath = `/${page.username}/post/${post.id}`;
+  const postLd = socialMediaPosting({
+    caption: post.caption,
+    mediaUrl: post.mediaUrl,
+    creatorUsername: page.username,
+    path: postPath,
+    products: post.products.map((item) => ({
+      title: item.title,
+      path: `/${page.username}/product/${item.id}`,
+    })),
+  });
   const crumbs = breadcrumbList([
     { name: SITE_NAME, path: "/" },
     { name: `@${page.username}`, path: `/${page.username}` },
-    { name: post.caption ?? "Post", path: `/${page.username}/post/${post.id}` },
+    { name: post.caption ?? "Post", path: postPath },
   ]);
 
   return (
@@ -82,7 +96,7 @@ export default async function PostPage({ params }: { params: Promise<Params> }) 
       isOwner={isOwner}
       taps={taps}
       viewer={{ signedIn: !!session?.user, following, watched }}
-      structuredData={crumbs}
+      structuredData={[postLd, crumbs]}
     />
   );
 }

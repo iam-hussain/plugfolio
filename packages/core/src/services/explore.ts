@@ -3,6 +3,7 @@ import type {
   DiscoveryPost,
   DiscoveryProduct,
   DiscoveryReadRepository,
+  SitemapCreator,
 } from "../ports/discovery-repository";
 
 /**
@@ -42,4 +43,14 @@ export async function explorePosts(
   query?: string,
 ): Promise<readonly DiscoveryPost[]> {
   return deps.discovery.listPosts(cleanQuery(query), PAGE_SIZE);
+}
+
+/** Ceiling on creators in one sitemap read — far above today's data, well
+ *  under the 50k-URL sitemap limit. Revisit with generateSitemaps when a
+ *  creator count in the thousands makes one file too big. */
+const SITEMAP_CREATOR_LIMIT = 5000;
+
+/** Every live creator with their visible posts/products, for sitemap.xml. */
+export async function sitemapCreators(deps: ExploreDeps): Promise<readonly SitemapCreator[]> {
+  return deps.discovery.listSitemapCreators(SITEMAP_CREATOR_LIMIT);
 }

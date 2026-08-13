@@ -40,7 +40,7 @@ export type PostPageViewProps = {
   taps: number | null;
   viewer: { signedIn: boolean; following: boolean; watched: boolean };
   /** Breadcrumb JSON-LD, built by the route from public facts. */
-  structuredData: Record<string, unknown>;
+  structuredData: readonly Record<string, unknown>[];
 };
 
 export function PostPageView({
@@ -58,7 +58,9 @@ export function PostPageView({
 
   return (
     <main data-accent={page.accent} className={cn(measure(), "pb-[clamp(48px,7vw,84px)]")}>
-      <JsonLd data={structuredData} />
+      {structuredData.map((data, index) => (
+        <JsonLd key={index} data={data} />
+      ))}
       <ViewBeacon surface="post" postId={post.id} />
       {/* Scroll past the byline and the shared top bar becomes the creator's;
           tapping it goes back to their page. Their byline sits high, so it

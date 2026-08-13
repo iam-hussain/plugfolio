@@ -79,6 +79,44 @@ export function profilePage(
 }
 
 /**
+ * A shoppable post as a schema.org SocialMediaPosting (SEO/AEO): the media,
+ * the caption, the creator as author, and each tagged product as `mentions` —
+ * exactly what the page shows, nothing session-derived.
+ */
+export function socialMediaPosting(args: {
+  caption: string | null;
+  mediaUrl: string;
+  creatorUsername: string;
+  /** Site-relative path to the post page. */
+  path: string;
+  products: readonly { title: string; path: string }[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SocialMediaPosting",
+    "@id": `${SITE_URL}${args.path}`,
+    url: `${SITE_URL}${args.path}`,
+    headline: args.caption ?? `A shoppable post by @${args.creatorUsername}`,
+    ...(args.caption ? { articleBody: args.caption } : {}),
+    image: absoluteUrl(args.mediaUrl),
+    author: {
+      "@type": "Person",
+      name: `@${args.creatorUsername}`,
+      url: `${SITE_URL}/${args.creatorUsername}`,
+    },
+    ...(args.products.length > 0
+      ? {
+          mentions: args.products.map((item) => ({
+            "@type": "Product",
+            name: item.title,
+            url: `${SITE_URL}${item.path}`,
+          })),
+        }
+      : {}),
+  };
+}
+
+/**
  * A tagged product as a schema.org Product, with an Offer when the tagged price
  * is known (SEO/AEO). Only what the page already shows — the price is the
  * display price, the image is the one on screen.

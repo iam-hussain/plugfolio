@@ -49,6 +49,17 @@ export type DiscoveryPost = {
   readonly productCount: number;
 };
 
+/**
+ * One creator's public URL inventory for the sitemap: the page itself plus
+ * every visible post and product, with `createdAt` as the lastModified signal
+ * (posts/products carry no updatedAt).
+ */
+export type SitemapCreator = {
+  readonly username: string;
+  readonly posts: readonly { readonly id: string; readonly createdAt: Date }[];
+  readonly products: readonly { readonly id: string; readonly createdAt: Date }[];
+};
+
 export type DiscoveryReadRepository = {
   /** Creators matching `query` (username contains, case-insensitive; "" = all). */
   listCreators(query: string, limit: number): Promise<readonly DiscoveryCreator[]>;
@@ -56,4 +67,6 @@ export type DiscoveryReadRepository = {
   listProducts(query: string, limit: number): Promise<readonly DiscoveryProduct[]>;
   /** Visible posts matching `query` (caption or handle; "" = all), newest first. */
   listPosts(query: string, limit: number): Promise<readonly DiscoveryPost[]>;
+  /** Every live creator with their visible posts/products, for sitemap.xml. */
+  listSitemapCreators(limit: number): Promise<readonly SitemapCreator[]>;
 };

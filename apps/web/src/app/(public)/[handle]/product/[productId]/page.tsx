@@ -42,13 +42,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     title,
     description,
     alternates: { canonical: path },
-    openGraph: {
-      type: "website",
-      url: path,
-      title,
-      description,
-      ...(product.imageUrl ? { images: [product.imageUrl] } : {}),
-    },
+    // The share image is the generated product card (./opengraph-image.tsx).
+    openGraph: { type: "website", url: path, title, description },
   };
 }
 

@@ -3,6 +3,7 @@ import type {
   DiscoveryPost,
   DiscoveryProduct,
   DiscoveryReadRepository,
+  SitemapCreator,
 } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 
@@ -15,6 +16,16 @@ const liveProfile = {
   suspendedAt: { isSet: false },
   user: { suspendedAt: { isSet: false } },
 } as const;
+
+/**
+ * "Visible post" must match BOTH shapes of not-hidden: the field was never set
+ * (absent) and the field was cleared back to null on unhide (stored null —
+ * creator-content-repository writes `hiddenAt: null`). `isSet: false` alone
+ * missed the second, so an unhidden post never returned to Explore.
+ */
+const visiblePost = {
+  OR: [{ hiddenAt: { isSet: false } }, { hiddenAt: null }],
+};
 
 /**
  * Prisma implementation of the `DiscoveryReadRepository` port — the public
@@ -89,7 +100,9 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
     async listPosts(query: string, limit: number): Promise<readonly DiscoveryPost[]> {
       const rows = await db.post.findMany({
         where: {
-          hiddenAt: { isSet: false },
+          // AND wrapper: visiblePost is an OR, and the query below also spreads
+          // an OR — as siblings one key would silently clobber the other.
+          AND: [visiblePost],
           profile: liveProfile,
           ...(query
             ? {
@@ -142,6 +155,20 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
                 : ("affiliate" as const),
         })),
       }));
+    },
+
+    async listSitemapCreators(limit: number): Promise<readonly SitemapCreator[]> {
+      const rows = await db.profile.findMany({
+        where: liveProfile,
+        orderBy: { createdAt: "asc" },
+        take: limit,
+        select: {
+          username: true,
+          posts: { where: visiblePost, select: { id: true, createdAt: true } },
+          products: { select: { id: true, createdAt: true } },
+        },
+      });
+      return rows;
     },
   };
 }

@@ -34,19 +34,17 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const page = await loadCreatorPage(handle);
   if (!page) return { title: `@${handle}` };
   const description = `Shop @${page.username}'s posts on ${SITE_NAME} — every tagged product, straight from the retailer. No account needed.`;
-  const firstMedia = page.posts[0]?.mediaUrl;
   return {
     title: `@${page.username}`,
     description,
     alternates: { canonical: `/${page.username}` },
+    // The share image is the generated identity card (./opengraph-image.tsx) —
+    // file-convention images take precedence over anything set here.
     openGraph: {
       type: "profile",
       url: `/${page.username}`,
       title: `@${page.username} · ${SITE_NAME}`,
       description,
-      // The creator's latest post is the truest share card; the brand og:image
-      // is the fallback when they haven't posted yet.
-      ...(firstMedia ? { images: [firstMedia] } : {}),
     },
   };
 }

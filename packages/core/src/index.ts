@@ -50,6 +50,7 @@ export type {
   DiscoveryProduct,
   DiscoveryPost,
   DiscoveryPostTag,
+  SitemapCreator,
 } from "./ports/discovery-repository";
 export type {
   TrafficReadRepository,
@@ -167,6 +168,7 @@ export {
   exploreCreators,
   exploreProducts,
   explorePosts,
+  sitemapCreators,
   type ExploreDeps,
 } from "./services/explore";
 export {
