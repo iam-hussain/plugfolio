@@ -9,6 +9,7 @@ import { PAGE_APPEARANCE_DEFAULTS } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
 import { resolveCoverStyle } from "@plugfolio/core";
 import { readAppearance, readMediaKind } from "../page-appearance";
+import { liveProfile } from "./visibility";
 
 const productSelect = {
   id: true,
@@ -22,15 +23,6 @@ const productSelect = {
   offerEndsAt: true,
   inStoreNote: true,
   categoryId: true,
-} as const;
-
-/** Admin suspension (docs/implementation/admin-app.md): a suspended profile —
- * or any profile of a suspended account — is off every public read (404). */
-// Mongo (Prisma): `{ field: null }` does NOT match an absent optional — a
-// never-suspended profile has no `suspendedAt` at all — so match on unset.
-const liveProfile = {
-  suspendedAt: { isSet: false },
-  user: { suspendedAt: { isSet: false } },
 } as const;
 
 /**

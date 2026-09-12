@@ -1,5 +1,6 @@
 import type { WatchKind, WatchlistItem, WatchlistRepository } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
+import { notHidden, notSuspended } from "./visibility";
 
 /**
  * Prisma implementation of the `WatchlistRepository` port. Idempotency comes
@@ -37,12 +38,12 @@ export function createWatchlistRepository(db: PrismaClient = prisma): WatchlistR
           ? await db.post.count({
               where: {
                 id: targetId,
-                hiddenAt: { isSet: false },
-                profile: { suspendedAt: { isSet: false } },
+                ...notHidden,
+                profile: notSuspended,
               },
             })
           : await db.product.count({
-              where: { id: targetId, profile: { suspendedAt: { isSet: false } } },
+              where: { id: targetId, profile: notSuspended },
             });
       return count > 0;
     },
@@ -62,7 +63,7 @@ export function createWatchlistRepository(db: PrismaClient = prisma): WatchlistR
         db.post.findMany({
           where: {
             id: { in: rows.filter((row) => row.kind === "post").map((row) => row.targetId) },
-            hiddenAt: { isSet: false },
+            ...notHidden,
           },
           select: { id: true, caption: true, mediaUrl: true, profile: creator },
         }),

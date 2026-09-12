@@ -6,26 +6,7 @@ import type {
   SitemapCreator,
 } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
-
-/**
- * Suspended profiles/accounts never surface on Explore (admin-app note).
- * Mongo stores an unset optional field as ABSENT, and Prisma's `{ field: null }`
- * does NOT match absent (unlike Postgres) — so "not suspended" is `isSet: false`.
- */
-const liveProfile = {
-  suspendedAt: { isSet: false },
-  user: { suspendedAt: { isSet: false } },
-} as const;
-
-/**
- * "Visible post" must match BOTH shapes of not-hidden: the field was never set
- * (absent) and the field was cleared back to null on unhide (stored null —
- * creator-content-repository writes `hiddenAt: null`). `isSet: false` alone
- * missed the second, so an unhidden post never returned to Explore.
- */
-const visiblePost = {
-  OR: [{ hiddenAt: { isSet: false } }, { hiddenAt: null }],
-};
+import { liveProfile, notHidden } from "./visibility";
 
 /**
  * Prisma implementation of the `DiscoveryReadRepository` port — the public
@@ -112,9 +93,9 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
         : [];
       const rows = await db.post.findMany({
         where: {
-          // AND wrapper: visiblePost is an OR, and the query below also spreads
+          // AND wrapper: notHidden is an OR, and the query below also spreads
           // an OR — as siblings one key would silently clobber the other.
-          AND: [visiblePost],
+          AND: [notHidden],
           profile: liveProfile,
           ...(query
             ? {
@@ -176,7 +157,7 @@ export function createDiscoveryRepository(db: PrismaClient = prisma): DiscoveryR
         take: limit,
         select: {
           username: true,
-          posts: { where: visiblePost, select: { id: true, createdAt: true } },
+          posts: { where: notHidden, select: { id: true, createdAt: true } },
           products: { select: { id: true, createdAt: true } },
         },
       });

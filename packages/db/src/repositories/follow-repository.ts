@@ -1,5 +1,6 @@
 import type { FollowRepository, FollowedCreator, ProfileSummary } from "@plugfolio/core";
 import { prisma, type PrismaClient } from "../client";
+import { notHidden, notSuspended } from "./visibility";
 
 /**
  * Prisma implementation of the `FollowRepository` port. Idempotency via the
@@ -41,7 +42,7 @@ export function createFollowRepository(db: PrismaClient = prisma): FollowReposit
       // Suspended pages are off the public surface, so they're off this list
       // too — every row here is a door to a page that opens.
       const follows = await db.follow.findMany({
-        where: { userId, profile: { suspendedAt: { isSet: false } } },
+        where: { userId, profile: notSuspended },
         select: {
           createdAt: true,
           profile: {
@@ -55,7 +56,7 @@ export function createFollowRepository(db: PrismaClient = prisma): FollowReposit
               // a filtered `_count`, which Mongo doesn't do.
               _count: { select: { products: true } },
               posts: {
-                where: { hiddenAt: { isSet: false } },
+                where: notHidden,
                 orderBy: { createdAt: "desc" },
                 take: 1,
                 select: { createdAt: true },
@@ -70,7 +71,7 @@ export function createFollowRepository(db: PrismaClient = prisma): FollowReposit
       // every visible post, and the ones since the last visit. `since` null
       // (never opened the page) counts everything as new.
       const profileIds = follows.map((follow) => follow.profile.id);
-      const visible = { hiddenAt: { isSet: false }, profileId: { in: profileIds } };
+      const visible = { ...notHidden, profileId: { in: profileIds } };
       const [totals, fresh] = await Promise.all([
         db.post.groupBy({ by: ["profileId"], where: visible, _count: { _all: true } }),
         db.post.groupBy({

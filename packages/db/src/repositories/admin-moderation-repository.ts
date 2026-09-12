@@ -1,4 +1,5 @@
 import { Prisma } from "../../generated/client";
+import { liveProfile } from "./visibility";
 import type {
   AdminCommentRow,
   AdminContentRepository,
@@ -23,8 +24,8 @@ function skipTake(page: PageQuery) {
 function profileStatusWhere(status: ProfileStatusFilter | undefined): Prisma.ProfileWhereInput {
   switch (status) {
     case "live":
-      // Mongo: a never-suspended row has no `suspendedAt` field — match unset.
-      return { suspendedAt: { isSet: false }, user: { suspendedAt: { isSet: false } } };
+      // "not suspended" must match both unset AND a restored null — see visibility.ts.
+      return liveProfile;
     case "suspended":
       return { suspendedAt: { not: null } };
     case "owner-suspended":
